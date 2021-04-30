@@ -1,0 +1,142 @@
+.close {
+	cursor: pointer;
+}
+
+.nodea-dropzone {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	min-height: 100px;
+	border: 1px dashed #212529;
+	border-radius: 3px;
+	cursor: pointer;
+}
+.nodea-dropzone.dragover {
+	background-color: rgba(0, 0, 0, .3);
+}
+.dropzonefile {
+	padding: 10px 20px 10px 20px;
+	height: 50px;
+	border: 1px solid grey;
+	border-radius: 5px;
+	margin: 10px;
+}
+
+.main-sidebar #module-zone .select2-container {
+	text-align: center;
+}
+
+.dataTables_wrapper {
+	overflow-x: auto;
+}
+
+.dataTables_length {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+.dataTables_filter {
+	display: inline-block;
+	float: right;
+}
+
+.hover:hover,
+.inline-help:hover,
+input[type=color]:hover,
+.insert:hover,
+table > tbody > tr:hover {
+	cursor: pointer;
+}
+
+label.no-weight {
+	font-weight: normal !important;
+	cursor: pointer;
+}
+
+label.required:after {
+	color: #e32;
+	content: ' *';
+	display:inline;
+}
+
+.show-textarea {
+	border: 1px solid #d2d6de;
+	padding: 5px;
+	width: 100%;
+	min-height: 200px;
+	border-radius: 2px;
+}
+
+.preview_file {
+	cursor: pointer;
+}
+
+.copy-button {
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 1;
+	color: #555;
+	text-align: center;
+	background-color: transparent;
+	border: "none";
+	border-radius: 4px;
+	width: 40px;
+	cursor: pointer;
+	display: table-cell;
+}
+
+.copy-button:hover {
+	background-color: #eee;
+}
+
+.main-sidebar .sidebar {
+	overflow-y: auto;
+}
+
+/* Tabulation */
+.nav-tabs-custom .nav-tabs {
+	background: var(--theme-white);
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+	padding: 3px;
+}
+
+.tab-content {
+	min-height: 275px;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-top: 0px;
+	padding: 30px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+
+.nav-tabs-custom .nav-item {
+	border-radius: 7px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	margin: 4px;
+	background-color: #fff;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border: 1px solid rgba(0, 0, 0, 0);
+	border-top: 1px solid var(--theme-primary-hover);
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	color: #495057;
+	background-color: #fff;
+	border: 0;
+	border-radius: 5px;
+	border-top: 3px solid var(--theme-primary-hover);
+}
+
+.tab-pane {
+	margin-top: 15px;
+	margin-bottom: 50px;
+}

@@ -1,0 +1,44 @@
+<table id="table_e_api_credentials" data-url="{tableUrl}" class="dataTable table table-bordered table-striped">
+	<thead class="main">
+		<tr class="fields">
+			<th data-field="id" data-col="id">
+				{#__ key="entity.e_api_credentials.id_entity"/}&nbsp;
+				{#__ key="entity.e_api_credentials.label_entity"/}
+			</th>
+			<th data-field="f_client_name" data-col="f_client_name" data-type="string">
+				{#__ key="entity.e_api_credentials.f_client_name"/}
+			</th>
+			{#actionAccess entity="api_credentials" action="read"}
+			<th data-type="show"></th>
+			{/actionAccess}
+			{#actionAccess entity="api_credentials" action="update"}
+			<th data-type="update"></th>
+			{/actionAccess}
+			{#actionAccess entity="api_credentials" action="delete"}
+			<th data-type="delete"></th>
+			{/actionAccess}
+		</tr>
+	</thead>
+	<thead class="filters">
+		<tr class="fields">
+			<th data-field="id" data-col="id">
+				{#__ key="entity.e_api_credentials.id_entity"/}&nbsp;
+				{#__ key="entity.e_api_credentials.label_entity"/}
+			</th>
+			<th data-field="f_client_name" data-col="f_client_name" data-type="string">
+				{#__ key="entity.e_api_credentials.f_client_name"/}
+			</th>
+			{#actionAccess entity="api_credentials" action="read"}
+			<th data-type="show"></th>
+			{/actionAccess}
+			{#actionAccess entity="api_credentials" action="update"}
+			<th data-type="update"></th>
+			{/actionAccess}
+			{#actionAccess entity="api_credentials" action="delete"}
+			<th data-type="delete"></th>
+			{/actionAccess}
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>

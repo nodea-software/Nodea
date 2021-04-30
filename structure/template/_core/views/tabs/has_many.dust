@@ -1,0 +1,6 @@
+{>"{e_subentity}/list_fields" /}
+{! create btn !}
+<a data-href="/{subentity}/create_form?{associationHref}&ajax=true" class="ajax btn btn-success">
+	<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+	<span>{#__ key="button.create"/}</span>
+</a>

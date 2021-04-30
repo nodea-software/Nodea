@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{#__ key="app.name"/}</title>
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+		<!-- Theme style -->
+		<link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.min.css">
+		<!-- Nodea style -->
+		<style>
+			body {
+				background: linear-gradient(90deg, rgba(0,102,255,1) 0%, rgba(0,240,255,1) 100%);
+			}
+		</style>
+	</head>
+	<body class="hold-transition login-page text-center" style="color: #FFF;">
+		<div class="col-12" style="margin-top: 200px;">
+			<img src="/img/logo/logo_nodea_white.png" alt='Nodea logo' width="30%"/>
+		</div>
+		<hr>
+		<div class="col-12">
+			{?message}
+				<h2 class="headline"><b>{#__ key=message /}</b></h2>
+			{:else}
+				<h2 class="headline"><b>{#__ key="error.500.title"/}</b></h2>
+			{/message}
+			<br>
+			{#__ key="error.goHome"/} :<br><br><a class="btn btn-default" href="/"><i class="fa fa-home"></i>&nbsp;&nbsp;{#__ key="error.home"/}</a></a>
+			<br><br>
+			{#__ key="error.goBack"/} :<br><br><a class="btn btn-default" href="javascript:history.back();"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="error.goBackText"/}</a>
+		</div>
+	</div>
+	<!-- jQuery -->
+	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="/AdminLTE/dist/js/adminlte.min.js"></script>
+</body>
+</html>

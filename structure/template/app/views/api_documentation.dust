@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{#__ key="app.name"/}&nbsp;|&nbsp;{#__ key="module.home"/}</title>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<!-- Font Awesome Icons -->
+		<link href="/AdminLTE/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" >
+		{! Toastr !}
+		<link href="/AdminLTE/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+		{! Select2 !}
+		<link href="/AdminLTE/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css">
+		{! Select2 BS4 Theme !}
+		<link href="/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" type="text/css">
+		{! iCheck !}
+		<link href="/js/plugins/icheck/css/flat/blue.css" rel="stylesheet" type="text/css">
+		{! Theme style !}
+		<link href="/AdminLTE/dist/css/adminlte.min.css" rel="stylesheet" type="text/css">
+		{! Nodea style !}
+		<link href="/core/css/nodea.css" type="text/css" rel="stylesheet">
+		{! Favicon !}
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">
+		<link rel="manifest" href="/img/favicons/manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+		{+custom_css /}
+
+		<style rel="stylesheet">
+			.method {
+				font-family: "Source Sans Pro", sans-serif;
+				font-weight: 600;
+				font-size: 15px;
+				display: inline-block;
+				margin: 0 0 5px 0;
+				padding: 6px 5px;
+				border-radius: 8px;
+				text-transform: uppercase;
+				background-color: #3387CC;
+				color: #ffffff;
+			}
+			.method.GET {
+				background-color: green;
+			}
+			.method.POST {
+				background-color: blue;
+			}
+			.method.PUT {
+				background-color: #e5c500;
+			}
+			.method.DELETE {
+				background-color: red;
+			}
+
+			.url {
+				color: white;
+				background-color: #000;
+				width: 100%;
+				margin: 0 0 20px 0;
+				border-radius: 8px;
+			}
+
+			.required {
+				display: inline;
+				padding: .3em .6em .3em;
+				font-size: 75%;
+				font-weight: 700;
+				line-height: 1;
+				color: #fff;
+				text-align: center;
+				white-space: nowrap;
+				vertical-align: baseline;
+				border-radius: .25em;
+				float: right;
+				background-color: grey;
+				margin-top: 4px;
+			}
+
+			.fixed {
+				position: fixed;
+			}
+
+			.routes-sidebar {
+				height: 100%;
+				overflow-y: scroll;
+			}
+
+			table td {
+				width: 25%;
+			}
+		</style>
+
+		<script type="text/javascript">var lang_user = 'en-EN';</script>
+	</head>
+
+	<body class="hold-transition sidebar-mini layout-fixed">
+		<div class="wrapper">
+
+			<nav class="main-header navbar navbar-expand navbar-dark navbar-light">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+					</li>
+				</ul>
+			</nav>
+
+			<!-- Main Sidebar Container -->
+			<aside class="main-sidebar sidebar-light-primary elevation-2">
+				<!-- App Logo -->
+				<a href="/" class="brand-link">
+					<img src="/img/logo/nodea_short.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-1">
+					<span class="brand-text font-weight-light">{#__ key="app.name"/}</span>
+				</a>
+
+				<!-- Sidebar -->
+				<div class="sidebar">
+					<nav class="mt-2">
+					    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+					        <li class="nav-header">MENU</li>
+					        <li class="nav-item">
+					            <a href="#" class="nav-link">
+					                <p>
+					                    Basic Auth
+					                    <i class="right fas fa-angle-left"></i>
+					                </p>
+					            </a>
+					            <ul class="nav nav-treeview">
+					                <li class="nav-item">
+					                    <a href="#" class="nav-link">
+					                        <i class="far fa-circle nav-icon"></i>
+					                        <p>Get token</p>
+					                        <i class="right fas fa-angle-left"></i>
+					                    </a>
+					                </li>
+					            </ul>
+					        </li>
+					        {#api_files}
+								<li class="nav-item has-treeview">
+									<a href="#" class="nav-link">
+										<p>
+											{#__ key=title /}
+											<i class="right fas fa-angle-left"></i>
+										</p>
+									</a>
+									<ul class="nav nav-treeview">
+										{#routes routeIdx=$idx}
+											<li class="nav-item">
+												<a href="#{code}-{$idx}" class="route-link nav-link">
+													<i class="far fa-circle nav-icon"></i>
+													{#__ key=title /}
+												</a>
+											</li>
+										{/routes}
+									</ul>
+								</li>
+							{/api_files}
+					    </ul>
+					</nav>
+				</div>
+			</aside>
+			<div class="content-wrapper">
+				<section class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12">
+								<br>
+								<h4>API version: {config.version}</h4>
+								<h1>General knowledge</h1>
+								<div id="get_token">
+									<h2>Get token</h2>
+
+									<p>To be able to interact with the API, you need to generate a Bearer Token using the <code>/api/getToken/</code> route</p>
+									<p>Store this token and provide it as query parameter to every route that requires an authentication : <code>/api/user/?token=TOKEN</code></p>
+									<p>Set your HTTP header like so with basic64 encoding : <code>Authorization clientID:clientSecret</code></p>
+
+									<span class="method GET">
+										GET
+									</span>
+									<pre class="url">
+										/api/getToken/
+									</pre>
+
+									<h3>Response</h3>
+									<pre>
+										<code>
+											{
+												"token": "STRING"
+											}
+										</code>
+									</pre>
+
+									<h3>Errors</h3>
+									<table class="dataTable table table-bordered table-striped animated fadeIn">
+										<thead>
+											<tr>
+												<th>Status code</th>
+												<th>Description</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>500</td>
+												<td>BadAuthorizationHeader - There is an invalid or no authorization header</td>
+											</tr>
+											<tr>
+												<td>401</td>
+												<td>AuthenticationFailed - Couldn't match clientID/clientSecret with database</td>
+											</tr>
+										</tbody>
+									</table>
+
+									<h3>Example</h3>
+
+									<pre class="url">
+										const request = require('request');<br>
+										<br>
+										// API credentials<br>
+										const clientKey = 'THcfYQ7sGW3jRdq';<br>
+										const clientSecret = 'dexXLYNwdhezlxk';<br>
+										<br>
+										// Base64 encoding<br>
+										const auth = 'Basic ' + new Buffer(clientKey + ':' + clientSecret).toString('base64');<br>
+										<br>
+										// API request<br>
+										request(&#123;<br>
+										&nbsp;&nbsp;url : '&#123;&#123;HOST&#125;&#125;/api/getToken',<br>
+										&nbsp;&nbsp;headers : &#123;<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;"Authorization" : auth<br>
+										&nbsp;&nbsp;&#125;<br>
+										&#125;, function (error, response, body) &#123;<br>
+										&nbsp;&nbsp;body = JSON.parse(body);<br>
+										&nbsp;&nbsp;console.log(body.token);<br>
+										&#125;);
+									</pre>
+								</div>
+								{#api_files}
+									<h1>{#__ key=title /}</h1>
+									{#routes}
+									<div id="{code}-{$idx}">
+										<h2>{#__ key=title /}</h2>
+										<p>{description|s}</p>
+										<span class="method {method}">
+											{method}
+										</span>
+										<pre class="url">
+											{url}
+										</pre>
+										{#parameters}
+											{?params}
+												<h3>Params</h3>
+												<table class="dataTable table table-bordered table-striped animated fadeIn">
+													<thead>
+														<tr>
+															<th>Field</th>
+															<th>Type</th>
+															<th>Default value</th>
+															<th>Descritpion</th>
+														</tr>
+													</thead>
+													<tbody>
+														{#params}
+														<tr>
+															<td>{field} {@eq key=required value="true" type="boolean"}<span class="required">required</span>{/eq}</td>
+															<td>{type}</td>
+															<td>{defaultValue}</td>
+															<td>{description|s}</td>
+														</tr>
+														{/params}
+													</tbody>
+												</table>
+											{/params}
+											{?query}
+												<h3>Query</h3>
+												<table class="dataTable table table-bordered table-striped animated fadeIn">
+													<thead>
+														<tr>
+															<th>Field</th>
+															<th>Type</th>
+															<th>Default value</th>
+															<th>Descritpion</th>
+														</tr>
+													</thead>
+													<tbody>
+														{#query}
+														<tr>
+															<td>{field} {@eq key=required value="true" type="boolean"}<span class="required">required</span>{/eq}</td>
+															<td>{type}</td>
+															<td>{defaultValue}</td>
+															<td>{description|s}</td>
+														</tr>
+														{/query}
+													</tbody>
+												</table>
+											{/query}
+											{?body}
+												<h3>Body</h3>
+												<table class="dataTable table table-bordered table-striped animated fadeIn">
+													<thead>
+														<tr>
+															<th>Field</th>
+															<th>Type</th>
+															<th>Default value</th>
+															<th>Descritpion</th>
+														</tr>
+													</thead>
+													<tbody>
+														{#body}
+														<tr>
+															<td>{field} {@eq key=required value="true" type="boolean"}<span class="required">required</span>{/eq}</td>
+															<td>{type}</td>
+															<td>{defaultValue}</td>
+															<td>{description|s}</td>
+														</tr>
+														{/body}
+													</tbody>
+												</table>
+											{/body}
+										{/parameters}
+										{#response}
+											<h3>Response</h3>
+											<pre class="url">
+												{.}
+											</pre>
+										{/response}
+										{?errors}
+											<h3>Errors</h3>
+											<table class="dataTable table table-bordered table-striped animated fadeIn">
+												<thead>
+													<tr>
+														<th>Status code</th>
+														<th>Description</th>
+													</tr>
+												</thead>
+												<tbody>
+													{#errors}
+													<tr>
+														<td>{code}</td>
+														<td>{description}</td>
+													</tr>
+													{/errors}
+												</tbody>
+											</table>
+										{/errors}
+									</div>
+									{@sep}
+										<hr>
+									{/sep}
+									{/routes}
+								{/api_files}
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+		<!-- Bootstrap 4 -->
+		<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<!-- AdminLTE App -->
+		<script src="/AdminLTE/dist/js/adminlte.min.js" type="text/javascript"></script>
+		<!-- Moment js -->
+		<script src="/AdminLTE/plugins/moment/moment.min.js"></script>
+		<!-- Toastr -->
+		<script src="/AdminLTE/plugins/toastr/toastr.min.js" type="text/javascript"></script>
+		<!-- Select2 -->
+		<script src="/AdminLTE/plugins/select2/js/select2.min.js" type="text/javascript"></script>
+		<!-- Dropzone -->
+		<script src="/AdminLTE/plugins/dropzone/min/dropzone.min.js" type="text/javascript"></script>
+		<!-- Summernote -->
+		<script src="/AdminLTE/plugins/summernote/summernote.min.js" type="text/javascript"></script>
+		{! <script src='/AdminLTE/js/plugins/summernote/plugin/stt/stt.js' type="text/javascript"></script> !}
+		<!-- Input Mask -->
+		<script src="/AdminLTE/plugins/inputmask/jquery.inputmask.min.js" type="text/javascript"></script>
+		<!-- iCheck -->
+		<script src="/js/plugins/icheck/icheck.min.js" type="text/javascript"></script>
+		<!-- MaskMoney -->
+		<script src="/js/plugins/maskmoney/maskmoney.js" type="text/javascript"></script>
+		<!-- JSBarCode -->
+		<script src="/js/plugins/jsbarcode/jsbarcode.all.min.js" type="text/javascript"></script>
+		<!-- UUID V4 -->
+		<script src="/js/plugins/uuid/uuid.min.js?v={config.version}" type="text/javascript"></script>
+
+		<script type="text/javascript">
+			$(function() {
+				NodeaForms();
+
+				$(".route-link").click(function() {
+					$(".route-link").parent().removeClass('active');
+					$(this).parent().addClass('active');
+				});
+			});
+		</script>
+	</body>
+</html>

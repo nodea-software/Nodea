@@ -1,0 +1,386 @@
+<div id="fields" class="row">
+    <div data-field="f_order" class="col-12">
+        <div class="form-group">
+            <label for="f_order">
+                {#__ key="entity.e_page.f_order"/}&nbsp;
+                {@inline_help field="f_order"}
+                <i data-field="f_order" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <input readonly="" class="form-control input" placeholder='{#__ key="entity.e_page.f_order" /}' name="f_order" value="{maxOrder}" type="number" max="2147483648">
+        </div>
+    </div>
+    <div data-field="f_titre" class="col-12">
+        <div class="form-group">
+            <label for="f_titre" class="required">
+                {#__ key="entity.e_page.f_titre"/}&nbsp;
+                {@inline_help field="f_titre"}
+                <i data-field="f_titre" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_titre" /}' name="f_titre" value="" type="text" maxlength="255" required="">
+        </div>
+    </div>
+    <div data-field="f_delay" class="col-6">
+        <div class="form-group">
+            <label for="f_delay">
+                {#__ key="entity.e_page.f_delay"/}&nbsp;
+                {@inline_help field="f_delay"}
+                <i data-field="f_delay" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_delay" /}' name="f_delay" value="" type="number" max="2147483648">
+        </div>
+    </div>
+    <div data-field="f_timeout" class="col-6">
+        <div class="form-group">
+            <label for="f_timeout">
+                {#__ key="entity.e_page.f_timeout"/}&nbsp;
+                {@inline_help field="f_timeout"}
+                <i data-field="f_timeout" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_timeout" /}' name="f_timeout" value="" type="number" max="2147483648">
+        </div>
+    </div>
+    <div data-field="f_execute_on_error" class="col-12">
+        <div class="form-group">
+            <label for="f_execute_on_error">
+                {#__ key="entity.e_page.f_execute_on_error"/}&nbsp;
+                {@inline_help field="f_execute_on_error"}
+                <i data-field="f_execute_on_error" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            &nbsp;
+            <br>
+            <input class="form-control input" name="f_execute_on_error" type="checkbox">
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card card-default">
+            <div class="card-header with-border">
+
+                <label>
+                    {#__ key="entity.e_page.startWith" /}
+                </label>
+
+            </div>
+            <div class="card-body">
+                <div data-field="f_startwith_url" class="col-12">
+                    <div class="form-group">
+                        <label for="f_startwith_url">
+                            {#__ key="entity.e_page.f_startwith_url"/}&nbsp;
+                            {@inline_help field="f_startwith_url"}
+                            <i data-field="f_startwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class='input-group-text'>
+                                    <i class="fa fa-link"></i>
+                                </span>
+                            </div>
+                            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_startwith_url" /}' name="f_startwith_url" value="" type="url" data-type="url">
+                        </div>
+                    </div>
+                </div>
+
+                <div data-field="f_startwith_method" class="col-12">
+                    <div class="form-group">
+                        <label for="f_startwith_method">
+                            {#__ key="entity.e_page.f_startwith_method"/}&nbsp;
+                            {@inline_help field="f_startwith_method"}
+                            <i data-field="f_startwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <select class="form-control select" name="f_startwith_method" width="100%">
+                            <option value="" selected="">
+                                {#__ key="select.default" /}
+                            </option>
+                            {#enum_radio.e_page.f_startwith_method}
+                            <option value="{.value}"> {.translation} </option>
+                            {/enum_radio.e_page.f_startwith_method}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header with-border">
+                <label>
+                    {#__ key="entity.e_page.endWith" /}
+                </label>
+            </div>
+
+            <div class="card-body">
+                <div data-field="f_endwith_url" class="col-12">
+                    <div class="form-group">
+                        <label for="f_endwith_url">
+                            {#__ key="entity.e_page.f_endwith_url"/}&nbsp;
+                            {@inline_help field="f_endwith_url"}
+                            <i data-field="f_endwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class='input-group-text'>
+                                    <i class="fa fa-link"></i>
+                                </span>
+                            </div>
+                            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_endwith_url" /}' name="f_endwith_url" value="" type="url" data-type="url">
+                        </div>
+                    </div>
+                </div>
+                <div data-field="f_endwith_method" class="col-12">
+                    <div class="form-group">
+                        <label for="f_endwith_method">
+                            {#__ key="entity.e_page.f_endwith_method"/}&nbsp;
+                            {@inline_help field="f_endwith_method"}
+                            <i data-field="f_endwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <select class="form-control select" name="f_endwith_method" width="100%">
+                            <option value="" selected="">
+                                {#__ key="select.default" /}
+                            </option>
+                            {#enum_radio.e_page.f_endwith_method}
+                            <option value="{.value}"> {.translation} </option>
+                            {/enum_radio.e_page.f_endwith_method}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header with-border">
+                <label>
+                    {#__ key="entity.e_page.download" /}
+                </label>
+            </div>
+
+            <div class="card-body">
+                <div data-field="f_download_url" class="col-12">
+                    <div class="form-group">
+                        <label for="f_download_url">
+                            {#__ key="entity.e_page.f_download_url"/}&nbsp;
+                            {@inline_help field="f_download_url"}
+                            <i data-field="f_download_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class='input-group-text'>
+                                    <i class="fa fa-link"></i>
+                                </span>
+                            </div>
+                            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_download_url" /}' name="f_download_url" value="" type="url" data-type="url">
+                        </div>
+                    </div>
+                </div>
+                <div data-field="f_download_filename" class="col-12">
+                    <div class="form-group">
+                        <label for="f_download_filename">
+                            {#__ key="entity.e_page.f_download_filename"/}&nbsp;
+                            {@inline_help field="f_download_filename"}
+                            <i data-field="f_download_filename" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                            {/inline_help}
+                        </label>
+                        <input class="form-control input" placeholder='{#__ key="entity.e_page.f_download_filename" /}' name="f_download_filename" value="" type="text" maxlength="255">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div data-field="f_type" class="col-12">
+        <div class="form-group">
+            <label for="f_type">
+                {#__ key="entity.e_page.f_type"/}&nbsp;
+                {@inline_help field="f_type"}
+                <i data-field="f_type" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <select class="form-control select" name="f_type" width="100%">
+                <option value="">
+                    {#__ key="select.default" /}
+                </option>
+                {#enum_radio.e_page.f_type}
+                {@eq key="script" value="{.value}" }
+                <option value="{.value}" selected=""> {.translation} </option>
+                {:else}
+                <option value="{.value}"> {.translation} </option>
+                {/eq}
+                {/enum_radio.e_page.f_type}
+            </select>
+        </div>
+    </div>
+
+    <div data-field="f_script" class="col-3" style="display: none;">
+        <div id="btn-script">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default">{#__ key="automation.add_action"/}</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <a class="dropdown-item" href="#" onclick="script_append('input');">{#__ key="automation.script_menu_input"/}</a>
+                    <a class="dropdown-item" onclick="script_append('select');">{#__ key="automation.script_menu_select"/}</a>
+                    <a class="dropdown-item" onclick="script_append('checkbox');">{#__ key="automation.script_menu_checkbox"/}</a>
+                    <a class="dropdown-item" onclick="script_append('radio');">{#__ key="automation.script_menu_radio"/}</a>
+                    <a class="dropdown-item" onclick="script_append('submit');">{#__ key="automation.script_menu_submit"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="script_append('read_text');">{#__ key="automation.script_menu_read_text"/}</a>
+                    <a class="dropdown-item" onclick="script_append('read_field');">{#__ key="automation.script_menu_read_field"/}</a>
+                    <a class="dropdown-item" onclick="script_append('click_element');">{#__ key="automation.script_menu_click_element"/}</a>
+                    <a class="dropdown-item" onclick="script_append('find_element');">{#__ key="automation.script_menu_find_element"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="script_append('keydown_enter');">{#__ key="automation.script_menu_keydown_enter"/}</a>
+                    <a class="dropdown-item" onclick="script_append('keydown_tab');">{#__ key="automation.script_menu_keydown_tab"/}</a>
+                    <a class="dropdown-item" onclick="script_append('keydown_backspace');">{#__ key="automation.script_menu_keydown_backspace"/}</a>
+                    <a class="dropdown-item" onclick="script_append('keydown_esc');">{#__ key="automation.script_menu_keydown_esc"/}</a>
+                    <a class="dropdown-item" onclick="script_append('keydown_any');">{#__ key="automation.script_menu_keydown_any"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="script_append('open_tab');">{#__ key="automation.script_menu_open_tab"/}</a>
+                    <a class="dropdown-item" onclick="script_append('change_tab');">{#__ key="automation.script_menu_change_tab"/}</a>
+                    <a class="dropdown-item" onclick="script_append('open_url');">{#__ key="automation.script_menu_open_url"/}</a>
+                    <a class="dropdown-item" onclick="script_append('error');">{#__ key="automation.script_menu_error"/}</a>
+                </ul>
+            </div>
+        </div>
+        <div id="btn-sequence" style="display: none;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default">{#__ key="automation.add_action"/}</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <a class="dropdown-item" onclick="sequence_append('test');">{#__ key="automation.sequence_menu_test"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('download');">{#__ key="automation.sequence_menu_download"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('upload');">{#__ key="automation.sequence_menu_upload"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('mapping');">{#__ key="automation.sequence_menu_mapping"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('update_entity');">{#__ key="automation.sequence_menu_update_entity"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="sequence_append('encrypt');">{#__ key="automation.sequence_menu_encrypt"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('decrypt');">{#__ key="automation.sequence_menu_decrypt"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="sequence_append('mouse_move');">{#__ key="automation.sequence_menu_mouse_move"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('mouse_click');">{#__ key="automation.sequence_menu_mouse_click"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('mouse_right_click');">{#__ key="automation.sequence_menu_mouse_right_click"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('mouse_double_click');">{#__ key="automation.sequence_menu_mouse_double_click"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('type_text');">{#__ key="automation.sequence_menu_type_text"/}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="sequence_append('next_step');">{#__ key="automation.sequence_menu_next_step"/}</a>
+                    <a class="dropdown-item" onclick="sequence_append('error');">{#__ key="automation.sequence_menu_error"/}</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div id="btn-variables-script">
+            <div class="btn-group insert-mosaic">
+                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+                </button>
+                <div class="dropdown-menu" role="menu">
+                    <a class="dropdown-item" onclick="add_script_variable('step_index');">{#__ key="automation.script_menu_step_index"/}</a>
+                    <a class="dropdown-item" onclick="add_script_variable('step_serial_number');">{#__ key="automation.script_menu_step_serial_number"/}</a>
+                    <a class="dropdown-item" onclick="add_script_variable('env');">{#__ key="automation.script_menu_env_variable"/}</a>
+                    <a class="dropdown-item" onclick="add_script_variable('session');">{#__ key="automation.script_menu_session_variable"/}</a>
+                </div>
+            </div>
+        </div>
+        <div id="btn-variables-sequence" style="display: none;">
+            <div class="btn-group insert-mosaic">
+                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <a class="dropdown-item" onclick="add_sequence_variable('step_index');">{#__ key="automation.sequence_menu_step_index"/}</a>
+                    <a class="dropdown-item" onclick="add_sequence_variable('step_serial_number');">{#__ key="automation.sequence_menu_step_serial_number"/}</a>
+                    <a class="dropdown-item" onclick="add_sequence_variable('env');">{#__ key="automation.sequence_menu_env_variable"/}</a>
+                    <a class="dropdown-item" onclick="add_sequence_variable('session');">{#__ key="automation.sequence_menu_session_variable"/}</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="col-12">
+        <div class="form-group">
+            <label for="f_script">
+                {#__ key="entity.e_page.f_script"/}&nbsp;
+                {@inline_help field="f_script"}
+                <i data-field="f_script" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <textarea class="form-control textarea regular-textarea" placeholder='{#__ key="entity.e_page.f_script" /}' name="f_script" id="f_script_textareaid" type="text">{f_script|s}</textarea>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var currentMirror = null;
+
+        $(function() {
+
+            var mirrorOptions = {
+                mode: 'javascript',
+                theme: 'darcula',
+                lineNumbers: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                matchBrackets: true,
+                autoCloseBrackets: true,
+                showTrailingSpace: true,
+                autoCloseTags: true,
+                foldGutter: true,
+            };
+            $("select[name=f_type]").change(function() {
+                var selectedVal = $(this).find("option:selected").val();
+                if (selectedVal != "") {
+                    $("div[data-field=f_script]").show();
+                    var textArea = $("textarea[name=f_script]");
+                    $(".CodeMirror").remove();
+                    if (selectedVal == 'script') {
+                        textArea.text("(_ => {\n\t\n})();");
+                        currentMirror = CodeMirror.fromTextArea(textArea[0], mirrorOptions);
+                        currentMirror.setSize(null, 500);
+                        $("#btn-script").show();
+                        $("#btn-variables-script").show();
+                        $("#btn-sequence").hide();
+                        $("#btn-variables-sequence").hide();
+                    } else if (selectedVal == 'sequence') {
+                        textArea.text("module.exports = {\n\texecute: async utils => {\n\t\n\t}\n}");
+                        currentMirror = CodeMirror.fromTextArea(textArea[0], mirrorOptions);
+                        currentMirror.setSize(null, 500);
+                        $("#btn-script").hide();
+                        $("#btn-variables-script").hide();
+                        $("#btn-sequence").show();
+                        $("#btn-variables-sequence").show();
+                    }
+                }
+            });
+            setTimeout(function() {
+                $("select[name=f_type]").change();
+            }, 500);
+
+            $("div[data-field=f_script]").parents('form').submit(function() {
+                currentMirror.toTextArea();
+            });
+
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify.min.js"></script>
+    <script src="/core/js/coding_buttons.js" type="text/javascript"></script>
+</div>

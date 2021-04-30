@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{#__ key="app.name"/}</title>
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+        <!-- icheck bootstrap -->
+        <link rel="stylesheet" href="/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.min.css">
+        <!-- Nodea style -->
+        <link rel="stylesheet" href="/core/css/login.css">
+        <!-- Theme -->
+        <link href='/theme/nodea/css/style.css' rel='stylesheet' type='text/css' data-type="theme" data-theme="nodea">
+
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/img/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/img/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/img/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/img/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">
+        <link rel="manifest" href="/img/favicons/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+    </head>
+    <body class="hold-transition login-page">
+        <div class="login-box">
+            <div class="card card-outline card-primary">
+                <div class="card-header text-center app-logo">
+                    <img src="/img/logo/logo_nodea_color.png" alt='Nodea logo' width="100%"/>
+                </div>
+                <div class="card-body">
+                    {+content /}
+                </div>
+            </div>
+        </div>
+
+        <!-- jQuery -->
+        <script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+        <!-- Bootstrap 4 -->
+        <script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- AdminLTE App -->
+        <script src="/AdminLTE/dist/js/adminlte.min.js"></script>
+        <!-- Input Mask -->
+        <script src="/AdminLTE/plugins/inputmask/jquery.inputmask.min.js" type="text/javascript"></script>
+        <script>var toastrArray = [];</script>
+        {#toastr}
+            <script type="text/javascript">
+                toastrArray.push({
+                    message: '{#__ key=message /}',
+                    level: "{level}"
+                });
+            </script>
+        {/toastr}
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+                $("input[data-type='email']").inputmask({
+                    alias: "email"
+                });
+
+                for (var i = 0; i < toastrArray.length; i++) {
+                    switch (toastrArray[i].level) {
+                        case "info":
+                            $('#error-box').addClass('bg-primary').html("<i class='fa fa-info-circle'></i><br>" + toastrArray[i].message).show();
+                            break;
+                        case "success":
+                            $('#error-box').addClass('bg-success').html("<i class='fa fa-check-circle'></i><br>" + toastrArray[i].message).show();
+                            break;
+                        case "warning":
+                            $('#error-box').addClass('bg-warning').html("<i class='fa fa-exclamation-triangle'></i><br>" + toastrArray[i].message).show();
+                            break;
+                        case "error":
+                            $('#error-box').addClass('bg-danger').html("<i class='fa fa-exclamation-circle'></i><br>" + toastrArray[i].message).show();
+                            break;
+                    }
+                }
+            });
+
+            /* Generate and open a modal */
+            function doModal(title, content) {
+                $('#tmp_text_modal').remove();
+                var modal_html = '\
+                <div id="tmp_text_modal" class="modal fade" tabindex="-1" role="dialog">\
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">\
+                        <div class="modal-content">\
+                            <div class="modal-header">\
+                                <h4>' + title + '</h4>\
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
+                                    <span aria-hidden="true">&times;</span>\
+                                </button>\
+                            </div>\
+                            <div class="modal-body">\
+                                <p>' + content.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</p>\
+                            </div>\
+                            <div class="modal-footer">\
+                                <span class="btn btn-default" data-dismiss="modal">\
+                                    Fermer\
+                                </span>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>';
+                $("body").append(modal_html);
+                $("#tmp_text_modal").modal();
+            }
+
+            $(document).on('click', '.login-help', function() {
+                doModal($(this).data('title'), $(this).data('content'));
+            });
+        </script>
+        {+custom_js /}
+    </body>
+</html>

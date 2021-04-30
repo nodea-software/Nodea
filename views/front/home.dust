@@ -1,0 +1,178 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<link href="/css/Nodea/home.css" type="text/css" rel="stylesheet">
+{/custom_css}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Content Header -->
+		<div class="content-header">
+			<div class="container-fluid text-center">
+				<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<div class="content animate__animated animate__fadeIn">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-xs-12 col-sm">
+						<a class="home-card" href="/build">
+							<div class="card card-widget widget-user powertip" powertip-content='{#__ key="powertip.home.2" /}' powertip-order='2'>
+								<div class="widget-user-header">
+									<h3 class="widget-user-username">{#__ key="menu.build" /}</h3>
+									<h6 class="widget-user-desc">{#__ key="build.subtitle" /}</h6>
+								</div>
+								<div class="widget-user-image">
+									<img class="animate__animated" src="/img/picto/wrench.png" alt="Wrench picto">
+								</div>
+							</div>
+						</a>
+					</div>
+					<div class="col-xs-12 col-sm">
+						<a class="home-card" href="/develop">
+							<div class="card card-widget widget-user">
+								<div class="widget-user-header">
+									<h3 class="widget-user-username">{#__ key="menu.develop" /}</h3>
+									<h6 class="widget-user-desc">{#__ key="develop.subtitle" /}</h6>
+								</div>
+								<div class="widget-user-image">
+									<img class="animate__animated" src="/img/picto/list.png" alt="Wrench picto">
+								</div>
+							</div>
+						</a>
+					</div>
+					<div class="col-xs-12 col-sm">
+						{! <a class="home-card" href="#"> !}
+							<div class="card card-widget widget-user wip-card">
+								<div class="widget-user-header">
+									<h3 class="widget-user-username">{#__ key="menu.test" /}</h3>
+									<h6 class="widget-user-desc">{#__ key="test.subtitle" /}</h6>
+								</div>
+								<div class="widget-user-image">
+									<img class="animate__animated" src="/img/picto/check.png" alt="Wrench picto">
+								</div>
+							</div>
+						{! </a> !}
+					</div>
+					<div class="col-xs-12 col-sm">
+						{! <a class="home-card" href="#"> !}
+							<div class="card card-widget widget-user wip-card">
+								<div class="widget-user-header">
+									<h3 class="widget-user-username">{#__ key="menu.deploy" /}</h3>
+									<h6 class="widget-user-desc">{#__ key="deploy.subtitle" /}</h6>
+								</div>
+								<div class="widget-user-image">
+									<img class="animate__animated" src="/img/picto/cloud.png" alt="Cloud picto">
+								</div>
+							</div>
+						{! </a> !}
+					</div>
+					<div class="col-xs-12 col-sm">
+						<a class="home-card" href="/configure">
+							<div class="card card-widget widget-user powertip" powertip-content='{#__ key="powertip.home.3" /}' powertip-order='3'>
+								<div class="widget-user-header">
+									<h3 class="widget-user-username">{#__ key="menu.configure" /}</h3>
+									<h6 class="widget-user-desc">{#__ key="configure.subtitle" /}</h6>
+								</div>
+								<div class="widget-user-image">
+									<img class="animate__animated" src="/img/picto/gears.png" alt="Wrench picto">
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<a href="https://www.nodea-software.com" target=_blank>
+							<div class="homebox blue">
+								<div class="row">
+									<div class="col-2">
+										<img class="animate__animated" src="/img/picto_white/web.png" alt="Web picto" width="100%">
+									</div>
+									<div class="col-8">
+										<h3 style="margin-top: 15px;">{#__ key="home.website" /}</h3>
+									</div>
+									<div class="col-2 text-right">
+										<i style="margin-top: 25px;" class="fas fa-external-link-alt"></i>
+									</div>
+									<div class="col-12">
+										<hr>
+	    								<p>{#__ key="home.website_text" /}</p>
+	    							</div>
+								</div>
+							</div>
+						</a>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<a href="https://docs.nodea-software.com" target=_blank>
+							<div class="homebox blue2">
+								<div class="row">
+									<div class="col-2">
+										<img class="animate__animated" src="/img/picto_white/generation_doc.png" alt="Doc picto" width="100%">
+									</div>
+									<div class="col-8">
+										<h3 style="margin-top: 15px;">{#__ key="home.documentation" /}</h3>
+									</div>
+									<div class="col-2 text-right">
+										<i style="margin-top: 25px;" class="fas fa-external-link-alt"></i>
+									</div>
+									<div class="col-12">
+										<hr>
+	    								<p>{#__ key="home.documentation_text" /}</p>
+	    							</div>
+								</div>
+							</div>
+						</a>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<a href="https://github.com/nodea-software/nodea" target=_blank>
+							<div class="homebox cyan">
+								<div class="row">
+									<div class="col-2">
+										<img class="animate__animated" src="/img/picto_white/github.png" alt="Github picto" width="100%">
+									</div>
+									<div class="col-8">
+										<h3 style="margin-top: 15px;">{#__ key="home.github" /}</h3>
+									</div>
+									<div class="col-2 text-right">
+										<i style="margin-top: 25px;" class="fas fa-external-link-alt"></i>
+									</div>
+									<div class="col-12">
+										<hr>
+	    								<p>{#__ key="home.github_text" /}</p>
+	    							</div>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+
+	{! Snow ! !}
+	{?noel}
+		<script type="text/javascript" src="/js/Nodea/snow.js"></script>
+	{/noel}
+
+	<script>
+		$(document).on('mouseover', '.card', function(){
+
+			if($(this).hasClass('wip-card'))
+				return;
+
+			const element = $(this).find('.widget-user-image')[0];
+			element.classList.add('animate__animated', 'animate__pulse');
+
+			element.addEventListener('animationend', () => {
+				element.classList.remove('animate__animated', 'animate__pulse');
+			});
+		});
+	</script>
+{/custom_js}

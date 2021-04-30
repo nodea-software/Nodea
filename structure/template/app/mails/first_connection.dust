@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+		<style type="text/css">
+			html {
+				color: #3A3A3A;
+				background-color: #fff !important;
+			}
+			.main{
+				width: 80%;
+				margin: auto;
+				background: #fff;
+				color: #3A3A3A;
+				text-align: center;
+			}
+			.main img{
+				display: block;
+				width: 200px;
+				margin: auto;
+				margin-bottom: 30px;
+				margin-top: 30px;
+			}
+			.button {
+				border: 1px solid #293380;
+				border-radius: 8px;
+				cursor: pointer;
+				display: inline-block;
+				font-weight: bold;
+				height: 2.75em;
+				line-height: 2.75em;
+				min-width: 9.25em;
+				padding: 0 1.5em;
+				text-align: center;
+				text-decoration: none;
+				white-space: nowrap;
+				background-color: #3763ad;
+				color: #FFF !important;
+			}
+
+			a.button:hover {
+				border: 1px solid black !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="main">
+			<img src="{host}/img/logo/logo_nodea_color.png" alt="Nodea Logo">
+			<hr><br>
+			Bonjour {user.f_login},
+			<br>
+			<br>
+			Vous venez d'être inscrit sur: <b>{host}</b>
+			<br>
+			Vous devez à présent valider votre compte en procédant à la première connexion:
+			<br><br>
+			<a href="{first_connection_url}" class="button">Première connexion</a><br><br>
+			<i>(Si le lien ne fonctionne pas suivre l'URL: <b>{first_connection_url}</b>)</i>
+			<br>
+			<br>
+			Merci !
+			<br>
+			<br>
+            L’Équipe Nodea<br>
+            contact@nodea-software.com
+			<br>
+			<br>
+			Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.
+			<br><br><hr><br>
+		</div>
+	</body>
+</html>

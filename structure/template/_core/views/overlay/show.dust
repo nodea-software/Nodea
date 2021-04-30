@@ -1,0 +1,6 @@
+{#entityData}
+	{>"{e_subentity}/show_fields" /}
+	<button type="button" class="btn btn-default cancel" style="margin-right:10px;">{#__ key="button.cancel"/}</button>
+{/entityData}
+
+<script class="tab-script" type="text/javascript" src="/core/js/tabs/show.js"></script>

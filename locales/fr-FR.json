@@ -1,0 +1,574 @@
+{
+	"app": {
+		"name": "Nodea Software",
+		"version": "version"
+	},
+	"login": {
+		"log_in": "Se connecter",
+		"reset_password": "Changement de mot de passe",
+		"emailResetSent": "Un email vous permettant de réinitialiser votre mot de passe vous a été envoyé.",
+		"emailResetSentOther": "Un email permettant à l'utilisateur de réinitialiser son mot de passe a été envoyé.",
+		"tokenNotFound": "Impossible de retrouver votre jeton, nous ne pouvons pas valider votre demande.",
+		"passwordReset": "Votre mot de passe a été réinitialisé.",
+		"first_connection": {
+			"title": "Première connexion",
+			"hasAlreadyPassword": "Mise à jour impossible. Cet utilisateur possède déjà un mot de passe.",
+			"userNotExist": "Cet utilisateur n'existe pas, merci de vérifier que le login et l'email sont corrects.",
+			"passwordNotValid": "Mot de passe invalide, merci de réessayer.",
+			"userNotActivate": "Votre compte n'est pas activé, merci de suivre la procédure de première connexion en cliquant sur le lien à cet effet.",
+			"missingToken": "Le jeton de première connexion est manquant, merci de vérifier vos email.",
+			"wrongToken": "Le jeton de première connexion n'est pas valide.",
+			"help": {
+				"email_title": "Email - Première connexion",
+				"email_content": "<u>Pour le compte admin:</u><br>Environnement local: <b>admin@local.fr</b><br>Environnement en ligne: <b>VOTRE_ENV-admin@nodea-software.com</b><br><i>(exemple: https://myenv.nodea.studio => myenv-admin@nodea.com)</i><br><br><u>Pour les autres comptes:</u><br>Email de votre choix, cet email sera utilisé pour le compte gitlab associé au générateur le cas échéant.",
+				"password_title": "Mot de passe - Première connexion",
+				"password_content": "<p>Merci de choisir votre mot de passe, il doit respecter le format suivant:<br><br>- 8 caractères minimum<br>- Au moins 1 chiffre<br>- Au moins 1 majuscule<br>- Au moins 1 caractère spécial (!@#$%^&*)<br></i><br></p>"
+			}
+		},
+		"signup": {
+			"title": "Inscrivez-vous"
+		},
+		"authentication": "Connectez-vous pour démarrer votre session",
+		"login": "Identifiant",
+		"password": "Mot de passe",
+		"confirm_password": "Confirmer le mot de passe",
+		"mail": "Email",
+		"lastname": "Nom",
+		"firstname": "Prénom",
+		"remember_me": "Se souvenir de moi",
+		"submit": "Soumettre",
+		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
+		"logout_success": "Vous avez bien été déconnecté."
+	},
+	"deploy": {
+		"deploying": "Déploiement en cours...",
+		"please_wait": "Nous déployons votre application. Cette opération peut prendre quelques minutes. Veuillez patienter...",
+		"ready": "Votre application est prête.",
+		"goto": "Aller vers votre application.",
+		"stayonpage": "Vous devriez rester sur cette page pendant le déploiement de votre application."
+	},
+	"menu": {
+		"home": "Accueil",
+		"module": "Module",
+		"editor": "Code Source",
+		"ui_editor": "UI Designer",
+		"logs": "Logs",
+		"build": "Construire",
+		"develop": "Développer",
+		"test": "Tester",
+		"deploy": "Déployer",
+		"configure": "Configurer"
+	},
+	"button": {
+		"generate": "Générer",
+		"show": "Afficher",
+		"update": "Modifier",
+		"delete": "Supprimer",
+		"remove": "Retirer",
+		"create": "Créer",
+		"list": "Lister",
+		"save": "Sauvegarder",
+		"preview": "Prévisualisation",
+		"execute": "Exécuter",
+		"yes": "Oui",
+		"no": "Non",
+		"close": "Fermer",
+		"add": "Ajouter",
+		"documentation": "Documentation",
+		"cancel": "Annuler",
+		"loading": "Chargement en cours...",
+		"help": "Aide",
+		"clone": "Cloner",
+		"understand": "Compris !",
+		"export": "Exporter",
+		"confirm": "Êtes-vous sûr de vouloir continuer ?"
+	},
+	"home": {
+		"website": "Site web",
+		"website_text": "Visitez notre site web pour en apprendre plus sur Nodea.",
+		"documentation": "Documentation",
+		"documentation_text": "Retrouvez toutes les ressources nécessaires sur notre documentation officielle.",
+		"github": "Github",
+		"github_text": "Nodea est un logiciel open source, vous pouvez accéder à son code source sur Github !"
+	},
+	"build": {
+		"subtitle": "Construisez vos applications",
+		"your_application": "Vos applications",
+		"clicktopreview": "Ci-dessous la liste des applications auxquelles vous avez accès. Cliquez pour prévisualiser.",
+		"tabs": {
+			"home": "Accueil",
+			"generate": "Créer",
+			"script": "Générer",
+			"import": "Importer",
+			"manage": "Gérer"
+		},
+		"home": {
+			"generate_text": "Créer une application",
+			"script_text": "Exécuter un script d'instruction",
+			"import_text": "Importer une application",
+			"manage_text": "Accéder à toutes vos applications"
+		},
+		"generate": {
+			"title": "Vous pouvez créer une nouvelle application",
+			"subtitle": "Et nous nous occupons du reste !"
+		}
+	},
+	"develop": {
+		"subtitle": "Gérer les tâches de vos applications",
+		"issue": "Tâche",
+		"issues": "Tâches",
+		"tabs": {
+			"backlog": "Tâches",
+			"mytasks": "Mes tâches",
+			"versioning": "Versions",
+			"documentation": "Documentation"
+		},
+		"home": {
+			"backlog": "Gestion des tâches",
+			"mytasks": "Gérer vos propre tâches",
+			"versioning": "Versions de l'application",
+			"documentation": "Documentation API et JSDOC"
+		},
+		"backlog": {
+			"add_new_issue": "Créer une nouvelle tâche",
+			"add_new_tag": "Créer une nouvelle version",
+			"issue_list": "Liste des tâches",
+			"title": "Titre",
+			"description": "Description",
+			"created_at": "Crée le",
+			"labels": "Libellés",
+			"labels_help": "(Écrire + Entrer pour en créer de nouveaux)",
+			"assign": "Assigné à",
+			"state": "Statut",
+			"access": "Voir"
+		},
+		"see_commit": "Voir ce commit",
+		"issue_create": "La tâche a bien été crée !"
+	},
+	"test": {
+		"subtitle": "Testez vos applications"
+	},
+	"deploy": {
+		"subtitle": "Suivez vos déploiements"
+	},
+	"configure": {
+		"subtitle": "Paramétrez et gérez votre environnement",
+		"tabs": {
+			"home": "Accueil",
+			"users": "Utilisateurs",
+			"account": "Mon compte",
+			"settings": "Paramètres"
+		},
+		"home": {
+			"users_text": "Gérer les utilisateurs Nodea",
+			"account_text": "Gérer votre compte Nodea",
+			"settings_text": "Paramétrer le générateur Nodea"
+		},
+		"users": {
+			"add" : "Créer un nouvel utilisateur",
+			"update": "Modifier les données de l'utilisateur",
+			"show" : "Afficher les données de l'utilisateur et lui donner accès à des applications",
+			"user_already_exist": "Un utilisateur avec ce login existe déjà, merci de modifier votre login.",
+			"email_already_exist": "Un utilisateur avec cet email existe déjà, merci de donner une autre adresse email."
+		},
+		"account": {
+			"general_info": "Informations générales",
+			"signup_date": "Date d'inscription"
+		}
+	},
+	"listApplication": {
+		"id": "ID",
+		"name": "Nom",
+		"createdBy": "Créée par",
+		"action": "Actions",
+		"sureToDelete": "Êtes-vous sûr ?",
+		"loading": "Chargement...",
+		"appDelete" : "Application supprimée !",
+		"gitlab": {
+			"modal_title": "Comment cloner cette application ?",
+			"text1": "Afin de pouvoir cloner votre application il suffit d'exécuter cette commande :",
+			"text2": "Votre identifiant Gitlab est :",
+			"text3": "Votre mot de passe est celui de votre compte générateur ou de votre compte Gitlab si vous l'avez changé sur gitlab."
+		},
+		"no_project_1": "Aucune application générée."
+	},
+	"editor": {
+		"legend": "Éditeur de code",
+		"folders": "Dossiers",
+		"change_theme": "Changer de thème",
+		"intro": "Bonjour utilisateur Nodea!",
+		"intro2": "Vous pouvez sélectionner un fichier à éditer sur le menu de gauche ;)",
+		"intro3": "F11: Plein écran | Ctrl+S: Sauvegarder | Ctrl+0: Fermer/Ouvrir les scopes | Ctrl+=: Indenter le code"
+	},
+	"ui_editor": {
+		"page_not_found": "Impossible de trouver le fichier.",
+		"page_saved": "Votre nouvelle mise en page a bien été appliquée.",
+		"page_saved_all": "Votre nouvelle mise en page sur toute l'entité a bien été appliquée.",
+		"select_entity": "Sélectionnez une entité à éditer.",
+		"applyAll": "Appliquer sur toute l'entité.",
+		"tips": "Essayez Ctrl+Click ou encore Shift+Click sur les boutons de modification de taille pour gagner du temps !",
+		"create_page": "Page de création",
+		"update_page": "Page de mise à jour",
+		"show_page": "Page d'affichage"
+	},
+	"instructionScript": {
+		"redirecting": "Redirection...",
+		"createScript": "Écrire un script",
+		"fromFile": "Depuis un fichier",
+		"alreadyProcessing": "Un autre utilisateur est déjà en train d'exécuter un script, merci de réessayer dans quelques instants.",
+		"lastWrittentScript": "Les derniers scripts chargés"
+	},
+	"template": {
+		"no_version": "La version est manquante dans la configuration de votre générateur, il est nécessaire d'en avoir un pour récupérer les modèles adaptés.",
+		"no_clone": "Impossible de récupérer la liste des modèles Nodea, merci de contacter Nodea.",
+		"no_pull": "Impossible de mettre à jour votre dossier de modèles, ceux-ci sont donc potentiellement obsolètes.",
+		"no_checkout": "Impossible de trouver des modèles compatibles avec la version du générateur.",
+		"no_script": "Impossible de trouver le script .nps correspondant au template et à votre langue."
+	},
+	"import": {
+		"appname": "Nom de l'application",
+		"zipfile": "Fichier compressé (.zip) de l'application",
+		"sqlfile": "Executer un fichier SQL (non obligatoire)",
+		"action": "Importer l'application",
+		"success": "L'application a bien été générée ! Vous pouvez y acceder juste ici",
+		"error": "Une erreur s'est produite, vous pouvez réessayer en cliquant sur le lien ci-dessous"
+	},
+	"settings": {
+		"legend": "Paramètres",
+		"display_language": "Langue du générateur",
+		"dark_theme": "Mode nuit",
+		"display_infos": "Vos informations",
+		"display_code_platform": "Plateforme de code",
+		"infos": {
+			"login": "Login",
+			"role": "Rôle",
+			"lastname": "Nom",
+			"firstname": "Prénom",
+			"phone": "Téléphone",
+			"email": "Email"
+		},
+		"change_password": "Réinitialiser son mot de passe",
+		"reset_button": "Réinitialiser",
+		"sure_reset": "Êtes-vous sur ? Vous allez être déconnecté, votre mot de passe sera réinitialisé et vous allez recevoir un email pour en configurer un nouveau.",
+		"sure_reset_other": "Êtes-vous sur ? Le mot de passe de cet utilisateur sera réinitialisé et il va recevoir un email pour en configurer un nouveau.",
+		"activate_translation": "Activer la traduction automatique (connexion internet + clé API Google valide requises)",
+		"english": "Anglais",
+		"french": "Français",
+		"info_delete_compte": "Si vous souhaitez supprimer votre compte merci de nous contacter:"
+	},
+	"preview": {
+		"title": "Prévisualisation",
+		"execute": "Exécuter vos instructions ici !",
+		"reload": "Redémarrer le serveur",
+		"save": "Sauvegarder",
+		"code_platform": "Plateforme de code",
+		"issue-button": "Signaler un bug",
+		"help-button": "Besoin d'aide ?",
+		"server_timeout": "Le serveur de l'application ne répond pas, merci de vérifier les logs.",
+		"disable_log_refresh": "Désactiver le rafraichissement des logs",
+		"no_create_app": "Vous ne pouvez pas créer de nouvelle application depuis la prévisualisation, merci de vous rendre à l'accueil du générateur.",
+		"session": {
+			"noApplication": "Aucune application sélectionnée",
+			"noModule": "Aucune module sélectionné",
+			"noEntity": "Aucune entité sélectionnée"
+		},
+		"logo": {
+			"title": "Ajouter un logo",
+			"text": "Veuillez ajouter votre logo ci-dessous (Taille conseillée 250px x 180px) :",
+			"add": "Le nouveau logo a bien été ajouté.",
+			"remove": "Le logo a bien été supprimé.",
+			"noLogo": "Désolé mais vous n'avez actuellement pas de logo, vous pouver en ajouter un avec l'instruction:<br> -<b class=\"click-instruction\"> ajouter un logo</b>",
+			"notExist": "Désolé mais le fichier demandé n'existe pas, vous pouvez ajouter votre logo avec l'instruction :<br> -<b class=\"click-instruction\"> ajouter un logo</b>"
+		}
+	},
+	"application": {
+		"label": "Application",
+		"create": "Créer une nouvelle application",
+		"not_started": "Aucune application n'est lancée. Sélectionnez-en une dans la liste.",
+		"no_access": "Vous n'avez pas accès à cette application.",
+		"couldnt_load": "Impossible de charger l'application"
+	},
+	"select": {
+		"default": "-- Choisir --"
+	},
+	"module": {
+		"label": "Module"
+	},
+	"entity": {
+		"label": "Entité",
+		"name": "Nom de l'entité"
+	},
+	"error": {
+		"oneLetter": "Il doit y avoir au moins une lettre dans le nom.",
+		"oops": "Oups! Une erreur s'est produite",
+		"textone": "Vous devriez contacter votre administrateur, et vous pouvez",
+		"texttwo": "retourner à l'accueil",
+		"or": "ou",
+		"textthree": "simplement revenir en arrière.",
+		"404": "Le lien que vous avez suivi peut être incorrect ou la page peut avoir été supprimée.",
+		"valueTooLong": "Désolé, la valeur renseignée dépasse la longueur maximum autorisée (<30) après génération (%s).",
+		"cannotFindInstruction": "Désolé, je ne comprends pas ce que vous me demandez.",
+		"missingParametersInstruction": "La syntaxe ou les paramètres de votre instruction sont erronés. Merci de consultez la documentation.",
+		"notForParamEntity": "Vous ne pouvez pas faire ça avec une entité de paramètre."
+	},
+	"chat": {
+		"welcome": "Bonjour et bienvenue ! Je suis Nodea, votre assistant personnel de création. À tout moment, je suis là pour vous guider dans la découverte du générateur Nodea.<br> Pour commencer, voici quelques instructions à exécuter ci-dessous:<br><br>- <b class=\"click-instruction\">ajouter une entité Personne</b><br>- <b class=\"click-instruction\">créer un champ Nom</b><br>- <b class=\"click-instruction\">créer un champ Anniversaire de type Date</b>"
+	},
+	"database": {
+		"application": {
+			"select": {
+				"selected": "Application %s sélectionnée."
+			},
+			"create": {
+				"success" : "Nouvelle application %s créée."
+			},
+			"delete":{
+				"deleted": "Application %s supprimée !"
+			},
+			"notFound": {
+				"withThisName": "Désolé, mais il n'y a pas d'application avec ce nom : %s."
+			},
+			"alreadyExist": "Désolé, mais une application existe déjà avec ce nom : %s.",
+			"fsAlreadyExist": "Un dossier avec ce nom d'application existe déjà dans votre dossier d'espace de travail, veuillez le supprimer ou changer le nom de la nouvelle application pour continuer."
+		},
+		"module": {
+			"select": {
+				"selected": "Module %s sélectionné."
+			},
+			"create": {
+				"success" : "Vous venez d'ajouter un nouveau module %s<br>Pour le supprimer, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer le module %s</b>.",
+				"alreadyExist": "Un module avec un nom identique ou similaire à %s existe déjà."
+			},
+			"delete":{
+				"deleted": "Module %s supprimé !"
+			},
+			"notFound": {
+				"notFound": "Impossible de trouver le module %s."
+			}
+		},
+		"component":{
+			"create": {
+				"success" : "Nouveau composant %s créé.",
+				"successOnEntity": "Nouveau composant %s créé sur l'entité %s."
+			},
+			"notFound": {
+				"notFoundInModule": "Désolé, aucun composant avec le nom %s existe dans le module %s",
+				"notFoundOnEntity": "Désolé, aucun composant avec le nom %s existe sur l'entité %s.",
+				"notFound": "Désolé, impossible de retrouver le composant avec le nom %s"
+			},
+			"delete": {
+				"success": "Le composant a bien été supprimé !"
+			}
+		},
+		"entity": {
+			"select": {
+				"selected": "Entité %s sélectionnée."
+			},
+			"create": {
+				"success": "Vous venez de créer la nouvelle entité %s au sein du module %s. Pour la supprimer, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer l'entité %s</b>.",
+				"alreadyExist": "Entité avec un nom (%s) identique ou similaire existe déjà."
+			},
+			"delete": {
+				"deleted": "Entité %s supprimée !"
+			},
+			"notFound": {
+				"withThisName": "Désolé, mais il n'y a pas d'entité avec le nom: %s."
+			}
+		},
+		"field": {
+			"error":{
+				"selectOrCreateBefore": "Vous devez sélectionner ou créer une entité avant.",
+				"alreadyExist": "Désolé, un champ ou un onglet avec un nom (%s) identique ou similaire existe déjà."
+			},
+			"create": {
+				"created": "Vous venez d'ajouter un nouveau champ %s à l'entité %s.<br>Pour le supprimer, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer le champ %s</b><br>Pour le rendre unique:<br>- <b class=\"click-instruction\">rendre le champ %s unique</b><br>Pour le rendre obligatoire:<br>- <b class=\"click-instruction\">rendre le champ %s obligatoire</b>"
+			},
+			"delete": {
+				"deleted": "Champ %s supprimé !"
+			},
+			"notFound": {
+				"withThisName": "Désolé mais il n'y a pas de champ %s."
+			}
+		}
+	},
+	"structure": {
+		"global": {
+			"restart": {
+				"success": "Le serveur a bien été redémarré !",
+				"error": "Oups, le serveur de l'application ne répond pas.<br>Dernière erreur détectée dans les logs:<br>- <b>%s</b><br>Vous pouvez vérifier les logs en cliquant sur l'onglet correspondant et essayer de redémarrer à l'aide de l'instruction: <br>- <b class=\"click-instruction\">redémarrer le serveur</b>",
+				"missing_module": "Le module node '%s' est manquant ! Vous pouvez l'installer à l'aide de l'instruction:<br>- <b class=\"click-instruction\">npm install %s</b>"
+			},
+			"npmInstall": {
+				"success": "Tous les modules node ont bien été installés !"
+			},
+			"gitPush": {
+				"success": "L'application a bien été sauvegardée !"
+			},
+			"gitPull": {
+				"success": "L'application a bien été chargée !"
+			},
+			"gitCommit": {
+				"success": "Le commit a bien été effectué !"
+			},
+			"error": {
+				"alreadyInProcess": "Désolé, une instruction générateur est déjà en cours. Merci d'attendre qu'elle se termine pour exécuter une nouvelle instruction.",
+				"alreadyInProcessGit": "Désolé, un processus git est déjà en cours. Merci d'attendre qu'il termine pour exécuter une nouvelle instruction git.",
+				"notDoGit": "L'option 'enabled' dans config/code_platform.js est désactivée, l'instruction demandée ne fera donc rien."
+			}
+		},
+		"module": {
+			"error": {
+				"notHome": "Vous ne pouvez pas supprimer le module Accueil (home).",
+				"notAdministration": "Vous ne pouvez pas supprimer le module Administration."
+			}
+		},
+		"field": {
+			"attributes": {
+				"success": "Le champ %s est désormais %s = %s.",
+				"successKnownAttribute": "Le champ %s est désormais %s.",
+				"successKnownAttributeWarning": "Le champ %s est désormais %s. !ATTENTION! La contrainte en base n'a pas pu être appliquée, la table correspondante n'existe pas au moment de l'instruction.",
+				"notUnderstandGiveAvailable": "Désolé, je ne comprends pas ce que vous souhaitez. Possibilités :<br>%s<br>",
+				"notUnderstand": "Désolé, je ne comprends pas l'attribut demandé.",
+				"fieldNoFound": "Aucun champ avec le nom %s trouvé dans l'entité courante.",
+				"duplicateUnique": "Désolé, le champ contient déjà des valeurs identiques, impossible de le rendre unique.",
+				"missingValues": "Erreur, vous devez spécifier les valeurs que vous souhaitez avoir dans le champ de type enum / radio.",
+				"noSpace": "Erreur, merci de séparer les valeurs dans un champ de type enum / radio par des virgules et non des espaces.",
+				"notUnique4RelatedToMany": "Désolé, mais il n'est pas possible de rendre un champ de type 'Related to many' unique."
+			}
+		},
+		"association": {
+			"deleteTab": "L'onglet %s a bien été supprimé.",
+			"hasOne": {
+				"successEntity": "Un onglet «%s» vient d'être ajouté à l'entité %s.<br>Vous accèderez à cet onglet en affichant un %s.<br>Pour supprimer cet onglet, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer l'onglet %s</b>"
+			},
+			"hasMany": {
+				"successEntity": "Un onglet «%s» vient d'être ajouté à l'entité %s.<br>Vous accèderez à cet onglet en affichant un %s.<br>Pour supprimer cet onglet, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer l'onglet %s</b>",
+				"successSubEntity": "Un onglet «%s» vient d'être ajouté à l'entité %s.<br>Attention cet onglet référence une sous-entité, elle ne s'affiche donc pas dans le menu.<br>Vous accèderez à cet onglet en affichant un %s.<br>Pour supprimer cet onglet, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer l'onglet %s</b>"
+			},
+			"hasManyExisting": {
+				"success": "Nouvelle association 'Has Many Existing' avec l'entité %s créée sur %s."
+			},
+			"relatedToMultiple":{
+				"success": "Nouveau champ %s relié à plusieurs %s créé sur %s.<br>Pour le supprimer, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer le champ %s</b><br>Pour le rendre obligatoire:<br>- <b class=\"click-instruction\">rendre le champ %s obligatoire</b>"
+			},
+			"relatedTo": {
+				"success": "Nouveau champ %s relié à %s créé.<br>Pour le supprimer, tapez l'instruction:<br>- <b class=\"click-instruction\">supprimer le champ %s</b><br>Pour le rendre unique:<br>- <b class=\"click-instruction\">rendre le champ %s unique</b><br>Pour le rendre obligatoire:<br>- <b class=\"click-instruction\">rendre le champ %s obligatoire</b>",
+				"missingField": "Le champ %s de l'entité %s n'existe pas ou n'est pas utilisable."
+			},
+			"error":{
+				"alreadySameAlias": "Une association avec cet alias existe déjà entre ces deux entités.",
+				"tooMuchHasMany": "Désolé, plusieurs relation has many détectées de la cible vers la source, impossible de créer la relation multiple.",
+				"unableTab": "Impossible de trouver le menu %s dans l'entité courante."
+			}
+		},
+		"component": {
+			"error": {
+				"alreadyExistOnEntity": "Désolé, un composant avec ce nom est déjà associé à cette entité dans ce module.",
+				"alreadyExistInApp": "Désolé, une autre entité avec le nom du composant existe déjà dans cette application.",
+				"alreadyExistOnModule": "Désolé, un composant avec ce nom existe déjà dans ce module.",
+				"onlyOneAllowed": "Désolé, un seul composant de ce type est autorisé par entité."
+			},
+			"chat": {
+				"success": "Composant chat ajouté avec succès"
+			}
+		},
+		"ui": {
+			"columnVisibility":{
+				"hide": "La colonne %s est désormais cachée.",
+				"show": "La colonne %s est désormais visible.",
+				"noColumn": "Impossible de trouver la colonne %s."
+			},
+			"theme": {
+				"list": "Thèmes disponibles:<br>%s<br>",
+				"cannotFind": "Impossible de trouver le thème demandé. Thèmes disponibles :<br>%s<br>",
+				"missingCss": "Il faut au moins 1 fichier .css dans votre thème !",
+				"missingInfo": "Le fichier infos.json est manquant !",
+				"missingScreenshot": "Le fichier screenshot.png est manquant !",
+				"alreadyExist": "Un thème avec ce nom existe déjà, merci de changer le nom du thème dans le infos.json.",
+				"successUpload": "Le thème a bien été ajouté !",
+				"successInstall": "Le thème %s a bien été appliqué !"
+			},
+			"layout": {
+				"list": "Layout disponibles:<br>%s<br>",
+				"cannotFind": "Impossible de trouver le layout demandée. Layouts disponibles :<br>%s<br>",
+				"success": "Disposition %s appliquée sur le module %s !"
+			},
+			"icon": {
+				"success": "L'entité %s a maintenant l'icône %s",
+				"list": "Suivez ce lien pour avoir une liste complète des icônes disponibles:<br><a href='https://fontawesome.com/cheatsheet/' target='_blank'>Font Awesome</a>",
+				"multiple_choice": "Plusieurs icones correspondent au terme que vous avez renseigner, merci de choisir parmi celle ci:<br>%s",
+				"not_found": "Impossible de trouver l'icone demandée, merci de vous référer à la liste des icones en suivant ce lien: <a href='https://fontawesome.com/cheatsheet/' target='_blank'>Font Awesome</a>"
+			},
+			"widget": {
+				"unknown": "Widget %s inconnu",
+				"success": "Widget %s ajouté au module %s",
+				"delete": "Widget %s supprimé avec succès",
+				"all_deleted": "Tous les widgets de %s ont été supprimés",
+				"unknown_fields": "Impossible d'ajouter le widget car les champs suivants sont inconnus :<br>%s",
+				"no_fields": "Aucun champ fourni. Vous devez spécifier les champs à utiliser pour le widget. Veuillez consulter la documentation."
+			},
+			"title": {
+				"success": "Le titre a bien été ajouté !",
+				"remove_success": "Le titre a bien été supprimé !",
+				"not_found": "Impossible de trouver le titre à supprimer !"
+			}
+		}
+	},
+	"botresponse": {
+		"help" : "Vous avez demandé de l'aide. Accédez aux vidéos d'aide sur notre <a href='https://www.youtube.com/channel/UCOF9iI9Wwe8iucSd7ayHlMQ' target=_blank>chaîne YouTube</a> ou à la documentation en ligne ici <a href='https://docs.nodea-software.com/' target='_blank'>https://docs.nodea-software.com/</a>",
+		"applicationavailable": "L'application est disponible ici : <br> <a href='%s' target='_blank'>%s</a>",
+		"deployment": "Nous déployons votre application...<br> Cela peut prendre quelques minutes, attendez son déploiement puis cliquez sur le lien suivant :<br> <a href='%s' target='_blank'>%s</a>"
+	},
+	"users": {
+		"connected_as": "Connecté en tant que",
+		"login": "Identifiant",
+		"email": "Email",
+		"role": "Rôle",
+		"applications": "Applications",
+		"enabled": "Activé",
+		"lastname": "Nom",
+		"firstname": "Prénom",
+		"phone": "Téléphone",
+		"not_delete_admin": "Vous ne pouvez pas supprimer l'administrateur principal.",
+		"not_remove_admin_role": "Vous ne pouvez pas enlever le rôle admin à l'administrateur principal.",
+		"send_mail_to_user": "Envoyer un email à l'utilisateur pour lui fournir un lien de première connexion."
+	},
+	"action": {
+		"success": {
+			"create": "Création réussie.",
+			"update": "Mise à jour réussie.",
+			"destroy": "La suppression a bien été prise en compte."
+		},
+		"choose": "--- Choisir ---",
+		"missing_values": "Des valeurs sont manquantes, merci de les renseigner.",
+		"no_access_admin": "Vous devez être administrateur pour accèder à cette page."
+	},
+	"powertip": {
+		"stop": "Arrêter le tuto",
+		"next": "Suivant",
+		"home": {
+			"1": "Bienvenue sur Nodea !<br> Pour commencer je vais vous présenter les différents menus.",
+			"2": "Ici se trouve le menu Construire. Vous pouvez à travers ce menu générer et gérer vos applications Nodea !",
+			"3": "Le menu Configurer permet de personnaliser votre générateur Nodea ainsi que d'administrer votre compte."
+		},
+		"build": {
+			"1": "Vous pouvez ici créer une application vide prête à être complétée.",
+			"2": "Ici vous pouvez écrire un script ou encore charger un fichier d'instruction afin de générer une application complète en quelques minutes !",
+			"3": "Si vous avez une application déjà existante sur un autre générateur Nodea, vous pouvez l'importer ici.",
+			"4": "Vous pouvez consulter l'ensemble des applications ici, et ainsi les exporter, cloner le code source ou encore les supprimer.",
+			"5": "Vous trouverez ici un accès rapide à toutes vos applications !"
+		}
+	},
+	"code_platform": {
+		"error": {
+			"project_creation": "Une erreur s'est produite lors de la création du projet sur la platforme de code",
+			"user_not_in_session": "Impossible de trouver votre utilisateur de la plateforme de code en session. Merci d'essayer de vous déconnecter / reconnecter ou alors contacter l'administrateur de la plateforme.",
+			"user_not_found": "Impossible de trouver votre utilisateur sur la plateforme de code. Merci de contacter l'administrateur de la plateforme.",
+			"admin_not_confirmed": "L'administrateur du générateur n'a pas confirmé son compte Gitlab, merci de le contacter !",
+			"user_not_confirmed": "Vous n'avez pas confirmé votre compte Gitlab, merci de vérifier vos email avant de continuer !"
+		}
+	},
+	"alpha": {
+		"text": "Ceci est une version alpha, si vous souhaitez nous rapporter un bug ou encore une suggestion vous pouvez nous contacter à cette adresse:<br><br><b>support@nodea-software.com</b><br><br>Merci !"
+	}
+}

@@ -1,0 +1,166 @@
+<div class="row">
+	<div class="col-xs-12 col-md-8 col-lg-9">
+		<form id="previewForm" action="/application/preview" method="post">
+			<input class="form-control input" id="iframe_url" name="iframe_url" type="hidden" value="{iframe_url}" />
+			<input class="form-control input" id="chat" name="chat" type="hidden" value="{chat|stringify}" />
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<button type="button" class="btn btn-default" id="btn-speech"><i class="fa fa-microphone fa-md"></i></button>
+				</div>
+				<input class="form-control" id="instruction" name="instruction" type="text" autocomplete="off" autofocus="autofocus" required="required" x-webkit-speech="x-webkit-speech" placeholder='{#__ key="preview.execute"/}' />
+				<span class="input-group-append">
+					<button type="submit" class="btn btn-success" id="execute_instruction">{#__ key="button.execute"/}</button>
+				</span>
+			</div>
+		</form>
+		<div class="responsive-iframe" style="position: relative;">
+			{@ne key=iframe_url value=-1}
+				<iframe id="iframe" height="700px" width="100%" src="{iframe_url}" webkitAllowFullScreen="webkitAllowFullScreen" mozallowfullscreen="mozallowfullscreen" allowFullScreen="allowFullScreen" style="border: 1px solid grey;border-radius: 3px;"></iframe>
+			{/ne}
+			<div id="errorIframe" {@eq key=iframe_url value=-1} style='display: block;'{/eq}>
+				<img src="/img/mascot/body.png" alt="Error" />
+			</div>
+			<div id="loadingIframe">
+				<img class="animate__animated animate__pulse animate__infinite" src="/img/logo/transparent_white.png" alt="Loading" />
+			</div>
+			<br>
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-4 col-lg-3">
+		<div class="timeline" id="chat-box">
+			{#chat.items}
+				<div>
+					{@eq key=user value="Nodea"}
+						<img src="/img/mascot/head.png" alt="Nodea picture" class="mipsy-img">
+						<div class="timeline-item mipsy-item">
+					{:else}
+						<div class="timeline-item user-item">
+					{/eq}
+						<span class="time"><i class="fas fa-clock"></i>&nbsp;{dateEmission}</span>
+						<h3 class="timeline-header">
+							{user}
+						</h3>
+						{@eq key=user value="Nodea"}
+							<div class="timeline-body mipsy-answer">
+						{:else}
+							<div class="timeline-body user-answer">
+						{/eq}
+							{@eq key=content value="chat.welcome"}
+								{@gt key=chat.items.length value=1}
+									<span class="standard-writing">{#__ key=content filters="|s" /}</span>
+								{:else}
+									<span class="dynamic-writing">{#__ key=content filters="|s" /}</span>
+								{/gt}
+							{:else}
+								{@ifTrue key=isError}
+									<span class="standard-writing" style="color:#e33939;">
+										<i class='fa fa-exclamation-circle'></i> {#__ key=content params=params filters="|s"/}
+									</span>
+								{:else}
+									<span class="standard-writing">{#__ key=content params=params filters="|s"/}</span>
+								{/ifTrue}
+							{/eq}
+						</div>
+					</div>
+					{@ne key=user value="Nodea"}
+						<i class="fas fa-user bg-primary"></i>
+					{/ne}
+				</div>
+			{/chat.items}
+		</div>
+
+		<!-- Session-->
+		<div class="box box-solid" style="margin-bottom:0px;">
+			<div class="box-body">
+				<div class="callout callout-info">
+					<h5 class="box-title"><i class="fas fa-server"></i> Session</h5>
+					<hr>
+					{#session}
+						{?application.name}
+							{#__ key="application.label"/} :<b class="sessionApplicationInfo">&nbsp;{application.name}</b>
+						{:else}
+							{#__ key="application.label"/} :<b class="sessionApplicationInfo">&nbsp;{#__ key="preview.session.noApplication"/}</b>
+						{/application.name}
+						<br>
+						{?module.name}
+							{#__ key="module.label"/} :<b class="sessionModuleInfo">&nbsp;{module.name}</b>
+						{:else}
+							{#__ key="module.label"/} :<b class="sessionModuleInfo">&nbsp;{#__ key="preview.session.noModule"/}</b>
+						{/module.name}
+						<br>
+						{?entity.name}
+							{#__ key="entity.label"/} :<b class="sessionEntityInfo">&nbsp;{entity.name}</b>
+						{:else}
+							{#__ key="entity.label"/} :<b class="sessionEntityInfo">&nbsp;{#__ key="preview.session.noEntity"/}</b>
+						{/entity.name}
+					{/session}
+				</div>
+			</div>
+			<div class="box-footer">
+				<div class="text-center">
+					<a class="btn btn-app" id="restart-server" href="#">
+						<i style='margin-top: 5px;' class="fas fa-sync-alt"></i>{#__ key="preview.reload"/}
+					</a>
+					{?code_platform.user}
+						<a class="btn btn-app" id="save-server" href="#">
+							<i style='margin-top: 5px;' class="fas fa-upload"></i>{#__ key="preview.save"/}
+						</a>
+					{/code_platform.user}
+					{?application.codePlatformRepoHTTP}
+						<a class="btn btn-app" target="_blank" href="{application.codePlatformRepoHTTP}">
+							<i style='margin-top: 5px;' class="fas fa-external-link-alt"></i>{#__ key="preview.code_platform"/}
+						</a>
+					{/application.codePlatformRepoHTTP}
+					<a class="btn btn-app" target="_blank" href="https://github.com/nodea-software/nodea/issues/new">
+						<i style='margin-top: 5px;' class="fab fa-github"></i>{#__ key="preview.issue-button"/}
+					</a>
+					{@ifTrue key=support_chat_enabled}
+						{! <div class="btn btn-app" id="message-box" title="" data-toggle="tooltip" data-original-title="Support chat">
+							<i style='margin-top: 5px;' class="fas fa-comment"></i>
+							<div class="badge badge-danger slack-message-count" style="display: none;"></div>
+							{#__ key="preview.help-button"/}
+						</div> !}
+					{/ifTrue}
+					<a class="btn btn-app" target="_blank" href="https://docs.nodea-software.com">
+						<i style='margin-top: 5px;' class="fas fa-book"></i>{#__ key="button.documentation"/}
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{! Modal for instruction set logo !}
+<div class="modal fade" id="modalsetlogo" tabindex="-1" role="dialog" aria-labelledby="Set logo">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">{#__ key="preview.logo.title"/}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body" style='height: 550px;'>
+				<p class="text-center">
+					<img src="/img/mascot/body.png" alt="Mipsy" style="display:block;margin:auto;width: 125px;" />
+					<br>{#__ key="preview.logo.text"/}
+					<br><br>
+					<div class="col-xs-12" data-field="set_logo">
+						<div class="form-group">
+							<label for="set_logo">Logo</label>
+							<div class="dropzone dropzone-field" id="set_logo_dropzone"></div>
+							<input id="set_logo_dropzone_hidden" type="hidden" name="set_logo" />
+						</div>
+					</div>
+					<div class="col-xs-12 text-center">
+						<button class="btn btn-success" id="addLogo">{#__ key="button.add"/}</button>
+					</div>
+					<br><br>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default" type="button" data-dismiss="modal">{#__ key="button.close"/} </button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,15 @@
+<legend>
+	{#__ key="button.add"/}
+</legend>
+
+<form action="/{subentity}/create" class="ajax" method="post" enctype="multipart/form-data">
+    {>"{e_subentity}/create_fields" /}
+</form>
+
+<legend>
+	{#__ key="operation.list"/}
+</legend>
+
+{>"{e_subentity}/list_fields" /}
+
+<script src="/core/js/tabs/file_storage.js" type="text/javascript"></script>

@@ -1,0 +1,37 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-2 sidebar">
+		<h4>{#__ key="entity.label"/} :</h4>
+		<select id="entitySelect" name="entitySelect">
+			<option default="true" value="">{#__ key="ui_editor.select_entity"/}</option>
+			{#entities}
+				<option value="{name}">{displayName}</option>
+			{/entities}
+		</select><br>
+		<ul class="sidebar-menu" id="pages" style="display:none;">
+			<li class="ui-state-default treeview" style="display:block;">
+				<a class="ui_editor_page" href="#" data-entity="" data-page="create">
+					<i class="fa fa-file"></i>&nbsp;&nbsp;{#__ key="ui_editor.create_page"/}
+				</a>
+			</li>
+			<li class="ui-state-default treeview" style="display:block;">
+				<a class="ui_editor_page" href="#" data-entity="" data-page="update">
+					<i class="fa fa-file"></i>&nbsp;&nbsp;{#__ key="ui_editor.update_page"/}
+				</a>
+			</li>
+			<li class="ui-state-default treeview" style="display:block;">
+				<a class="ui_editor_page" href="#" data-entity="" data-page="show">
+					<i class="fa fa-file"></i>&nbsp;&nbsp;{#__ key="ui_editor.show_page"/}
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="col-xs-12 col-sm-10">
+		<div id="ui_editor"></div>
+		<i id="ui_editor_tips" style="display:none;">{#__ key="ui_editor.tips"/}</i>
+		<br><br>
+		<input id="ui_editor_apply_all" type="checkbox" />
+		<span id="ui_editor_apply_all_span" style="display:none;">{#__ key="ui_editor.applyAll"/}</span>
+		<br><br>
+		<button class="btn btn-primary" id="ui_editor_save" style="display:none;">{#__ key="button.save"/}</button>
+	</div>
+</div>

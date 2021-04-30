@@ -1,0 +1,61 @@
+{>"login_layout"/}
+{<custom_css}
+	<style>
+		.toast-top-center{
+			top: 20px;
+		}
+	</style>
+{/custom_css}
+{<content}
+	<p class="login-box-msg">{#__ key="login.authentication"/}</p>
+
+	<div id="error-box"></div>
+
+	<form action="/login" method="post">
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
+			<div class="input-group-append">
+				<div class="input-group-text">
+					<span class="fas fa-user"></span>
+				</div>
+			</div>
+		</div>
+		<div class="input-group mb-3">
+			<input type="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
+			<div class="input-group-append">
+				<div class="input-group-text">
+					<span class="fas fa-lock"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<div class="icheck-primary">
+					<input type="checkbox" id="remember" name="remember_me">
+					<label for="remember">
+						{#__ key="login.remember_me"/}
+					</label>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-12">
+				<button type="submit" class="btn btn-primary btn-block">{#__ key="login.submit"/}</button>
+			</div>
+		</div>
+		<input type="hidden" name="redirect" value="{redirect}">
+	</form>
+	<hr>
+	<p class="mb-1">
+		<a href="/reset_password">{#__ key="login.reset_password"/}</a>
+	</p>
+	<p class="mb-1">
+		<a href="/first_connection">{#__ key="login.first_connection.title"/}</a>
+	</p>
+	{@ifTrue key=globalConf.open_signup}
+		<p class="mb-0">
+			<a href="/signup">{#__ key="login.signup.title"/}</a>
+		</p>
+	{/ifTrue}
+{/content}

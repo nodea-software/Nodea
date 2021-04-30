@@ -1,0 +1,37 @@
+.CodeMirror {
+	border: 1px solid #d5d5d5;
+	height: 640px;
+}
+.cm-trailingspace {
+	background-color: red;
+}
+.cm-dust {
+	color: #0ca;
+}
+.CodeMirror-fullscreen {
+	z-index: 1050;
+}
+.close-tab{
+	visibility: hidden;
+}
+.close-tab:hover{
+	color: red;
+	cursor: pointer;
+}
+li.load-file:hover a .close-tab {
+	visibility: visible;
+}
+#editor-navtabs li.active {
+	border-top: 3px solid #555;
+	border-radius: 5px;
+}
+#editor-navtabs li.modified {
+	border-top: 3px solid #F5900E;
+	border-radius: 5px;
+}
+#editor-navtabs li a {
+	color: #555;
+}
+#editor-navtabs li a {
+	font-family: Arial;
+}

@@ -1,0 +1,94 @@
+<div id="fields" class="row">
+	<div data-field="f_task_name" class="col-12">
+		<div class="form-group">
+			<label for="f_task_name">
+				{#__ key="entity.e_media_task.f_task_name"/}&nbsp;
+				{@inline_help field="f_task_name"}
+					<i data-field="f_task_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_task_name">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_task.f_task_name" /}' name="f_task_name" value="" type="text" maxlength="255">
+		</div>
+	</div>
+	<div data-field="f_task_type" class="col-12">
+		<div class="form-group">
+			<label for="f_task_type">
+				{#__ key="entity.e_media_task.f_task_type"/}&nbsp;
+				{@inline_help field="f_task_type"}
+					<i data-field="f_task_type" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<br>
+			<select class="form-control select" name="f_task_type" style="width:100%;">
+				<option value="">
+					{#__ key="select.default" /}
+				</option>
+				{#enum_radio.e_media_task.f_task_type}
+					{@eq key="manual" value="{.value}" }
+						<option value="{.value}" selected=""> {.translation} </option>
+					{:else}
+						<option value="{.value}"> {.translation} </option>
+					{/eq}
+				{/enum_radio.e_media_task.f_task_type}
+			</select>
+		</div>
+	</div>
+	<div data-field="f_assignment_logic" class="col-12">
+		<div class="form-group">
+			<label for="f_assignment_logic">
+				{#__ key="entity.e_media_task.f_assignment_logic"/}&nbsp;
+				{@inline_help field="f_assignment_logic"}
+				<i data-field="f_assignment_logic" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control input" placeholder='{#__ key="entity.e_media_task.f_assignment_logic" /}' name="f_assignment_logic" value="" type="text" maxlength="255">
+		</div>
+	</div>
+
+    <div data-field="f_process" class="col-12">
+        <div class="form-group">
+            <label for="r_process">
+                {#__ key="entity.e_media_task.r_process" /}&nbsp;
+                {@inline_help field="r_process"}
+                <i data-field="r_process" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                {/inline_help}
+            </label>
+            <select class="ajax form-control" name="r_process" data-source="process" data-using="f_name" width="100%"></select>
+        </div>
+    </div>
+	<div data-field="f_data_flow" class="col-12">
+		<div class="form-group">
+			<label for="f_data_flow">
+				{#__ key="entity.e_media_task.f_data_flow"/}&nbsp;
+				{@inline_help field="f_data_flow"}
+					<i data-field="f_data_flow" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_data_flow">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<textarea class="form-control textarea regular-textarea mt-2" placeholder='{#__ key="entity.e_media_task.f_data_flow" /}' name="f_data_flow" id="f_data_flow_textareaid" type="text">{f_data_flow|s}</textarea>
+		</div>
+	</div>
+</div>

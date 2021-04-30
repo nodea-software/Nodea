@@ -1,0 +1,93 @@
+<h4>{#__ key="develop.tabs.versioning"/}</h4>
+<hr>
+<div class="row">
+	<div class="col-12">
+		<a class="btn btn-warning" href='{currentRepoUrl}/tags' target=_blank>
+			<i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;
+			Tags
+		</a>&nbsp;&nbsp;
+		<button type='button' class='btn btn-success' data-toggle="modal" data-target="#newTag">
+			<i class="fas fa-plus"></i>&nbsp;&nbsp;
+			{#__ key="develop.backlog.add_new_tag" /}
+		</button>
+		<br><br>
+		<div class="timeline">
+			<div class="time-label">
+				<span class="bg-blue"><i class="fas fa-tags"></i>&nbsp;&nbsp;Tags</span>
+			</div>
+			{#projectTags}
+				<div>
+					<i class="fas fa-tag bg-yellow"></i>
+					<div class="timeline-item">
+						<span class="time">
+							<i class="fas fa-clock"></i>
+						</span>
+						<h3 class="timeline-header">
+						<b>{name}</b>
+						</h3>
+						<div class="timeline-body">
+							{message}
+							{?release.description}
+								<br><br>
+								{release.description}
+							{/release.description}
+							{#commit}
+								<br><br>
+								<b>Tagged commit:</b> {title} ({author_name})
+							{/commit}
+						</div>
+					</div>
+				</div>
+			{/projectTags}
+			<div>
+				<i class="fas fa-clock bg-gray"></i>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='newTag' tabindex='-1' role='dialog' aria-labelledby='newTagLabel' aria-hidden='true'>
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newTagLabel">{#__ key="develop.backlog.add_new_tag" /}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12">
+						{#__ key="develop.backlog.title" /}:<br>
+						<input type="text" name="title" class="input-group">
+						<br>
+					</div>
+					<div class="col-12">
+						{#__ key="develop.backlog.description" /}:<br>
+						<textarea name="description" class="form-control"></textarea>
+						<br>
+					</div>
+					<div class="col-12">
+						Commit:<br>
+						<select class="select2" style='width:100%;' name="commit">
+							{#projectCommits}
+								<option value='{id}'>{title}</option>
+							{/projectCommits}
+						</select>
+						<br><br>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">
+					<i class="fas fa-times"></i>&nbsp;&nbsp;
+					{#__ key="button.cancel"/}
+				</button>
+				<button type="button" class="btn btn-success" id="new-tag-trigger">
+					<i class="fas fa-save"></i>&nbsp;&nbsp;
+					{#__ key="button.save"/}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

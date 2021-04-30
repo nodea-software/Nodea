@@ -1,0 +1,88 @@
+<h4>{#__ key="build.tabs.manage"/}</h4>
+<hr>
+<div class="row">
+	<div class="col-12">
+		{^applications}
+			<div class="col-12 text-center">
+				<br>
+				<h2 class="headline">{#__ key="listApplication.no_project_1"/}</h2>
+			</div>
+		{:else}
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>{#__ key="listApplication.id"/}</th>
+						<th>{#__ key="listApplication.name"/}</th>
+						<th>URL</th>
+						<th>{#__ key="listApplication.createdBy"/}</th>
+						<th colspan="5" class="text-center">{#__ key="listApplication.action"/}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#applications}
+						<tr>
+							<td>{id}</td>
+							<td>{displayName}</td>
+							<td><a href='{dataValues.url}' target='_blank'>{dataValues.url}</a></td>
+							<td>{dataValues.createdBy}</td>
+							<td class="text-center">
+								<a class="btn btn-info" href="/application/preview/{name}">
+									<i class="fa fa-desktop fa-md"></i>&nbsp;&nbsp;
+									<span>{#__ key="button.preview"/}</span>
+								</a>
+							</td>
+							<td class="text-center">
+								<a class="btn btn-primary export-btn" href="/application/export/{name}">
+									<i class="fa fa-download fa-md"></i>&nbsp;&nbsp;
+									<span>{#__ key="button.export"/}</span>
+								</a>
+							</td>
+							{?code_platform_user}
+								{?dataValues.repo_url}
+									<td class="text-center">
+										<button type="button" data-repourl="{dataValues.repo_url}" data-reposshurl="{dataValues.repo_ssh_url}" class="btn btn-warning code-platform-button" data-toggle="modal" data-target="#gitlabModal">
+											<i class="fab fa-gitlab"></i>&nbsp;&nbsp;
+											<span>{#__ key="button.clone"/}</span>
+										</button>
+									</td>
+								{/dataValues.repo_url}
+							{/code_platform_user}
+							<td class="text-center">
+								<button type='button' class="btn btn-danger deleteAppForm" data-name='{displayName}' data-codename='{name}' data-id='{id}'>
+									<i class="fa fa-trash fa-md"></i>&nbsp;&nbsp;
+									<span>{#__ key="button.delete"/}</span>
+								</button>
+							</td>
+						</tr>
+					{/applications}
+				</tbody>
+			</table>
+		{/applications}
+	</div>
+</div>
+
+{?code_platform_user}
+	<div class="modal fade" id="gitlabModal" tabindex="-1" role="dialog" aria-labelledby="gitlabModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header text-center">
+					<h5 class="modal-title" id="gitlabModalLabel">{#__ key="listApplication.gitlab.modal_title" /}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body text-center">
+					{#__ key="listApplication.gitlab.text1" /}<br><br>
+					<i>HTTP:<br><b>git clone <span id="code_platform_repo_url"></span></b></i><br>
+					<i>SSH:<br><b>git clone <span id="code_platform_repo_ssh_url"></span></b></i><br><br>
+					{#__ key="listApplication.gitlab.text2" /}<br><br>
+					<i><b>{code_platform_user.name}</b></i><br><br>
+					{#__ key="listApplication.gitlab.text3" /}&nbsp;<i class="fa fa-smile-o"></i>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">{#__ key="button.understand"/}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{/code_platform_user}

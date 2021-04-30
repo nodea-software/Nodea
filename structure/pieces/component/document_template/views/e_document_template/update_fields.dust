@@ -1,0 +1,91 @@
+<div id="fields" class="row">
+    <div data-field="f_name" class="col-12">
+        <div class="form-group">
+            <label for="f_name" class="required"> {#__ key="entity.e_document_template.f_name"/} </label>
+            <input class="form-control input" placeholder='{#__ key="entity.e_document_template.f_name" /}' name="f_name" value="{f_name}" type="text" required="">
+        </div>
+    </div>
+    <div data-field="f_format_pair" class="col-12">
+        <div class="form-group">
+            <label for="f_format_pair">
+                {#__ key="entity.e_document_template.f_format_pair"/}&nbsp;
+                {@inline_help field="f_format_pair"}
+                <i data-field="f_format_pair" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <select name="f_format_pair" data-source="document_template" class="form-control" width="100%">
+                {#format_pairs}
+                    {@eq key=f_format_pair value="{code}"}
+                        <option selected="" value="{code}">{label}</option>
+                    {:else}
+                        <option selected="" value="{code}">{label}</option>
+                    {/eq}
+                {/format_pairs}
+            </select>
+        </div>
+    </div>
+    <div data-field="f_file" class="col-12">
+        <div class="form-group">
+            <label for="f_file" class="required">
+                {#__ key="entity.e_document_template.f_file"/}
+            </label>
+            <div class="nodea-dropzone">
+                {#f_file}
+                <div class="dropzonefile">
+                    {.}&nbsp;<i class="remove-file fa fa-times" style="color: red;"></i>
+                </div>
+                {:else}
+                {#__ key="message.insert_file" /}
+                {/f_file}
+            </div>
+            <input type="file" name="f_file" value="{f_file}" style="display: none;">
+            <input type="hidden" name="f_file_modified" value="false">
+        </div>
+    </div>
+    <div data-field="f_entity" class="col-12">
+        <div class="form-group">
+            <label for="f_entity" class="required"> {#__ key="entity.e_document_template.f_entity"/} </label>
+            <select data-url="/document_template/entity_list" class="ajax form-control" name="f_entity" data-source="document_template" width="100%">
+                {#f_entity}
+                <option value="{.}" selected="">{.|h}</option>
+                {/f_entity}
+            </select>
+        </div>
+    </div>
+    <div data-field="f_group" class="col-12">
+        <div class="form-group">
+            <label for="f_group">
+                {#__ key="entity.e_document_template.r_group" /}
+                {@inline_help field="r_group"}
+                <i data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                {/inline_help}
+            </label>
+            <select multiple="" class="ajax form-control" name="r_group" data-source="group" data-using="f_label" width="100%">
+                <option value="">
+                    {#__ key="select.default" /}
+                </option>
+                {#r_group}
+                <option value="{id}" selected="">{f_label|h}</option>
+                {/r_group}
+            </select>
+        </div>
+    </div>
+    <div data-field="f_role" class="col-12">
+        <div class="form-group">
+            <label for="f_role">
+                {#__ key="entity.e_document_template.r_role" /}
+                {@inline_help field="r_role"}
+                <i data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                {/inline_help}
+            </label>
+            <select multiple="" class="ajax form-control" name="r_role" data-source="role" data-using="f_label" width="100%">
+                <option value="">
+                    {#__ key="select.default" /}
+                </option>
+                {#r_role}
+                <option value="{id}" selected="">{f_label|h}</option>
+                {/r_role}
+            </select>
+        </div>
+    </div>
+</div>

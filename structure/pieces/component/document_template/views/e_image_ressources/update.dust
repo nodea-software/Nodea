@@ -1,0 +1,122 @@
+{>"layout_m_administration"/}
+
+{<header}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0">
+                    {#__ key="module.custom_module"/}&nbsp;
+                    <small>
+                        {#__ key="module.module"/}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                	<li class="breadcrumb-item">
+                        <a href="/module/home">
+                            <i class="fa fa-home"></i>&nbsp;&nbsp;
+                            {#__ key="module.home"/}
+                        </a>
+                    </li>
+                    <!-- SUB MODULE - DO NOT REMOVE -->
+                    <li class="breadcrumb-item active">
+                        {#__ key="entity.e_image_ressources.label_entity"/}
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<form action="/image_ressources/update" method="post">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">
+								{#__ key="operation.update"/}&nbsp;
+								{#__ key="entity.e_image_ressources.label_entity"/}
+							</h3>
+							<div class="card-tools">
+								<button type="button" class="btn btn-tool" data-card-widget="collapse">
+								<i class="fas fa-minus"></i>
+								</button>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="form-group">
+								<label for="id">
+									{#__ key="entity.e_image_ressources.id_entity"/} {#__ key="entity.e_image_ressources.label_entity"/}
+								</label>
+								<input name="id" type="hidden" value="{e_image_ressources.id}">
+								<input name="id_display" type="text" placeholder="{e_image_ressources.id_entity}" value="{e_image_ressources.id}" disabled="" class="form-control input"/>
+							</div>
+							{#e_image_ressources}
+								{>"e_image_ressources/update_fields"/}
+							{/e_image_ressources}
+							<div class="form-group">
+								<input name="version" value="1" type="hidden" />
+							</div>
+						</div>
+						<div class="card-footer">
+							<a class="btn btn-default" href="javascript:history.back();">
+								{#__ key="button.cancel"/}
+							</a>
+							&nbsp;&nbsp;
+							{#actionAccess entity="image_ressources" action="update"}
+								<button type="submit" class="btn btn-primary">
+									<i class="fas fa-save">&nbsp;&nbsp;</i>
+									{#__ key="button.save"/}
+								</button>
+							{/actionAccess}
+						</div>
+					</div>
+
+					{#associationFlag}
+						<input type="hidden" name='associationFlag' value="{.}">
+					{/associationFlag}
+					{#associationSource}
+						<input type="hidden" name='associationSource' value="{.}">
+					{/associationSource}
+					{#associationForeignKey}
+						<input type="hidden" name='associationForeignKey' value="{.}">
+					{/associationForeignKey}
+					{#associationAlias}
+						<input type="hidden" name='associationAlias' value="{.}">
+					{/associationAlias}
+					{#associationUrl}
+						<input type="hidden" name='associationUrl' value="{.}">
+					{/associationUrl}
+				</form>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script type="text/javascript">
+		$(function() {
+			/* Apply focus on first row's form element */
+			firstElementFocus();
+
+			NodeaForms();
+
+			/* Code regex check */
+			$(document).on('keydown', 'input[name="f_code"]', function(){
+				while ($(this).val() != "" && !/[a-zA-Z0-9_ ]{1,25}$/g.test($(this).val()))
+            		$(this).val($(this).val().substring(0, $(this).val().length - 1))
+			});
+
+			$(document).on('blur', 'input[name="f_code"]', function(){
+				if($(this).val() != '') {
+					if($(this).val().startsWith('{img_'))
+						$(this).val($(this).val().substring(4, $(this).val().length));
+					$(this).val('img_' + $(this).val().replace(/ /g, '_').toLowerCase());
+				}
+			});
+		});
+	</script>
+{/custom_js}

@@ -1,0 +1,101 @@
+<table id="table_e_page" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn">
+    <thead class="main">
+        <tr class="fields">
+            <th data-type="ordering">
+                <i class="fa fa-arrow-down"></i>&nbsp;<i class="fa fa-arrow-up"></i>
+            </th>
+            <th data-field="f_order" data-col="f_order" data-type="integer" data-default-order="ASC">
+                {#__ key="entity.e_page.f_order"/}
+            </th>
+            <th data-field="f_titre" data-col="f_titre" data-type="string">
+                {#__ key="entity.e_page.f_titre"/}
+            </th>
+            <th data-field="f_type" data-col="f_type" data-type="enum">
+                {#__ key="entity.e_page.f_type"/}
+            </th>
+            <th data-field="f_script" data-col="f_script" data-type="text">
+                {#__ key="entity.e_page.f_script"/}
+            </th>
+            <th data-field="f_delay" data-col="f_delay" data-type="integer">
+                {#__ key="entity.e_page.f_delay"/}
+            </th>
+            <th data-field="f_startwith_url" data-col="f_startwith_url" data-type="url">
+                {#__ key="entity.e_page.f_startwith_url"/}
+            </th>
+            <th data-field="f_startwith_method" data-col="f_startwith_method" data-type="enum">
+                {#__ key="entity.e_page.f_startwith_method"/}
+            </th>
+            <th data-field="f_endwith_url" data-col="f_endwith_url" data-type="url">
+                {#__ key="entity.e_page.f_endwith_url"/}
+            </th>
+            <th data-field="f_endwith_method" data-col="f_endwith_method" data-type="enum">
+                {#__ key="entity.e_page.f_endwith_method"/}
+            </th>
+            <th data-field="f_execute_on_error" data-col="f_execute_on_error" data-type="boolean">
+                {#__ key="entity.e_page.f_execute_on_error"/}
+            </th>
+            <th data-field="f_timeout" data-col="f_timeout" data-type="integer">
+                {#__ key="entity.e_page.f_timeout"/}
+            </th>
+            {#actionAccess entity="page" action="read"}
+            <th data-type="show"></th>
+            {/actionAccess}
+            {#actionAccess entity="page" action="update"}
+            <th data-type="update"></th>
+            {/actionAccess}
+            {#actionAccess entity="page" action="delete"}
+            <th data-type="delete"></th>
+            {/actionAccess}
+        </tr>
+    </thead>
+    <thead class="filters">
+        <tr class="fields">
+            <th data-type="ordering">
+            </th>
+            <th data-field="f_order" data-col="f_order" data-type="integer">
+                {#__ key="entity.e_page.f_order"/}
+            </th>
+            <th data-field="f_titre" data-col="f_titre" data-type="string">
+                {#__ key="entity.e_page.f_titre"/}
+            </th>
+            <th data-field="f_type" data-col="f_type" data-type="enum">
+                {#__ key="entity.e_page.f_type"/}
+            </th>
+            <th data-field="f_script" data-col="f_script" data-type="text">
+                {#__ key="entity.e_page.f_script"/}
+            </th>
+            <th data-field="f_delay" data-col="f_delay" data-type="integer">
+                {#__ key="entity.e_page.f_delay"/}
+            </th>
+            <th data-field="f_startwith_url" data-col="f_startwith_url" data-type="url">
+                {#__ key="entity.e_page.f_startwith_url"/}
+            </th>
+            <th data-field="f_startwith_method" data-col="f_startwith_method" data-type="enum">
+                {#__ key="entity.e_page.f_startwith_method"/}
+            </th>
+            <th data-field="f_endwith_url" data-col="f_endwith_url" data-type="url">
+                {#__ key="entity.e_page.f_endwith_url"/}
+            </th>
+            <th data-field="f_endwith_method" data-col="f_endwith_method" data-type="enum">
+                {#__ key="entity.e_page.f_endwith_method"/}
+            </th>
+            <th data-field="f_execute_on_error" data-col="f_execute_on_error" data-type="boolean">
+                {#__ key="entity.e_page.f_execute_on_error"/}
+            </th>
+            <th data-field="f_timeout" data-col="f_timeout" data-type="integer">
+                {#__ key="entity.e_page.f_timeout"/}
+            </th>
+            {#actionAccess entity="page" action="read"}
+            <th data-type="show"></th>
+            {/actionAccess}
+            {#actionAccess entity="page" action="update"}
+            <th data-type="update"></th>
+            {/actionAccess}
+            {#actionAccess entity="page" action="delete"}
+            <th data-type="delete"></th>
+            {/actionAccess}
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>

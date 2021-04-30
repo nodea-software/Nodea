@@ -1,0 +1,82 @@
+{
+    "plugins": [],
+    "recurseDepth": 10,
+    "source": {
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": ""
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc", "closure"]
+    },
+    "templates": {
+        "systemName": "My application",
+        "systemSummary": "systemSummary",
+        "systemLogo": "",
+        "systemColor": "systemColor",
+        "footer": "footer",
+        "copyright": "copyright",
+        "includeDate": true,
+        "dateFormat": "dateFormat",
+        "inlineNav": true,
+        "inverseNav": true,
+        "navMembers": [{
+            "kind": "class",
+            "title": "Classes",
+            "summary": "All documented classes."
+        }, {
+            "kind": "external",
+            "title": "Externals",
+            "summary": "All documented external members."
+        }, {
+            "kind": "global",
+            "title": "Globals",
+            "summary": "All documented globals."
+        }, {
+            "kind": "mixin",
+            "title": "Mixins",
+            "summary": "All documented mixins."
+        }, {
+            "kind": "interface",
+            "title": "Interfaces",
+            "summary": "All documented interfaces."
+        }, {
+            "kind": "module",
+            "title": "Modules",
+            "summary": "All documented modules."
+        }, {
+            "kind": "namespace",
+            "title": "Routes",
+            "summary": "All documented routes."
+        }, {
+            "kind": "tutorial",
+            "title": "Tutorials",
+            "summary": "All available tutorials."
+        }, {
+            "kind": "event",
+            "title": "Hooks",
+            "summary": "All available hooks."
+        }],
+        "linenums": true,
+        "showTableOfContents": true,
+        "showAccessFilter": true,
+        "analytics": {
+            "ua": "UA-XXXXX-XXX",
+            "domain": "XXXX"
+        },
+        "collapseSymbols": true,
+        "methodHeadingReturns": true,
+        "outputSourceFiles": true,
+        "outputSourcePath": true,
+        "sort": "",
+        "search": true,
+        "favicon": "",
+        "stylesheets": [],
+        "scripts": []
+    },
+    "opts": {
+        "encoding": "utf8",
+        "sort": false
+    }
+}

@@ -1,0 +1,237 @@
+{>"layout_m_home"/}
+
+{<custom_css_2}
+	<link href='/js/plugins/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+	<style>
+		.pendingEvent{
+			padding: 5px 5px 5px 12px;
+			border-radius: 3px;
+			margin-bottom: 5px;
+			cursor: pointer;
+		}
+	</style>
+{/custom_css_2}
+
+{<header}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6">
+				<h1 class="m-0">
+				{#__ key="module.m_home"/}&nbsp;
+				<small>
+				{#__ key="module.module"/}
+				</small>
+				</h1>
+			</div>
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item">
+						<a href="/module/home">
+							<i class="fa fa-home"></i>&nbsp;&nbsp;
+							{#__ key="module.home"/}
+						</a>
+					</li>
+					<li class="breadcrumb-item active">
+						{#__ key="global_component.agenda.menu"/}
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-md-3">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="global_component.agenda.add_event"/}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<select style="width: 100%;" class="form-control selectCategoryColor" id="selectCategorySide">
+							<option data-backgroundcolor="#CCCCCC" value="">{#__ key="global_component.agenda.no_category"/}</option>
+							{#categories}
+								<option data-backgroundcolor="{f_color}" value="{id}">{f_label}</option>
+							{/categories}
+						</select>
+						<div style="margin-top: 10px;" class="input-group">
+							<input id="new-event-title" type="text" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control"/>
+							<div class="input-group-btn">
+								<button id="add-new-event" type="button" class="btn btn-success btn-flat">{#__ key="button.add"/}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="global_component.agenda.pending_event"/}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div id="pengingEventList">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='col-xs-12 col-md-9'>
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="global_component.agenda.menu"/}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div id="calendar"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="eventCreateModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Créer un évenement</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="modalCreateStartDate" >
+					<input type="hidden" id="modalCreateUser" >
+					<select style="width: 100%;" class="form-control selectCategoryColor" id="modalCreateCategory">
+						<option data-backgroundcolor="#CCCCCC" value="">{#__ key="global_component.agenda.no_category"/}</option>
+						{#categories}
+							<option data-backgroundcolor="{f_color}" value="{id}">{f_label}</option>
+						{/categories}
+					</select>
+					<div style="margin-top: 10px;width: 100%;" class="input-group">
+						<input type="text" id="modalCreateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<input class='form-control input' id="createEventAllDayCheckbox" type='checkbox'>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="global_component.agenda.startHour"/}</label>
+						<div class='input-group'>
+							<div class='input-group-prepend'>
+								<span class='input-group-text'>
+									<i class='fa fa-clock-o'></i>
+								</span>
+							</div>
+							<input class='form-control input timepicker' id="modalCreateStartTime" type='text' />
+						</div>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="global_component.agenda.endHour"/}</label>
+						<div class='input-group'>
+							<div class='input-group-prepend'>
+								<span class='input-group-text'>
+									<i class='fa fa-clock-o'></i>
+								</span>
+							</div>
+							<input class='form-control input timepicker' id="modalCreateEndTime" type='text' />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="createEvent" >{#__ key="button.save" /}</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.cancel" /}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="eventUpdateModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="myModalLabel">Modifier un évenement</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="modalUpdateEventID" />
+					<input type="hidden" id="modalUpdateID" />
+					<select style="width: 100%;" class="form-control selectCategoryColor" id="modalUpdateCategory">
+						<option data-backgroundcolor="#CCCCCC" value="">{#__ key="global_component.agenda.no_category"/}</option>
+						{#categories}
+							<option data-backgroundcolor="{f_color}" value="{id}">{f_label}</option>
+						{/categories}
+					</select>
+					<div style="margin-top: 10px;width: 100%;" class="input-group">
+						<input type="text" id="modalUpdateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<input class='form-control input' id="updateEventAllDayCheckbox" type='checkbox'>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="global_component.agenda.startHour"/}</label>
+						<div class='input-group'>
+							<div class='input-group-prepend'>
+								<span class='input-group-text'>
+									<i class='fa fa-clock-o'></i>
+								</span>
+							</div>
+							<input class='form-control input timepicker' id="modalUpdateStartTime" type='text' />
+						</div>
+					</div>
+					<div style="margin-top: 10px" class='bootstrap-timepicker'>
+						<label>{#__ key="global_component.agenda.endHour"/}</label>
+						<div class='input-group'>
+							<div class='input-group-prepend'>
+								<span class='input-group-text'>
+									<i class='fa fa-clock-o'></i>
+								</span>
+							</div>
+							<input class='form-control input timepicker' id="modalUpdateEndTime" type='text' />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="updateEvent" >{#__ key="button.save" /}</button>
+					<button type="button" class="btn btn-danger" id="deleteEvent" data-dismiss="modal">{#__ key="button.delete" /}</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.cancel" /}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script src='/AdminLTE/plugins/jquery-ui/jquery-ui.min.js'></script>
+	<script src='/js/plugins/fullcalendar/fullcalendar.min.js'></script>
+	<script src='/js/plugins/fullcalendar/locale-all.js'></script>
+	<script>
+		var FILL_TITLE_AGENDA = '{#__ key="global_component.agenda.fill_title" /}';
+		var END_BEFORE_START_MSG = '{#__ key="global_component.agenda.end_before_start" /}';
+	</script>
+	<script>var usersRessources = [];</script>
+	{#users}
+		<script>usersRessources.push({id:{id}, title: "{f_login}"});</script>
+	{/users}
+	<script src='/core/js/component/agenda.js'></script>
+{/custom_js}

@@ -1,0 +1,62 @@
+<form class="ajax" action="/status/set_children" method="post">
+    <select name="next_status" class="regular-select" multiple="">
+        {#e_status.dataValues.all_children}
+        {?dataValues.selected}
+        <option value="{id}" selected="">
+            {f_name}
+        </option>
+        {:else}
+        <option value="{id}">
+            {f_name}
+        </option>
+        {/dataValues.selected}
+        {/e_status.dataValues.all_children}
+    </select>
+    <i>
+        {#__ key="component.status.tip_1" /}
+    </i>
+    <br><br>
+    <input type="hidden" value="{e_status.id}" name="id_status">
+    <a id="create_child" data-url="/status/create_form" class="btn btn-success">
+        <i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+        <span>
+            {#__ key="button.create"/}
+        </span>
+    </a>
+</form>
+<script type="text/javascript">
+    $(function() {
+        const tab = NodeaTabs.current.tab;
+        NodeaForms(tab, {
+            elements: {
+                dual_list: {
+                    selector: 'select[name=next_status]',
+                    initializer: (element) => {
+                        if (element.bootstrapDualListbox) {
+                            element.bootstrapDualListbox({
+                                nonSelectedListLabel: AVAILABLE_STATUS,
+                                selectedListLabel: NEXT_STATUS,
+                                moveOnSelect: false,
+                                showFilterInputs: false,
+                                infoText: false,
+                                selectorMinimalHeight: 250
+                            });
+                            element.on('change', function() {
+                                tab.find('form').submit()
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        $("#create_child").click(function(event) {
+            NodeaTabs.loadOverlay($(this).data('url'));
+        });
+
+        $(document).on('click', "#r_children option", function(e){
+            if(e.ctrlKey && $(this).val() && !isNaN($(this).val()))
+                window.open('/status/show?id=' + $(this).val() + '#r_children');
+        });
+    });
+</script>

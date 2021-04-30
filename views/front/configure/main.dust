@@ -1,0 +1,130 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+	</style>
+{/custom_css}
+
+{<title}
+	{#__ key="menu.home"/}<small>{#__ key="menu.module"/}</small>
+{/title}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/gears.png" alt="Wrench picto">
+									{#__ key="menu.configure"/}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-3">
+									<li class="nav-item">
+										<a class="nav-link active" href="/configure">
+											{#__ key="configure.tabs.home"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/configure/account">
+											{#__ key="configure.tabs.account"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/configure/settings">
+											{#__ key="configure.tabs.settings"/}
+										</a>
+									</li>
+									{#isAdmin}
+										<li class="nav-item">
+											<a class="nav-link" href="/configure/users">
+												{#__ key="configure.tabs.users"/}
+											</a>
+										</li>
+									{/isAdmin}
+
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="tab-content">
+									<div class="tab-pane active" id="home">
+										<h4>{#__ key="configure.tabs.home"/}</h4>
+										<hr>
+										<div class="row">
+											<div class="col-xs-12 col-sm-12 col-md-4">
+												<a href='/configure/account' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-id-badge"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="configure.tabs.account"/}</span>
+															<span class="info-box-number">{#__ key="configure.home.account_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-4">
+												<a href='/configure/settings' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-cogs"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="configure.tabs.settings"/}</span>
+															<span class="info-box-number">{#__ key="configure.home.settings_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+
+											{#isAdmin}
+												<div class="col-xs-12 col-sm-12 col-md-4">
+													<a href='/configure/users' class="trigger-tab">
+														<div class="info-box mb-3">
+															<span class="info-box-icon bg-primary-2 elevation-1">
+																<i class="fas fa-users"></i>
+															</span>
+
+															<div class="info-box-content">
+																<span class="info-box-text">{#__ key="configure.tabs.users"/}</span>
+																<span class="info-box-number">{#__ key="configure.home.users_text"/}</span>
+															</div>
+														</div>
+													</a>
+												</div>
+											{/isAdmin}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+{/custom_js}

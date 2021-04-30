@@ -1,0 +1,347 @@
+{
+	"app": {
+		"name": "Application",
+        "version": "version"
+	},
+	"notification": {
+		"deleteAll": "Supprimer toutes les notifications",
+		"icon": {
+			"choose": "Choisir une icône"
+		}
+	},
+	"login": {
+		"log_in": "Log in",
+		"reset_password": {
+			"title": "Mot de passe oublié",
+			"success": "Votre mot de passe a bien été réinitialisé. Merci de faire de nouveau le processus de première connexion pour changer votre mot de passe.",
+			"successMail": "Un email vous permettant de réinitialiser votre mot de passe vous a été envoyé.",
+			"userNotExist": "Impossible de trouver l'utilisateur correspondant aux informations renseignées.",
+			"cannotFindToken": "Erreur, impossible de retrouver votre jeton de réinitialisation."
+		},
+		"first_connection": {
+			"title": "Première connexion",
+			"success_login": "Mise à jour effectuée, vous êtes désormais connecté(e) !",
+			"userNotExist": "Cet utilisateur n'existe pas ou a déjà été activé.",
+			"alreadyHavePassword": "Opération impossible, cet utilisateur possède déjà un mot de passe.",
+			"passwordNotValid": "Mot de passe invalide, merci de réessayer.",
+			"help": {
+				"password_title": "Mot de passe - Première connexion",
+				"password_content": "<p>Merci de choisir votre mot de passe, il doit respecter le format suivant:<br><br>- 8 caractères minimum<br>- Au moins 1 chiffre<br>- Au moins 1 majuscule<br>- Au moins 1 caractère spécial (!@#$%^&*)<br></i><br></p>"
+			}
+		},
+		"authentication": "Connexion",
+		"login": "Login",
+		"password": "Mot de passe",
+		"confirm_password": "Confirmation du mot de passe",
+		"email": "Email",
+		"remember_me": "Se souvenir de moi",
+		"submit": "Soumettre",
+		"missing_infos": "Merci de renseigner l'ensemble des champs.",
+		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
+		"not_enabled": "Votre compte ne semble pas être activé, merci d'effectuer le processus de première connexion.",
+		"logout_success": "Vous avez bien été déconnecté."
+	},
+	"settings": {
+		"tool_success": "The access configuration file has been imported.",
+		"legend": "Modifier vos paramètres",
+		"lang": "Langue",
+		"check_change_password": "Changer votre mot de passe",
+		"title_change_password": "Procédure de changement de mot de passe",
+		"old_password": "Votre ancien mot de passe",
+		"new_password_1": "Nouveau mot de passe",
+		"new_password_2": "Confirmer nouveau mot de passe",
+		"error1": "Vous devez renseigner un nouveau mot de passe pour le changer.",
+		"error2": "Les deux mots de passe ne correspondent pas.",
+		"error3": "Votre nouveau mot de passe doit faire au moins 4 caractères.",
+		"error4": "Votre ancien mot de passe n'est pas valide.",
+		"success": "Votre profil a bien été mis à jour."
+	},
+    "automation": {
+        "add_action": "Ajouter une action",
+        "toggle_dropdown": "Toggle Dropdown",
+        "script_menu_input": "Saisir un champ",
+        "script_menu_select": "Choisir une valeur dans une liste déroulante",
+        "script_menu_checkbox": "Cocher une case à cocher",
+        "script_menu_radio": "Activer un bouton radio",
+        "script_menu_submit": "Soumettre un formulaire",
+        "script_menu_read_text": "Lire un texte",
+        "script_menu_read_field": "Lire un champ",
+        "script_menu_click_element": "Cliquer sur un élément",
+        "script_menu_find_element": "Trouver un élément",
+        "script_menu_keydown_enter": "Appuyer sur la touche Entrée",
+        "script_menu_keydown_tab": "Appuyer sur la touche Tab",
+        "script_menu_keydown_backspace": "Appuyer sur la touche Backspace",
+        "script_menu_keydown_esc": "Appuyer sur la touche Echappement (Esc)",
+        "script_menu_keydown_any": "Appuyer sur une touche normale",
+        "script_menu_open_tab": "Ouvrir un nouvel onglet",
+        "script_menu_change_tab": "Changer d'onglet",
+        "script_menu_open_url": "Naviguer vers une URL",
+        "script_menu_error": "Interompre le programme en erreur",
+        "sequence_menu_test": "Effectuer un test conditionnel",
+        "sequence_menu_download": "Télécharger un document",
+        "sequence_menu_upload": "Uploader un document",
+        "sequence_menu_mapping": "Transformer une valeur suivant une table de paramétrage",
+        "sequence_menu_update_entity": "Mettre à jour une entité serveur",
+        "sequence_menu_encrypt": "Encrypter une variable",
+        "sequence_menu_decrypt": "Décrypter une variable",
+        "sequence_menu_mouse_move": "Déplacer la souris à une position donnée",
+        "sequence_menu_mouse_click": "Cliquer",
+        "sequence_menu_mouse_right_click": "Cliquer avec le bouton droit",
+        "sequence_menu_mouse_double_click": "Double-cliquer",
+        "sequence_menu_type_text": "Saisir du texte",
+        "sequence_menu_next_step": "Déclencher une étape",
+        "sequence_menu_error": "Interompre le programme en erreur",
+        "add_variable": "Ajouter une variable",
+        "script_menu_step_index": "Index de l'étape",
+        "script_menu_step_serial_number": "Numéro d'ordre de l'étape",
+        "script_menu_env_variable": "Variable d'environnement (flux de données)",
+        "script_menu_session_variable": "Variable de session",
+        "sequence_menu_step_index": "Index de l'étape",
+        "sequence_menu_step_serial_number": "Numéro d'ordre de l'étape",
+        "sequence_menu_env_variable": "Variable d'environnement (flux de données)",
+        "sequence_menu_session_variable": "Variable de session",
+        "zip_created_replaced": "Le zip a été généré et le fichier programme remplacé",
+        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme."
+    },
+	"navbar": {
+		"about": "A propos",
+		"support": "Support"
+	},
+	"select": {
+		"default": "-- Choisir --"
+	},
+	"module": {
+		"home": "Accueil",
+		"module": "Module",
+		"administration": "Administration"
+	},
+	"administration": {
+		"menu": {
+			"dashboard": "Tableau de bord",
+			"profils_utilisateurs": "Profils utilisateurs",
+			"access_settings": "Droit d'accès",
+			"workflows": "Workflows",
+			"automatisation": "Automatisation",
+			"documentation": "Documentation",
+			"api": "API",
+			"import_export": "Import / Export",
+			"configuration": "Configuration",
+			"offline_mode": "Mode hors ligne",
+			"access_settings_api": "Accès à l'API",
+			"access_tool": "Fichier configuration des accès",
+            "access_settings_group": "Gestion des accès par groupe",
+            "access_settings_role": "Gestion des actions par rôle",
+            "api_documentation": "Documentation de l'API",
+            "db_tool": "Outil BDD"
+		},
+		"access_settings": {
+			"moduleList": "Modules",
+			"entityList": "Entités",
+			"action": {
+				"read": "Afficher",
+				"create": "Créer",
+				"update": "Modifier",
+				"delete": "Supprimer"
+			},
+			"no_access_group_module": "Votre groupe n'a pas accès à ce module.",
+			"no_access_group_entity": "Votre groupe n'a pas accès à cette entité.",
+			"no_access_change_status": "Votre groupe n'a pas le droit de changer ce statut.",
+			"no_access_role": "Votre rôle n'a pas accès à cette action sur cette entité.",
+			"no_group": "Votre compte n'a pas d'accès à l'application, merci de contacter l'administrateur."
+		},
+		"import_export": {
+			"access": {
+				"title": "Fichier configuration des accès",
+				"export": "Exporter la configuration des accès",
+				"import": "Importer une configuration d'accès",
+				"import_file_name": "Fichier access.json:",
+				"warning": "Attention, le fichier doit être de la même structure que le access.json actuel ! Sinon l'application ne sera plus utilisable."
+			},
+			"db": {
+				"title": "Outil BDD",
+				"export_title": "Export",
+				"import_title": "Import",
+				"export_action": "Exporter",
+				"all_db": "Toute la base de donnée",
+				"import_action": "Importer",
+				"import_file": "Fichier SQL",
+				"import_success": "L'import a bien été effectué.",
+				"import_error": "Une erreur s'est produite, merci de vérifier les logs.",
+				"file_needed": "Merci d'ajouter le fichier d'import.",
+				"wrong_db_pwd": "Mot de passe incorrect.",
+				"modal_password_title": "Confirmation du mot de passe",
+				"modal_password_content": "Merci de confirmer le mot de passe de la base de données:",
+				"wrong_dialect": "Désolé, les outils de base de données ne fonctionne qu'avec MySQL pour le moment.",
+				"no_choice": "Merci de choisir ce que vous souhaitez exporter."
+			}
+		},
+		"user": {
+			"send_first_connection_mail": "Souhaitez-vous envoyer un email de première connexion à l'utilisateur ?",
+			"resend_email": "Renvoyer un email de première connexion",
+			"resend_email_success": "Le mail a bien été envoyé",
+			"cannot_modify_admin": "Vous ne pouvez pas modifier le compte Administrateur de l'application.",
+            "cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application."
+		}
+	},
+	"button": {
+		"disconnect": "Se déconnecter",
+		"show": "Afficher",
+		"update": "Modifier",
+		"delete": "Supprimer",
+		"create": "Créer",
+		"list": "Lister",
+		"add": "Ajouter",
+		"remove": "Retirer",
+		"save": "Sauvegarder",
+		"preview": "Prévisualiser",
+		"execute": "Exécuter",
+		"settings": "Paramètres",
+		"download": "Télécharger",
+		"previous": "Précédent",
+		"next": "Suivant",
+		"close": "Fermer",
+		"generate": "Générer",
+		"help": "Aide",
+		"cancel": "Annuler",
+		"return": "Retour",
+		"delete_confirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement ?",
+		"loading": "Chargement...",
+        "generate_replace": "Générer et remplacer",
+        "duplicate": "Dupliquer"
+	},
+	"operation": {
+		"show": "Afficher",
+		"update": "Modifier",
+		"create": "Créer",
+		"list": "Lister"
+	},
+	"message": {
+		"create": {
+			"success": "Succès ! L'enregistrement a été créé en base de données.",
+			"failure": "Erreur ! L'enregistrement n'a pas été créé en base de données. Veuillez contacter votre administrateur."
+		},
+		"update": {
+			"success": "Succès ! L'enregistrement a été modifié en base de données.",
+			"failure": "Erreur ! L'enregistrement n'a pas été modifié en base de données. Veuillez contacter votre administrateur."
+		},
+		"delete": {
+			"success": "Succès ! L'enregistrement a été supprimé en base de données."
+		},
+		"empty": "Aucune donnée à afficher",
+		"insert_file": "Glisser un fichier ici ou cliquer",
+		"empty_file": "Aucun fichier",
+		"unique": "Ce champ doit être unique:",
+		"relatedtomanycheckbox_required": "Un champ nécessite d'avoir au moins une case cochée."
+	},
+	"entity": {},
+	"synchro": {
+		"title": "Synchronisation",
+		"configure": "Configurer données de chargement",
+		"list": "Lister les synchronisations",
+		"config": {
+			"title": "Configuration"
+		},
+		"process": {
+			"title": "Synchronisation",
+			"synchronize": "Synchroniser",
+			"dumped": "Données de chargement généré",
+			"no_credentials": "Aucun identifiant synchro trouvé",
+			"connection_failed": "Impossible de se connecter a l'API"
+		}
+	},
+	"global_component": {
+		"local_file_storage": {
+			"wait_upload": "Des fichiers sont en cours de téléchargement, merci de bien vouloir patienter.",
+			"required_file": "Des champs fichiers / images sont obligatoires, merci de les renseigner."
+		},
+		"agenda": {
+			"menu": "Agenda",
+			"add_event": "Ajouter un événement",
+			"no_category": "Pas de catégorie",
+			"pending_event": "Événement(s) en attente",
+			"startHour": "Heure de début",
+			"endHour": "Heure de fin",
+			"fill_title": "Merci de renseigner un titre d'événement.",
+			"start_date": "Merci de renseigner au moins une date de début.",
+			"start_after_end": "La date de début est après ou similaire à la date de fin, merci de corriger.",
+			"end_before_start": "La date de fin est avant ou similaire à la date de début, merci de corriger."
+		},
+		"document_template": {
+			"template_example_dust": "Exemple de template dust",
+            "format_pairs": {
+                "dust_pdf": "Template Dust vers document PDF",
+                "docx_docx": "Template Word vers document Word"
+            },
+			"help": {
+				"menu": "Aide Modèle Document",
+				"description": "<p style='text-align:justify;'> Les modèles de document sont utilisables dans l'onglet où est positionné le composant <b>Modèle de document</b> de chaque entité.\nLors de la création de votre modèle, vous devez inclure aux endroits désirés les variables listées ci-dessous, elles seront remplacées à la volée par les données de l'entité au moment où vous cliquerez sur le bouton 'Générer'.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Pour utiliser la date de création ou de modification de chaque enregistrement veuillez utiliser:<br>\n- <b>{createdAt}</b> pour la date de création <br>\n- <b>{updatedAt}</b> pour la date de modification.\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<p>NB: Selectionnez une entité dans la liste ci-dessous pour découvrir les données disponibles et l'usage des variables.</p>\n",
+				"pageTitle": "Alimenter un modèle de document",
+				"entityInformations": "Informations concernant l'entité",
+				"entityTableRow1": "Entité",
+				"entityTableRow2": "Variable",
+				"entityTableRow3": "Accès variable",
+				"entityTableRow4": "Description",
+				"displayEntityVariables": "Sélectionnez une entité pour voir les variables disponibles",
+				"titleentity": "Entité"
+			},
+			"global_variables": {
+				"date": "Date",
+				"time": "Heure",
+				"datetime": "Date et heure",
+				"user_login": "Login de l'utilisateur connecté",
+				"user_email": "Email de l'utilisateur connecté"
+			},
+			"global": {
+				"variables": "Variables globales",
+				"description": "Ces variables commencent par un <b> g_ </b> et sont accessibles dans toutes les entités."
+			},
+            "images_ressources": {
+                "label": "Ressources image",
+                "description": "<p>Ces variables commencent par un <b> img_ </b> et sont accessibles dans toutes les entités.</p>\n<p>Elles permettent d'inclure les ressources images que vous avez crée dans l'administration. Utilisez le champ <b> code </b> de votre Ressource image dans votre template pour qu'il soit remplacé par le buffer de l'image en base64.</p>\n",
+                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
+            }
+		},
+		"status": {
+			"diagram": "Diagramme"
+		}
+	},
+	"component": {},
+	"defaults": {
+		"widgets": {
+			"lastrecords": {
+				"label": "derniers enregistrements"
+			},
+			"stats": {
+				"more_info": "Plus d'infos"
+			},
+			"piechart": {
+				"distribution": "Répartition"
+			}
+		},
+		"createdAt": "Date de création"
+	},
+	"error": {
+		"validation": {
+			"number": "La valeur du champ %s doit être un nombre",
+			"radio": "La valeur du champ %s n'est pas valide",
+			"float": "Le champ %s doit être un nombre décimal",
+			"boolean": "La valeur du champ %s doit être vrai ou faux",
+			"email": "Le champ %s n'est pas un email valide",
+			"date": "Le champ %s n'est pas une date valide",
+			"tel": "Le champ %s n'est pas un téléphone valide",
+			"color": "Le champ %s n'est pas une couleur valide",
+			"url": "Le champ %s n'est pas une URL valide"
+		},
+		"404": {
+			"title": "Nous n’avons pas pu trouver ce que vous souhaitiez."
+		},
+		"500": {
+			"title": "Nous sommes désolé, une erreur serveur s'est produite."
+		},
+		"goHome": "Si vous souhaitez retourner à la page d'accueil, cliquez-ici",
+		"goBack": "Si vous souhaitez revenir en arrière, cliquez-ici",
+		"goBackText": "Revenir en arrière",
+		"home": "Accueil",
+		"valueTooLong": "La valeur renseignée dépasse la longueur maximum autorisée(>30)."
+	}
+}

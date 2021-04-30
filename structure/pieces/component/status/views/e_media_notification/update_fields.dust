@@ -1,0 +1,129 @@
+<div id="fields" class="row">
+	<div data-field="f_title" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label for="f_title">
+				{#__ key="entity.e_media_notification.f_title"/}
+				&nbsp;
+				{@inline_help field="f_title"}
+					<i data-field="f_title" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_title">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_notification.f_title" /}' name="f_title" value="{f_title}" type="text">
+		</div>
+	</div>
+	<div data-field="f_description" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label for="f_description">
+				{#__ key="entity.e_media_notification.f_description"/}
+				&nbsp;
+				{@inline_help field="f_description"}
+					<i data-field="f_description" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_description">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_notification.f_description" /}' name="f_description" value="{f_description}" type="text">
+		</div>
+	</div>
+	<div data-field="f_icon" class="col-xs-12 col-md-6">
+		<div class="form-group">
+			<label for="f_icon">
+				{#__ key="entity.e_media_notification.f_icon"/}
+				&nbsp;
+				{@inline_help field="f_icon"}
+				<i data-field="f_icon" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<input type="hidden" class="media-field" name="f_icon" value="{f_icon}">
+			<div class="dropdown" style="width: 100%;">
+				<button class="btn btn-default dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					{#__ key="notification.icon.choose" /}
+				</button>
+				<div id="icons" class="dropdown-menu">
+					<div class="row">
+						<div class="col-12">
+							<div class="input-group form-group">
+								<span class="input-group-prepend">
+									<span class='input-group-text'>
+										<i class="fa fa-search"></i>
+									</span>
+								</span>
+								<input id="filter" class="input form-control" placeholder='Filter...'>
+							</div>
+						</div>
+						{#icon_list}
+							<div class="col-2 icon-wrap mb-4" style="text-align: center;">
+								<i class="{.} fa-2x"></i>
+							</div>
+						{/icon_list}
+					</div>
+				</div>
+			</div>
+			<br>
+			<div id="current-icon">
+				<i data-current-icon="{f_icon}" class="{f_icon} fa-2x" style="margin-bottom: 5px;"></i>
+			</div>
+		</div>
+	</div>
+	<div data-field="f_color" class="col-xs-12 col-sm-4 col-md-6">
+		<div class="form-group">
+			<label for="f_color">
+				{#__ key="entity.e_media_notification.f_color"/}
+				&nbsp;
+				{@inline_help field="f_color"}
+				<i data-field="f_color" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_notification.f_color" /}' name="f_color" value="{f_color}" type="color">
+		</div>
+	</div>
+	<div data-field="f_targets" class="col-12">
+		<div class="form-group">
+			<label for="f_targets" class='required'>
+				{#__ key="component.status.notification_targets" /}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="user_target" data-for="f_targets">
+							{#__ key="component.status.choose_user_target" /}
+						</a>
+						<a class="dropdown-item insert" data-type="user" data-for="f_targets">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_targets">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input name="f_targets" value="{f_targets}" class="form-control mt-2" required>
+		</div>
+	</div>
+	<input name="id_media_notification" type="hidden" class="media-field" value="{id}">
+</div>

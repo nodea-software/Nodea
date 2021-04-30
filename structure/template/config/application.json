@@ -1,0 +1,48 @@
+{
+	"appname": "nodea_workspace",
+	"version": 0,
+	"versionAppli": "1",
+	"api_enabled": true,
+	"socket": {
+		"enabled": true,
+		"chat": false,
+		"notification": true
+	},
+	"contact_field_for_sms": "f_phone",
+	"document_template": {
+		"format_pairs": [{
+			"code": "docx_docx",
+			"label": "global_component.document_template.format_pairs.docx_docx",
+			"input": "docx",
+			"output": "docx"
+		}, {
+			"code": "dust_pdf",
+			"label": "global_component.document_template.format_pairs.dust_pdf",
+			"input": "dust",
+			"output": "pdf"
+		}],
+		"input_extentions": ["pdf", "dust", "html", "doc", "docx"],
+		"output_extentions": ["docx", "pdf", "html"]
+	},
+	"maintenance": false,
+	"synchronization": {
+		"ignore_list": [
+			"e_action",
+			"e_api_credentials",
+			"e_group",
+			"e_role",
+			"e_media_function",
+			"e_media_mail",
+			"e_media_notification",
+			"e_notification",
+			"e_status",
+			"e_synchronization",
+			"e_synchro_credentials",
+			"e_translation",
+			"e_media_sms",
+			"e_user"
+		]
+	},
+	"lang": "fr-FR",
+	"timezone": "Europe/Paris"
+}

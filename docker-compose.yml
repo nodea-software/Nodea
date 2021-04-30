@@ -1,0 +1,41 @@
+version: '3.3'
+
+services:
+  nodea:
+    container_name: nodea_app
+    image: nodeasoftware/nodea:latest
+    links:
+      - "database:database"
+    ports:
+      - "1337:1337"
+      - "9001-9025:9001-9025" # 25 applications max, you can increase to 9100 for 100 applications if necessary
+    networks:
+      - nodea_network
+    volumes:
+      - app:/app
+    environment:
+      NODEA_ENV: "develop"
+      SERVER_IP: "127.0.0.1"
+      DATABASE_IP: "database"
+      DATABASE_USER: "nodea"
+      DATABASE_PWD: "nodea"
+      DATABASE_NAME: "nodea"
+  database:
+    container_name: nodea_database
+    image: nodeasoftware/nodea-database-mariadb:latest # nodea-database-mysql || nodea-database-mariadb || nodea-database-postgres
+    networks:
+      - nodea_network
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: nodea
+      MYSQL_DATABASE: nodea
+      MYSQL_USER: nodea
+      MYSQL_PASSWORD: nodea
+
+networks:
+  nodea_network:
+
+volumes:
+  db_data:
+  app:

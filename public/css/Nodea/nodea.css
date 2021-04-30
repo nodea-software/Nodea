@@ -1,0 +1,335 @@
+/* Nodea Hexa */
+
+/* Official */
+:root {
+	--nodea-blue: #3763ad;
+	--nodea-blue-2: #00a9ff;
+	--nodea-cyan: #00f0ff;
+	--nodea-violet: #a068f8;
+	--nodea-violet-2: #330099;
+	--nodea-green: #49bf64;
+	--nodea-yellow: #ffcc33;
+	--nodea-orange: #ffc355;
+	--nodea-red: #cc0000;
+	--nodea-black: #3c3c3c;
+	--nodea-grey: #929292;
+}
+
+/* Global font */
+@font-face {
+	font-family: Montserrat-Regular;
+	src: url("../../fonts/Montserrat/Montserrat-Regular.ttf") format("truetype");
+}
+
+html {
+	font-family: Montserrat-Regular;
+}
+
+body {
+	font-family: Montserrat-Regular;
+}
+
+/* --- Global --- */
+
+.content-wrapper {
+	background-color: #f7f7f7;
+	background-image: url("../../img/background_texture.png");
+}
+
+#toast-container > div {
+	opacity: 1;
+	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+	filter: alpha(opacity=100);
+}
+
+.card-title img {
+	width: 40px;
+	margin-right:10px;
+}
+
+.main-card {
+	margin-top: 10px;
+	margin-bottom: 0px;
+	/*min-height: 800px;*/
+}
+
+.progress {
+	border-radius: 5px;
+}
+
+/* Navbar */
+.navbar-white {
+	background-color: var(--nodea-black);
+}
+
+.navbar-light .navbar-nav .nav-link, .navbar-light .navbar-nav .nav-link {
+	color: #FFF;
+	font-weight: bold;
+}
+
+.navbar-light .navbar-nav .nav-link:focus, .navbar-light .navbar-nav .nav-link:hover {
+	color: rgba(255,255,255,.7);
+}
+
+.connectedas-label {
+	font-size: 13px;
+	color: #FFF;
+	margin-right: 15px;
+}
+
+.connectedas-label a{
+	color: #FFF;
+}
+
+.alpha-label {
+	background-color: var(--nodea-red);
+	color: #FFF;
+	border-radius: 5px;
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-weight: bold;
+}
+
+/* Tabs */
+.nav-pills .nav-link {
+	color: var(--nodea-black) !important;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	color: var(--nodea-black);
+	background-color: #FFF;
+	border-bottom: 2px solid var(--nodea-blue-2);
+}
+
+.nav-pills .nav-link:not(.active):hover {
+	color: var(--nodea-blue-2);
+}
+
+/* Buttons */
+
+.btn {
+	padding: .500rem .75rem;
+}
+
+.input-group .btn {
+	padding: .375rem .75rem;
+}
+
+.btn-primary {
+	background-color: var(--nodea-blue-2);
+	border: 0px solid var(--nodea-black);
+	box-shadow: 0 0px 0px 0px var(--nodea-blue-2) inset;
+    transition: box-shadow 1s;
+}
+
+.btn-primary:hover {
+	background-color: var(--nodea-blue-2);
+	box-shadow: -125px -125px 200px -200px var(--nodea-blue) inset;
+}
+
+.btn-info {
+	background-color: var(--nodea-blue);
+	border: 0;
+	box-shadow: 0 0px 0px 0px var(--nodea-blue) inset;
+    transition: box-shadow 1s;
+}
+
+.btn-info:hover {
+	background-color: var(--nodea-blue);
+    box-shadow: -125px -125px 200px -200px var(--nodea-blue-2) inset;
+}
+
+.btn-warning {
+	background-color: var(--nodea-yellow);
+	border: 0;
+	box-shadow: 0 0px 0px 0px var(--nodea-blue) inset;
+    transition: box-shadow 1s;
+    color: var(--nodea-black);
+}
+
+.btn-danger {
+	background-color: var(--nodea-red);
+	border: 0;
+	box-shadow: 0 0px 0px 0px var(--nodea-blue) inset;
+    transition: box-shadow 1s;
+    color: #FFF;
+}
+
+.btn-success {
+	background-color: var(--nodea-green);
+	border: 0;
+	box-shadow: 0 0px 0px 0px var(--nodea-blue) inset;
+    transition: box-shadow 1s;
+    color: #FFF;
+}
+
+.callout.callout-info {
+	border-left-color: var(--nodea-blue);
+}
+
+/* Texte */
+a {
+	color: var(--nodea-blue);
+}
+
+/* Backgrounds */
+.bg-primary {
+	background-color: var(--nodea-blue) !important;
+}
+
+.bg-primary-2 {
+	background-color: var(--nodea-blue-2) !important;
+}
+
+.bg-info {
+	background-color: var(--nodea-cyan) !important;
+}
+
+.bg-nodea-black {
+	color: #FFF;
+	background-color: var(--nodea-black) !important;
+}
+
+/* Footer */
+.main-footer {
+	background-color: #f4f6f9;
+	border-top: 0px;
+	color: #869099;
+	padding: 1rem;
+	font-size: 13px;
+}
+
+/* --- Login --- */
+
+body.login-page, .register-page {
+	background: linear-gradient(90deg, rgba(0,102,255,1) 0%, rgba(0,240,255,1) 100%);
+}
+
+body.login-page, .login-box .card-primary.card-outline {
+	border-top: 0px;
+}
+
+body.login-page .login-help {
+	color: var(--nodea-blue-2);
+	cursor: pointer;
+}
+
+body.login-page .login-help:hover {
+	color: var(--nodea-blue);
+}
+
+body.login-page #error-box {
+	display: none;
+	color: #FFF;
+	margin-bottom: 20px;
+	padding: 8px;
+	border-radius: 3px;
+	text-align: center;
+	font-size: 15px;
+}
+
+/* --- Preview --- */
+
+#preview-card .card-body {
+	min-height: 800px;
+}
+
+#loadingIframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 700px;
+    background-color: rgba(0, 0, 0, 0.25);
+    display:none;
+}
+
+#loadingIframe img{
+    display:block;
+    margin: auto;
+    margin-top:250px;
+    width:200px;
+}
+
+#errorIframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 764px;
+    background-color: rgba(0, 0, 0, 0.5);
+    display:none;
+}
+
+#errorIframe img{
+    display:block;
+    margin: auto;
+    margin-top:275px;
+    width:200px;
+}
+
+#ui_editor_apply_all{
+    margin:0;
+    vertical-align: bottom;
+    position: relative;
+    top: -1px;
+    overflow: hidden;
+    margin-right:5px;
+    display:none;
+}
+
+#logs-content{
+    white-space: pre-line;
+    height: 700px;
+    overflow:auto;
+    background:black;
+    color:#FFF;
+}
+
+.dynamic-writing {
+    display: none;
+}
+
+b.click-instruction {
+	cursor: pointer;
+}
+
+.ui-autocomplete {
+	max-height: 200px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 20px;
+}
+
+#ui-editor .sidebar .sidebar-menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#ui-editor .sidebar-menu > li {
+    background: #fff;
+}
+
+#ui-editor .sidebar-menu > li:hover {
+    background: #f9f9f9;
+}
+
+#ui-editor .sidebar-menu > li.active > a {
+    color: #222;
+    background: #f9f9f9;
+}
+
+#ui-editor .sidebar > .sidebar-menu > li:first-of-type > a {
+    border-top: 1px solid #fff;
+}
+
+#ui-editor .sidebar > .sidebar-menu > li > a {
+    margin-right: 1px;
+}
+
+#ui-editor .sidebar .sidebar-menu > li > a {
+    padding: 12px 5px 12px 15px;
+    display: block;
+}

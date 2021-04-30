@@ -1,0 +1,231 @@
+const Entity = require('@core/abstract_routes/entity');
+
+const options = require('@app/models/options/e_inline_help');
+const attributes = require('@app/models/attributes/e_inline_help');
+
+const helpers = require('@core/helpers');
+const block_access = helpers.access;
+const language = helpers.language;
+const models = require('@app/models');
+
+const fs = require('fs');
+
+class E_inline_help extends Entity {
+	constructor() {
+		const additionalRoutes = ['help'];
+		super('e_inline_help', attributes, options, helpers, additionalRoutes);
+
+		this.defaultMiddlewares = [
+			helpers.access.isLoggedIn
+		];
+	}
+
+	help() {
+		this.router.get('/help/:entity/:field', this.asyncRoute( async (data) => {
+			const help = await models.E_inline_help.findOne({
+				where: {
+					f_entity: 'e_' + data.req.params.entity,
+					f_field: data.req.params.field
+				}
+			});
+			if (!help)
+				return data.res.error(_ => data.res.status(404).end());
+
+			if (help.f_content && help.f_content != '' && isNaN(help.f_content)) {
+				// Escape HTML
+				help.f_content = help.f_content.replace(/&/g, '&amp');
+				help.f_content = help.f_content.replace(/</g, '&lt');
+				help.f_content = help.f_content.replace(/>/g, '&gt');
+			}
+
+			data.res.success(_ => data.res.send(help.f_content));
+		}));
+	}
+
+	get hooks() {
+		return {
+			list: {
+				// start: async(data) => {},
+				// beforeRender: async(data) => {},
+			},
+			datalist: {
+				// start: async(data) => {},
+				// beforeDatatableQuery: async(data) => {},
+				// afterDatatableQuery: async(data) => {},
+				beforeResponse: (data) => {
+					for (let i = 0; i < data.preparedData.data.length; i++) {
+						const row = data.preparedData.data[i];
+						const entityTrad = 'entity.' + row.f_entity + '.label_entity';
+						const fieldTrad = 'entity.' + row.f_entity + '.' + row.f_field;
+						data.preparedData.data[i].f_entity = language(data.req.session.lang_user).__(entityTrad);
+						data.preparedData.data[i].f_field = language(data.req.session.lang_user).__(fieldTrad);
+					}
+				}
+			},
+			subdatalist: {
+				// start: async (data) => {},
+				// beforeDatatableQuery: async (data) => {},
+				// afterDatatableQuery: async (data) => {},
+				// beforeResponse: async (data) => {},
+			},
+			show: {
+				// start: async (data) => {},
+				// beforeEntityQuery: async(data) => {},
+				afterEntityQuery: (data) => {
+					const entity = data.e_inline_help.f_entity;
+					data.e_inline_help.f_entity = language(data.req.session.lang_user).__('entity.' + entity + '.label_entity');
+					data.e_inline_help.f_field = language(data.req.session.lang_user).__('entity.' + entity + '.' + data.e_inline_help.f_field);
+				}
+				// beforeRender: async(data) => {}
+			},
+			create_form: {
+				// start: async (data) => {},
+				// ifFromAssociation: async(data) => {},
+				beforeRender: (data) => {
+					const entities = [];
+					fs.readdirSync(__dirname + '/../models/attributes/').filter(file => file.indexOf('.') !== 0 && file.slice(-5) === '.json' && file.substring(0, 2) == 'e_').forEach(file => {
+						const fields = [];
+						const attributesObj = JSON.parse(fs.readFileSync(__dirname + '/../models/attributes/' + file));
+						const optionsObj = JSON.parse(fs.readFileSync(__dirname + '/../models/options/' + file));
+						const entityName = file.substring(0, file.length - 5);
+
+						for (const field in attributesObj)
+							if (field != 'id' && field != 'version' && field.indexOf('f_') == 0)
+								fields.push({
+									tradKey: 'entity.' + entityName + '.' + field,
+									field: field
+								});
+
+						for (let i = 0; i < optionsObj.length; i++)
+							if (optionsObj[i].structureType == 'relatedTo' || optionsObj[i].structureType == 'relatedToMultiple' || optionsObj[i].structureType == 'relatedToMultipleCheckbox')
+								fields.push({
+									tradKey: 'entity.' + entityName + '.' + optionsObj[i].as,
+									field: optionsObj[i].as
+								});
+
+						if (fields.length > 0)
+							entities.push({
+								tradKey: 'entity.' + entityName + '.label_entity',
+								entity: entityName,
+								fields: fields
+							});
+					});
+					data.entities = entities;
+				}
+			},
+			create: {
+				// start: async (data) => {},
+				beforeCreateQuery: (data) => {
+					data.createObject.f_field = data.req.body.f_field.split('.')[1];
+				}
+				// beforeRedirect: async(data) => {}
+			},
+			update_form: {
+				// start: async (data) => {},
+				// afterEntityQuery: async(data) => {},
+				beforeRender: (data) => {
+					const entity = data.e_inline_help.f_entity;
+					data.e_inline_help.f_entity = language(data.req.session.lang_user).__('entity.' + entity + '.label_entity');
+					data.e_inline_help.f_field = language(data.req.session.lang_user).__('entity.' + entity + '.' + data.e_inline_help.f_field);
+				}
+			},
+			update: {
+				// start: async (data) => {},
+				// beforeRedirect: async(data) => {}
+			},
+			loadtab: {
+				// start: async (data) => {},
+				// beforeValidityCheck: (data) => {},
+				// afterValidityCheck: (data) => {},
+				// beforeDataQuery: (data) => {},
+				// beforeRender: (data) => {},
+			},
+			set_status: {
+				// start: async (data) => {},
+				// beforeRedirect: async(data) => {}
+			},
+			search: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_remove: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_add: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
+			destroy: {
+				// start: async (data) => {},
+				// beforeEntityQuery: async(data) => {},
+				// beforeDestroy: async(data) => {},
+				// beforeRedirect: async(data) => {},
+			}
+		};
+	}
+
+	get middlewares() {
+		return {
+			list: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			datalist: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			subdatalist: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			show: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			create_form: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "create")
+			],
+			create: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "create")
+			],
+			update_form: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "update")
+			],
+			update: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "update")
+			],
+			loadtab: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			set_status: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read"),
+				block_access.statusGroupAccess
+			],
+			search: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "read")
+			],
+			fieldset_remove: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "delete")
+			],
+			fieldset_add: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "create")
+			],
+			destroy: [
+				block_access.entityAccessMiddleware(this.entity),
+				block_access.actionAccessMiddleware(this.entity, "delete")
+			]
+		}
+	}
+}
+
+module.exports = E_inline_help;

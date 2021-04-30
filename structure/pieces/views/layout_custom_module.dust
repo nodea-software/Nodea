@@ -1,0 +1,14 @@
+{>"main_layout"/}
+
+{<custom_css}
+	{+custom_css_2 /}
+{/custom_css}
+
+{<modules}
+	<select id='module-select' class='form-control' onchange='navigate()'></select>
+{/modules}
+
+{<sidebar}
+	<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+	</ul>
+{/sidebar}

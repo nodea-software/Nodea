@@ -1,0 +1,310 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+		.app-box {
+			background-color: var(--nodea-black);
+			border: 0;
+			box-shadow: 0 0px 0px 0px var(--nodea-grey) inset;
+		    transition: box-shadow 1s;
+		    color: #FFF;
+		    font-size: 19px;
+		}
+
+		.app-box:hover {
+		    box-shadow: -150px -150px 200px -200px var(--nodea-grey) inset;
+		}
+
+		.app-box .info-box-icon {
+			border-right: 1px solid #FFF;
+			margin-right: 10px;
+		}
+
+		#createScriptTextarea{
+		    float:left;
+		    display: none;
+		}
+
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+	</style>
+{/custom_css}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/wrench.png" alt="Wrench picto">
+									{#__ key="menu.build" /}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-3">
+									<li class="nav-item">
+										<a class="nav-link active" href="#home" data-toggle="tab">
+											{#__ key="build.tabs.home"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#generate" data-toggle="tab">
+											{#__ key="build.tabs.generate"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#script" data-toggle="tab">
+											{#__ key="build.tabs.script"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#import" data-toggle="tab">
+											{#__ key="build.tabs.import"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#manage" data-toggle="tab">
+											{#__ key="build.tabs.manage"/}
+										</a>
+									</li>
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="tab-content">
+									<div class="tab-pane active" id="home">
+										<h4>Accueil</h4>
+										<hr>
+										<div class="row">
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_generate' class="trigger-tab powertip" powertip-content='{#__ key="powertip.build.1" /}' powertip-order='1'>
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-plus"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="build.tabs.generate"/}</span>
+															<span class="info-box-number">{#__ key="build.home.generate_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_script' class="trigger-tab powertip" powertip-content='{#__ key="powertip.build.2" /}' powertip-order='2'>
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-align-left"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="build.tabs.script"/}</span>
+															<span class="info-box-number">{#__ key="build.home.script_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_import' class="trigger-tab powertip" powertip-content='{#__ key="powertip.build.3" /}' powertip-order='3'>
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-file-import"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="build.tabs.import"/}</span>
+															<span class="info-box-number">{#__ key="build.home.import_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_manage' class="trigger-tab powertip" powertip-content='{#__ key="powertip.build.4" /}' powertip-order='4'>
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-list-ul"></i>
+														</span>
+
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="build.tabs.manage"/}</span>
+															<span class="info-box-number">{#__ key="build.home.manage_text"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+										{@gt key=nb_application value=0}
+											<br><br>
+											<h4>{#__ key="build.your_application"/}</h4>
+											{#__ key="build.clicktopreview"/}
+											<hr>
+											<div class="row powertip" powertip-content='{#__ key="powertip.build.5" /}' powertip-order='5'>
+												{#applications}
+													<div data-id="{id}" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 app-box-col">
+														<a href="/application/preview/{name}" style="width: 100%;">
+															<div class="app-box info-box" style="width: 100%;">
+																{! <div class="ribbon-wrapper">
+																	<div class="ribbon bg-primary">
+																		<i class="fas fa-eye"></i>
+																	</div>
+																</div> !}
+																<span class="info-box-icon">
+																	<i class="fas fa-desktop"></i>
+																</span>
+
+																<div class="info-box-content">
+																	<span class="info-box-text"><b>{displayName}</b></span>
+																</div>
+															</div>
+														</a>
+													</div>
+												{/applications}
+											</div>
+										{/gt}
+									</div>
+									<div class="tab-pane" id="generate">
+										{>"front/build/generate"/}
+									</div>
+									<div class="tab-pane" id="script">
+										{>"front/build/script"/}
+									</div>
+									<div class="tab-pane" id="import">
+										{>"front/build/import"/}
+									</div>
+									<div class="tab-pane" id="manage">
+										{>"front/build/manage"/}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<!-- Select2 -->
+	<script src="/AdminLTE/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+	<!-- Moment -->
+	<script src="/AdminLTE/plugins/moment/moment.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var sureToDelete = '{#__ key="listApplication.sureToDelete"/}';
+		var loading = '{#__ key="listApplication.loading"/}';
+		var projectDelete = '{#__ key="listApplication.projectDelete"/}';
+		var appDelete = '{#__ key="listApplication.appDelete"/}';
+		var loadingText = '{#__ key="button.loading"/}';
+
+		var env_protocol = "{globalConf.protocol}";
+		var env_sub_domain = "{globalConf.sub_domain}";
+		var dns_studio = "{globalConf.dns_studio}";
+	</script>
+	<script src="/js/Nodea/tab_redirection.js" menu='build' type="text/javascript"></script>
+	<script src="/js/Nodea/generate.js" type="text/javascript"></script>
+	<script src="/js/Nodea/instruction_script.js" type="text/javascript"></script>
+	<script src="/js/Nodea/import_app.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			/* --- Manage application --- */
+
+			/* --- Export application --- */
+			$(document).on('click', '.export-btn', function(){
+
+				if ($(this).hasClass("disabled")) {
+					event.preventDefault();
+				}
+
+				var context = this;
+		        $(this).addClass("disabled");
+		        $(this).css("cursor", "wait");
+		        var tmpText = $(this).html();
+		        if ($(this).hasClass("btn-confirm")) {
+		            if (!isChrome) {
+		                $(this).html("<i class='fa fa-spinner fa-spin'></i>");
+		            }
+		        } else {
+		            $(this).html("<i class='fa fa-spinner fa-spin'></i>");
+		        }
+		        setTimeout(function () {
+		            $(context).prop("disabled", false);
+		            $(context).css("cursor", "pointer");
+		            $(context).html(tmpText);
+		        }, 3000);
+			});
+
+			/* --- Delete application --- */
+			$(document).on('click', '.deleteAppForm', function() {
+				if(!window.confirm(sureToDelete))
+					return;
+				var originHtml = $(this).html();
+				$(this).html(loading);
+				$(this).prop("disabled", true);
+				$(document.body).css({cursor: 'wait'});
+				$.ajax({
+					url: '/application/delete',
+					method: 'POST',
+					context: this,
+					data: {
+						app_name: $(this).attr('data-name')
+					},
+					success: function() {
+						$(this).parents('tr').remove();
+						$(this).prop("disabled", false);
+						$(document.body).css({cursor: 'default'});
+
+						$('.app-box-col[data-id="' + $(this).attr('data-id') + '"]').remove();
+						$('select[name="select_application"]').find('option[value="' + $(this).attr('data-codename') + '"]').remove();
+						$('select[name="select_application"]').select2("destroy");
+						$('select[name="select_application"]').select2();
+
+						/* If it is the delete app button generated for the script tab when an error occured*/
+						if($(this).hasClass('fromScript')) {
+							$("#answers").html('');
+                    		$("#progress_title").text('');
+                    		$("#instructionCount").text('');
+							$("#progressbarcontent").hide();
+							$(this).replaceWith('<span id="goTo" style="display:none;">Redirection...</span>').hide();
+						}
+
+						toastr.success(appDelete);
+					},
+					error: function(err) {
+						console.log(err);
+						if(err.message)
+							toastr.error(err.message);
+						else if(err.messageText)
+							toastr.error(err.messageText);
+						else if(err.responseText)
+							toastr.error(err.responseText);
+						$(this).html(originHtml);
+						$(document.body).css({cursor: 'auto'});
+					}
+				});
+
+				return false;
+			});
+
+			/* --- Code platform information --- */
+			$(document).on("click", ".code-platform-button", function(){
+				$("#code_platform_repo_url").html($(this).attr("data-repourl"));
+				$("#code_platform_repo_ssh_url").html($(this).attr("data-reposshurl"));
+			});
+		});
+	</script>
+{/custom_js}

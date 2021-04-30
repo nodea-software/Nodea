@@ -1,0 +1,166 @@
+<div id="fields" class="row">
+	<div data-field="f_to" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_to">
+				{#__ key="entity.e_media_mail.f_to"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="user" data-for="f_to">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_to">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+						<a class="dropdown-item insert" data-type="email_field" data-for="f_to">
+							{#__ key="component.status.choose_from_email_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_to" /}' name="f_to" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_cc" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_cc">
+				{#__ key="entity.e_media_mail.f_cc"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="user" data-for="f_cc">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_cc">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+						<a class="dropdown-item insert" data-type="email_field" data-for="f_cc">
+							{#__ key="component.status.choose_from_email_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_cc" /}' name="f_cc" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_cci" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_cci">
+				{#__ key="entity.e_media_mail.f_cci"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="user" data-for="f_cci">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_cci">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+						<a class="dropdown-item insert" data-type="email_field" data-for="f_cci">
+							{#__ key="component.status.choose_from_email_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_cci" /}' name="f_cci" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_from" class="col-xs-12 col-sm-6">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_from">
+				{#__ key="entity.e_media_mail.f_from"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="user" data-for="f_from">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_from">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+						<a class="dropdown-item insert" data-type="email_field" data-for="f_from">
+							{#__ key="component.status.choose_from_email_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_from" /}' name="f_from" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_attachments" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_attachments">
+				{#__ key="entity.e_media_mail.f_attachments"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="file_field" data-for="f_attachments">
+							{#__ key="component.status.choose_from_file_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_attachments" /}' name="f_attachments" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_subject" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_subject">
+				{#__ key="entity.e_media_mail.f_subject"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_subject">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_subject" /}' name="f_subject" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_content" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_content">
+				{#__ key="entity.e_media_mail.f_content"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="field" data-for="f_content">
+							{#__ key="component.status.choose_from_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<textarea rows=30 class="form-control textarea regular-textarea mt-2" placeholder='{#__ key="entity.e_media_mail.f_content" /}' name="f_content" id="f_content_textareaid" type="text">{f_content|s}</textarea>
+		</div>
+	</div>
+</div>

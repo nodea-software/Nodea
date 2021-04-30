@@ -1,0 +1,199 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+	</style>
+{/custom_css}
+
+{<title}
+	{#__ key="menu.home"/}<small>{#__ key="menu.module"/}</small>
+{/title}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/gears.png" alt="Users picto">
+									{#__ key="configure.tabs.settings"/}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-2">
+									<li class="nav-item">
+										<a class="nav-link" href="/configure">
+											{#__ key="configure.tabs.home"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/configure/account">
+											{#__ key="configure.tabs.account"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link active" href="/configure/settings">
+											{#__ key="configure.tabs.settings"/}
+										</a>
+									</li>
+									{#isAdmin}
+										<li class="nav-item">
+											<a class="nav-link" href="/configure/users">
+												{#__ key="configure.tabs.users"/}
+											</a>
+										</li>
+									{/isAdmin}
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="row">
+									<div class="col-12">
+										<div class="form-group">
+											<label>{#__ key="settings.display_language"/}</label>
+											<br>
+											<a class='chooseLanguage btn {@eq key=user_lang value="fr-FR"}btn-primary{:else}btn-default{/eq}' data-lang="fr-FR">
+												{#__ key="settings.french"/}
+											</a>&nbsp;&nbsp;
+											<a class='chooseLanguage btn {@eq key=user_lang value="en-EN"}btn-primary{:else}btn-default{/eq}' data-lang="en-EN">
+												{#__ key="settings.english"/}
+											</a>
+										</div>
+									</div>
+									<div class="col-12">
+										<br>
+										<div class="form-group">
+											<label>{#__ key="settings.dark_theme"/}</label>
+											<br>
+											<a class='darkTheme btn {@ifTrue key=dark_theme}btn-primary{:else}btn-default{/ifTrue}' data-choice=true>
+												{#__ key="button.yes"/}
+											</a>&nbsp;&nbsp;
+											<a class='darkTheme btn {@ifTrue key=dark_theme}btn-default{:else}btn-primary{/ifTrue}' data-choice=false>
+												{#__ key="button.no"/}
+											</a>
+										</div>
+									</div>
+									{#isAdmin}
+										<div class="col-12">
+											<br>
+											<div class="form-group">
+												<label>{#__ key="settings.activate_translation"/}</label>
+												<br>
+												<a class="chooseTranslate btn {@ifTrue key=toTranslate}btn-primary{:else}btn-default{/ifTrue}" data-activate="true">
+													{#__ key="button.yes"/}
+												</a>&nbsp;&nbsp;
+												<a class="chooseTranslate btn {@ifTrue key=toTranslate}btn-default{:else}btn-primary{/ifTrue}" data-activate="false">
+													{#__ key="button.no"/}
+												</a>
+											</div>
+										</div>
+									{/isAdmin}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script type="text/javascript">
+		var sureResetMsg = '{#__ key="settings.sure_reset"/}';
+		var loginUser = "{user.login}";
+		var mailUser = "{user.email}";
+		$(document).ready(function() {
+			$(document).on("click", ".chooseLanguage", function(){
+				var lang = $(this).data("lang");
+				var ajaxdata = {
+					lang: lang
+				};
+
+				$.ajax({
+					url : '/configure/settings/change_language',
+					type : 'POST',
+					data : JSON.stringify(ajaxdata),
+					dataType : 'json',
+					contentType: "application/json",
+					context: this,
+					success: function (data) {
+						if(data.success){
+							location.reload();
+						}
+					},
+					error: function (error) {
+						console.error(error);
+						toastr.error(error);
+					}
+				});
+			});
+
+			$(document).on("click", ".darkTheme", function(){
+				var choice = $(this).data("choice");
+				var ajaxdata = {
+					choice: choice
+				};
+
+				$.ajax({
+					url : '/configure/settings/change_theme',
+					type : 'POST',
+					data : JSON.stringify(ajaxdata),
+					dataType : 'json',
+					contentType: "application/json",
+					context: this,
+					success: function (data) {
+						if(data.success){
+							location.reload();
+						}
+					},
+					error: function (error) {
+						console.error(error);
+						toastr.error(error);
+					}
+				});
+			});
+
+			$(document).on("click", ".chooseTranslate", function(){
+				var activate = $(this).data("activate");
+				var ajaxdata = {
+					activate: activate
+				};
+
+				$.ajax({
+					url : '/configure/settings/activate_translation',
+					type : 'POST',
+					data : JSON.stringify(ajaxdata),
+					dataType : 'json',
+					contentType: "application/json",
+					context: this,
+					success: function (data) {
+						if(data.success){
+							location.reload();
+						}
+					},
+					error: function (error) {
+						console.error(error);
+						toastr.error(error);
+					}
+				});
+			});
+		});
+	</script>
+{/custom_js}

@@ -1,0 +1,31 @@
+<h4>{#__ key="develop.tabs.mytasks"/}</h4>
+<hr>
+<div class="row">
+	<div class="col-12">
+		<a class="btn btn-warning" href='{currentRepoUrl}/issues' target=_blank>
+			<i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;
+			{#__ key="develop.issues" /}
+		</a>
+		<br><br>
+		<h5>
+			{#__ key="develop.backlog.issue_list" /}
+		</h5>
+		<hr>
+		<table id="mytasks" class="table table-bordered table-hover animate__animated animate__fadeIn animate__slow">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>{#__ key="develop.backlog.title" /}</th>
+					<th>{#__ key="develop.backlog.description" /}</th>
+					<th>{#__ key="develop.backlog.created_at" /}</th>
+					<th>{#__ key="develop.backlog.labels" /}</th>
+					<th>{#__ key="develop.backlog.assign" /}</th>
+					<th>{#__ key="develop.backlog.state" /}</th>
+					<th>{#__ key="develop.backlog.access" /}</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>

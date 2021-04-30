@@ -1,0 +1,91 @@
+{>"layout_m_administration" /}
+
+{<header}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6">
+				<h1 class="m-0">
+				{#__ key="module.m_administration"/}&nbsp;
+				<small>
+					{#__ key="module.module"/}
+				</small>
+				</h1>
+			</div>
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item">
+						<a href="/module/home">
+							<i class="fa fa-home"></i>&nbsp;&nbsp;
+							{#__ key="module.home"/}
+						</a>
+					</li>
+					<li class='breadcrumb-item'>
+						<a href='/module/administration'>
+							{#__ key="module.m_administration"/}
+						</a>
+					</li>
+					<li class="breadcrumb-item active">
+						{#__ key="administration.menu.access_tool" /}
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="administration.menu.access_tool" /}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-12">
+								<h3>{#__ key="administration.import_export.access.export" /}</h3>
+								<hr style="margin-top: 5px;">
+								<form action="/import_export/access_export" method="GET" id="export_form">
+									<button type="submit" class="btn btn-primary">{#__ key="administration.import_export.db.export_action" /}</button>
+								</form>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-12">
+								<h3>{#__ key="administration.import_export.access.import" /}</h3>
+								<hr style="margin-top: 5px;">
+								<b style="color:orange;">{#__ key="administration.import_export.access.warning" /}</b>
+								<form action="/import_export/access_import" method="POST" id="import_form">
+									<div class="form-group">
+										<label for="import_file">
+											{#__ key="administration.import_export.access.import_file_name"/}
+										</label>
+										<div class="dropzone dropzone-field" id="import_file_dropzone" data-entity="access_tool"></div>
+										<input type="hidden" name="import_file" id="import_file_dropzone_hidden" required>
+									</div>
+									<button type="submit" class="btn btn-primary">{#__ key="administration.import_export.db.import_action" /}</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{/content}
+
+{<custom_js}
+	<script type="text/javascript">
+		NodeaForms();
+	</script>
+{/custom_js}

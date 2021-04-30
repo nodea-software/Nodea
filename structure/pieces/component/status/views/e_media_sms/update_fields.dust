@@ -1,0 +1,55 @@
+<div id="fields" class="row">
+	<div data-field="f_message" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_message">
+				{#__ key="entity.e_media_sms.f_message"/}<br>
+				{@inline_help field="f_message"}
+					<i data-field="f_message" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="file_field" data-for="f_message">
+							{#__ key="component.status.choose_from_file_field" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<textarea class="form-control textarea mt-2" placeholder='{#__ key="entity.e_media_sms.f_message" /}' name="f_message" id="f_message_textareaid" type="text">{f_message|s}</textarea>
+		</div>
+	</div>
+	<div data-field="f_phone_numbers" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_phone_numbers">
+				{#__ key="entity.e_media_sms.f_phone_numbers"/}<br>
+				{@inline_help field="f_phone_numbers"}
+					<i data-field="f_phone_numbers" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend insert-mosaic">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" x-placement="bottom-start">
+						<a class="dropdown-item insert" data-type="phone_field" data-for="f_phone_numbers">
+							{#__ key="component.status.choose_from_phone_field" /}
+						</a>
+						<a class="dropdown-item insert" data-type="user" data-for="f_phone_numbers">
+							{#__ key="component.status.choose_from_user" /}
+						</a>
+						<a class="dropdown-item insert" data-type="group" data-for="f_phone_numbers">
+							{#__ key="component.status.choose_from_group" /}
+						</a>
+					</div>
+				</div>
+			</div>
+			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_sms.f_phone_numbers" /}' name="f_phone_numbers" value="{f_phone_numbers}" type="text" maxlength="255">
+		</div>
+	</div>
+	<input name="id_media_sms" type="hidden" class="media-field" value="{id}">
+</div>

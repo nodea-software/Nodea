@@ -1,0 +1,296 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+	</style>
+{/custom_css}
+
+{<title}
+	{#__ key="menu.home"/}<small>{#__ key="menu.module"/}</small>
+{/title}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/user.png" alt="User picto">
+									{#__ key="configure.tabs.account"/}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-2">
+									<li class="nav-item">
+										<a class="nav-link" href="/configure">
+											{#__ key="configure.tabs.home"/}
+										</a>
+									</li>
+
+									<li class="nav-item">
+										<a class="nav-link active" href="/configure/account">
+											{#__ key="configure.tabs.account"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/configure/settings">
+											{#__ key="configure.tabs.settings"/}
+										</a>
+									</li>
+									{#isAdmin}
+										<li class="nav-item">
+											<a class="nav-link" href="/configure/users">
+												{#__ key="configure.tabs.users"/}
+											</a>
+										</li>
+									{/isAdmin}
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="row">
+									<div class="col-md-3">
+										<div class="card card-primary card-outline">
+											<div class="card-body box-profile">
+												<div class="text-center">
+													<img src="/img/picto/user.png" alt="User profile picture" width="100px">
+												</div>
+
+												<h3 class="profile-username text-center">{user.firstname} {user.lastname}</h3>
+
+												<p class="text-muted text-center">{user.login}</p>
+
+												<ul class="list-group list-group-unbordered mb-3">
+													<li class="list-group-item">
+														<b>{#__ key="configure.account.signup_date"/}</b> <a class="float-right">{user.createdAt|datetime}</a>
+													</li>
+													<li class="list-group-item">
+														<b>Applications</b> <a class="float-right">{user.Applications.length}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<!-- /.card -->
+									</div>
+									<!-- /.col -->
+									<div class="col-md-9">
+										<div class="card">
+											<div class="card-header p-2">
+												<ul class="nav nav-pills">
+													<li class="nav-item">
+														<a class="nav-link active" href="#home" data-toggle="tab">
+															{#__ key="configure.account.general_info"/}
+														</a>
+													</li>
+													<li class="nav-item">
+														<a class="nav-link" href="#applications" data-toggle="tab">
+															Applications
+														</a>
+													</li>
+												</ul>
+											</div><!-- /.card-header -->
+											<div class="card-body">
+												<div class="tab-content">
+													<div class="active tab-pane" id="home">
+														<div class="row">
+															<div class="col-12">
+																<label>{#__ key="settings.display_infos"/}</label>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.login"/}<br>
+																	<input class="form-control input" value="{user.login}" readonly />
+																</div>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.role"/}<br>
+																	<input class="form-control input" value="{user.Role.name}" readonly />
+																</div>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.lastname"/}<br>
+																	<input class="form-control input" value="{user.lastname}" name='lastname' />
+																</div>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.firstname"/}<br>
+																	<input class="form-control input" value="{user.firstname}" name='firstname' />
+																</div>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.phone"/}<br>
+																	<input class="form-control input" value="{user.phone}" name='phone' />
+																</div>
+															</div>
+															<div class="col-xs-12 col-sm-6">
+																<div class="form-group">
+																	{#__ key="settings.infos.email"/}<br>
+																	<input class="form-control input" value="{user.email}" readonly />
+																</div>
+															</div>
+															<div class="col-12">
+																<button class='btn btn-primary' id='account_update_btn'>
+																	<i class="fas fa-save fa-md"></i>&nbsp;&nbsp;
+																	<span>{#__ key="button.save"/}</span>
+																</button>
+															</div>
+
+															{?code_platform_user}
+																<div class="col-12">
+																	<hr>
+																	<label>{#__ key="settings.display_code_platform"/}</label>
+																</div>
+																<div class="col-xs-12 col-sm-6">
+																	<div class="form-group">
+																		URL<br>
+																		<input class="form-control input" value="{code_platform_host}" readonly />
+																	</div>
+																</div>
+																<div class="col-xs-12 col-sm-6">
+																	<div class="form-group">
+																		Login<br>
+																		<input class="form-control input" value="{code_platform_user.email}" readonly />
+																	</div>
+																</div>
+															{/code_platform_user}
+															<div class="col-12">
+																<hr>
+																<div class="form-group">
+																	<label>{#__ key="settings.change_password"/}</label>
+																	<br>
+																	<button type='button' id='resetPassword' class="btn btn-primary">
+																		<i class="fas fa-sync fa-md"></i>&nbsp;&nbsp;
+																		{#__ key="settings.reset_button"/}
+																	</button>
+																</div>
+															</div>
+															<div class="col-12">
+																<hr>
+																<div class="form-group">
+																	<label>{#__ key="settings.info_delete_compte"/}</label>
+																	<br>
+																	<a href='mailto:contact@nodea-software.com' class="btn btn-primary">
+																		<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
+																		contact@nodea-software.com
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="tab-pane" id="applications">
+														<div class="row">
+															{#user.Applications}
+																<div data-id="{id}" class="col-xs-12 col-sm-4">
+																	<a href="/application/preview/{name}" style="width: 100%;">
+																		<div class="app-box info-box bg-primary" style="width: 100%;">
+																			{! <div class="ribbon-wrapper">
+																				<div class="ribbon bg-primary">
+																					<i class="fas fa-eye"></i>
+																				</div>
+																			</div> !}
+																			<span class="info-box-icon">
+																				<i class="fas fa-desktop"></i>
+																			</span>
+
+																			<div class="info-box-content">
+																				<span class="info-box-text"><b>{displayName}</b></span>
+																			</div>
+																		</div>
+																	</a>
+																</div>
+															{/user.Applications}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script type="text/javascript">
+		var sureResetMsg = '{#__ key="settings.sure_reset" /}';
+		var successUpdateMsg = '{#__ key="action.success.update" /}';
+		var loginUser = "{user.login}";
+		var emailUser = "{user.email}";
+		$(document).ready(function() {
+
+			$(document).on("click", "#resetPassword", function(){
+				var sure = confirm(sureResetMsg);
+				if(!sure)
+					return;
+
+				var ajaxdata = {
+					login: loginUser,
+					email: emailUser
+				};
+
+				$(this).prop('disabled', true);
+
+				$.ajax({
+					url : '/configure/settings/reset_password',
+					type : 'POST',
+					data : JSON.stringify(ajaxdata),
+					contentType: "application/json",
+					context: this,
+					success: function (success) {
+						window.location.href = "/logout";
+					},
+					error: function (err) {
+						console.log(err);
+						toastr.error(err.responseText || err.message || err);
+						$(this).prop('disabled', false);
+					}
+				});
+			});
+
+			$(document).on("click", "#account_update_btn", function(){
+				$.ajax({
+					url : '/configure/account/update',
+					type : 'POST',
+					data : {
+						firstname: $('input[name="firstname"]').val(),
+						lastname: $('input[name="lastname"]').val(),
+						phone: $('input[name="phone"]').val()
+					},
+					context: this,
+					success: function () {
+						toastr.success(successUpdateMsg);
+					},
+					error: function (err) {
+						console.log(err);
+						toastr.error(err.responseText || err.message || err);
+					}
+				});
+			});
+		});
+	</script>
+{/custom_js}

@@ -1,0 +1,650 @@
+{>"main_layout"/}
+
+{<custom_css}
+{+custom_css_2 /}
+{/custom_css}
+
+{<modules}
+    <select id="module-select" class="form-control" onchange="navigate()">
+        {#moduleAccess module="home"}
+        <option data-module="m_home" value="/module/home">
+            {#__ key="module.m_home" /}
+        </option>
+        {/moduleAccess}
+        {#moduleAccess module="administration"}
+        <option data-module="m_administration" value="/module/administration" selected="">
+            {#__ key="module.m_administration" /}
+        </option>
+        {/moduleAccess}
+    </select>
+{/modules}
+
+{! {#entityAccess entity="sisi"}
+{#actionAccess entity="user" action="create"}
+ !}
+{<sidebar}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+            <a href="/module/administration" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    {#__ key="administration.menu.dashboard" /}
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>
+                    {#__ key="administration.menu.profils_utilisateurs" /}
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                {#entityAccess entity="user"}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>{#__ key="entity.e_user.label_entity" /}</p>
+                            <i class="right fas fa-angle-left"></i>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {#actionAccess entity="user" action="create"}
+                                <li class="nav-item">
+                                    <a href="/user/create_form" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.create" /}</p>
+                                    </a>
+                                </li>
+                            {/actionAccess}
+                            {#actionAccess entity="user" action="read"}
+                                <li class="nav-item">
+                                    <a href="/user/list" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.list" /}</p>
+                                    </a>
+                                </li>
+                            {/actionAccess}
+                        </ul>
+                    </li>
+                {/entityAccess}
+                {#entityAccess entity="role"}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>{#__ key="entity.e_role.label_entity" /}</p>
+                            <i class="right fas fa-angle-left"></i>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {#actionAccess entity="role" action="create"}
+                                <li class="nav-item">
+                                    <a href="/role/create_form" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.create" /}</p>
+                                    </a>
+                                </li>
+                            {#actionAccess entity="role" action="read"}
+                            {/actionAccess}
+                                <li class="nav-item">
+                                    <a href="/role/list" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.list" /}</p>
+                                    </a>
+                                </li>
+                            {/actionAccess}
+                        </ul>
+                    </li>
+                {/entityAccess}
+                {#entityAccess entity="group"}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>{#__ key="entity.e_group.label_entity" /}</p>
+                            <i class="right fas fa-angle-left"></i>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {#actionAccess entity="group" action="create"}
+                                <li class="nav-item">
+                                    <a href="/group/create_form" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.create" /}</p>
+                                    </a>
+                                </li>
+                            {/actionAccess}
+                            {#actionAccess entity="group" action="read"}
+                                <li class="nav-item">
+                                    <a href="/group/list" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        <p>{#__ key="operation.list" /}</p>
+                                    </a>
+                                </li>
+                            {/actionAccess}
+                        </ul>
+                    </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        {#entityAccess entity="access_settings"}
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-user-shield"></i>
+                    <p>
+                        {#__ key="administration.menu.access_settings" /}
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    {#actionAccess entity="access_settings" action="read"}
+                        <li class="nav-item">
+                            <a href="/access_settings/show_role" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>{#__ key="entity.e_role.label_entity" /}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/access_settings/show_group" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>{#__ key="entity.e_group.label_entity" /}</p>
+                            </a>
+                        </li>
+                    {/actionAccess}
+                </ul>
+            </li>
+        {/entityAccess}
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fa fa-random"></i>
+                <p>
+                    {#__ key="administration.menu.workflows" /}
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                {#entityAccess entity="status"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_status.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="status" action="create"}
+                        <li class="nav-item">
+                            <a href="/status/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                <p>{#__ key="operation.create" /}</p>
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="status" action="read"}
+                        <li class="nav-item">
+                            <a href="/status/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                <p>{#__ key="operation.list" /}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/status/diagram" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                <p>{#__ key="global_component.status.diagram" /}</p>
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+
+                {#entityAccess entity="media"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_media.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="media" action="create"}
+                        <li class="nav-item" class="nav-link">
+                            <a href="/media/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="media" action="read"}
+                        <li class="nav-item" class="nav-link">
+                            <a href="/media/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fa fa-tasks nav-icon"></i>
+                <p>
+                    {#__ key="administration.menu.automatisation" /}
+                </p>
+                <i class="right fas fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview">
+                {#entityAccess entity="robot"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_robot.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="robot" action="create"}
+                        <li class="nav-item">
+                            <a href="/robot/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="robot" action="read"}
+                        <li class="nav-item">
+                            <a href="/robot/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+                {#entityAccess entity="task"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_task.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="task" action="create"}
+                        <li class="nav-item">
+                            <a href="/task/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="task" action="read"}
+                        <li class="nav-item">
+                            <a href="/task/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+                {#entityAccess entity="process"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_process.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="process" action="create"}
+                        <li class="nav-item">
+                            <a href="/process/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="process" action="read"}
+                        <li class="nav-item">
+                            <a href="/process/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+                {#entityAccess entity="program"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_program.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="program" action="create"}
+                        <li class="nav-item">
+                            <a href="/program/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="program" action="read"}
+                        <li class="nav-item">
+                            <a href="/program/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fa fa-book nav-icon"></i>
+                <p>
+                    {#__ key="administration.menu.documentation" /}
+                </p>
+                <i class="right fas fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview">
+                {#entityAccess entity="inline_help"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_inline_help.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="inline_help" action="create"}
+                        <li class="nav-item">
+                            <a href="/inline_help/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="inline_help" action="read"}
+                        <li class="nav-item">
+                            <a href="/inline_help/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+                {#entityAccess entity="user_guide"}
+                    <li class="nav-item">
+                        <a href="/user_guide/update_form?id=1" class="nav-link">
+                            <i class="fas fa-caret-right nav-icon"></i>
+                            <p>
+                                {#__ key="entity.e_user_guide.label_entity" /}
+                            </p>
+                        </a>
+                    </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fa fa-link nav-icon"></i>
+                <p>
+                    {#__ key="administration.menu.api" /}
+                </p>
+                <i class="right fas fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview">
+                {#actionAccess entity="access_settings_api" action="read"}
+                    <li class="nav-item">
+                        <a href="/access_settings/show_api" class="nav-link">
+                            <i class="fas fa-caret-right nav-icon"></i>
+                            {#__ key="administration.menu.access_settings_api" /}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a target=_blank href="/api_documentation" class="nav-link">
+                            <i class="fas fa-caret-right nav-icon"></i>
+                            {#__ key="administration.menu.api_documentation" /}
+                        </a>
+                    </li>
+                {/actionAccess}
+                {#entityAccess entity="api_credentials"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_api_credentials.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="api_credentials" action="create"}
+                        <li class="nav-item">
+                            <a href="/api_credentials/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="api_credentials" action="read"}
+                        <li class="nav-item">
+                            <a href="/api_credentials/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        {#entityAccess entity="import_export"}
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-arrows-alt-v nav-icon"></i>
+                    <p>
+                        {#__ key="administration.menu.import_export" /}
+                    </p>
+                    <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    {#entityAccess entity="db_tool"}
+                        {#actionAccess entity="db_tool" action="read"}
+                            <li class="nav-item">
+                                <a href="/import_export/db_show" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    {#__ key="administration.import_export.db.title" /}
+                                </a>
+                            </li>
+                        {/actionAccess}
+                    {/entityAccess}
+                    {#entityAccess entity="access_tool"}
+                        {#actionAccess entity="access_tool" action="read"}
+                            <li class="nav-item">
+                                <a href="/import_export/access_show" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    {#__ key="administration.import_export.access.title" /}
+                                </a>
+                            </li>
+                        {/actionAccess}
+                    {/entityAccess}
+                </ul>
+            </li>
+        {/entityAccess}
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fa fa-cogs nav-icon"></i>
+                <p>
+                    {#__ key="administration.menu.configuration" /}
+                </p>
+                <i class="right fas fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview">
+                {#entityAccess entity="document_template"}
+                    {#actionAccess entity="document_template" action="read"}
+                        <li class="nav-item">
+                            <a class="help-new-window nav-link" href="/document_template/help">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                {#__ key="global_component.document_template.help.menu" /}
+                            </a>
+                        </li>
+                    {/actionAccess}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>
+                                {#__ key="entity.e_document_template.label_entity" /}
+                            </p>
+                            <i class="right fas fa-angle-left"></i>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {#actionAccess entity="document_template" action="create"}
+                            <li class="nav-item">
+                                <a href="/document_template/create_form" class="nav-link">
+                                    <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                    {#__ key="operation.create" /}
+                                </a>
+                            </li>
+                            {/actionAccess}
+                            {#actionAccess entity="document_template" action="read"}
+                            <li class="nav-item">
+                                <a href="/document_template/list" class="nav-link">
+                                    <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                    {#__ key="operation.list" /}
+                                </a>
+                            </li>
+                            {/actionAccess}
+                        </ul>
+                    </li>
+                {/entityAccess}
+                {#entityAccess entity="image_ressources"}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                            {#__ key="entity.e_image_ressources.label_entity" /}
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {#actionAccess entity="image_ressources" action="create"}
+                        <li class="nav-item">
+                            <a href="/image_ressources/create_form" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.create" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                        {#actionAccess entity="image_ressources" action="read"}
+                        <li class="nav-item">
+                            <a href="/image_ressources/list" class="nav-link">
+                                <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                {#__ key="operation.list" /}
+                            </a>
+                        </li>
+                        {/actionAccess}
+                    </ul>
+                </li>
+                {/entityAccess}
+            </ul>
+        </li>
+        {@eq key=config.env value="tablet"}
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-unlink nav-icon"></i>
+                    <p>
+                        {#__ key="administration.menu.offline_mode" /}
+                    </p>
+                    <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    {#entityAccess entity="synchro"}
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fa fa-sync nav-icon"></i>
+                                <p>
+                                    {#__ key="synchro.title" /}
+                                </p>
+                                <i class="right fas fa-angle-left"></i>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {@ne key=config.env value="tablet"}
+                                <li class="nav-item">
+                                    <a href="/synchronization/show" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        {#__ key="synchro.configure" /}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/synchronization/list_dump" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        {#__ key="synchro.list" /}
+                                    </a>
+                                </li>
+                                {/ne}
+                                {@eq key=config.env value="tablet"}
+                                <li class="nav-item">
+                                    <a href="/synchronization/show" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        {#__ key="synchro.process.synchronize" /}
+                                    </a>
+                                </li>
+                                {/eq}
+                            </ul>
+                        </li>
+                    {/entityAccess}
+                    {#entityAccess entity="synchro_credentials"}
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fa fa-key nav-icon"></i>
+                                <p>
+                                    {#__ key="entity.e_synchro_credentials.label_entity" /}
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {#actionAccess entity="synchro_credentials" action="create"}
+                                <li class="nav-item">
+                                    <a href="/synchro_credentials/create_form" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        {#__ key="operation.create" /}
+                                    </a>
+                                </li>
+                                {/actionAccess}
+                                {#actionAccess entity="synchro_credentials" action="read"}
+                                <li class="nav-item">
+                                    <a href="/synchro_credentials/list" class="nav-link">
+                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
+                                        {#__ key="operation.list" /}
+                                    </a>
+                                </li>
+                                {/actionAccess}
+                            </ul>
+                        </li>
+                    {/entityAccess}
+                </ul>
+            </li>
+        {/eq}
+    </ul>
+{/sidebar}

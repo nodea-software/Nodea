@@ -1,0 +1,18 @@
+-- CREATE NODEA DATABASE FOR PostgreSQL
+
+DROP DATABASE IF EXISTS nodea;
+CREATE DATABASE nodea encoding='UTF8';
+
+DROP USER IF EXISTS nodea;
+CREATE USER nodea WITH PASSWORD 'nodea' CREATEDB;
+ALTER USER nodea superuser;
+
+-- GENERATE NEEDED SESSION TABLE FOR PostgreSQL
+DROP TABLE IF EXISTS sessions;
+CREATE TABLE "sessions" (
+  "sid" varchar NOT NULL COLLATE "default",
+	"sess" json NOT NULL,
+	"expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "sessions" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;

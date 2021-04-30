@@ -1,0 +1,247 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<!-- DataTables -->
+	<link rel="stylesheet" href="/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+	<link rel="stylesheet" href="/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+	<style type="text/css">
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+
+		.dataTables_wrapper {
+			overflow-x: auto;
+		}
+
+		.dataTables_length {
+			display: inline-block;
+			margin-right: 15px;
+		}
+
+		.dataTables_filter {
+			display: inline-block;
+			float: right;
+		}
+	</style>
+{/custom_css}
+
+{<content}
+	<div class="content-wrapper">
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/list.png" alt="List picto">
+									{#__ key="menu.develop" /}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-3">
+									<span style="margin-top: 7px;"><b>Application:</b>&nbsp;&nbsp;</span>
+									<select id="develop_current_app" class="select2" style='width:200px;'>
+										{#allApps}
+											{@eq key=currentApp value=name}
+												<option value="{name}" selected>{displayName}</option>
+											{:else}
+												<option value="{name}">{displayName}</option>
+											{/eq}
+										{/allApps}
+									</select>
+									&nbsp;&nbsp;
+									<span>
+										<a class="btn btn-warning" href='{currentRepoUrl}' target=_blank>
+											<i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;
+											Repository
+										</a>
+									</span>
+								</ul>
+								<ul class="nav nav-pills ml-auto p-3">
+									<li class="nav-item">
+										<a class="nav-link active" href="#home" data-toggle="tab">
+											{#__ key="build.tabs.home"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#backlog" data-toggle="tab">
+											{#__ key="develop.tabs.backlog"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#mytasks" data-toggle="tab">
+											{#__ key="develop.tabs.mytasks"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#versioning" data-toggle="tab">
+											{#__ key="develop.tabs.versioning"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#documentation" data-toggle="tab">
+											{#__ key="develop.tabs.documentation"/}
+										</a>
+									</li>
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="tab-content">
+									<div class="tab-pane active" id="home">
+										<h4>Accueil</h4>
+										<hr>
+										<div class="row">
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_backlog' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-plus"></i>
+														</span>
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="develop.tabs.backlog"/}</span>
+															<span class="info-box-number">{#__ key="develop.home.backlog"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_mytasks' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-plus"></i>
+														</span>
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="develop.tabs.mytasks"/}</span>
+															<span class="info-box-number">{#__ key="develop.home.mytasks"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_versioning' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-plus"></i>
+														</span>
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="develop.tabs.versioning"/}</span>
+															<span class="info-box-number">{#__ key="develop.home.versioning"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+												<a href='#_documentation' class="trigger-tab">
+													<div class="info-box mb-3">
+														<span class="info-box-icon bg-primary-2 elevation-1">
+															<i class="fas fa-plus"></i>
+														</span>
+														<div class="info-box-content">
+															<span class="info-box-text">{#__ key="develop.tabs.documentation"/}</span>
+															<span class="info-box-number">{#__ key="develop.home.documentation"/}</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+										<br>
+										<h4>Dernières activités</h4>
+										<hr>
+										<div class="row">
+											<div class="col-md-12">
+												<div class="timeline">
+													<div class="time-label">
+														<span class="bg-blue"><i class="fas fa-code"></i>&nbsp;&nbsp;Commits</span>
+													</div>
+													{#lastCommits}
+														<div>
+															<i class="fas fa-code bg-yellow"></i>
+															<div class="timeline-item">
+																<span class="time">
+																	<i class="fas fa-clock"></i> {committed_date|datetime}</span>
+																<h3 class="timeline-header">
+																	<a href="#">{author_name}</a> commit <b>{title}</b>
+																</h3>
+																<div class="timeline-body">
+																	{message}
+																</div>
+																<div class="timeline-footer">
+																	<a class="btn btn-primary btn-sm" href="{web_url}" target=_blank>
+																		<i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;
+																		{#__ key="develop.see_commit"/}
+																	</a>
+																</div>
+															</div>
+														</div>
+													{/lastCommits}
+													<div>
+														<i class="fas fa-clock bg-gray"></i>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="backlog">
+										{>"front/develop/backlog"/}
+									</div>
+									<div class="tab-pane" id="mytasks">
+										{>"front/develop/mytasks"/}
+									</div>
+									<div class="tab-pane" id="versioning">
+										{>"front/develop/versioning"/}
+									</div>
+									<div class="tab-pane" id="documentation">
+										{>"front/develop/documentation"/}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<!-- Select2 -->
+	<script src="/AdminLTE/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+	<!-- Select2 -->
+	<script src="/AdminLTE/plugins/moment/moment.min.js" type="text/javascript"></script>
+	<!-- DataTables  & Plugins -->
+	<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/jszip/jszip.min.js"></script>
+	<script src="/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
+	<script src="/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+	{@eq key=user_lang value="fr-FR"}
+		<script src="/js/Nodea/datatables_fr.js"></script>
+	{:else}
+		<script>var datatables_translation = null</script>
+	{/eq}
+	<!-- Nodea -->
+	<script src="/js/Nodea/tab_redirection.js" menu='develop' type="text/javascript"></script>
+	<script type="text/javascript">
+		var projectID = "{projectID}";
+		var CREATE_ISSUE_SUCCESS = '{#__ key="develop.issue_create" /}';
+	</script>
+	<script src="/js/Nodea/develop.js" menu='develop' type="text/javascript"></script>
+{/custom_js}
+

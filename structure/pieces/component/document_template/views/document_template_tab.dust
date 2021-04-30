@@ -1,0 +1,17 @@
+<div class="tab-pane fade show" id="r_document_template" role="tabpanel" aria-labelledby="r_document_template-tab">
+	<form action="/document_template/generate" method="POST">
+		<input type="hidden" value="ENTITY" name="entity">
+		<input type="hidden" value="{ENTITY.id}" name="id_entity">
+		<div class="form-group">
+			<label for="f_model_document" class="required">
+				{#__ key="entity.e_document_template.label_entity"/}
+			</label>
+			<select id="component_document_template" class="ajax form-control" name="id_document" data-source="document_template" data-using="f_name" required style="width: 100%;">
+				<option value="">{#__ key="select.default" /}</option>
+			</select>
+		</div>
+		<button type="submit" class="btn btn-primary">
+			{#__ key="button.generate" /}
+		</button>
+	</form>
+</div>

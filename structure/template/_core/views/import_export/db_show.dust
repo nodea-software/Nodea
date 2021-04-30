@@ -1,0 +1,185 @@
+{>"layout_m_administration" /}
+
+{<header}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0">
+                    {#__ key="module.m_administration"/}&nbsp;
+                    <small>
+                        {#__ key="module.module"/}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                	<li class="breadcrumb-item">
+                        <a href="/module/home">
+                            <i class="fa fa-home"></i>&nbsp;&nbsp;
+                            {#__ key="module.home"/}
+                        </a>
+                    </li>
+                    				<li class='breadcrumb-item'>
+					<a href='/module/administration'>
+						{#__ key="module.m_administration"/}
+					</a>
+				</li>
+                    <li class="breadcrumb-item active">
+                       {#__ key="administration.menu.db_tool" /}
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="administration.menu.db_tool" /}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="nav-tabs-custom" id="tabs">
+							<ul class="nav nav-tabs" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" data-toggle="pill" href="#export" role="tab" aria-controls="export" aria-selected="true">
+										{#__ key="administration.import_export.db.export_title" /}
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" data-toggle="pill" href="#import" role="tab" aria-controls="import" aria-selected="false">
+										{#__ key="administration.import_export.db.import_title" /}
+									</a>
+								</li>
+							</ul>
+							<div class="tab-content" style="min-height:275px;">
+								<div class="tab-pane fade show active" id="export" role="tabpanel" aria-labelledby="export-tab">
+									<div class="row">
+										<div class="col-12">
+											<br>
+											<form action="/import_export/db_export" method="POST" id="export_form">
+												<input type="checkbox" name="all_db" />&nbsp;&nbsp;{#__ key="administration.import_export.db.all_db" /}<br>
+												<br>
+												<span id="checkbox-entities" style="margin-bottom: 15px;">
+													{#entities}
+														<input type="checkbox" name="{tableName}" />&nbsp;&nbsp;{#__ key=tradKey /}&nbsp;<b>({tableName})</b><br>
+													{/entities}
+												</span>
+												<br>
+												<button type='button' data-toggle="modal" data-action='{#__ key="administration.import_export.db.export_action" /}' data-target="#db_password" class="btn btn-primary btn-modal">
+													{#__ key="administration.import_export.db.export_action" /}
+												</button>
+											</form>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade show" id="import" role="tabpanel" aria-labelledby="import-tab">
+									<div class="row">
+										<div class="col-12">
+											<form action="/import_export/db_import" method="POST" id="import_form">
+												<div class="form-group">
+													<label for="import_file">
+														{#__ key="administration.import_export.db.import_file"/}
+													</label>
+													<div class="nodea-dropzone">
+														<i class="fas fa-download"></i>&nbsp;&nbsp;
+														{#__ key="message.insert_file" /}
+													</div>
+													<input type="file" name="import_file" value="" style="display: none;">
+												</div>
+												<br>
+												<button type='button' data-toggle="modal" data-action='{#__ key="administration.import_export.db.import_action" /}' data-target="#db_password" class="btn btn-primary btn-modal">
+													{#__ key="administration.import_export.db.import_action" /}
+												</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="db_password" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">{#__ key="administration.import_export.db.modal_password_title" /}</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<label>{#__ key="administration.import_export.db.modal_password_content" /}</label>
+					<input type="password" name="db_password" class="form-control input">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="execute_button"></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script>
+		$(document).ready(function() {
+
+			NodeaForms();
+
+			$(document).on("ifChecked", "input[name='all_db']", function(){
+				$("#checkbox-entities").hide("fast");
+				$("input:not([name='all_db'])").icheck("uncheck");
+			});
+
+			$(document).on("ifUnchecked", "input[name='all_db']", function(){
+				$("#checkbox-entities").show("fast");
+				$("input:not([name='all_db'])").icheck("uncheck");
+			});
+
+			$(document).on("ifClicked", "input:not([name='all_db'])", function(){
+				$("input[name='all_db']").icheck("uncheck");
+			});
+
+			$(document).on("click", "button[data-target='#db_password']", function(){
+				$("#execute_button").attr("data-form", $(this).parents("form").attr("id"));
+				$("#execute_button").text($(this).data("action") + " !");
+				$("#execute_button").prop("disabled", false);
+				$("input[name='db_password']").val("");
+				setTimeout(function(){
+					$("input[name='db_password']").focus();
+				}, 300);
+			});
+
+			$(document).on("click", "#execute_button", function(){
+				$(this).html("<i class=\"fa fa-spinner fa-spin\" style=\"font-size:24px\"></i>");
+				$(this).prop("disabled", true);
+				$("form#"+$(this).attr("data-form")).append($("input[name='db_password']").clone().hide());
+				$("form#"+$(this).attr("data-form")).submit();
+				if($(this).attr("data-form") == "export_form"){
+					$(document).find("form#"+$(this).attr("data-form")+" input[name='db_password']").remove();
+					setTimeout(function(){
+						$("#db_password").modal("hide");
+						$("#export_form input[type='checkbox']").each(function(){
+							$(this).icheck('uncheck')
+						});
+					}, 2000);
+				}
+			});
+		});
+	</script>
+{/custom_js}

@@ -1,0 +1,28 @@
+/* --- Login --- */
+
+body.login-page, .register-page {
+	background: linear-gradient(90deg, rgba(0,102,255,1) 0%, rgba(0,240,255,1) 100%);
+}
+
+body.login-page, .login-box .card-primary.card-outline {
+	border-top: 0px;
+}
+
+body.login-page .login-help {
+	color: var(--theme-secondary);
+	cursor: pointer;
+}
+
+body.login-page .login-help:hover {
+	color: var(--theme-primary);
+}
+
+body.login-page #error-box {
+	display: none;
+	color: #FFF;
+	margin-bottom: 20px;
+	padding: 8px;
+	border-radius: 3px;
+	text-align: center;
+	font-size: 15px;
+}

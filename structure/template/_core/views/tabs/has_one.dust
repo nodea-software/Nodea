@@ -1,0 +1,26 @@
+{#isEmpty}
+	{#__ key="message.empty" /}<br>
+	{! create btn !}
+	<a data-href="/{subentity}/create_form?{associationHref}&ajax=true" class="ajax btn btn-success">
+		<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+		<span>{#__ key="button.create"/}</span>
+	</a>
+{:else}
+	{#data}
+		{! fields !}
+		{>"{e_subentity}/show_fields" ajaxDisplay="true" /}
+		{! update btn !}
+		<a style="margin-right:8px;float:left;" data-href="/{subentity}/update_form?id={id}&{associationHref}&ajax=true" href="#" class="ajax btn btn-warning">
+			<i class="fas fa-edit">&nbsp;&nbsp;</i>
+			<span>{#__ key="button.update"/}</span>
+		</a>
+		{! delete btn !}
+		<form action="/{subentity}/delete" style="float:left;" class="ajax" method="post">
+			<button class="btn btn-danger btn-confirm">
+				<i class="fas fa-trash">&nbsp;&nbsp;</i>
+				<span>{#__ key="button.delete" /}</span>
+			</button>
+			<input name="id" value="{id}" type="hidden">
+		</form>
+	{/data}
+{/isEmpty}
