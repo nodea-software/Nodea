@@ -16,7 +16,7 @@ MySQL (5.7 or higher) / MariaDB (v10 or higher) or PostgreSQL server installed a
 
 ### Instructions
 
-git clone: <pre>git clone git@github.com:nodea/nodea.git</pre>
+git clone: <pre>git clone git@github.com:nodea-software/nodea.git</pre>
 
 Execute the following instructions:<br/>
 <pre>
