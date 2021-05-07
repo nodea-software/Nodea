@@ -98,6 +98,9 @@ module.exports = {
 
 			case 'hasManyPreset':
 				dustData.tabType = 'has_many_preset';
+				dustData.entity = tabInfo.entity
+				dustData.alias = tabInfo.option.as
+				dustData.entityId = tabInfo.entityId
 				dustData.e_subentity = tabInfo.e_subentity
 				dustData.subentity = tabInfo.subentity
 				dustData.tableUrl = `/${tabInfo.entity}/subdatalist?subentityAlias=${tabInfo.option.as}&subentityModel=${tabInfo.option.target}&sourceId=${tabInfo.entityId}&paginate=false`;
