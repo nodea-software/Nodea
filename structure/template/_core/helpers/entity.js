@@ -109,7 +109,36 @@ module.exports = {
 		}
 		return dustData;
 	},
-	postProcessEntityData: async function (entity, lang = 'fr-FR') {
+	// Process entity data after beeing fetched from DB
+	postProcessEntityData: async function (entity, options = {}) {
+		const lang = options.lang || 'fr-FR';
+
+		const defaultProcessors = {
+			enum: (entityName, entity, attribute, attributeDef) => {
+				entity[attribute] = {
+					value: entity[attribute],
+					translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
+				};
+			},
+			boolean: (entityName, entity, attribute, attributeDef) => {
+				let boolTrad;
+				if (lang == 'fr-FR')
+					boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
+				else
+					boolTrad = entity[attribute] == true ? 'Yes' : 'No';
+				entity[attribute] = {
+					value: entity[attribute],
+					translation: boolTrad
+				}
+			},
+			file: (entityName, entity, attribute, attributeDef) => {
+				entity[attribute] = file_helper.originalFilename(entity[attribute]);
+			},
+			picture: (...args) => {
+				defaultProcessors.file(...args);
+			}
+		}
+
 		let entityName, attributes;
 		try {
 			entityName = entity.constructor.name.toLowerCase();
@@ -121,31 +150,16 @@ module.exports = {
 		}
 		for (const attribute in attributes) {
 			const attributeDef = attributes[attribute];
+			const newmipsType = attributeDef.newmipsType;
+
 			if (!entity[attribute])
 				continue;
+			if (options[newmipsType] === false)
+				continue;
 
-			switch (attributeDef.newmipsType) {
-				case 'enum':
-					entity[attribute] = {
-						value: entity[attribute],
-						translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
-					};
-					break;
-				case 'boolean': {
-					let boolTrad;
-					if (lang == 'fr-FR')
-						boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
-					else
-						boolTrad = entity[attribute] == true ? 'Yes' : 'No';
-					entity[attribute] = {
-						value: entity[attribute],
-						translation: boolTrad
-					}
-					break;
-				}
-				default:
-					break;
-			}
+			const processor = typeof options[newmipsType] === 'function' ? options[newmipsType] : defaultProcessors[newmipsType];
+			if (processor)
+				processor(entityName, entity, attribute, attributeDef);
 		}
 
 		const childrenPromises = [];
