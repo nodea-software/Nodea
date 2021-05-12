@@ -131,6 +131,7 @@ module.exports = {
 				return true;
 			return false;
 		}
+
 		function buildContext(ctx){
 			let newContext = {};
 			for (const obj in ctx) {
@@ -146,28 +147,29 @@ module.exports = {
 			return newContext;
 		}
 
-		function diveContext(ctx) {
-			let current, results = [];
+		function diveContext(ctx, results = []) {
+			let current;
 			for (const obj in ctx) {
 				current = ctx[obj];
 				if (typeof current === 'object') {
 					switch (obj) {
 						case 'stack':
 						case 'tail':
-							results = diveContext(current);
+							results = diveContext(current, results);
 							break;
 						case 'head':
 							if (!("tail" in current))
 								results.push(JSON.stringify(buildContext(current), null, 2));
 							break;
 						default:
-							results = diveContext(current);
+							results = diveContext(current, results);
 							break;
 					}
 				}
 			}
 			return results;
 		}
+
 		dust.helpers.contextUpperDump = function(chunk, context) {
 			const results = diveContext(context);
 			for (let i = 0; i < results.length; i++)
