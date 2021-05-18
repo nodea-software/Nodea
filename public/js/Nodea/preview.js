@@ -116,6 +116,36 @@ $(document).ready(function() {
 	/////////
 	// Editor
 	/////////
+	// Load file/folder sidebar
+	function generateSidebarEditor(menu, tabMargin = 0, content = "") {
+		for (var i = 0; i < menu.length; i++) {
+			if (typeof menu[i].path !== "undefined") {
+				content += "" +
+					"<li class='nav-item has-treeview'>" +
+					"   <a class='load-file nav-link' href='#' data-path=" + menu[i].path + " data-filename=" + menu[i].title + " style='margin-left: " + tabMargin + "px'>" +
+					"       <i class='fa fa-file'></i>" +
+					"       &nbsp;&nbsp;" + menu[i].title +
+					"   </a>" +
+					"</li>";
+			} else if (typeof menu[i].under !== "undefined") {
+				content += "" +
+					"<li class='nav-item has-treeview'>" +
+					"    <a href='#' class='nav-link' style='margin-left: " + tabMargin + "px'>" +
+					"        <i class='fa fa-folder'></i>&nbsp;&nbsp;" +
+					"        <span>" + menu[i].title + "</span>&nbsp;&nbsp;" +
+					"        <i class='fas fa-angle-left right'></i>" +
+					"    </a>" +
+					"    <ul class='nav nav-treeview'>";
+				var newMargin = tabMargin + 15;
+				content = generateSidebarEditor(menu[i].under, newMargin, content);
+				content += "" +
+					"    </ul>" +
+					"</li>";
+			}
+		}
+		return content;
+	}
+
 	var isEditorStarted = false;
 	$(document).on("click", "#start-editor", function() {
 		if (!isEditorStarted) {
@@ -154,37 +184,8 @@ $(document).ready(function() {
 				// $("#codemirror-menu ul#editor-menu").tree();
 				$("#loadingEditorIframe").remove();
 			}, 500);
-			// Load file/folder sidebar
-			var side_menu_html = "";
 
-			function generateSidebarEditor(menu, tabMargin) {
-				for (var i = 0; i < menu.length; i++) {
-					if (typeof menu[i].path !== "undefined") {
-						side_menu_html += "" +
-							"<li class='nav-item has-treeview'>" +
-							"   <a class='load-file nav-link' href='#' data-path=" + menu[i].path + " data-filename=" + menu[i].title + " style='margin-left: " + tabMargin + "px'>" +
-							"       <i class='fa fa-file'></i>" +
-							"       &nbsp;&nbsp;" + menu[i].title +
-							"   </a>" +
-							"</li>";
-					} else if (typeof menu[i].under !== "undefined") {
-						side_menu_html += "" +
-							"<li class='nav-item has-treeview'>" +
-							"    <a href='#' class='nav-link' style='margin-left: " + tabMargin + "px'>" +
-							"        <i class='fa fa-folder'></i>&nbsp;&nbsp;" +
-							"        <span>" + menu[i].title + "</span>&nbsp;&nbsp;" +
-							"        <i class='fas fa-angle-left right'></i>" +
-							"    </a>" +
-							"    <ul class='nav nav-treeview'>";
-						var newMargin = tabMargin + 15;
-						generateSidebarEditor(menu[i].under, newMargin)
-						side_menu_html += "" +
-							"    </ul>" +
-							"</li>";
-					}
-				}
-			}
-			generateSidebarEditor(workspaceFolder, 0)
+			var side_menu_html = generateSidebarEditor(workspaceFolder);
 			$("#codemirror-menu ul#editor-menu").append(side_menu_html);
 		}
 	});
@@ -351,37 +352,14 @@ $(document).ready(function() {
 						$("#entitySelect").append("<option value='" + data.entities[i]._name + "'>" + data.entities[i]._displayName + "</option>");
 
 					// Update Editor file selection
-					$("ul#sortable.sidebar-menu").empty();
+					var content = generateSidebarEditor(data.workspaceFolder);
+					$("#codemirror-menu ul#editor-menu").empty().append(content);
 
-					function recursiveEditorFolders(folder) {
-						var tmpContent = "";
-						if (folder) {
-							for (var i = 0; i < folder.length; i++) {
-								var file = folder[i];
-								if (typeof file.path !== "undefined") {
-									tmpContent += "<li><a href='#' data-path='" + file.path + "' data-filename='" + file.title + "' class='load-file'><i class='fa fa-file'></i> " + file.title + "</a></li>";
-								} else if (typeof file.under !== "undefined") {
-									tmpContent += "<li style='display:block;' class='ui-state-default treeview'><a href='#'><i class='fa fa-folder'></i><span>" + file.title + "</span><i class='fa pull-right fa-angle-left'></i></a><ul class='treeview-menu'>";
-									tmpContent += recursiveEditorFolders(file.under);
-									tmpContent += "</ul></li>";
-								}
-							}
-						}
-						return tmpContent;
-					}
-					var content = recursiveEditorFolders(data.workspaceFolder);
-					$("ul#sortable.sidebar-menu").append(content);
-					$(".sidebar .treeview").tree();
-					// Reset Code Editor
+					// Refresh Code Editor Tabs
 					if (typeof myEditor !== "undefined") {
 						$("#codemirror-editor li.load-file").each(function() {
-							$(this).remove();
+							$(this).trigger('click', true).removeClass("modified");
 						});
-						myEditor.setValue("");
-						myEditor.clearHistory();
-						myEditor.refresh();
-						myEditor.clearGutter();
-						$(".CodeMirror-code").empty();
 					}
 
 					// Reset UI Editor
