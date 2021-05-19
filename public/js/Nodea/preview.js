@@ -1,24 +1,23 @@
 $(document).ready(function() {
-	function getTranslation(key, params, callback) {
-		var ajaxData = {
-			key: key,
-			params: params,
-			lang: user_lang
-		};
-		$.ajax({
-			url: '/default/ajaxtranslate',
-			type: 'POST',
-			data: JSON.stringify(ajaxData),
-			dataType: 'json',
-			contentType: "application/json",
-			context: this,
-			success: function(answer) {
-				callback(answer.value);
-			},
-			error: function(error) {
-				console.error(error);
-				callback(key);
-			}
+
+	function getTranslation(key, params) {
+		return new Promise(resolve => {
+			$.ajax({
+				url: '/default/ajaxtranslate',
+				type: 'POST',
+				data: {
+					key: key,
+					params: params,
+					lang: user_lang
+				},
+				success: function(answer) {
+					resolve(answer.value);
+				},
+				error: function(error) {
+					console.error(error);
+					resolve(key);
+				}
+			});
 		});
 	}
 
@@ -248,11 +247,18 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on("submit", "form#previewForm", function(e) {
+	$(document).on("submit", "form#previewForm", async(e) => {
+		e.preventDefault();
+
 		if ($("#instruction").val() == "") {
-			toastr.error("Error, empty instruction.");
+			toastr.error(await getTranslation('preview.empty_instruction'));
 			return false;
 		}
+
+		// File is currently modified in code editor and not save
+		if($("#codemirror-editor li.load-file.modified").length != 0)
+			if(!confirm(await getTranslation('preview.modified_file_instruction')))
+				return false;
 
 		var setLogoInstructions = ["add logo", "add a logo", "set a logo", "set logo", "mettre un logo", "mettre logo", "ajouter logo", "ajouter un logo"];
 		var givenInstruction = $("#instruction").val().toLowerCase().trim();
@@ -279,10 +285,15 @@ $(document).ready(function() {
 		$("#execute_instruction").html("Loading...");
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
+
 		$.ajax({
 			url: "/application/preview",
 			method: 'POST',
-			data: $(this).serialize(),
+			data: {
+				iframe_url: $(this).find('input[name="iframe_url"]').val(),
+				chat: $(this).find('input[name="chat"]').val(),
+				instruction: $(this).find('input[name="instruction"]').val()
+			},
 			success: function(data) {
 
 				if (data.toRedirect)
@@ -316,7 +327,7 @@ $(document).ready(function() {
 
 				// Nodea answer
 				var mipsyItem = data.chat.items[data.chat.items.length - 1];
-				getTranslation(mipsyItem.content, mipsyItem.params, function(mipsyAnswer) {
+				getTranslation(mipsyItem.content, mipsyItem.params).then(mipsyAnswer => {
 					let contentMipsy = `<div><img src="/img/mascot/head.png" alt="Nodea picture" class="mipsy-img"><div class="timeline-item mipsy-item"><span class="time"><i class="fas fa-clock"></i>&nbsp;${mipsyItem.dateEmission}</span><h3 class="timeline-header">${mipsyItem.user}</h3><div class="timeline-body mipsy-answer"><span class="standard-writing">${mipsyAnswer}</span></div></div></div>`;
 					if (mipsyItem.isError)
 						contentMipsy = `<div><img src="/img/mascot/head.png" alt="Nodea picture" class="mipsy-img"><div class="timeline-item mipsy-item"><span class="time"><i class="fas fa-clock"></i>&nbsp;${mipsyItem.dateEmission}</span><h3 class="timeline-header">${mipsyItem.user}</h3><div class="timeline-body mipsy-answer"><span class="standard-writing" style="color:#e33939;"><i class='fa fa-exclamation-circle'></i>&nbsp;${mipsyAnswer}</span></div></div></div>`;
@@ -379,7 +390,7 @@ $(document).ready(function() {
 			},
 			error: function(error) {
 				console.error(error);
-				toastr.error("Sorry, an error occured :/");
+				toastr.error(error.message);
 			}
 		});
 		return false;

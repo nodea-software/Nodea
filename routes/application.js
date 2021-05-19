@@ -261,15 +261,15 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		// Current application url
 		data.iframe_url = process_manager.childUrl(req, db_app.id);
 
+		/* Add instruction in chat */
+		setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
+
 		if(appProcessing[appName])
 			throw new Error('structure.global.error.alreadyInProcess');
 		appProcessing[appName] = true;
 
 		if(parser.parse(instruction).function == 'createNewApplication')
 			throw new Error('preview.no_create_app');
-
-		/* Add instruction in chat */
-		setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
 
 		const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
 

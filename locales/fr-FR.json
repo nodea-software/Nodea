@@ -267,6 +267,8 @@
 		"server_timeout": "Le serveur de l'application ne répond pas, merci de vérifier les logs.",
 		"disable_log_refresh": "Désactiver le rafraichissement des logs",
 		"no_create_app": "Vous ne pouvez pas créer de nouvelle application depuis la prévisualisation, merci de vous rendre à l'accueil du générateur.",
+		"empty_instruction": "Vous n'avez pas renseigné d'instruction, merci de remplir le champ.",
+		"modified_file_instruction": "Vous avez un fichier en cours de modification dans l'éditeur de code, si vous executez une instruction le contenu non sauvegardé sera perdu. Souhaitez-vous continuer ?",
 		"session": {
 			"noApplication": "Aucune application sélectionnée",
 			"noModule": "Aucune module sélectionné",
