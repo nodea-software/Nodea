@@ -1,6 +1,6 @@
 const globalConf = require('../config/global.js');
+const cp = require('child_process');
 const spawn = require('cross-spawn');
-const psTree = require('ps-tree');
 const fs = require("fs-extra");
 const path = require('path');
 const fetch = require('node-fetch');
@@ -9,7 +9,6 @@ const ansiToHtml = new AnsiToHTML();
 const moment = require('moment');
 const childsUrlsStorage = {};
 const process_server_per_app = [];
-let process_server = null;
 
 function setDefaultChildUrl(sessionID, appName){
 	if(typeof childsUrlsStorage[sessionID] === "undefined")
@@ -30,7 +29,7 @@ exports.launchChildProcess = function(req, appName, env) {
 
 	setDefaultChildUrl(req.sessionID, appName);
 
-	process_server = spawn('node', [__dirname + "/../workspace/" + appName + "/server.js", 'autologin'], {
+	const process_server = spawn('node', [__dirname + "/../workspace/" + appName + "/server.js", 'autologin'], {
 		CREATE_NO_WINDOW: true,
 		env: env
 	});
@@ -70,7 +69,6 @@ exports.launchChildProcess = function(req, appName, env) {
 		console.log('\x1b[31m%s\x1b[0m', 'Child process exited');
 	});
 
-	exports.process_server = process_server;
 	return process_server;
 }
 
@@ -118,49 +116,26 @@ exports.childUrl = (req, appID) => {
 	return url;
 }
 
-const cp = require('child_process');
-exports.killChildProcess = (pid) => new Promise(resolve => {
-	console.log("Killed child process was called : " + pid);
-	// OS is Windows
+exports.killChildProcess = (process) => new Promise(resolve => {
+	console.log("Kill child process: " + process.pid);
+	// OS handling
 	const isWin = /^win/.test(process.platform);
 	if (isWin) {
-		// **** Commands that works fine on WINDOWS ***
-		cp.exec('taskkill /PID ' + process_server.pid + ' /T /F', err => {
-			if(err)
+		cp.exec('taskkill /PID ' + process.pid + ' /T /F', err => {
+			if(err){
+				console.error("Cannot kill process with pid " + process.pid);
 				console.error(err);
-			console.log("Killed child process");
-			exports.process_server = null;
+			}
 			resolve();
 		});
 	} else {
-		/* Kill all the differents child process */
-		const killTree = true;
-		if (killTree) {
-			psTree(pid, function(err, children) {
-				if(err)
-					console.error(err);
-
-				const pidArray = [pid].concat(children.map(p => p.PID));
-
-				for (let i = 0; i < pidArray.length; i++) {
-					try {
-						console.log("TPID : " + pidArray[i]);
-						process.kill(pidArray[i], 'SIGKILL');
-					} catch(err) {
-						console.error("Cannot kill process with pid " + pidArray[i]);
-					}
-				}
-				resolve();
-			});
-		} else {
-			try {
-				/* Kill just one child */
-				process.kill(pid, 'SIGKILL');
-			} catch(err) {
-				console.error("Cannot kill process with pid " + pid);
-			}
-			resolve();
+		try {
+			process.kill(); // SIGTERM the process
+		} catch(err) {
+			console.error("Cannot kill process with pid " + process.pid);
+			console.error(err);
 		}
+		resolve();
 	}
 })
 

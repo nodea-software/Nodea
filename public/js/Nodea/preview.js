@@ -296,6 +296,9 @@ $(document).ready(function() {
 			},
 			success: function(data) {
 
+				$("#errorIframe").hide();
+				$('iframe#iframe').show();
+
 				if (data.toRedirect)
 					return window.location.href = data.url;
 

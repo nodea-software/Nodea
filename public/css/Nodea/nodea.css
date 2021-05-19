@@ -235,6 +235,13 @@ body.login-page #error-box {
 	min-height: 800px;
 }
 
+.responsive-iframe iframe#iframe {
+	height: 700px;
+	width: 100%;
+	border: 1px solid grey;
+	border-radius: 3px;
+}
+
 #loadingIframe {
     position: absolute;
     top: 0;
@@ -257,7 +264,7 @@ body.login-page #error-box {
     top: 0;
     left: 0;
     width: 100%;
-    height: 764px;
+    height: 710px;
     background-color: rgba(0, 0, 0, 0.5);
     display:none;
 }
@@ -265,8 +272,8 @@ body.login-page #error-box {
 #errorIframe img{
     display:block;
     margin: auto;
-    margin-top:275px;
-    width:200px;
+    margin-top: 235px;
+    width: 200px;
 }
 
 #ui_editor_apply_all{

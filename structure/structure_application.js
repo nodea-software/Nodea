@@ -470,7 +470,7 @@ const process_manager = require('../services/process_manager.js');
 exports.deleteApplication = async(data) => {
 	const app_name = data.application.name;
 	// Kill spawned child process by preview
-	const process_server = process_manager.process_server;
+	const process_server = process_manager.process_server_per_app[app_name];
 	const pathToWorkspace = __dirname + '/../workspace/' + app_name;
 	const pathToAppLogs = __dirname + '/../workspace/logs/app_' + app_name + '.log';
 
@@ -533,7 +533,7 @@ exports.deleteApplication = async(data) => {
 	}
 
 	if (process_server != null) {
-		await process_manager.killChildProcess(process_server.pid);
+		await process_manager.killChildProcess(process_server);
 		process_manager.process_server_per_app[app_name] = null;
 	}
 
