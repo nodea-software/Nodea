@@ -64,13 +64,16 @@ exports.help = async _ => { // eslint-disable-line
 }
 
 exports.deploy = async (data) => {
-	// Generator DB
-	const dbApp = await models.Application.findOne({
-		name: data.application.name
-	});
 
-	data.appID = dbApp.id;
-	return await cloud_manager.deploy(data);
+	throw new Error('Instruction disabled. Will be added in future release');
+
+	// Generator DB
+	// const dbApp = await models.Application.findOne({
+	// 	name: data.application.name
+	// });
+
+	// data.appID = dbApp.id;
+	// return await cloud_manager.deploy(data);
 }
 
 exports.restart = async _ => { // eslint-disable-line
