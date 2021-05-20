@@ -90,7 +90,7 @@ async function checkServer(iframe_url, initialTimestamp, timeoutServer) {
 	}
 
 	// Default server error: 502 Bad Gateway - Mean no server response
-	if(typeof response === 'undefined' || response.status == 502)
+	if(typeof response === 'undefined' || response.status == 502 || response.status == 501)
 		return await checkServer(iframe_url, initialTimestamp, timeoutServer);
 
 	// Unusual error, log it

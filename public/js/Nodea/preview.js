@@ -41,7 +41,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.ge-addRowGroup', function() {
 		var newRow = $("body").find('.ui-sortable').last().parent();
-		newRow.find('.ge-add-row').click();
+		newRow.find('.ge-add-row').trigger('click');
 		newRow.find('.ge-content').remove();
 	});
 
@@ -49,7 +49,7 @@ $(document).ready(function() {
 		width: '100%'
 	});
 
-	$("#entitySelect").change(function() {
+	$("#entitySelect").on('change', function() {
 		$("#pages").slideUp();
 		if ($(this).val()) {
 			$("#pages a").data('entity', $(this).val());
@@ -58,13 +58,14 @@ $(document).ready(function() {
 	});
 
 	var entity, page;
-	$(".ui_editor_page").click(function() {
+	$(".ui_editor_page").on('click', function() {
 		var self = this;
 		entity = $(this).data('entity');
 		page = $(this).data('page');
 		$.ajax({
 			url: '/ui_editor/getPage/' + entity + '/' + page,
 			success: function(pageHtml) {
+				console.log(pageHtml);
 				$("#ui_editor").html(pageHtml);
 				// Remove mainControls who are not removed by modifying html
 				$(".ge-mainControls").remove();
@@ -85,7 +86,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$("#ui_editor_save").click(function() {
+	$("#ui_editor_save").on('click', function() {
 		var html = $("#ui_editor").gridEditor('getHtml');
 		var currentScreenMode = $(".ge-layout-mode button span").text();
 		$(this).text(loadingButtonText);

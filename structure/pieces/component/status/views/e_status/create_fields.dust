@@ -1,6 +1,6 @@
 <div id="fields" class="row">
 	{#f_entity}
-		<div class="col-xs-12 col-sm-6">
+		<div data-field="entityStatus" class="col-xs-12 col-sm-6">
 			<div class="form-group">
 				<label for="f_field" class="required">{#__ key="entity.e_status.f_field"/} {@inline_help field="f_field"}&nbsp;<i data-field="f_field" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help}</label>
 				<input disabled class="form-control" name="traducted" value='{#__ key=entityTrad /} - {#__ key=fieldTrad /}'>
