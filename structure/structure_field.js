@@ -945,7 +945,7 @@ exports.setRequiredAttribute = async (data) => {
 	if (attributesObj[data.options.value]) {
 		// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
 		// In script you can set required a field in user, role or group but it crash the user admin autogeneration
-		// becaude the required field is not given during the creation
+		// because the required field is not given during the creation
 		if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
 			attributesObj[data.options.value].allowNull = set;
 		// Alter column to set default value in DB if models already exist

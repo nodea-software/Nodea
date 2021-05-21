@@ -300,7 +300,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		if (data.function == "deleteApplication") {
 			// Kill server
 			if(process_server_per_app[appName])
-				await process_manager.killChildProcess(process_server_per_app[appName].pid);
+				await process_manager.killChildProcess(process_server_per_app[appName]);
 			process_server_per_app[appName] = null;
 			data.toRedirect = true;
 			data.url = "/"; // Generator home
@@ -320,7 +320,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 
 		if(data.restartServer) {
 			// Kill server first
-			await process_manager.killChildProcess(process_server_per_app[appName].pid);
+			await process_manager.killChildProcess(process_server_per_app[appName]);
 			// Launch a new server instance to reload resources
 			process_server_per_app[appName] = process_manager.launchChildProcess(req, appName, env);
 			const initialTimestamp = new Date().getTime();
