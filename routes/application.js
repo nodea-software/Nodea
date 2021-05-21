@@ -131,7 +131,7 @@ async function execute(req, instruction, __, data = {}, saveMetadata = true) {
 		throw __(err.message ? err.message : err, err.messageParams || []);
 	}
 
-	if(data.function == 'deleteApplication' && req.session.nodea_chats[data.options.value])
+	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])
 		req.session.nodea_chats[data.options.value] = {}
 
 	const newData = session_manager.setSession(data.function, req, info, data);
