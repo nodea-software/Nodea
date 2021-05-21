@@ -18,7 +18,7 @@ function checkAndCreateAttr(instructionsFunction, options, valueToCheck) {
 	return data;
 }
 
-// ******* BASIC Actions ******* //
+// ******* BASIC ******* //
 exports.showSession = _ => {
 	const data = {};
 	data.function = "showSession";
@@ -80,7 +80,7 @@ exports.gitStatus = _ => {
 	return data;
 };
 
-// ******* SELECT Actions ******* //
+// ******* SELECT ******* //
 
 exports.selectApplication = result => {
 
@@ -127,7 +127,7 @@ exports.selectEntity = result => {
 	return data;
 };
 
-// ******* FIELD ATTRIBUTES Actions ******* //
+// ******* FIELD ATTRIBUTES ******* //
 exports.setFieldAttribute = result => {
 
 	// Set entity name as the first option in options array
@@ -161,7 +161,7 @@ exports.setFieldKnownAttribute = result => {
 	return data;
 };
 
-// ******* DATALIST Actions ******* //
+// ******* DATALIST ******* //
 exports.setColumnVisibility = result => {
 
 	// Set entity name as the first option in options array
@@ -210,7 +210,7 @@ exports.setColumnVisible = result => {
 	return data;
 };
 
-// ******* CREATE Actions ******* //
+// ******* CREATE ******* //
 
 exports.createNewApplication = result => {
 
@@ -343,7 +343,7 @@ exports.createNewFieldWithTypeRadio = result => {
 	return checkAndCreateAttr("createNewField", options, value);
 };
 
-// ******* DELETE Actions ******* //
+// ******* DELETE ******* //
 
 exports.deleteApplication = result => {
 
@@ -425,7 +425,7 @@ exports.deleteTab = result => {
 	return data;
 };
 
-// ******* LIST Actions ******* //
+// ******* LIST ******* //
 exports.listApplication = _ => {
 
 	const data = {
@@ -458,7 +458,7 @@ exports.listField = _ => {
 	return data;
 };
 
-// ******* ASSOCIATION Actions ******* //
+// ******* ASSOCIATION ******* //
 
 // --------- One to One ---------
 // Tabs in show
@@ -672,7 +672,7 @@ exports.relationshipHasManyPresetUsing = result => {
 	return checkAndCreateAttr("createNewHasManyPreset", options, target);
 };
 
-// ******* COMPONENT Actions ******* //
+// ******* COMPONENT ******* //
 
 /* STATUS */
 exports.createNewComponentStatus = result => {
@@ -839,7 +839,7 @@ exports.createComponentChat = _ => {
 	}
 }
 
-// ******* INTERFACE Actions ******* //
+// ******* INTERFACE ******* //
 exports.setLogo = result => {
 	const value = result[1];
 	const options = {

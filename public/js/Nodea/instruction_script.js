@@ -69,7 +69,7 @@ function fetchStatus() {
 $(function() {
 
     // Get last written script
-    var lastWrittenScript = JSON.parse(localStorage.getItem("newmips_last_written_script"));
+    var lastWrittenScript = JSON.parse(localStorage.getItem("nodea_last_written_script"));
     if(!lastWrittenScript)
         lastWrittenScript = [];
 
@@ -135,7 +135,7 @@ $(function() {
                     date: moment().format("DD MMM, HH:mm"),
                     content: $("#createScriptTextarea").val()
                 });
-                localStorage.setItem("newmips_last_written_script", JSON.stringify(lastWrittenScript));
+                localStorage.setItem("nodea_last_written_script", JSON.stringify(lastWrittenScript));
             }
 
             $.ajax({

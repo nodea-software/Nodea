@@ -23,7 +23,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -41,7 +41,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -59,7 +59,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -79,7 +79,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -97,7 +97,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -115,7 +115,7 @@ const config = {
 			defaultValue: 'FRANCE',
 			sql: {
 				type: 'STRING',
-				newmipsType: "string",
+				nodeaType: "string",
 				defaultValue: null
 			},
 			lang: {
@@ -137,7 +137,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "double",
+				nodeaType: "double",
 				defaultValue: null
 			},
 			lang: {
@@ -159,7 +159,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "double",
+				nodeaType: "double",
 				defaultValue: null
 			},
 			lang: {
@@ -177,7 +177,7 @@ const config = {
 			defaultValue: '',
 			sql: {
 				type: 'STRING',
-				newmipsType: "STRING",
+				nodeaType: "STRING",
 				defaultValue: null
 			},
 			lang: {

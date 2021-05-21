@@ -633,7 +633,7 @@ exports.setupChat = async (data) => {
 	const piecesPath = __piecesPath + '/component/socket';
 
 	// Copy chat files
-	fs.copySync(piecesPath + '/chat/js/chat.js', workspacePath + '/app/public/js/Newmips/component/chat.js');
+	fs.copySync(piecesPath + '/chat/js/chat.js', workspacePath + '/core/public/js/component/chat.js');
 	fs.copySync(piecesPath + '/chat/helpers/chat.js', workspacePath + '/_core/helpers/chat.js');
 	fs.copySync(piecesPath + '/chat/routes/chat.js', workspacePath + '/app/routes/chat.js');
 

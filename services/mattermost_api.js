@@ -3,7 +3,7 @@ const mattermostConfig = require('../config/mattermost.js');
 const request = require('request-promise');
 const moment = require('moment');
 const channel = {};
-let token = false, tokenExpire, supportUser, channelName, supportTeam, newmipsTeam, teamMembers;
+let token = false, tokenExpire, supportUser, channelName, supportTeam, nodeaTeam, teamMembers;
 
 // Getting authentication token from mattermost
 async function authenticate() {
@@ -148,7 +148,7 @@ async function createIncomingWebhook(channelID) { // eslint-disable-line
 		},
 		body: {
 			channel_id: channelID,
-			display_name: "Generated hook from newmips environment"
+			display_name: "Generated hook from nodea environment"
 		},
 		json: true,
 		forever: true
@@ -231,10 +231,10 @@ exports.init = async (appName) => {
 		// Support team is the team where the discussing channel is
 		supportTeam = await getTeam(mattermostConfig.team);
 		channel[channelName] = await createChannel(channelName, supportTeam.id);
-		// Newmips team represent all the support person from newmips that will be added to the channel
-		newmipsTeam = await getTeam(mattermostConfig.support_members);
-		// Get all newmips team members
-		teamMembers = await getTeamMembers(newmipsTeam.id);
+		// nodea team represent all the support person from nodea that will be added to the channel
+		nodeaTeam = await getTeam(mattermostConfig.support_members);
+		// Get all nodea team members
+		teamMembers = await getTeamMembers(nodeaTeam.id);
 		// Add all team to the channel
 		await addTeamToChannel(teamMembers, channel[channelName].id);
 	}

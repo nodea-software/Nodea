@@ -51,7 +51,7 @@ module.exports = async function(entityId, entityName, includes) {
 		// eslint-disable-next-line global-require
 		const attributes = require(`@app/models/attributes/${entityName}`);
 		for (const attrName in attributes) {
-			if (attributes[attrName].newmipsType === 'file' && source[attrName]) {
+			if (attributes[attrName].nodeaType === 'file' && source[attrName]) {
 				// eslint-disable-next-line no-await-in-loop
 				const [filePath, fileName] = await duplicateFile(entityName, source, attrName);
 				duplicateValues[attrName] = fileName;

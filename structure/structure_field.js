@@ -753,13 +753,13 @@ exports.setupField = async (data) => {
 		attributesObject[field_name] = {
 			"type": typeForModel,
 			"values": cleanEnumValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
 			"values": cleanEnumValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 	} else if (field_type == "radio") {
@@ -773,34 +773,34 @@ exports.setupField = async (data) => {
 		attributesObject[field_name] = {
 			"type": typeForModel,
 			"values": cleanRadioValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
 			"values": cleanRadioValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
 		attributesObject[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type
+			"nodeaType": field_type
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type
+			"nodeaType": field_type
 		}
 	} else {
 		attributesObject[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type,
+			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type,
+			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		}
 	}

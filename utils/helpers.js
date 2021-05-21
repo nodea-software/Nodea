@@ -142,7 +142,7 @@ module.exports = {
 		for (const attr in attributes) {
 			structureDatalist.push({
 				field: attr,
-				type: attributes[attr].newmipsType,
+				type: attributes[attr].nodeaType,
 				entityCode: mainEntity,
 				traductionKey: "entity." + mainEntity + "." + attr,
 				associated: false
@@ -156,7 +156,7 @@ module.exports = {
 				for (const currentAttr in currentAttributes) {
 					structureDatalist.push({
 						field: currentAttr,
-						type: currentAttributes[currentAttr].newmipsType,
+						type: currentAttributes[currentAttr].nodeaType,
 						entity: options[j].as,
 						entityCode: options[j].target,
 						traductionKey: "entity." + options[j].target + "." + currentAttr,

@@ -6,14 +6,14 @@
 	},
 	"id_last_seen_message": {
 		"type": "INTEGER",
-		"newmipsType": "integer"
+		"nodeaType": "integer"
 	},
 	"id_user": {
 		"type": "INTEGER",
-		"newmipsType": "integer"
+		"nodeaType": "integer"
 	},
 	"id_channel": {
 		"type": "INTEGER",
-		"newmipsType": "integer"
+		"nodeaType": "integer"
 	}
 }

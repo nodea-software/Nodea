@@ -1,8 +1,8 @@
 {
-	"name": "newmipsWorkspace",
-	"description": "A newmips generated workspace",
-	"repository": "https://github.com/newmips/newmips",
-	"README": "https://github.com/newmips/newmips/blob/master/README.md",
+	"name": "Nodea Application",
+	"description": "A Nodea generated application",
+	"repository": "https://github.com/nodea-software/nodea",
+	"README": "https://github.com/nodea-software/nodea/blob/master/README.md",
 	"license": "GPL-3.0",
 	"main": "server.js",
 	"scripts": {

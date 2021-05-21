@@ -166,7 +166,7 @@ class Program extends Entity {
 					const fileFields = [];
 					for (const fieldName in this.attributes) {
 						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.newmipsType))
+						if (['file', 'picture'].includes(field.nodeaType))
 							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
 					}
 					let fileMiddleware;
@@ -191,7 +191,7 @@ class Program extends Entity {
 					const fileFields = [];
 					for (const fieldName in this.attributes) {
 						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.newmipsType))
+						if (['file', 'picture'].includes(field.nodeaType))
 							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
 					}
 					let fileMiddleware;

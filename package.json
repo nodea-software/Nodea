@@ -3,9 +3,9 @@
 	"description": "Nodea generator",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Newmips/newmips.git"
+		"url": "https://github.com/nodea-software/nodea"
 	},
-	"README": "https://github.com/newmips/newmips/blob/master/README.md",
+	"README": "https://github.com/nodea-software/nodea/blob/master/README.md",
 	"license": "GPL-3.0",
 	"main": "server.js",
 	"dependencies": {

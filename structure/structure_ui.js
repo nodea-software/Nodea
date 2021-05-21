@@ -426,7 +426,7 @@ exports.createWidgetPiechart = async (data) => {
 				data.field = {
 					name: options[j].as,
 					displayName: options[j].showAs,
-					type: options[j].newmipsType
+					type: options[j].nodeaType
 				};
 				definitlyNotFound = false;
 				break;

@@ -1191,7 +1191,7 @@ exports.createNewHasManyPreset = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}
@@ -1332,7 +1332,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}
@@ -1462,7 +1462,7 @@ exports.createNewFieldRelatedToMultiple = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 module.exports = (attribute) => {
-	switch (attribute.newmipsType) {
+	switch (attribute.nodeaType) {
 		case 'enum':
 		case 'radio':
 			return {isIn: {

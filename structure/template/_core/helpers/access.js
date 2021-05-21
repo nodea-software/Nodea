@@ -84,7 +84,7 @@ exports.setRoleAccess = function(entities) {
 
 // route middleware to make sure
 exports.isLoggedIn = function(req, res, next) {
-	// Autologin for newmips's "iframe" live preview context
+	// Autologin for Nodea's "iframe" live preview context
 	if (global.auto_login == true){ // eslint-disable-line
 		global.auto_login = false; // eslint-disable-line
 		models.E_user.findOne({

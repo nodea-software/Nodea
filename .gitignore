@@ -1,4 +1,4 @@
-### Newmips ###
+### Nodea ###
 # Logs
 logs
 *.log
@@ -31,9 +31,9 @@ jspm_packages
 .node_repl_history
 # Output of 'npm pack'
 *.tgz
-# Workspace Newmips
+# Workspace
 workspace
-# Upload Newmips
+# Upload
 upload
 structure/template/node_modules
 # Config Files
