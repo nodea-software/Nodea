@@ -1,5 +1,6 @@
 {
-	"name": "Nodea Application",
+	"name": "nodea_app",
+	"version": "3.0.1",
 	"description": "A Nodea generated application",
 	"repository": "https://github.com/nodea-software/nodea",
 	"README": "https://github.com/nodea-software/nodea/blob/master/README.md",

@@ -1,5 +1,6 @@
 {
-	"name": "Nodea",
+	"name": "nodea",
+	"version": "3.0.1",
 	"description": "Nodea generator",
 	"repository": {
 		"type": "git",
