@@ -3,6 +3,7 @@ const domHelper = require('../utils/jsDomHelper');
 const translateHelper = require("../utils/translate");
 const helpers = require("../utils/helpers");
 const component_helper = require("../helpers/components");
+const fieldHelper = require("../helpers/field");
 
 async function addTab(entity, file, newLi, newTabContent) {
 	const $ = await domHelper.read(file);
@@ -770,7 +771,7 @@ exports.addNewComponentAddress = async (data) => {
 
 	const parentBaseFile = workspacePath + '/app/views/' + data.entity.name;
 
-	await require('./structure_field').updateListFile(parentBaseFile, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body); // eslint-disable-line
+	fieldHelper.updateListFile(parentBaseFile, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body);
 
 	// Update locales
 	const langFR = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/fr-FR.json', 'utf8'));
