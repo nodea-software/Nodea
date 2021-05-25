@@ -8,7 +8,6 @@ const AnsiToHTML = require('ansi-to-html');
 const ansiToHtml = new AnsiToHTML();
 const moment = require('moment');
 const childsUrlsStorage = {};
-const process_server_per_app = [];
 
 function setDefaultChildUrl(sessionID, appName){
 	if(typeof childsUrlsStorage[sessionID] === "undefined")
@@ -23,14 +22,16 @@ function setChildUrl(sessionID, appName, url){
 }
 exports.setChildUrl = setChildUrl;
 
-exports.process_server_per_app = process_server_per_app;
+exports.process_server_per_app = [];
 
-exports.launchChildProcess = function(req, appName, env) {
+exports.launchChildProcess = function(sessionID, appName, port) {
 
-	setDefaultChildUrl(req.sessionID, appName);
+	setDefaultChildUrl(sessionID, appName);
+
+	const env = Object.create(process.env);
+	env.PORT = port;
 
 	const process_server = spawn('node', [__dirname + "/../workspace/" + appName + "/server.js", 'autologin'], {
-		CREATE_NO_WINDOW: true,
 		env: env
 	});
 
@@ -46,7 +47,7 @@ exports.launchChildProcess = function(req, appName, env) {
 		// child process after restart
 		if (data.indexOf("IFRAME_URL") != -1) {
 			if (data.indexOf("/status") == -1){
-				childsUrlsStorage[req.sessionID][appName] = data.split('::')[1];
+				childsUrlsStorage[sessionID][appName] = data.split('::')[1];
 			}
 		} else {
 			const cleaned = data.replace(/(.*)\n*$/, '$1');
@@ -89,8 +90,8 @@ async function checkServer(iframe_url, initialTimestamp, timeoutServer) {
 		return await checkServer(iframe_url, initialTimestamp, timeoutServer);
 	}
 
-	// Default server error: 502 Bad Gateway - Mean no server response
-	if(typeof response === 'undefined' || response.status == 502 || response.status == 501)
+	// Handling standard server error (404, 501, 502)
+	if(typeof response === 'undefined' || [404, 501, 502].includes(response.status))
 		return await checkServer(iframe_url, initialTimestamp, timeoutServer);
 
 	// Unusual error, log it
@@ -130,7 +131,9 @@ exports.killChildProcess = (process) => new Promise(resolve => {
 		});
 	} else {
 		try {
+			console.log(process.killed);
 			process.kill(); // SIGTERM the process
+			console.log(process.killed);
 		} catch(err) {
 			console.error("Cannot kill process with pid " + process.pid);
 			console.error(err);

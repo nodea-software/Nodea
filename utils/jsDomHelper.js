@@ -132,7 +132,7 @@ exports.replace = async (filename, element, $insert) => {
 	write(filename, $);
 }
 
-exports.insertHtml = async (filename, element, html) => {
+exports.insertHtml = (filename, element, html) => {
 	const $ = read(filename);
 	$(element).html(html);
 	write(filename, $);

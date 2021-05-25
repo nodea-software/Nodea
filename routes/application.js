@@ -177,12 +177,10 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 
 	models.Application.findOne({where: {name: appName}}).then(db_app => {
 
-		const env = Object.create(process.env);
 		const port = math.add(9000, db_app.id);
-		env.PORT = port;
 
 		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
-			process_server_per_app[appName] = process_manager.launchChildProcess(req, appName, env);
+			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 
 		data.session = session_manager.getSession(req)
 
@@ -252,10 +250,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	(async () => {
 
 		const db_app = await models.Application.findOne({where: {name: appName}});
-
 		const port = math.add(9000, db_app.id);
-		const env = Object.create(process.env);
-		env.PORT = port;
 
 		const {protocol} = globalConf;
 		const {host} = globalConf;
@@ -322,10 +317,9 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 			// Kill server first
 			await process_manager.killChildProcess(process_server_per_app[appName]);
 			// Launch a new server instance to reload resources
-			process_server_per_app[appName] = process_manager.launchChildProcess(req, appName, env);
-			const initialTimestamp = new Date().getTime();
+			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 			console.log('Starting server...');
-			await process_manager.checkServer(appBaseUrl + '/app/status', initialTimestamp, timeoutServer);
+			await process_manager.checkServer(appBaseUrl + '/app/status', new Date().getTime(), timeoutServer);
 		}
 
 		data.session = session_manager.getSession(req);

@@ -5,14 +5,14 @@ const domHelper = require('../utils/jsDomHelper');
 const language = require('../services/language');
 const gitHelper = require('../utils/git_helper');
 
-async function applyToAllEntity(currentHtml, notPage, entity, appName) {
+function applyToAllEntity(currentHtml, notPage, entity, appName) {
 	const pageFiles = ['create_fields.dust', 'update_fields.dust', 'show_fields.dust'];
 	for (let i = 0; i < pageFiles.length; i++) {
 		if (pageFiles[i] == notPage)
 			continue;
 
 		const pageUri = __workspacePath + '/' + appName + '/app/views/' + entity + '/' + pageFiles[i];
-		const $ = await domHelper.read(pageUri); // eslint-disable-line
+		const $ = domHelper.read(pageUri); // eslint-disable-line
 		const saveField = {};
 
 		// Save current state of fields in the current working page
@@ -46,7 +46,7 @@ async function applyToAllEntity(currentHtml, notPage, entity, appName) {
 			if (currentHtml("body").children('.row').eq(i).html() != "")
 				packedRow += currentHtml("body").children('.row').eq(i).html();
 
-		await domHelper.insertHtml(pageUri, "#fields", packedRow); // eslint-disable-line
+		domHelper.insertHtml(pageUri, "#fields", packedRow); // eslint-disable-line
 	}
 }
 
@@ -128,15 +128,17 @@ router.post('/setPage/:entity/:page', block_access.hasAccessApplication, (req, r
 			if ($("body").children('.row').eq(i).html() != "")
 				packedRow += $("body").children('.row').eq(i).html();
 
-		await domHelper.insertHtml(pageUri, "#fields", packedRow);
+		domHelper.insertHtml(pageUri, "#fields", packedRow);
 
 		// If the user ask to apply on all entity
 		if (req.body.applyAll == "true")
-			await applyToAllEntity($, page, entity, req.session.app_name);
+			applyToAllEntity($, page, entity, req.session.app_name);
 
 		// Doing git commit
 		// We simply add session values in attributes array
 		await gitHelper.gitCommit({
+			currentUser: req.session.passport.user,
+			code_platform: req.session.code_platform,
 			application: {
 				name: req.session.app_name
 			},
