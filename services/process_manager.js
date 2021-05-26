@@ -131,9 +131,7 @@ exports.killChildProcess = (process) => new Promise(resolve => {
 		});
 	} else {
 		try {
-			console.log(process.killed);
 			process.kill(); // SIGTERM the process
-			console.log(process.killed);
 		} catch(err) {
 			console.error("Cannot kill process with pid " + process.pid);
 			console.error(err);
