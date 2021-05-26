@@ -471,16 +471,26 @@ var NodeaForms = (_ => {
 					});
 				}
 			},
-			decimal: {
+			number: {
 				selector: "input[type='number']",
 				initializer: (element) => {
-					element.keyup(function() {
-						if (typeof element.data("custom-type") === "undefined") {
-							if (element.val().length > 10)
-								element.val(element.val().slice(0, 10));
-						} else if (element.data("custom-type") == "bigint")
-							if (element.val().length > 19)
-								element.val(element.val().slice(0, 19));
+					element.on('keyup', function() {
+						if (typeof element.data("custom-type") === "undefined" && element.val().length > 10) {
+							element.val(element.val().slice(0, 10));
+						} else if (element.data("custom-type") == "bigint" && element.val().length > 19) {
+							element.val(element.val().slice(0, 19));
+						}
+					});
+				}
+			},
+			decimal: {
+				selector: "input[data-custom-type='decimal']",
+				initializer: (element) => {
+					const decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					element.on('keyup', function() {
+						while ($(this).val() != "" && $(this).val() != "-" && !decimalRegx.test($(this).val()))
+							$(this).val($(this).val().substring(0, $(this).val().length - 1));
+						$(this).val($(this).val().replace(',', '.'));
 					});
 				}
 			},
@@ -713,12 +723,10 @@ var NodeaForms = (_ => {
 								jq_element.parent().parent().find('#' + id).remove();
 							}
 						}
-					} else {
-						if (element.attr('data-custom-type') === 'code39') {
-							element.on('keyup', function() {
-								element.val(element.val().toUpperCase());
-							});
-						}
+					} else if (element.attr('data-custom-type') === 'code39') {
+						element.on('keyup', function() {
+							element.val(element.val().toUpperCase());
+						});
 					}
 				},
 				validator: (element, form) => {
@@ -774,14 +782,6 @@ var NodeaForms = (_ => {
 						toastr.error(message);
 						return false;
 					}
-				}
-			},
-			code39: {
-				selector: "input[data-type='code39']",
-				initializer: (element) => {
-					element.on('keyup', function() {
-						element.val(element.val().toUpperCase());
-					});
 				}
 			},
 			currency: {

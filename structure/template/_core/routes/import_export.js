@@ -284,26 +284,15 @@ class CoreImportExport extends Route {
 	}
 
 	access_import() {
-		this.router.post('/access_import', this.middlewares.access_import, (req, res) => {
-			const src = req.body.import_file;
-			const partOfFilepath = src.split('-');
-			if (partOfFilepath.length > 1) {
-				const base = partOfFilepath[0];
-				const completeFilePath = globalConf.localstorage + 'access_tool/' + base + '/' + src;
-				const newAccessJson = fs.readFileSync(completeFilePath);
-				fs.writeFileSync(__configPath + "/access.json", newAccessJson);
-				req.session.toastr.push({
-					message: "settings.tool_success",
-					level: "success"
-				});
-				return res.redirect("/import_export/access_show");
-			}
-			req.session.toastr.push({
-				message: "An error occured.",
-				level: "error"
+		this.router.post('/access_import', this.middlewares.access_import, this.asyncRoute(async (data) => {
+			const access_file = data.req.files.import_file[0];
+			fs.writeFileSync(__configPath + "/access.json", access_file.buffer, 'utf8');
+			data.req.session.toastr.push({
+				message: "settings.tool_success",
+				level: "success"
 			});
-			return res.redirect("/import_export/access_show");
-		});
+			return data.res.success(_ => data.res.redirect("/import_export/access_show"));
+		}));
 	}
 }
 

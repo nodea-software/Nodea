@@ -127,13 +127,13 @@ exports.loadFromHtml = html => new Promise((resolve, reject) => {
 })
 
 exports.replace = async (filename, element, $insert) => {
-	const $ = await read(filename);
+	const $ = read(filename);
 	$(element).replaceWith($insert(element));
 	write(filename, $);
 }
 
-exports.insertHtml = async (filename, element, html) => {
-	const $ = await read(filename);
+exports.insertHtml = (filename, element, html) => {
+	const $ = read(filename);
 	$(element).html(html);
 	write(filename, $);
 }

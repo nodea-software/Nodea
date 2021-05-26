@@ -14,11 +14,9 @@
 			</div>
 		</form>
 		<div class="responsive-iframe" style="position: relative;">
-			{@ne key=iframe_url value=-1}
-				<iframe id="iframe" height="700px" width="100%" src="{iframe_url}" webkitAllowFullScreen="webkitAllowFullScreen" mozallowfullscreen="mozallowfullscreen" allowFullScreen="allowFullScreen" style="border: 1px solid grey;border-radius: 3px;"></iframe>
-			{/ne}
-			<div id="errorIframe" {@eq key=iframe_url value=-1} style='display: block;'{/eq}>
-				<img src="/img/mascot/body.png" alt="Error" />
+			<iframe id="iframe" {@eq key=iframe_url value=-1}style='display: none;'{/eq} src="{iframe_url}" webkitAllowFullScreen="webkitAllowFullScreen" mozallowfullscreen="mozallowfullscreen" allowFullScreen="allowFullScreen"></iframe>
+			<div id="errorIframe" {@eq key=iframe_url value=-1}style='display: block;'{/eq}>
+				<img src="/img/mascot/body_sad.png" alt="Error" />
 			</div>
 			<div id="loadingIframe">
 				<img class="animate__animated animate__pulse animate__infinite" src="/img/logo/transparent_white.png" alt="Loading" />

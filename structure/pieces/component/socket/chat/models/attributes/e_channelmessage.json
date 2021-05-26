@@ -9,6 +9,6 @@
 	},
 	"f_message": {
 		"type": "TEXT",
-		"newmipsType": "text"
+		"nodeaType": "text"
 	}
 }

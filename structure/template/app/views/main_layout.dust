@@ -330,7 +330,7 @@
 		</script>
 		{! HTML encode / decode functions !}
 		<script src="/core/js/html_encode_decode.js?v={config.version}" type='text/javascript'></script>
-		{! Newmips App !}
+		{! Nodea App !}
 		<script src="/core/js/nodea.js?v={config.version}" type='text/javascript'></script>
 
 		{+custom_js /}

@@ -153,14 +153,14 @@ module.exports = {
 		}
 		for (const attribute in attributes) {
 			const attributeDef = attributes[attribute];
-			const newmipsType = attributeDef.newmipsType;
+			const nodeaType = attributeDef.nodeaType;
 
 			if (!entity[attribute])
 				continue;
-			if (options[newmipsType] === false)
+			if (options[nodeaType] === false)
 				continue;
 
-			const processor = typeof options[newmipsType] === 'function' ? options[newmipsType] : defaultProcessors[newmipsType];
+			const processor = typeof options[nodeaType] === 'function' ? options[nodeaType] : defaultProcessors[nodeaType];
 			if (processor)
 				processor(entityName, entity, attribute, attributeDef);
 		}
@@ -193,7 +193,7 @@ module.exports = {
 				// Fetch thumbnails buffers
 				// Get attribute value
 				const value = data.data[i][field];
-				if (typeof attributes[field] != 'undefined' && attributes[field].newmipsType == 'picture' && value != null) {
+				if (typeof attributes[field] != 'undefined' && attributes[field].nodeaType == 'picture' && value != null) {
 					const filePath = `thumbnail/${value}`;
 					(thumbnailTask => {
 						thumbnailPromises.push((async _ => {
@@ -325,7 +325,7 @@ module.exports = {
 
 			const promises = [];
 			for (const key in entity.dataValues) {
-				if (!attributes[key] || attributes[key].newmipsType != 'picture')
+				if (!attributes[key] || attributes[key].nodeaType != 'picture')
 					continue;
 
 				if (!entity.dataValues[key] || entity.dataValues[key] === "")
@@ -354,7 +354,7 @@ module.exports = {
 		const deletePromises = [];
 		// Remove all the files and pictures associated to an entity row
 		for (const attribute in attributes) {
-			const type = attributes[attribute].newmipsType;
+			const type = attributes[attribute].nodeaType;
 			if (!['file', 'picture'].includes(type))
 				continue;
 			if (!entity[attribute] || entity[attribute] === "")
@@ -441,7 +441,7 @@ module.exports = {
 				for (let i = 0; i < results.rows.length; i++)
 					for (const fieldSelect in results.rows[i])
 						if (fieldSelect == field && results.rows[i][fieldSelect] && results.rows[i][fieldSelect] != "")
-							switch (attributes[field].newmipsType) {
+							switch (attributes[field].nodeaType) {
 								case "date":
 									results.rows[i][fieldSelect] = moment(results.rows[i][fieldSelect]).format(lang == "fr-FR" ? "DD/MM/YYYY" : "YYYY-MM-DD")
 									break;

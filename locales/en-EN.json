@@ -266,6 +266,8 @@
 		"server_timeout": "Server timed out, please check the application logs.",
 		"disable_log_refresh": "Disable logs refresh",
 		"no_create_app": "You cannot create a new application from the preview, please go to the generator home page.",
+		"empty_instruction": "You have not filled in an instruction, please fill in the field.",
+		"modified_file_instruction": "You have a file being edited in the code editor, if you execute an instruction the unsaved content will be lost. Would you like to continue ?",
 		"session": {
 			"noApplication": "No application selected",
 			"noModule": "No module selected",

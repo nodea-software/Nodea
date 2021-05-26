@@ -69,8 +69,11 @@
 										<label for="import_file">
 											{#__ key="administration.import_export.access.import_file_name"/}
 										</label>
-										<div class="dropzone dropzone-field" id="import_file_dropzone" data-entity="access_tool"></div>
-										<input type="hidden" name="import_file" id="import_file_dropzone_hidden" required>
+										<div class='nodea-dropzone'>
+											<i class='fas fa-download'></i>&nbsp;&nbsp;
+												{#__ key="message.insert_file" /}
+											</div>
+										<input id="import_file_dropzone_hidden" type='file' name='import_file' style='display: none;'/>
 									</div>
 									<button type="submit" class="btn btn-primary">{#__ key="administration.import_export.db.import_action" /}</button>
 								</form>

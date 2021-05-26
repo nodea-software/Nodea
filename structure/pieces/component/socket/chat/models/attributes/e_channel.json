@@ -9,7 +9,7 @@
 	},
 	"f_name": {
 		"type": "STRING",
-		"newmipsType": "string"
+		"nodeaType": "string"
 	},
 	"f_type": {
 		"type": "ENUM",

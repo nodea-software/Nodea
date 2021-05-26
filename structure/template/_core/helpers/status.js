@@ -174,11 +174,11 @@ module.exports = {
 
 			// Building field array
 			for (const field in entityFields) {
-				if (entityFields[field].newmipsType == "email")
+				if (entityFields[field].nodeaType == "email")
 					fieldTree.email_fields.push(field);
-				if (entityFields[field].newmipsType == "phone")
+				if (entityFields[field].nodeaType == "phone")
 					fieldTree.phone_fields.push(field);
-				if (entityFields[field].newmipsType == "file" || entityFields[field].newmipsType == "picture")
+				if (entityFields[field].nodeaType == "file" || entityFields[field].nodeaType == "picture")
 					fieldTree.file_fields.push(field);
 				fieldTree.fields.push(field);
 			}
@@ -222,11 +222,11 @@ module.exports = {
 
 			// Building field array
 			for (const field in entityFields) {
-				if (entityFields[field].newmipsType == "email")
+				if (entityFields[field].nodeaType == "email")
 					fieldTree.email_fields.push(field);
-				if (entityFields[field].newmipsType == "phone")
+				if (entityFields[field].nodeaType == "phone")
 					fieldTree.phone_fields.push(field);
-				if (entityFields[field].newmipsType == "file" || entityFields[field].newmipsType == "picture")
+				if (entityFields[field].nodeaType == "file" || entityFields[field].nodeaType == "picture")
 					fieldTree.file_fields.push(field);
 				fieldTree.fields.push(field);
 			}
