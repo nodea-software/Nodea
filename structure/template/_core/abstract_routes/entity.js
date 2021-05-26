@@ -222,7 +222,7 @@ class CoreEntity extends Route {
 
 			/**
 		     * Called at route start
-		     * @function CoreEntity#subdatalist#start
+		     * @function Core#CoreEntity#subdatalist#start
 		     * @memberof CoreEntity#subdatalist
 		     * @param {object} data
 			 * @param {object} data.req - Request - See expressjs definition
@@ -263,7 +263,7 @@ class CoreEntity extends Route {
 		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
 		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 		     * @param {object} data.tableInfo - Table information from client
-		     * @param {string} data.rawData - Result of the datatable query as raw data
+		     * @param {object} data.rawData - Result of the datatable query as raw data
 		     */
 			if (await this.getHook('subdatalist', 'afterDatatableQuery', data) === false)
 				return;
@@ -281,8 +281,8 @@ class CoreEntity extends Route {
 		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
 		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 		     * @param {object} data.tableInfo - Table information from client
-		     * @param {string} data.rawData - Result of the datatable query as raw data
-		     * @param {string} data.preparedData - Post processed data of datatable query results. This is the data sent as response
+		     * @param {object} data.rawData - Result of the datatable query as raw data
+		     * @param {object} data.preparedData - Post processed data of datatable query results. This is the data sent as response
 		     */
 			if (await this.getHook('subdatalist', 'beforeResponse', data) === false)
 				return;
@@ -1047,7 +1047,7 @@ class CoreEntity extends Route {
 
 			/**
 		     * Called before setting target status using `helpers.status.setStatus()`
-		     * @function CoreEntity#set_status#beforeActionsExecution
+		     * @function CoreEntity#set_status#beforeSetStatus
 		     * @memberof CoreEntity#set_status
 		     * @param {object} data
 			 * @param {object} data.req - Request - See expressjs definition
