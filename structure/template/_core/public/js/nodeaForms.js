@@ -571,11 +571,6 @@ var NodeaForms = (_ => {
 					element.datetimepicker({
 						format: 'HH:mm'
 					});
-					element.inputmask({
-						inputFormat: "h2:mm",
-						alias: 'datetime',
-						placeholder: "hh:mm",
-					});
 				}
 			},
 			datepicker: {

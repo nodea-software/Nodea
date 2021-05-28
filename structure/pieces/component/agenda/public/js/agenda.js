@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(function() {
 
     $(".selectCategoryColor").next("span").find(".select2-selection").css("background-color", "#CCCCCC");
 
@@ -6,242 +6,216 @@ $(document).ready(function() {
         $(this).next("span").find(".select2-selection").css("background-color", $(this).find("option:selected").attr("data-backgroundcolor"));
     });
 
+    function generateDragEvent(title, category) {
+        var generateID = moment();
+        var eventObj = '{"id": "'+generateID+'","title": "'+title+'", "idCategory":'+category.id+', "stick": "true","backgroundColor": "'+category.color+'", "borderColor": "'+category.color+'"}';
+
+        var htmlToAppend = "<div data-event='"+eventObj+"' class='draggable pendingEvent external-event' id='"+generateID+"' style='z-index: 100;background-color: "+category.color+";'>"+title+"<i style='margin-top: 3px;' class='fas fa-times float-right'></i></div>";
+
+        $("#pengingEventList").append(htmlToAppend);
+        $("#new-event-title").val("");
+
+        new FullCalendar.Draggable($("#"+generateID).get(0));
+    }
+
     $(document).on("click", "#add-new-event", function(){
 
         var eventTitle = $("#new-event-title").val();
 
-        if(eventTitle != ""){
-            var categoryID = $("#selectCategorySide").val();
-            if(categoryID == "")
-                categoryID = 0;
-            var categoryColor = $("#selectCategorySide option:selected").attr("data-backgroundcolor");
-
-            var generateID = moment();
-            var eventObj = '{"title": "'+eventTitle+'", "idCategory":'+categoryID+', "stick": "true","backgroundColor": "'+categoryColor+'", "borderColor": "'+categoryColor+'"}';
-
-            var htmlToAppend = "<div data-event='"+eventObj+"' class='draggable pendingEvent external-event' id='"+generateID+"' style='z-index: 100;background-color: "+categoryColor+";'>"+eventTitle+"<i style='margin-top: 3px;' class='fa fa-times pull-right'></i></div>";
-
-            $("#pengingEventList").append(htmlToAppend);
-            $("#new-event-title").val("");
-
-            $("#"+generateID).draggable({
-                revert: true,
-                revertDuration: 0
-            });
-        } else {
-            toastr.warning(FILL_TITLE_AGENDA);
+        if(eventTitle == '') {
+            toastr.error(FILL_TITLE_AGENDA);
+            return;
         }
+
+        var categoryID = $("#selectCategorySide").val();
+        if(categoryID == "")
+            categoryID = 0;
+        var categoryColor = $("#selectCategorySide option:selected").attr("data-backgroundcolor");
+
+        generateDragEvent(eventTitle, {
+            id: categoryID,
+            color: categoryColor
+        });
     });
 
-    $(document).on("click", ".external-event i.fa.fa-times", function(){
+    $(document).on("click", ".external-event i.fas.fa-times", function(){
         $(this).parent("div").remove();
     });
 
-    $("*").tooltip({
-        disabled: true
-    });
-
-    $('.modal').on('shown.bs.modal', function() {
-        $(this).find('[autofocus]').focus();
-    });
-
-    if (lang_user == "fr-FR") {
-        var currentLocal = "fr";
-        var ressourceName = "Utilisateurs";
-        var buttonTextObj = {
-            today: 'Aujourd\'hui',
-            month: 'Mois',
-            week: 'Semaine',
-            day: 'Jour',
-            customTimelineDay: "Timeline/Jour",
-            customTimelineWeek: "Timeline/Semaine"
-        };
-    } else {
-        var currentLocal = "en";
-        var ressourceName = "Users";
-        var buttonTextObj = {
-            today: 'Today',
-            month: 'Month',
-            week: 'Week',
-            day: 'Day',
-            customTimelineDay: "Timeline/Day",
-            customTimelineWeek: "Timeline/Week"
-        };
-    }
-
-    /* Full calendat init */
-    $('#calendar').fullCalendar({
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        locale: currentLocal,
-        eventSources: [{
-            url: '/URL_ROUTE/get_event',
+        initialView: 'dayGridMonth',
+        locale: calendarLocales.lang,
+        timeZone: 'UTC',
+        resourceAreaWidth: "15%",
+        defaultTimedEventDuration: "04:00:00",
+        editable: true,
+        droppable: true,
+        resourceAreaHeaderContent: calendarLocales.users,
+        events: {
+            url: '/agenda/get_event',
             method: 'POST',
-            data: function() {
-                return {}; // You can add data to /get_event rout here
-            },
+            extraParams: {}, /* Add extra params here */
             failure: function(err) {
-                console.error(err)
+                console.error(err);
                 toastr.error(err.message);
             }
-        }],
-        header: {
+        },
+        resources: usersRessources,
+        headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'month,agendaWeek,customTimelineDay,customTimelineWeek'
-        },
-        buttonIcons: {
-            prev: "left-single-arrow",
-            next: "right-single-arrow"
+            right: 'dayGridMonth,customWeek,customTimelineDay,customTimelineWeek'
         },
         views: {
+            customWeek: {
+                type: 'timeGridWeek',
+                buttonText: calendarLocales.week,
+                slotDuration: "00:30:00"
+            },
             customTimelineDay: {
-                type: 'timelineDay'
+                type: 'resourceTimeline',
+                buttonText: calendarLocales.customTimelineDay
             },
             customTimelineWeek: {
-                type: 'timelineWeek',
+                type: 'resourceTimelineWeek',
+                buttonText: calendarLocales.customTimelineWeek,
                 slotDuration: "24:00:00"
             }
         },
-        buttonText: buttonTextObj,
-        navLinks: false,
-        editable: true,
-        eventLimit: true,
-        droppable: true,
-        resourceAreaWidth: "15%",
-        defaultTimedEventDuration: "04:00:00",
-        timezone: 'UTC',
-        eventReceive: function(event) {
-
-            /*event.end is null, so set it to start + the number of hours you want*/
-            event.end = moment.utc(event.start).add(4, "h");
-
+        eventReceive: function(info) {
+            const event = calendar.getEventById(info.event.id);
+            const resourceIds = event.getResources().map(x => x.id);
+            
             /* Convert into good SQL format */
-            var startDate = moment.utc(event.start).format("YYYY-MM-DD HH:mm:ss");
-            var endDate = moment.utc(event.end).format("YYYY-MM-DD HH:mm:ss");
-
-            var ajaxData = {
-                title: event.title,
-                allday: event.allDay,
-                start: startDate,
-                end: endDate,
-                idCategory: event.idCategory,
-                idUser: event.resourceId || null
-            };
+            var startDate = moment.utc(event.startStr).format("YYYY-MM-DD HH:mm:ss");
+            var endDate = moment.utc(event.startStr).add(4, "h").format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/URL_ROUTE/add_event',
+                url: '/agenda/add_event',
                 type: 'POST',
-                data: JSON.stringify(ajaxData),
-                dataType: 'json',
+                data: JSON.stringify({
+                    title: info.event.title,
+                    allday: info.event.allDay,
+                    start: startDate,
+                    end: endDate,
+                    idCategory: info.event.extendedProps.idCategory || null,
+                    resourceIds: resourceIds
+                }),
                 contentType: "application/json",
-                context: this,
-                success: function(data) {
-                    /*event.url = "/agenda_event/show?id="+data.idEvent;*/
-                    event.eventId = data.idEvent;
-                    $('#calendar').fullCalendar('updateEvent', event);
+                success: function(createdEvent) {
+                    // Update the tmp event id with the event created id
+                    event.setProp('id', createdEvent.id);
+                    // Regenerate new droppable event, with a new tmp id
+                    generateDragEvent($(info.draggedEl).text(), {
+                        id: $(info.draggedEl).data('event').idCategory,
+                        color: $(info.draggedEl).data('event').backgroundColor
+                    });
+                    $(info.draggedEl).remove();
                 },
                 error: function(error) {
                     console.error(error);
                 }
             });
         },
-        eventResize: function(event) {
+        eventResize: function(info) {
 
             /* Convert into good SQL format */
-            var startDate = moment(event.start).format("YYYY-MM-DD HH:mm:ss");
-            var endDate = moment(event.end).format("YYYY-MM-DD HH:mm:ss");
-
-            var ajaxData = {
-                eventId: event.eventId,
-                start: startDate,
-                end: endDate
-            };
+            var startDate = moment.utc(info.event.start).format("YYYY-MM-DD HH:mm:ss");
+            var endDate = moment.utc(info.event.end).format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/URL_ROUTE/resize_event',
+                url: '/agenda/resize_event',
                 type: 'POST',
-                data: JSON.stringify(ajaxData),
-                dataType: 'json',
-                contentType: "application/json",
-                context: this,
+                data: {
+                    id: info.event.id,
+                    start: startDate,
+                    end: endDate
+                },
                 error: function(error) {
                     console.error(error);
                 }
             });
         },
-        eventDrop: function(event) {
-            /* Convert into good SQL format */
-            var startDate = moment.utc(event.start).format("YYYY-MM-DD HH:mm:ss");
-            if (event.end == null)
-                event.end = moment.utc(event.start).add(4, "h");
-            var endDate = moment.utc(event.end).format("YYYY-MM-DD HH:mm:ss");
+        eventDrop: function(info) {
 
-            var ajaxData = {
-                eventId: event.eventId,
-                start: startDate,
-                end: endDate,
-                allDay: event.allDay,
-                idUser: event.resourceId || null,
-                idUsers: event.resourceIds || null
-            };
+            const event = calendar.getEventById(info.event.id);
+            const resourceIds = event.getResources();
+
+            /* Convert into good SQL format */
+            const startDate = moment.utc(event.startStr).format("YYYY-MM-DD HH:mm:ss");
+
+            let endDate;
+            if(!event.end)
+                endDate = moment.utc(event.startStr).add(4, "h").format("YYYY-MM-DD HH:mm:ss");
+            else
+                endDate = moment.utc(event.endStr).format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/URL_ROUTE/update_event_drop',
+                url: '/agenda/update_event_drop',
                 type: 'POST',
-                data: JSON.stringify(ajaxData),
-                dataType: 'json',
+                data: JSON.stringify({
+                    id: event.id,
+                    start: startDate,
+                    end: endDate,
+                    allDay: event.allDay,
+                    resourceIds: resourceIds
+                }),
                 contentType: "application/json",
-                context: this,
                 error: function(error) {
                     console.error(error);
                 }
             });
         },
-        eventClick: function(calEvent, jsEvent, view) {
-            $("#modalUpdateEventID").val(calEvent.eventId);
-            $("#modalUpdateID").val(calEvent._id);
-            $("#modalUpdateTitle").val(calEvent.title);
-            if (calEvent.allDay) {
+        eventClick: function(info) {
+            $("#modalUpdateID").val(info.event.id);
+            $("#modalUpdateTitle").val(info.event.title);
+            if (info.event.allDay) {
                 $('#updateEventAllDayCheckbox').icheck('checked');
+                $("#modalUpdateStartTime").prop("disabled", true);
+                $("#modalUpdateEndTime").prop("disabled", true);
                 $("#modalUpdateStartTime").val('00:00');
                 $("#modalUpdateEndTime").val('00:00');
             } else {
-                if (calEvent.end == null)
-                    calEvent.end = moment.utc(calEvent.start).add(4, "h");
                 $('#updateEventAllDayCheckbox').icheck('unchecked');
-                $("#modalUpdateStartTime").val(moment.utc(calEvent.start).format("HH:mm"));
-                $("#modalUpdateEndTime").val(moment.utc(calEvent.end).format("HH:mm"));
+                $("#modalUpdateStartTime").val(moment.utc(info.event.start).format("HH:mm"));
+                $("#modalUpdateEndTime").val(moment.utc(info.event.end).format("HH:mm"));
             }
-            if (calEvent.idCategory != 0)
-                $("#modalUpdateCategory").val(calEvent.idCategory).trigger("change");
+
+            if (info.event.extendedProps.idCategory != 0)
+                $("#modalUpdateCategory").val(info.event.extendedProps.idCategory).trigger("change");
+
             $('#eventUpdateModal').modal('show');
         },
-        dayClick: function(date, jsEvent, view, ressources) {
-            $("#modalCreateStartDate").val(date._d);
-            /* Get the start hours when the user clicked in the calendar */
-            $("#modalCreateStartTime").val(moment.utc(date._d).format("HH:mm"));
-            /* Add 4 hours to default end time in create modal */
-            $("#modalCreateEndTime").val(moment.utc(date._d).add(4, "hours").format("HH:mm"));
+        dateClick: function(info) {
+            $("#modalCreateStartDate").val(info.dateStr);
 
-            $("#modalCreateUser").val(null);
-            if (typeof ressources !== "undefined") {
-                $("#modalCreateUser").val(ressources.id)
-            }
-
-            if ($("#modalCreateStartTime").val() == "00:00") {
-                /* If start date is 00:00 then we considered that the event is all day, so check allDay checkbox */
+            if(info.allDay){
                 $('#createEventAllDayCheckbox').icheck('checked');
-                $("#modalCreateEndTime").val('00:00');
+                $("#modalCreateStartTime").prop("disabled", true);
+                $("#modalCreateEndTime").prop("disabled", true);
+                $("#modalUpdateStartTime").val('00:00');
+                $("#modalUpdateEndTime").val('00:00');
             } else {
-                $('#createEventAllDayCheckbox').icheck('unchecked');
+                /* Get the start hours when the user clicked in the calendar */
+                $("#modalCreateStartTime").val(moment.utc(info.date).format("HH:mm"));
+                /* Add 4 hours to default end time in create modal */
+                $("#modalCreateEndTime").val(moment.utc(info.date).add(4, "hours").format("HH:mm"));
             }
+
+            // In case of click on timeline view
+            $("#modalCreateUser").val(null);
+            if (typeof info.resource !== "undefined") {
+                $("#modalCreateUser").val(info.resource.id)
+            }
+
             $("#modalCreateTitle").val("");
             $("#modalCreateCategory").val("").trigger("change");
             $('#eventCreateModal').modal('show');
-        },
-        resourceLabelText: ressourceName,
-        resources: usersRessources
+        }
     });
+    calendar.render();
 
     /* Create event modal, all day checkbox managment */
     $(document).on("ifChanged", "#createEventAllDayCheckbox", function() {
@@ -276,19 +250,16 @@ $(document).ready(function() {
         if(!confirm(DEL_CONFIRM_TEXT))
             return;
 
-        var idEventToDelete = $("#modalUpdateEventID").val();
-        var idEventCalendarToDelete = $("#modalUpdateID").val();
+        var idEventToDelete = $("#modalUpdateID").val();
         $.ajax({
-            url: '/URL_ROUTE/delete_event',
+            url: '/agenda/delete_event',
             type: 'POST',
-            data: JSON.stringify({
+            data: {
                 id: idEventToDelete
-            }),
-            dataType: 'json',
-            contentType: "application/json",
+            },
             context: this,
             success: function(data) {
-                $("#calendar").fullCalendar('removeEvents', idEventCalendarToDelete);
+                calendar.getEventById(idEventToDelete).remove();
                 $('#eventUpdateModal').modal('hide');
             },
             error: function(error) {
@@ -298,21 +269,24 @@ $(document).ready(function() {
     });
 
     $(document).on("click", "#updateEvent", function() {
-        var idEventToUpdate = $("#modalUpdateEventID").val();
-        var idEventCalendarToDelete = $("#modalUpdateID").val();
+
+        var eventId = $("#modalUpdateID").val();
+        var event = calendar.getEventById(eventId);
 
         var newTitle = $("#modalUpdateTitle").val();
         var newCategory = $("#modalUpdateCategory").val();
         var newCategoryColor = $("#modalUpdateCategory").find("option:selected").data("backgroundcolor");
         var allDay = $("#updateEventAllDayCheckbox").icheck('update')[0].checked ? true : false;
 
-        var eventObj = $("#calendar").fullCalendar('clientEvents', idEventCalendarToDelete);
-
-        var startDate = eventObj[0].start.format("YYYY-MM-DD HH:mm:ss").split(" ");
-        var chosenTimeStart = moment($("#modalUpdateStartTime").val(), "HH:mm").format("HH:mm");
-        var chosenTimeEnd = moment($("#modalUpdateEndTime").val(), "HH:mm").format("HH:mm");
-        var newStartDate = startDate[0] + " " + chosenTimeStart + ":00";
-        var newEndDate = startDate[0] + " " + chosenTimeEnd + ":00";
+        var startDate = moment(event.startStr).format("YYYY-MM-DD");
+        var chosenTimeStart = $("#modalUpdateStartTime").val();
+        var chosenTimeEnd = $("#modalUpdateEndTime").val();
+        var newStartDate = startDate + " " + chosenTimeStart + ":00";
+        var newEndDate;
+        if(!event.end)
+            newEndDate = startDate + " " + chosenTimeEnd + ":00";
+        else
+            newEndDate = moment(event.endStr).format('YYYY-MM-DD HH:mm:ss')
 
         if (!allDay && moment(newStartDate).diff(newEndDate) >= 0) {
             toastr.error(END_BEFORE_START_MSG);
@@ -320,29 +294,25 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: '/URL_ROUTE/update_event',
+            url: '/agenda/update_event',
             type: 'POST',
             data: {
-                id: idEventToUpdate,
+                id: eventId,
                 f_title: newTitle,
                 f_all_day: allDay,
-                f_start_date: allDay ? startDate[0] + " 00:00:00" : newStartDate,
-                f_end_date: allDay ? startDate[0] + " 00:00:00" : newEndDate,
+                f_start_date: newStartDate,
+                f_end_date: newEndDate,
                 r_category: newCategory
             },
-            context: this,
-            success: function(data) {
-                eventObj[0].allDay = allDay;
-                eventObj[0].start = allDay ? moment.utc(startDate[0] + " 00:00:00") : moment.utc(newStartDate);
-                eventObj[0].title = newTitle;
-                eventObj[0].idCategory = newCategory;
-                eventObj[0].backgroundColor = newCategoryColor;
-                eventObj[0].borderColor = newCategoryColor;
-                // $('#calendar').fullCalendar('updateEvent', eventObj[0]);
-                /* Little trick to set end date */
-                eventObj[0].end = allDay ? moment.utc(startDate[0] + " 00:00:00") : moment.utc(newEndDate);
-                $('#calendar').fullCalendar('updateEvent', eventObj[0]);
-                $('#calendar').fullCalendar("refetchEvents");
+            success: function(updatedEvent) {
+
+                event.setDates(updatedEvent.f_start_date, updatedEvent.f_end_date);
+                event.setProp('title', newTitle);
+                event.setAllDay(updatedEvent.f_all_day);
+                event.setProp('backgroundColor', newCategoryColor);
+                event.setProp('borderColor', newCategoryColor);
+                event.setExtendedProp('idCategory', newCategory);
+            
                 $('#eventUpdateModal').modal('hide');
             },
             error: function(error) {
@@ -353,60 +323,59 @@ $(document).ready(function() {
 
     $(document).on("click", "#createEvent", function() {
 
-        var newTitle = $("#modalCreateTitle").val();
-        var newCategory = $("#modalCreateCategory").val();
-        var newCategoryColor = $("#modalCreateCategory").find("option:selected").data("backgroundcolor");
-        var allDay = $("#createEventAllDayCheckbox").icheck('update')[0].checked ? true : false;
+        const newTitle = $("#modalCreateTitle").val();
+        const newCategory = $("#modalCreateCategory").val();
+        const newCategoryColor = $("#modalCreateCategory").find("option:selected").data("backgroundcolor");
+        const allDay = $("#createEventAllDayCheckbox").icheck('update')[0].checked ? true : false;
 
-        var startDate = moment($("#modalCreateStartDate").val()).format("YYYY-MM-DD HH:mm:ss").split(" ");
-        var chosenTimeStart = moment($("#modalCreateStartTime").val(), "HH:mm").format("HH:mm");
-        var chosenTimeEnd = moment($("#modalCreateEndTime").val(), "HH:mm").format("HH:mm");
-        var newStartDate = startDate[0] + " " + chosenTimeStart + ":00";
-        var newEndDate = startDate[0] + " " + chosenTimeEnd + ":00";
-
-        var idUser = null;
-        if ($("#modalCreateUser").val() != null && $("#modalCreateUser").val() != "") {
-            idUser = $("#modalCreateUser").val();
+        const startDate = moment($("#modalCreateStartDate").val()).format('YYYY-MM-DD');
+        let chosenTimeStart = '00:00';
+        let chosenTimeEnd = '00:00';
+        if(!allDay) {
+            chosenTimeStart = $("#modalCreateStartTime").val();
+            chosenTimeEnd = $("#modalCreateEndTime").val();
         }
+        const newStartDate = startDate + " " + chosenTimeStart + ":00";
+        const newEndDate = startDate + " " + chosenTimeEnd + ":00";
+
+        var resourceIds = [];
+        if ($("#modalCreateUser").val() != null && $("#modalCreateUser").val() != "")
+            resourceIds = [$("#modalCreateUser").val()];
 
         if (!allDay && moment(newStartDate).diff(newEndDate) >= 0) {
             toastr.error(END_BEFORE_START_MSG);
             return false;
         }
 
-        var ajaxData = {
-            title: newTitle,
-            start: allDay ? startDate[0] + " 00:00:00" : newStartDate,
-            end: allDay ? startDate[0] + " 00:00:00" : newEndDate,
-            allday: allDay,
-            idCategory: newCategory || null,
-            idUser: idUser
-        };
-
         $.ajax({
-            url: '/URL_ROUTE/add_event',
+            url: '/agenda/add_event',
             type: 'POST',
-            data: JSON.stringify(ajaxData),
-            dataType: 'json',
+            data: JSON.stringify({
+                title: newTitle,
+                start: newStartDate,
+                end: newEndDate,
+                allday: allDay,
+                idCategory: newCategory || null,
+                resourceIds: resourceIds
+            }),
             contentType: "application/json",
-            context: this,
-            success: function(data) {
-                var newEvent = {
-                    eventId: data.idEvent,
-                    title: newTitle,
-                    start: newStartDate,
-                    end: newEndDate,
-                    allDay: allDay,
+            success: function(createdEvent) {
+                calendar.addEvent({
+                    id: createdEvent.id,
+                    title: createdEvent.f_title,
+                    start: createdEvent.f_start_date,
+                    end: createdEvent.f_end_date,
+                    allDay: createdEvent.f_all_day,
                     backgroundColor: newCategoryColor,
                     borderColor: newCategoryColor,
-                    idCategory: ajaxData.idCategory,
-                    resourceId: idUser
-                };
-                $('#calendar').fullCalendar('renderEvent', newEvent, true);
+                    idCategory: createdEvent.fk_id_agenda_category_category,
+                    resourceIds: resourceIds
+                }, true);
                 $('#eventCreateModal').modal('hide');
             },
-            error: function(error) {
-                console.error(error);
+            error: function(err) {
+                console.error(err);
+                toastr.error(err);
             }
         });
     });
