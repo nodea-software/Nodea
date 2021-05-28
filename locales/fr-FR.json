@@ -40,13 +40,6 @@
 		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
 		"logout_success": "Vous avez bien été déconnecté."
 	},
-	"deploy": {
-		"deploying": "Déploiement en cours...",
-		"please_wait": "Nous déployons votre application. Cette opération peut prendre quelques minutes. Veuillez patienter...",
-		"ready": "Votre application est prête.",
-		"goto": "Aller vers votre application.",
-		"stayonpage": "Vous devriez rester sur cette page pendant le déploiement de votre application."
-	},
 	"menu": {
 		"home": "Accueil",
 		"module": "Module",
@@ -149,7 +142,12 @@
 		"subtitle": "Testez vos applications"
 	},
 	"deploy": {
-		"subtitle": "Suivez vos déploiements"
+		"subtitle": "Suivez vos déploiements",
+		"deploying": "Déploiement en cours...",
+		"please_wait": "Nous déployons votre application. Cette opération peut prendre quelques minutes. Veuillez patienter...",
+		"ready": "Votre application est prête.",
+		"goto": "Aller vers votre application.",
+		"stayonpage": "Vous devriez rester sur cette page pendant le déploiement de votre application."
 	},
 	"configure": {
 		"subtitle": "Paramétrez et gérez votre environnement",
@@ -551,14 +549,37 @@
 		"home": {
 			"1": "Bienvenue sur Nodea !<br> Pour commencer je vais vous présenter les différents menus.",
 			"2": "Ici se trouve le menu Construire. Vous pouvez à travers ce menu générer et gérer vos applications Nodea !",
-			"3": "Le menu Configurer permet de personnaliser votre générateur Nodea ainsi que d'administrer votre compte."
+			"3": "Dans le menu Développer vous trouverez un suivi des activités ainsi que des intéractions avec le gestionnaire de code source du générateur.",
+			"4": "Le menu Tester permettra de mettre en place des phases de tests et de validation de vos applications générées ! Il est aujourd'hui en cours de développement.",
+			"5": "Vous trouverez dans ce menu l'interface de préparation et d'organisation du déploiement de vos applications. Il est aujourd'hui en cours de développement.",
+			"6": "Le menu Configurer permet de personnaliser votre générateur Nodea ainsi que d'administrer votre compte."
 		},
 		"build": {
-			"1": "Vous pouvez ici créer une application vide prête à être complétée.",
+			"1": "Vous pouvez ici créer une application standard prête à être customisée !",
 			"2": "Ici vous pouvez écrire un script ou encore charger un fichier d'instruction afin de générer une application complète en quelques minutes !",
-			"3": "Si vous avez une application déjà existante sur un autre générateur Nodea, vous pouvez l'importer ici.",
+			"3": "Si vous avez une application déjà existante sur un autre générateur Nodea, vous pouvez l'importer ici !",
 			"4": "Vous pouvez consulter l'ensemble des applications ici, et ainsi les exporter, cloner le code source ou encore les supprimer.",
 			"5": "Vous trouverez ici un accès rapide à toutes vos applications !"
+		},
+		"preview": {
+			"1": "Bienvenue sur la page de prévisualisation de votre application ! Je vais vous expliquer les différents éléments actuellement qui se présentent devant vous.",
+			"2": "Dans cette zone se trouve votre application, elle est actuellement utilisable et vous pouvez déjà naviguer dedans pour l'essayer !",
+			"3": "Ici vous pouvez taper des instructions pour modifier votre application. Essayer 'Ajouter une entité Personne' par exemple !",
+			"4": "Une fois une instruction executée, je vous répondrai ici :) Je vous donnerai quelques astuces de temps en temps !",
+			"5": "La session vous permet de savoir sur quelle Application, quel module et quel entité vous vous trouvez actuellement ! C'est important pour savoir sur quels éléments vont s'appliquer vos instructions.",
+			"6": "Vous avez quelques boutons d'actions et d'accès rapide disponible ici.",
+			"7": "Le UI Editor vous permet de modifier l'ordre et la largeur de vos champs !",
+			"8": "Vous pouvez accèder ici à un éditeur de code en ligne qui met à dispositions le code actuel de l'application !",
+			"9": "Les logs permettent d'afficher les retours de votre application, utile pour comprendre ce qu'il se passe !"
+		},
+		"develop": {
+			"1": "Bienvenue dans le menu Développer ! Ici vous trouverez des informations concernant le gestionnaire de code source connecté au générateur (ex Gitlab).",
+			"2": "Vous pouvez choisir l'application que vous souhaitez visualiser ici.",
+			"3": "Ici se trouve les derniers commits effectué sur le repository de votre application.",
+			"4": "Vous trouvez dans Tâches l'ensemble des issues provenant du gestionnaire de code source.",
+			"5": "Ici vous trouverez les tâches qui vous sont attribués.",
+			"6": "Les différentes versions de l'application seront repertorié ici",
+			"7": "La documentation de développeur ainsi que la documentation d'API sont accessible ici !"
 		}
 	},
 	"code_platform": {
