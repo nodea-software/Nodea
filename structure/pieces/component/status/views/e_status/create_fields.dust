@@ -25,8 +25,8 @@
 	<br><br><br><br>
 	<div data-field="f_name" class="col-xs-12 col-sm-6">
 		<div class="form-group">
-			<label for="f_name"> {#__ key="entity.e_status.f_name"/} {@inline_help field="f_name"}&nbsp;<i data-field="f_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
-			<input class="form-control input" placeholder='{#__ key="entity.e_status.f_name" /}' name="f_name" value="" type="text">
+			<label for="f_name" class="required"> {#__ key="entity.e_status.f_name"/} {@inline_help field="f_name"}&nbsp;<i data-field="f_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
+			<input class="form-control input" required placeholder='{#__ key="entity.e_status.f_name" /}' name="f_name" value="" type="text">
 		</div>
 	</div>
 	<div data-field="f_button_label" class="col-xs-12 col-sm-6">

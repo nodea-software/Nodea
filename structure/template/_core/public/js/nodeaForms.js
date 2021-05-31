@@ -183,6 +183,16 @@ var NodeaForms = (_ => {
 		return Object.entries({...defaults.elements, ...overrideDefaults.elements}).map(([key]) => key);
 	}
 
+	// Check if a string has a valid JSON syntax to parse it
+	function isValidJSON(string) {
+		if (/^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@')
+				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+				.replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
+			return true;
+		else
+			return false;
+	}
+
 	// Handle form submission
 	function handleSubmit(form, event, overrideDefaults = {}) {
         // Prevent multiple submission (double click)
@@ -265,16 +275,6 @@ var NodeaForms = (_ => {
 		} catch (err) {
 			console.error(err);
 		}
-	}
-
-	// Check if a string has a valid JSON syntax to parse it
-	function isValidJSON(string) {
-		if (/^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@')
-				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-				.replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
-			return true;
-		else
-			return false;
 	}
 
     // Server side you can:

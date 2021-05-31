@@ -795,19 +795,30 @@ var NodeaTable = (function() {
             	data: $(this).data('col') || null,
             	type: $(this).data('type'),
             	element: $(this),
-            	hidden: $(this).attr("data-hidden") == "1",
+            	hidden: $(this).attr("data-hidden") == "true",
             	defaultContent: " - "
             };
             var filterTh = $(tableID + " .filters th:eq("+ idx +")", context);
 
-		    // Check if column is hidden from columnSelector or through `data-hidden="1"` setting. data-hidden forces column hide
+            for (const hideCol of params.hide || []) {
+            	// Hidden using index
+            	if (!isNaN(parseInt(hideCol)) && parseInt(hideCol) == idx)
+            		column.hidden = true;
+            	// Hidden using col name
+            	else if (column.data === hideCol)
+            		column.hidden = true;
+            	// Hidden using col type
+            	else if (column.type === hideCol)
+            		column.hidden = true;
+            }
+		    // Check if column is hidden from columnSelector or through `data-hidden="true"` setting. data-hidden forces column hide
 		    column.show = column.hidden === true
 		    	? false
 		    	: hiddenColumns === null || !hiddenColumns.includes(column.data)
 
             var columnDef = {
         		targets: idx,
-        		render: () => "",
+        		render: defaults.columns.default.render,
         		visible: false,
         		searchable: false,
         		orderable: false,
@@ -937,7 +948,6 @@ var NodeaTable = (function() {
 			var x,left = 0,down;
 			/* If we are scrolling horizontaly the datalist then don't trigger the click event to go on the show */
 			var scrolling = false;
-
 			$(tableID + ' tbody', context).mousedown(function(e){
 				if(!e.ctrlKey){
 					e.preventDefault();
@@ -957,7 +967,7 @@ var NodeaTable = (function() {
 			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){scrolling = false;}, 500);});
 
 		} catch(err) {
-			console.error("NodeaDataTable ERROR "+tableID+" :");
+			console.error("ERROR: NodeaTable "+tableID+" :");
 			console.error(err);
 		}
 		return table;

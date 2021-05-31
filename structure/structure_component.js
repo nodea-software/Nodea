@@ -446,7 +446,7 @@ exports.newStatus = async (data) => {
 	// History list
 	{
 		// Hide buttons
-		$(".main").find("th[data-type=show], th[data-type=update], th[data-type=delete]").attr("data-hidden", "1");
+		$(".main").find("th[data-type=show], th[data-type=update], th[data-type=delete]").attr("data-hidden", "true");
 
 		// Render status column as colored badge
 		$("[data-col='"+statusAlias+".f_name']").each(function() {
