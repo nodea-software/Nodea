@@ -33,7 +33,7 @@
 						<!-- Custom Tabs -->
 						<div id='preview-card' class="card main-card">
 							<div class="card-header d-flex p-0">
-								<h3 class="card-title p-3">
+								<h3 class="card-title p-3 powertip" powertip-content='{#__ key="powertip.preview.1" /}' powertip-order='1'>
 									<img class="animate__animated" src="/img/picto/desktop.png" alt="Wrench picto">
 									{#__ key="preview.title"/}
 								</h3>
@@ -43,17 +43,17 @@
 											{#__ key="preview.title"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.preview.7" /}' powertip-order='7'>
 										<a class="nav-link" href="#ui-editor" data-toggle="tab">
 											{#__ key="menu.ui_editor"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.preview.8" /}' powertip-order='8'>
 										<a class="nav-link" href="#code-editor" data-toggle="tab" id="start-editor">
 											{#__ key="menu.editor"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.preview.9" /}' powertip-order='9'>
 										<a class="nav-link" href="#logs" data-toggle="tab" id="start-logs">
 											{#__ key="menu.logs"/}
 										</a>

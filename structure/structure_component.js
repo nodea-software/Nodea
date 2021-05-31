@@ -245,7 +245,6 @@ exports.newAgenda = async (data) => {
 					<i class='fa fa-calendar nav-icon'></i>\n\
 					<p>\n\
 						<!--{#__ key=\"global_component.agenda.menu\" /}-->\n\
-						<i class='right fas fa-angle-right'></i>\n\
 					</p>\n\
 				</a>\n\
 			</li>\n\
