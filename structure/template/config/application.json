@@ -1,14 +1,16 @@
 {
 	"appname": "nodea_workspace",
-	"version": 0,
-	"versionAppli": "1",
+	"version": "1.0.0",
+	"maintenance": false,
 	"api_enabled": true,
+	"lang": "fr-FR",
+	"timezone": "Europe/Paris",
+	"contact_field_for_sms": "f_phone",
 	"socket": {
 		"enabled": true,
 		"chat": false,
 		"notification": true
 	},
-	"contact_field_for_sms": "f_phone",
 	"document_template": {
 		"format_pairs": [{
 			"code": "docx_docx",
@@ -24,7 +26,6 @@
 		"input_extentions": ["pdf", "dust", "html", "doc", "docx"],
 		"output_extentions": ["docx", "pdf", "html"]
 	},
-	"maintenance": false,
 	"synchronization": {
 		"ignore_list": [
 			"e_action",
@@ -42,7 +43,5 @@
 			"e_media_sms",
 			"e_user"
 		]
-	},
-	"lang": "fr-FR",
-	"timezone": "Europe/Paris"
+	}
 }

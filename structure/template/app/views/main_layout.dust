@@ -79,7 +79,7 @@
 					<li class="nav-item">
 						<a class="nav-link" href="#">
 							<span class="badge badge-warning navbar-badge" style="margin-top: 5px;">
-								{#__ key="app.version"/}&nbsp;{config.versionAppli}.{config.version}
+								{#__ key="app.version"/}&nbsp;{config.version}
 							</span>
 						</a>
 					</li>
