@@ -24,7 +24,7 @@ exports.setColumnVisibility = async (data) => {
 		data.options.value = "id";
 
 	if($("*[data-field='" + data.options.value + "']").length > 0){
-		$("*[data-field='" + data.options.value + "']").attr("data-hidden", hide ? '1' : '0');
+		$("*[data-field='" + data.options.value + "']").attr("data-hidden", hide ? 'true' : 'false');
 		domHelper.write(pathToViews + '/list_fields.dust', $);
 		return {
 			message: hide ? "structure.ui.columnVisibility.hide" : "structure.ui.columnVisibility.show",
@@ -37,7 +37,7 @@ exports.setColumnVisibility = async (data) => {
 
 	if($("*[data-field='" + fieldCodeName + "']").length > 0){
 		//$("*[data-field='" + fieldCodeName + "']")[hide ? 'hide' : 'show']();
-		$("*[data-field='" + fieldCodeName + "']").attr("data-hidden", hide ? '1' : '0');
+		$("*[data-field='" + fieldCodeName + "']").attr("data-hidden", hide ? 'true' : 'false');
 		domHelper.write(pathToViews + '/list_fields.dust', $);
 		return {
 			message: hide ? "structure.ui.columnVisibility.hide" : "structure.ui.columnVisibility.show",
