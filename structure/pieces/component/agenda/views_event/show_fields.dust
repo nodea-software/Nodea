@@ -43,8 +43,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="far fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_start_date" /}' value="{f_start_date|datetime}" type="text" readonly="">
@@ -62,8 +62,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="fas fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_end_date" /}' value="{f_end_date|datetime}" type="text" readonly="">

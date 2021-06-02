@@ -43,8 +43,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="far fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input datetimepicker" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_start_date" /}' name="f_start_date" type="text" required="">
@@ -62,8 +62,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="fas fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input datetimepicker" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_end_date" /}' name="f_end_date" type="text">
@@ -91,7 +91,7 @@
 				<i data-field="r_category" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				{/inline_help}
 			</label>
-			<select class="ajax form-control" name="r_category" data-source="agenda_category" data-using="f_label">
+			<select class="ajax form-control" name="r_category" data-source="URL_CATEGORY" data-using="f_label">
 				<option value="">
 					{#__ key="select.default" /}
 				</option>

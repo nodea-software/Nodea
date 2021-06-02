@@ -54,7 +54,7 @@ $(function() {
         droppable: true,
         resourceAreaHeaderContent: calendarLocales.users,
         events: {
-            url: '/agenda/get_event',
+            url: '/URL_ROUTE/get_event',
             method: 'POST',
             extraParams: {}, /* Add extra params here */
             failure: function(err) {
@@ -93,7 +93,7 @@ $(function() {
             var endDate = moment.utc(event.startStr).add(4, "h").format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/agenda/add_event',
+                url: '/URL_ROUTE/add_event',
                 type: 'POST',
                 data: JSON.stringify({
                     title: info.event.title,
@@ -126,7 +126,7 @@ $(function() {
             var endDate = moment.utc(info.event.end).format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/agenda/resize_event',
+                url: '/URL_ROUTE/resize_event',
                 type: 'POST',
                 data: {
                     id: info.event.id,
@@ -153,7 +153,7 @@ $(function() {
                 endDate = moment.utc(event.endStr).format("YYYY-MM-DD HH:mm:ss");
 
             $.ajax({
-                url: '/agenda/update_event_drop',
+                url: '/URL_ROUTE/update_event_drop',
                 type: 'POST',
                 data: JSON.stringify({
                     id: event.id,
@@ -252,7 +252,7 @@ $(function() {
 
         var idEventToDelete = $("#modalUpdateID").val();
         $.ajax({
-            url: '/agenda/delete_event',
+            url: '/URL_ROUTE/delete_event',
             type: 'POST',
             data: {
                 id: idEventToDelete
@@ -294,7 +294,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '/agenda/update_event',
+            url: '/URL_ROUTE/update_event',
             type: 'POST',
             data: {
                 id: eventId,
@@ -348,7 +348,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '/agenda/add_event',
+            url: '/URL_ROUTE/add_event',
             type: 'POST',
             data: JSON.stringify({
                 title: newTitle,
