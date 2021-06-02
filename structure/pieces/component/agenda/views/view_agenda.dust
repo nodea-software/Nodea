@@ -63,7 +63,7 @@
 							{/categories}
 						</select>
 						<div style="margin-top: 10px;" class="input-group">
-							<input id="new-event-title" type="text" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control"/>
+							<input id="new-event-title" type="text" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control"/>
 							<div class="input-group-btn">
 								<button id="add-new-event" type="button" class="btn btn-success btn-flat">{#__ key="button.add"/}</button>
 							</div>
@@ -91,7 +91,7 @@
 				<div class="card">
 					<div class="card-header">
 						<h3 class="card-title">
-							{#__ key="global_component.agenda.menu"/}
+							{#__ key="component.CODE_NAME_LOWER.label_component" /}
 						</h3>
 						<div class="card-tools">
 							<button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -126,10 +126,10 @@
 						{/categories}
 					</select>
 					<div style="margin-top: 10px;width: 100%;" class="input-group">
-						<input type="text" id="modalCreateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+						<input type="text" id="modalCreateTitle" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control" autofocus/>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
-						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<label>{#__ key="entity.CODE_NAME_EVENT_LOWER.f_all_day"/}</label><br>
 						<input class='form-control input' id="createEventAllDayCheckbox" type='checkbox'>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
@@ -181,10 +181,10 @@
 						{/categories}
 					</select>
 					<div style="margin-top: 10px;width: 100%;" class="input-group">
-						<input type="text" id="modalUpdateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+						<input type="text" id="modalUpdateTitle" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control" autofocus/>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
-						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<label>{#__ key="entity.CODE_NAME_EVENT_LOWER.f_all_day"/}</label><br>
 						<input class='form-control input' id="updateEventAllDayCheckbox" type='checkbox'>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>

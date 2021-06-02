@@ -335,7 +335,8 @@ exports.deleteAgenda = async (data) => {
 	helpers.rmdirSyncRecursive(appPath + '/views/' + data.options.value);
 
 	const $ = await domHelper.read(layoutFileName);
-	$("#" + data.options.urlValue + "_menu_item").remove();
+
+	$(".nav-item[data-menu='" + data.options.value + "']").remove();
 	// Write back to file
 	domHelper.write(layoutFileName, $)
 
