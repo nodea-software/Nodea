@@ -57,32 +57,8 @@ class CoreApp extends Route {
 								console.error('No field defined for widget piechart')
 								return resolve();
 							}
-							// STATUS PIECHART
-							if (widget.field.indexOf('s_') == 0) {
-								const statusAlias = 'r_' + widget.field.substring(2);
-								models[model].findAll({
-									attributes: [statusAlias + '.f_name', statusAlias + '.f_color', [models.sequelize.fn('COUNT', 'id'), 'count']],
-									group: [statusAlias + '.f_name', statusAlias + '.f_color', statusAlias + '.id'],
-									include: {model: models.E_status, as: statusAlias},
-									raw: true
-								}).then((piechartData) => {
-									const dataSet = {labels: [], backgroundColor: [], data: []};
-									for (let i = 0; i < piechartData.length; i++) {
-										if (dataSet.labels.indexOf(piechartData[i].f_name) != -1) {
-											dataSet.data[dataSet.labels.indexOf(piechartData[i].f_name)] += piechartData[i].count
-										} else {
-											dataSet.labels.push(piechartData[i].f_name);
-											dataSet.backgroundColor.push(piechartData[i].f_color);
-											dataSet.data.push(piechartData[i].count);
-										}
-									}
-									widgetRes.data = dataSet;
-									data[widget.widgetID] = widgetRes;
-									resolve();
-								}).catch(resolve);
-							}
 							// RELATED TO PIECHART
-							else if (widget.field.indexOf('r_') == 0) {
+							if (widget.field.indexOf('r_') == 0) {
 								// Find option matching wdiget's targeted alias
 								let targetOption;
 								try {
@@ -100,38 +76,64 @@ class CoreApp extends Route {
 									return resolve();
 								}
 
-								// Build all variables required to query piechart data
-								const using = targetOption.usingField ? targetOption.usingField : [{value:'id'}];
-								const selectAttributes = [];
-								for (const attr of using)
-									selectAttributes.push('target.'+attr.value);
-								const foreignKey = targetOption.foreignKey;
-								const target = models['E'+targetOption.target.substring(1)].getTableName();
-								const source = models[model].getTableName();
+								if (targetOption.target == 'e_status') {
+									const statusAlias = widget.field;
+									models[model].findAll({
+										attributes: [statusAlias + '.f_name', statusAlias + '.f_color', [models.sequelize.fn('COUNT', 'id'), 'count']],
+										group: [statusAlias + '.f_name', statusAlias + '.f_color', statusAlias + '.id'],
+										include: {model: models.E_status, as: statusAlias},
+										raw: true
+									}).then((piechartData) => {
+										const dataSet = {labels: [], backgroundColor: [], data: []};
+										for (let i = 0; i < piechartData.length; i++) {
+											if (dataSet.labels.indexOf(piechartData[i].f_name) != -1) {
+												dataSet.data[dataSet.labels.indexOf(piechartData[i].f_name)] += piechartData[i].count
+											} else {
+												dataSet.labels.push(piechartData[i].f_name);
+												dataSet.backgroundColor.push(piechartData[i].f_color);
+												dataSet.data.push(piechartData[i].count);
+											}
+										}
+										widgetRes.data = dataSet;
+										data[widget.widgetID] = widgetRes;
+										console.log(data[widget.widgetID]);
+										resolve();
+									}).catch(resolve);
+								}
+								else {
+									// Build all variables required to query piechart data
+									const using = targetOption.usingField ? targetOption.usingField : [{value:'id'}];
+									const selectAttributes = [];
+									for (const attr of using)
+										selectAttributes.push('target.'+attr.value);
+									const foreignKey = targetOption.foreignKey;
+									const target = models['E'+targetOption.target.substring(1)].getTableName();
+									const source = models[model].getTableName();
 
-								models.sequelize.query(`
-									SELECT
-										count(source.id) count, ${selectAttributes.join(', ')}
-									FROM
-										${source} source
-									LEFT JOIN
-										${target} target
-									ON
-										target.id = source.${foreignKey}
-									GROUP BY ${foreignKey}
-								`, {type: models.sequelize.QueryTypes.SELECT}).then(piechartData => {
-									const dataSet = {labels: [], data: []};
-									for (const pie of piechartData) {
-										const labels = [];
-										for (const attr of using)
-											labels.push(pie[attr.value])
-										dataSet.labels.push(labels.join(' - '));
-										dataSet.data.push(pie.count);
-									}
-									widgetRes.data = dataSet;
-									data[widget.widgetID] = widgetRes;
-									resolve();
-								}).catch(resolve);
+									models.sequelize.query(`
+										SELECT
+											count(source.id) count, ${selectAttributes.join(', ')}
+										FROM
+											${source} source
+										LEFT JOIN
+											${target} target
+										ON
+											target.id = source.${foreignKey}
+										GROUP BY ${foreignKey}
+									`, {type: models.sequelize.QueryTypes.SELECT}).then(piechartData => {
+										const dataSet = {labels: [], data: []};
+										for (const pie of piechartData) {
+											const labels = [];
+											for (const attr of using)
+												labels.push(pie[attr.value])
+											dataSet.labels.push(labels.join(' - '));
+											dataSet.data.push(pie.count);
+										}
+										widgetRes.data = dataSet;
+										data[widget.widgetID] = widgetRes;
+										resolve();
+									}).catch(resolve);
+								}
 							}
 							// FIELD PIECHART
 							else {

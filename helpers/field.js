@@ -372,7 +372,7 @@ module.exports = {
 					str += '	<div class="nodea-dropzone">\n';
 					str += '		<!--{#'+field+'}-->\n';
 					str += '			<div class="dropzonefile">\n';
-					str += '				{.}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i>\n';
+					str += '				{.|filename}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i>\n';
 					str += '			</div>\n';
 					str += '		<!--{:else}-->\n';
 					str += '			<!--{#__ key="message.insert_file" /}-->\n';
@@ -388,7 +388,7 @@ module.exports = {
 					str += "					<i class='fa fa-download'></i>\n";
 					str += "				</span>\n";
 					str += "			</div>\n";
-					str += "			<input data-entity=" + entity + " data-field=" + value2 + " data-id='{id}' class='form-control text-left preview_file' name='" + field + "' value='{" + value2 + "|filename}' />\n";
+					str += "			<input value='{" + value2 + "|filename}' data-entity=" + entity + " data-field=" + value2 + " data-id='{id}' class='form-control text-left preview_file' name='" + field + "' />\n";
 					str += "		{:else}\n";
 					str += "			{#__ key=\"message.empty_file\" /}\n";
 					str += "		{/" + value2 + "}\n";
@@ -400,7 +400,7 @@ module.exports = {
 					str += "	<div class='nodea-dropzone image'><i class='fas fa-download'></i>&nbsp;&nbsp;<!--{#__ key=\"message.insert_file\" /}--></div>\n";
 					str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
 				} else if (file == 'update') {
-					str += '	<div class="nodea-dropzone image">{#'+field+'}<div class="dropzonefile">{.}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i></div>{/'+field+'}</div>\n';
+					str += '	<div class="nodea-dropzone image">{#'+field+'}<div class="dropzonefile">{.|filename}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i></div>{/'+field+'}</div>\n';
 					str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
 					str += "	<input type='hidden' name='"+ field + "_modified' value='false' />\n";
 				} else if (file == 'show') {
