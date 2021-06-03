@@ -2517,7 +2517,7 @@ exports.complete = function (instruction) {
 
 				// Add list of types to answer
 				if (answer.trim() == "[type]")
-					answers = [...answers, "string", "text", "regular text", "number", "big number", "decimal", "date", "datetime", "time", "boolean", "email", "tel", "fax", "money", "euro", "qrcode", "ean8", "ean13", "upc", "code39", "code128", "url", "password", "color"];
+					answers = [...answers, ...bot_helper.getNodeaTypes()];
 				else if (answer.trim() == '[widget]')
 					answers = [...answers, 'info', 'stat', 'statistique', 'piechart']
 				// Build array of string answers

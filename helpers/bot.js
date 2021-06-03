@@ -86,6 +86,12 @@ const nodeaTypes = {
 }
 
 module.exports = {
+	getNodeaTypes: _ => {
+		const results = [];
+		for(const nodeaType in nodeaTypes)
+			results.push(nodeaType, ...nodeaTypes[nodeaType]);
+		return results;
+	},
 	matchNodeaType: type => {
 		for(const nodeaType in nodeaTypes) {
 			if(type == nodeaType)
