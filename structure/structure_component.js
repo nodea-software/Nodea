@@ -782,7 +782,7 @@ exports.addNewComponentAddress = async (data) => {
 	langEN.entity[data.entity.name].r_address = 'Address';
 
 	// CREATE MODEL FILE
-	let modelTemplate = fs.readFileSync(__piecesPath + '/models/model.js', 'utf8');
+	let modelTemplate = fs.readFileSync(__piecesPath + '/component/address/models/address_model.js', 'utf8');
 	modelTemplate = modelTemplate.replace(/MODEL_NAME_LOWER/g, data.options.value);
 	modelTemplate = modelTemplate.replace(/MODEL_NAME/g, data.options.value.charAt(0).toUpperCase() + data.options.value.toLowerCase().slice(1));
 	modelTemplate = modelTemplate.replace(/TABLE_NAME/g, data.options.value);
@@ -858,7 +858,7 @@ exports.addNewComponentAddress = async (data) => {
 		<!--{/entityAccess}-->\n';
 
 		// Add new html to document
-		$('.nav-sidebar').append(li);
+		$('#menu_configuration').append(li);
 
 		// Write back to file
 		domHelper.write(fileName, $);

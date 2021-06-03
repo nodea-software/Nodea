@@ -159,10 +159,12 @@ exports.formatSearch = (column, searchValue, type) => {
 //	options: entity options
 //	body: request body
 // RETURN:
-//	Returns an array of two values [fieldObject, associationArray] :
+//	Returns an array of three values [fieldObject, associationArray, fileArray] :
 //		fieldObject: Entity create/update object built from body
 //		associationArray: An array of association that need to be updated. Contains alias function, association ids, and association option
 //			[{func: "setR_user", data: [42, 84], option: relationOption}]
+//		fileArray: Array of file to create/delete
+//			[{...multer.file, isPicture: bool, isModified: bool, attribute: string, finalPath: string}]
 exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 	const object = {}, associations = [], files = [];
 
