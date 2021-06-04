@@ -422,7 +422,7 @@ var NodeaForms = (_ => {
 					// Splitting display in col-xs-3 related to many checkbox
 					var checkboxes = element.find('wrap');
 					for (var i = 0; i < checkboxes.length; i += 3) {
-						checkboxes.slice(i, i + 3).wrapAll("<div class='col-xs-3' style='margin-bottom: 15px;'></div>");
+						checkboxes.slice(i, i + 3).wrapAll("<div class='col-3' style='margin-bottom: 15px;'></div>");
 					}
 				},
 				validator: (element, form) => {
@@ -935,6 +935,10 @@ var NodeaForms = (_ => {
 				    element.find(".address_field").keyup(function() {
 				    	$(this).val($(this).val().toUpperCase());
 				    });
+				    element.find(".clear-address-search").click(function() {
+				    	$(".address_component input[name!=address_id]").val("");
+				    	return false;
+				    })
 
 				    function initSearchInput(searchInput) {
 				    	searchInput.autocomplete({
@@ -963,7 +967,7 @@ var NodeaForms = (_ => {
 				                    const toReturn = fieldsToShow.map(field => _address[field]).join(' ');
 				                    if (ui.item.value == toReturn) {
 				                        for (var key in _address) {
-				                            if (_address[key] != '') //to prevent default value replacement
+				                            if (key != 'label' && _address[key] != '') //to prevent default value replacement
 				                                element.find('input[field=' + key + ']').val((_address[key] + '').toUpperCase());
 				                        }
 				                        /** Set Lat and Long value **/
