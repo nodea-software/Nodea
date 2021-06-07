@@ -3,9 +3,9 @@
 // Example:
 // {@myHelper} for global helpers
 // {#myHelper} for context helpers
+// {variable|myFilter} for context filters
 
-// TODO:
-// See documentation for standard Nodea Dust utils => https://thebeautifuldoc
+// See documentation: https://docs.nodea-software.com/en/developer/views#nodea-dustjs-helpers-locals-and-filters
 
 // Add your custom Dust Locals | Helper | Filters here =>
 module.exports = {
