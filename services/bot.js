@@ -1,24 +1,6 @@
-function checkAndCreateAttr(instructionsFunction, options, valueToCheck) {
+const bot_helper = require('../helpers/bot');
 
-	const data = {
-		function: instructionsFunction,
-		options: options
-	};
-
-	if (!isNaN(valueToCheck))
-		throw new Error('error.oneLetter');
-
-	if (valueToCheck.length > 30) {
-		console.log("Value is too long => " + valueToCheck + "(" + valueToCheck.length + ")");
-		const err = new Error('error.valueTooLong');
-		err.messageParams = [valueToCheck];
-		throw err;
-	}
-
-	return data;
-}
-
-// ******* BASIC Actions ******* //
+// ******* BASIC ******* //
 exports.showSession = _ => {
 	const data = {};
 	data.function = "showSession";
@@ -80,8 +62,7 @@ exports.gitStatus = _ => {
 	return data;
 };
 
-// ******* SELECT Actions ******* //
-
+// ******* SELECT ******* //
 exports.selectApplication = result => {
 
 	const value = result[1];
@@ -127,7 +108,7 @@ exports.selectEntity = result => {
 	return data;
 };
 
-// ******* FIELD ATTRIBUTES Actions ******* //
+// ******* FIELD ATTRIBUTES ******* //
 exports.setFieldAttribute = result => {
 
 	// Set entity name as the first option in options array
@@ -161,7 +142,7 @@ exports.setFieldKnownAttribute = result => {
 	return data;
 };
 
-// ******* DATALIST Actions ******* //
+// ******* DATALIST ******* //
 exports.setColumnVisibility = result => {
 
 	// Set entity name as the first option in options array
@@ -210,8 +191,7 @@ exports.setColumnVisible = result => {
 	return data;
 };
 
-// ******* CREATE Actions ******* //
-
+// ******* CREATE ******* //
 exports.createNewApplication = result => {
 
 	const value = result[1];
@@ -220,7 +200,7 @@ exports.createNewApplication = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewApplication", options, value);
+	return bot_helper.checkAndCreateAttr("createNewApplication", options, value);
 };
 
 exports.createNewModule = result => {
@@ -231,7 +211,7 @@ exports.createNewModule = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewModule", options, value);
+	return bot_helper.checkAndCreateAttr("createNewModule", options, value);
 };
 
 exports.createNewEntity = result => {
@@ -242,7 +222,7 @@ exports.createNewEntity = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewEntity", options, value);
+	return bot_helper.checkAndCreateAttr("createNewEntity", options, value);
 };
 
 exports.createNewParamEntity = result => {
@@ -254,7 +234,7 @@ exports.createNewParamEntity = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewEntity", options, value);
+	return bot_helper.checkAndCreateAttr("createNewEntity", options, value);
 };
 
 exports.createNewField = result => {
@@ -273,41 +253,38 @@ exports.createNewField = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewField", options, value);
+	return bot_helper.checkAndCreateAttr("createNewField", options, value);
 };
 
 exports.createNewFieldWithType = result => {
 
 	const value = result[1];
 	const type = result[2].toLowerCase().trim();
-	let defaultValue = null;
 
-	// Default value ?
+	// Default value
+	let defaultValue = null;
 	if (typeof result[3] !== "undefined")
 		defaultValue = result[3];
-		// if(type == 'text')
-		//	 console.warn("Default value for type text is not available, it will be ignored.");
-		// else
-		//	 defaultValue = result[3];
 
 	// Preparing Options
 	const options = {
 		value: value,
-		type: type,
+		givenType: type,
+		type: bot_helper.matchNodeaType(type),
 		defaultValue: defaultValue,
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewField", options, value);
+	return bot_helper.checkAndCreateAttr("createNewField", options, value);
 };
 
 exports.createNewFieldWithTypeEnum = result => {
 
 	const value = result[1];
 	const allValues = result[2];
-	let defaultValue = null;
 
-	// Default value ?
+	// Default value
+	let defaultValue = null;
 	if (typeof result[3] !== "undefined")
 		defaultValue = result[3];
 
@@ -319,7 +296,7 @@ exports.createNewFieldWithTypeEnum = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewField", options, value);
+	return bot_helper.checkAndCreateAttr("createNewField", options, value);
 };
 
 exports.createNewFieldWithTypeRadio = result => {
@@ -340,10 +317,10 @@ exports.createNewFieldWithTypeRadio = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewField", options, value);
+	return bot_helper.checkAndCreateAttr("createNewField", options, value);
 };
 
-// ******* DELETE Actions ******* //
+// ******* DELETE ******* //
 
 exports.deleteApplication = result => {
 
@@ -425,7 +402,7 @@ exports.deleteTab = result => {
 	return data;
 };
 
-// ******* LIST Actions ******* //
+// ******* LIST ******* //
 exports.listApplication = _ => {
 
 	const data = {
@@ -458,7 +435,7 @@ exports.listField = _ => {
 	return data;
 };
 
-// ******* ASSOCIATION Actions ******* //
+// ******* ASSOCIATION ******* //
 
 // --------- One to One ---------
 // Tabs in show
@@ -475,7 +452,7 @@ exports.relationshipHasOne = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasOne", options, target);
+	return bot_helper.checkAndCreateAttr("createNewHasOne", options, target);
 };
 
 exports.relationshipHasOneWithName = result => {
@@ -492,7 +469,7 @@ exports.relationshipHasOneWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasOne", options, as);
+	return bot_helper.checkAndCreateAttr("createNewHasOne", options, as);
 };
 
 
@@ -509,7 +486,7 @@ exports.createFieldRelatedTo = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedTo", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedTo", options, as);
 };
 
 exports.createFieldRelatedToUsing = result => {
@@ -526,7 +503,7 @@ exports.createFieldRelatedToUsing = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedTo", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedTo", options, as);
 };
 
 exports.createFieldRelatedToMultiple = result => {
@@ -541,7 +518,7 @@ exports.createFieldRelatedToMultiple = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
 };
 
 exports.createFieldRelatedToMultipleUsing = result => {
@@ -557,7 +534,7 @@ exports.createFieldRelatedToMultipleUsing = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
 };
 
 exports.createFieldRelatedToMultipleCheckbox = result => {
@@ -573,7 +550,7 @@ exports.createFieldRelatedToMultipleCheckbox = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
 };
 
 exports.createFieldRelatedToMultipleCheckboxUsing = result => {
@@ -590,7 +567,7 @@ exports.createFieldRelatedToMultipleCheckboxUsing = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
+	return bot_helper.checkAndCreateAttr("createNewFieldRelatedToMultiple", options, as);
 };
 
 // --------- One to Many ---------
@@ -608,7 +585,7 @@ exports.relationshipHasMany = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasMany", options, target);
+	return bot_helper.checkAndCreateAttr("createNewHasMany", options, target);
 };
 
 exports.relationshipHasManyWithName = result => {
@@ -625,7 +602,7 @@ exports.relationshipHasManyWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasMany", options, as);
+	return bot_helper.checkAndCreateAttr("createNewHasMany", options, as);
 };
 
 exports.relationshipHasManyPreset = result => {
@@ -646,7 +623,7 @@ exports.relationshipHasManyPreset = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasManyPreset", options, target);
+	return bot_helper.checkAndCreateAttr("createNewHasManyPreset", options, target);
 };
 
 exports.relationshipHasManyPresetUsing = result => {
@@ -669,10 +646,10 @@ exports.relationshipHasManyPresetUsing = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewHasManyPreset", options, target);
+	return bot_helper.checkAndCreateAttr("createNewHasManyPreset", options, target);
 };
 
-// ******* COMPONENT Actions ******* //
+// ******* COMPONENT ******* //
 
 /* STATUS */
 exports.createNewComponentStatus = result => {
@@ -690,7 +667,7 @@ exports.createNewComponentStatusWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewComponentStatus", options, value);
+	return bot_helper.checkAndCreateAttr("createNewComponentStatus", options, value);
 }
 
 exports.deleteComponentStatus = _ => {
@@ -708,7 +685,7 @@ exports.deleteComponentStatusWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("deleteComponentStatus", options, value);
+	return bot_helper.checkAndCreateAttr("deleteComponentStatus", options, value);
 };
 
 /* FILE STORAGE */
@@ -727,7 +704,7 @@ exports.addComponentFileStorageWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("addComponentFileStorage", options, value);
+	return bot_helper.checkAndCreateAttr("addComponentFileStorage", options, value);
 };
 
 /* AGENDA */
@@ -746,7 +723,7 @@ exports.createNewComponentAgendaWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("createNewComponentAgenda", options, value);
+	return bot_helper.checkAndCreateAttr("createNewComponentAgenda", options, value);
 };
 
 exports.deleteAgenda = _ => {
@@ -764,7 +741,7 @@ exports.deleteAgendaWithName = result => {
 		processValue: true
 	};
 
-	return checkAndCreateAttr("deleteAgenda", options, value);
+	return bot_helper.checkAndCreateAttr("deleteAgenda", options, value);
 };
 
 /**
@@ -777,7 +754,7 @@ exports.createNewComponentAddress = result => {
 		componentName: "Address",
 		instruction: result[0]
 	};
-	return checkAndCreateAttr("createNewComponentAddress", options, "Address");
+	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, "Address");
 };
 
 /**
@@ -792,7 +769,7 @@ exports.createNewComponentAddressWithName = result => {
 		processValue: true,
 		instruction: result[0]
 	};
-	return checkAndCreateAttr("createNewComponentAddress", options, result[1]);
+	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, result[1]);
 };
 
 /**
@@ -820,7 +797,7 @@ exports.createComponentDocumentTemplateWithName = result => {
 		instruction: result[0],
 		showValue: result[1]
 	};
-	return checkAndCreateAttr("createComponentDocumentTemplate", options, result[1]);
+	return bot_helper.checkAndCreateAttr("createComponentDocumentTemplate", options, result[1]);
 };
 /**
  * Delete component DocumentTemplate
@@ -839,7 +816,7 @@ exports.createComponentChat = _ => {
 	}
 }
 
-// ******* INTERFACE Actions ******* //
+// ******* INTERFACE ******* //
 exports.setLogo = result => {
 	const value = result[1];
 	const options = {
@@ -1085,7 +1062,7 @@ exports.removeTitle = result => {
 	};
 }
 
-const training = {
+const bot_instructions = {
 	"help": [
 		"how could you assist me",
 		"help",
@@ -2431,9 +2408,9 @@ exports.parse = (instruction) => {
 		instructionLength: 0
 	};
 
-	for (const action in training) {
-		for (let i = 0; i < training[action].length; i++) {
-			const regStr = training[action][i];
+	for (const action in bot_instructions) {
+		for (let i = 0; i < bot_instructions[action].length; i++) {
+			const regStr = bot_instructions[action][i];
 			const regExp = new RegExp(regStr, "ig");
 
 			const result = regExp.exec(instruction);
@@ -2466,14 +2443,14 @@ exports.complete = function (instruction) {
 
 	let answers = [];
 
-	// Check all training key phrases
-	for (const action in training) {
+	// Check all bot_instructions key phrases
+	for (const action in bot_instructions) {
 
 		// Check each blocks
-		for (let i = 0; i < training[action].length; i++) {
+		for (let i = 0; i < bot_instructions[action].length; i++) {
 
 			// Template to compare to
-			const template = training[action][i].split(" ");
+			const template = bot_instructions[action][i].split(" ");
 
 			// Split current key phrase and instructions into arrays to loop
 			const instr = instruction.trim().split(" ");
@@ -2540,7 +2517,7 @@ exports.complete = function (instruction) {
 
 				// Add list of types to answer
 				if (answer.trim() == "[type]")
-					answers = [...answers, "string", "text", "regular text", "number", "big number", "decimal", "date", "datetime", "time", "boolean", "email", "tel", "fax", "money", "euro", "qrcode", "ean8", "ean13", "upc", "code39", "code128", "url", "password", "color"];
+					answers = [...answers, ...bot_helper.getNodeaTypes()];
 				else if (answer.trim() == '[widget]')
 					answers = [...answers, 'info', 'stat', 'statistique', 'piechart']
 				// Build array of string answers

@@ -42,7 +42,7 @@
 		"logout_success": "Vous avez bien été déconnecté."
 	},
 	"settings": {
-		"tool_success": "The access configuration file has been imported.",
+		"tool_success": "Le fichier access.json a bien été importé.",
 		"legend": "Modifier vos paramètres",
 		"lang": "Langue",
 		"check_change_password": "Changer votre mot de passe",

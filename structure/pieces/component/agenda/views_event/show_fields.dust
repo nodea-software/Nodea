@@ -43,8 +43,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="far fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_start_date" /}' value="{f_start_date|datetime}" type="text" readonly="">
@@ -62,8 +62,8 @@
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<span class='input-group-text'>
-						<i class="fa fa-calendar"></i> +
-						<i class="fa fa-clock-o"></i>
+						<i class="fa fa-calendar"></i>&nbsp;+&nbsp;
+						<i class="fas fa-clock"></i>
 					</span>
 				</div>
 				<input class="form-control input" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_end_date" /}' value="{f_end_date|datetime}" type="text" readonly="">
@@ -130,18 +130,18 @@
 				<i class="fas fa-edit">&nbsp;&nbsp;</i><span>{#__ key="button.update"/}</span>
 			</a>
 			{/actionAccess}
-			{^hideButton}
-			{#actionAccess entity="URL_EVENT" action="create"}
-			<a href="/URL_EVENT/create_form" class="btn btn-success">
-				<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i><span>{#__ key="button.create"/}</span>
-			</a>
-			{/actionAccess}
-			{#actionAccess entity="URL_EVENT" action="read"}
-			<a href="/URL_EVENT/list" type="submit" class="btn btn-primary">
-				<i class="fa fa-list fa-md">&nbsp;&nbsp;</i><span>{#__ key="button.list"/}</span>
-			</a>
-			{/actionAccess}
-			{/hideButton}
+			{@ifTrue key=hideButton}
+				{#actionAccess entity="URL_EVENT" action="create"}
+				<a href="/URL_EVENT/create_form" class="btn btn-success">
+					<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i><span>{#__ key="button.create"/}</span>
+				</a>
+				{/actionAccess}
+				{#actionAccess entity="URL_EVENT" action="read"}
+				<a href="/URL_EVENT/list" type="submit" class="btn btn-primary">
+					<i class="fa fa-list fa-md">&nbsp;&nbsp;</i><span>{#__ key="button.list"/}</span>
+				</a>
+				{/actionAccess}
+			{/ifTrue}
 		</div>
 	</form>
 </div>

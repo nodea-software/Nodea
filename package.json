@@ -1,11 +1,12 @@
 {
-	"name": "Nodea",
+	"name": "nodea",
+	"version": "3.0.1",
 	"description": "Nodea generator",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Newmips/newmips.git"
+		"url": "https://github.com/nodea-software/nodea"
 	},
-	"README": "https://github.com/newmips/newmips/blob/master/README.md",
+	"README": "https://github.com/nodea-software/nodea/blob/master/README.md",
 	"license": "GPL-3.0",
 	"main": "server.js",
 	"dependencies": {
@@ -55,7 +56,6 @@
 		"passport-local": "~1.0.0",
 		"pg": "^8.5.1",
 		"promise-mysql": "^5.0.1",
-		"ps-tree": "^1.2.0",
 		"read-last-lines": "^1.8.0",
 		"request": "^2.87.0",
 		"request-promise": "^4.2.4",

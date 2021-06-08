@@ -80,7 +80,7 @@
 										</span>
 									</a>&nbsp;
 								{/actionAccess}
-								{^hideButton}
+								{@ifTrue key=hideButton}
 									{#actionAccess entity="custom_url_entity" action="create"}
 										<a href="/custom_url_entity/create_form" class="btn btn-success">
 											<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
@@ -97,7 +97,7 @@
 											</span>
 										</a>&nbsp;
 									{/actionAccess}
-								{/hideButton}
+								{/ifTrue}
 							</div>
 							<br>
 
@@ -135,7 +135,7 @@
 										</span>
 									</a>&nbsp;
 								{/actionAccess}
-								{^hideButton}
+								{@ifTrue key=hideButton}
 									{#actionAccess entity="custom_url_entity" action="create"}
 										<a href="/custom_url_entity/create_form" class="btn btn-success">
 											<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
@@ -152,7 +152,7 @@
 											</span>
 										</a>&nbsp;
 									{/actionAccess}
-								{/hideButton}
+								{/ifTrue}
 							</div>
 						{/custom_entity}
 					</div>

@@ -65,7 +65,7 @@
 				mainControls,
 				addRowGroup,
 				htmlTextArea;
-			var colClasses = ['col-md-', 'col-sm-', 'col-xs-', 'col-'];
+			var colClasses = ['col-'];
 			var curColClassIndex = 0; // Index of the column class we are manipulating currently
 			var MAX_COL_SIZE = 12;
 
@@ -84,7 +84,7 @@
 			// Wrap content if it is non-bootstrap
 			if (baseElem.children().length && !baseElem.find('div.row').length) {
 				var children = baseElem.children();
-				var newRow = $('<div class="row"><div class="col-md-12"/></div>').appendTo(baseElem);
+				var newRow = $('<div class="row"><div class="col-12"/></div>').appendTo(baseElem);
 				newRow.find('.col-md-12').append(children);
 			}
 

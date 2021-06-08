@@ -160,9 +160,9 @@
                         {/ifTrue}
                     </div>
                 </div>
-                <div class="col-6">
+                <div data-field="apply_default" class="col-6">
                     <div class="form-group">
-                        <label for="f_default">
+                        <label for="apply_default">
                             {#__ key="entity.e_status.apply_default"/}
                         </label>
                         <br>

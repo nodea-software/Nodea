@@ -28,187 +28,211 @@ class Agenda extends Route {
 	//
 
 	main() {
-		this.router.get('/', this.middlewares.main, this.asyncRoute((req, res) => {
-			const data = {};
-
-			models.CODE_NAME_CATEGORY_MODEL.findAll().then(categories => {
-				models.E_user.findAll().then(users => {
-
-					data.categories = categories;
-					data.events = [];
-					data.users = users;
-
-					res.render('CODE_NAME_LOWER/view_agenda', data);
-				});
+		this.router.get('/', this.middlewares.main, this.asyncRoute(async (data) => {
+			const categories = await models.CODE_NAME_CATEGORY_MODEL.findAll({}, {
+				transaction: data.transaction
 			});
+
+			const users = await models.E_user.findAll({}, {
+				transaction: data.transaction
+			});
+
+			data.res.success(_ => data.res.render('CODE_NAME_LOWER/view_agenda', {
+				categories: categories,
+				users: users,
+				events: []
+			}));
 		}));
 	}
 
 	get_event() {
-		this.router.post('/get_event', this.middlewares.get_event, this.asyncRoute((req, res) => {
-			(async () => {
+		this.router.post('/get_event', this.middlewares.get_event, this.asyncRoute(async(data) => {
 
-				const events = await models.CODE_NAME_EVENT_MODEL.findAll({
-					where: {
-						f_start_date: {
-							[models.$between]: [req.body.start, req.body.end]
-						}
-					},
-					include: [{
-						model: models.CODE_NAME_CATEGORY_MODEL,
-						as: "r_category"
-					}, {
-						model: models.E_user,
-						as: "r_users"
-					}]
-				});
+			const events = await models.CODE_NAME_EVENT_MODEL.findAll({
+				where: {
+					f_start_date: {
+						[models.$between]: [data.req.body.start, data.req.body.end]
+					}
+				},
+				include: [{
+					model: models.CODE_NAME_CATEGORY_MODEL,
+					as: "r_category"
+				}, {
+					model: models.E_user,
+					as: "r_users"
+				}]
+			}, {
+				transaction: data.transaction
+			});
 
-				const eventsArray = [];
-				for (let i = 0; i < events.length; i++) {
-					if (events[i].r_category == null) {
-						events[i].r_category = {
-							f_color: "#CCCCCC"
-						};
-					}
-					const resourceIds = [];
-					for (let j = 0; j < events[i].r_users.length; j++) {
-						resourceIds.push(events[i].r_users[j].id);
-					}
-					eventsArray.push({
-						eventId: events[i].id,
-						title: events[i].f_title,
-						start: events[i].f_start_date,
-						end: events[i].f_end_date,
-						allDay: events[i].f_all_day,
-						idCategory: events[i].r_category.id,
-						backgroundColor: events[i].r_category.f_color,
-						// url: "/CODE_NAME_EVENT_URL/show?id=" + events[i].id, // Uncomment if you want to be redirected on event click
-						resourceIds: resourceIds
-					});
+			const eventsArray = [];
+			for (let i = 0; i < events.length; i++) {
+				if (events[i].r_category == null) {
+					events[i].r_category = {
+						f_color: "#CCCCCC"
+					};
 				}
+				const resourceIds = [];
+				for (let j = 0; j < events[i].r_users.length; j++) {
+					resourceIds.push(events[i].r_users[j].id);
+				}
+				eventsArray.push({
+					id: events[i].id,
+					title: events[i].f_title,
+					start: events[i].f_start_date,
+					end: events[i].f_end_date,
+					allDay: events[i].f_all_day,
+					idCategory: events[i].r_category.id,
+					backgroundColor: events[i].r_category.f_color,
+					borderColor: events[i].r_category.f_color,
+					// url: "/CODE_NAME_EVENT_URL/show?id=" + events[i].id, // Uncomment if you want to be redirected on event click
+					resourceIds: resourceIds
+				});
+			}
 
-				return eventsArray;
-			})().then(eventsArray => {
-				res.status(200).send(eventsArray)
-			}).catch(err => {
-				console.error(err);
-				res.status(500).send(err)
-			})
+			data.res.success(_ => data.res.status(200).send(eventsArray));
 		}));
 	}
 
 	add_event() {
-		this.router.post('/add_event', this.middlewares.add_event, this.asyncRoute(async (req, res) => {
-			if(req.body.idCategory == "" || req.body.idCategory == 0)
-				req.body.idCategory = null;
+		this.router.post('/add_event', this.middlewares.add_event, this.asyncRoute(async (data) => {
+
+			if(data.req.body.idCategory == '' || data.req.body.idCategory == 0)
+				data.req.body.idCategory = null;
 
 			const createObj = {
 				version: 0,
-				f_title: req.body.title,
-				f_start_date: req.body.start,
-				f_end_date: req.body.end,
-				f_all_day: req.body.allday,
-				fk_id_CODE_NAME_CATEGORY_URL_category: req.body.idCategory
+				f_title: data.req.body.title,
+				f_start_date: data.req.body.start,
+				f_end_date: data.req.body.end,
+				f_all_day: data.req.body.allday,
+				fk_id_CODE_NAME_CATEGORY_URL_category: data.req.body.idCategory
 			};
 
-			const createdEvent = await models.CODE_NAME_EVENT_MODEL.create(createObj, {user: req.user});
-
-			const users = [];
-			if(req.body.idUser != null)
-				users.push(req.body.idUser);
-			await createdEvent.setR_users(users);
-
-			res.json({
-				success: true,
-				idEvent: createdEvent.id
+			const createdEvent = await models.CODE_NAME_EVENT_MODEL.create(createObj, {
+				user: data.req.user,
+				transaction: data.transaction
 			});
+
+			let users = [];
+			if (data.req.body.resourceIds && data.req.body.resourceIds.length != 0)
+				users = data.req.body.resourceIds.map(x => parseInt(x));
+
+			await createdEvent.setR_users(users, {
+				transaction: data.transaction
+			});
+
+			data.res.success(_ => data.res.status(200).send(createdEvent));
 		}));
 	}
 
 	resize_event() {
-		this.router.post('/resize_event', this.middlewares.resize_event, this.asyncRoute(async (req, res) => {
+		this.router.post('/resize_event', this.middlewares.resize_event, this.asyncRoute(async (data) => {
 			const updateObj = {
-				f_start_date: req.body.start,
-				f_end_date: req.body.end
+				f_start_date: data.req.body.start,
+				f_end_date: data.req.body.end
 			};
 
-			await models.CODE_NAME_EVENT_MODEL.update(updateObj, {where: {id: req.body.eventId}}, {user: req.user});
-
-			res.json({
-				success: true
+			await models.CODE_NAME_EVENT_MODEL.update(updateObj, {
+				where: {
+					id: data.req.body.id
+				}
+			}, {
+				user: data.req.user,
+				transaction: data.transaction
 			});
+
+			data.res.success(_ => data.res.status(200).json({
+				success: true
+			}));
 		}));
 	}
 
 	update_event() {
-		this.router.post('/update_event', this.middlewares.update_event, this.asyncRoute(async (req, res) => {
-			const id_e_URL_ROUTE_event = parseInt(req.body.id);
+		this.router.post('/update_event', this.middlewares.update_event, this.asyncRoute(async (data) => {
+			const id_e_URL_ROUTE_event = parseInt(data.req.body.id);
 
 			const e_URL_ROUTE_event = await models.CODE_NAME_EVENT_MODEL.findOne({
-				where: { id: id_e_URL_ROUTE_event }
+				where: {
+					id: id_e_URL_ROUTE_event
+				}
+			}, {
+				transaction: data.transaction
 			});
+
 			if (!e_URL_ROUTE_event)
-				return res.render('common/error', {erro: 404});
+				throw new Error('404 - Not found');
 
-			const [updateObject, updateAssociations] = model_builder.parseBody(attributes, options, req.body);
+			const [updateObject, updateAssociations] = model_builder.parseBody('e_URL_ROUTE_event', attributes, options, data.req.body);
 
-			if(isNaN(e_URL_ROUTE_event.version))
+			if (isNaN(e_URL_ROUTE_event.version))
 				updateObject.version = 0;
 			updateObject.version++;
 
 			// Update entity
-			const updatedObject = await e_URL_ROUTE_event.update(updateObject, {user: req.user});
+			const updatedObject = await e_URL_ROUTE_event.update(updateObject, {
+				user: data.req.user,
+				transaction: data.transaction
+			});
+
 			// Update associations
 			await Promise.all(updateAssociations.map(asso => e_URL_ROUTE_event[asso.func](asso.value)));
 
-			res.send(updatedObject);
+			data.res.success(_ => data.res.send(updatedObject));
 		}));
 	}
 
 	update_event_drop() {
-		this.router.post('/update_event_drop', this.middlewares.update_event_drop, this.asyncRoute((req, res) => {
-			(async () => {
-				const updateObj = {
-					f_start_date: req.body.start,
-					f_end_date: req.body.end,
-					f_all_day: typeof req.body.allDay === 'boolean' ? req.body.allDay : false
-				};
+		this.router.post('/update_event_drop', this.middlewares.update_event_drop, this.asyncRoute(async (data) => {
 
-				const currentEvent = await models.CODE_NAME_EVENT_MODEL.findByPk(req.body.eventId);
-				await currentEvent.update(updateObj, {where: {id: req.body.eventId}}, {user: req.user});
+			const updateObj = {
+				f_start_date: data.req.body.start,
+				f_end_date: data.req.body.end,
+				f_all_day: typeof data.req.body.allDay === 'boolean' ? data.req.body.allDay : false
+			};
 
-				let users = [];
-				if(req.body.idUsers != null)
-					users = req.body.idUsers;
-				else if (req.body.idUser != null)
-					users.push(req.body.idUser);
-				await currentEvent.setR_users(users)
-			})().then(_ => {
-				res.status(200).send(true);
-			}).catch(err => {
-				console.error(err);
-				res.status(500).send(err);
+			const currentEvent = await models.CODE_NAME_EVENT_MODEL.findByPk(data.req.body.id, {
+				transaction: data.transaction
 			});
+
+			await currentEvent.update(updateObj, {
+				user: data.req.user,
+				transaction: data.transaction
+			});
+
+			let users = [];
+			if (data.req.body.resourceIds && data.req.body.resourceIds.length != 0)
+				users = data.req.body.resourceIds.map(x => x.id);
+
+			await currentEvent.setR_users(users, {
+				transaction: data.transaction
+			})
+
+			data.res.success(_ => data.res.status(200).send(true));
 		}));
 	}
 
 	delete_event() {
-		this.router.post('/delete_event', this.middlewares.delete_event, this.asyncRoute(async(req, res) => {
-			const id_e_URL_ROUTE_event = parseInt(req.body.id);
+		this.router.post('/delete_event', this.middlewares.delete_event, this.asyncRoute(async(data) => {
+			const id_e_URL_ROUTE_event = parseInt(data.req.body.id);
 
 			const deleteObject = await models.CODE_NAME_EVENT_MODEL.findOne({
 				where: {
 					id: id_e_URL_ROUTE_event
 				}
+			}, {
+				transaction: data.transaction
 			});
 
 			await models.CODE_NAME_EVENT_MODEL.destroy({
 				where: {
 					id: id_e_URL_ROUTE_event
 				}
+			}, {
+				transaction: data.transaction
 			});
 
-			res.send(true);
+			data.res.success(_ => data.res.send(true));
 			entity_helper.removeFiles("e_URL_ROUTE_event", deleteObject, attributes);
 		}));
 	}

@@ -3,6 +3,7 @@ const domHelper = require('../utils/jsDomHelper');
 const translateHelper = require("../utils/translate");
 const helpers = require("../utils/helpers");
 const component_helper = require("../helpers/components");
+const fieldHelper = require("../helpers/field");
 
 async function addTab(entity, file, newLi, newTabContent) {
 	const $ = await domHelper.read(file);
@@ -244,7 +245,6 @@ exports.newAgenda = async (data) => {
 					<i class='fa fa-calendar nav-icon'></i>\n\
 					<p>\n\
 						<!--{#__ key=\"global_component.agenda.menu\" /}-->\n\
-						<i class='right fas fa-angle-right'></i>\n\
 					</p>\n\
 				</a>\n\
 			</li>\n\
@@ -335,7 +335,8 @@ exports.deleteAgenda = async (data) => {
 	helpers.rmdirSyncRecursive(appPath + '/views/' + data.options.value);
 
 	const $ = await domHelper.read(layoutFileName);
-	$("#" + data.options.urlValue + "_menu_item").remove();
+
+	$(".nav-item[data-menu='" + data.options.value + "']").remove();
 	// Write back to file
 	domHelper.write(layoutFileName, $)
 
@@ -445,7 +446,7 @@ exports.newStatus = async (data) => {
 	// History list
 	{
 		// Hide buttons
-		$(".main").find("th[data-type=show], th[data-type=update], th[data-type=delete]").attr("data-hidden", "1");
+		$(".main").find("th[data-type=show], th[data-type=update], th[data-type=delete]").attr("data-hidden", "true");
 
 		// Render status column as colored badge
 		$("[data-col='"+statusAlias+".f_name']").each(function() {
@@ -633,7 +634,7 @@ exports.setupChat = async (data) => {
 	const piecesPath = __piecesPath + '/component/socket';
 
 	// Copy chat files
-	fs.copySync(piecesPath + '/chat/js/chat.js', workspacePath + '/app/public/js/Newmips/component/chat.js');
+	fs.copySync(piecesPath + '/chat/js/chat.js', workspacePath + '/core/public/js/component/chat.js');
 	fs.copySync(piecesPath + '/chat/helpers/chat.js', workspacePath + '/_core/helpers/chat.js');
 	fs.copySync(piecesPath + '/chat/routes/chat.js', workspacePath + '/app/routes/chat.js');
 
@@ -770,7 +771,7 @@ exports.addNewComponentAddress = async (data) => {
 
 	const parentBaseFile = workspacePath + '/app/views/' + data.entity.name;
 
-	await require('./structure_field').updateListFile(parentBaseFile, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body); // eslint-disable-line
+	fieldHelper.updateListFile(parentBaseFile, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body);
 
 	// Update locales
 	const langFR = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/fr-FR.json', 'utf8'));
@@ -781,7 +782,7 @@ exports.addNewComponentAddress = async (data) => {
 	langEN.entity[data.entity.name].r_address = 'Address';
 
 	// CREATE MODEL FILE
-	let modelTemplate = fs.readFileSync(__piecesPath + '/models/model.js', 'utf8');
+	let modelTemplate = fs.readFileSync(__piecesPath + '/component/address/models/address_model.js', 'utf8');
 	modelTemplate = modelTemplate.replace(/MODEL_NAME_LOWER/g, data.options.value);
 	modelTemplate = modelTemplate.replace(/MODEL_NAME/g, data.options.value.charAt(0).toUpperCase() + data.options.value.toLowerCase().slice(1));
 	modelTemplate = modelTemplate.replace(/TABLE_NAME/g, data.options.value);
@@ -857,7 +858,7 @@ exports.addNewComponentAddress = async (data) => {
 		<!--{/entityAccess}-->\n';
 
 		// Add new html to document
-		$('.nav-sidebar').append(li);
+		$('#menu_configuration').append(li);
 
 		// Write back to file
 		domHelper.write(fileName, $);

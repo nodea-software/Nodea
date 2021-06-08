@@ -20,7 +20,7 @@
 		<link href="/css/Nodea/nodea.css" type="text/css" rel="stylesheet">
 
 		{@ifTrue key=dark_theme}
-			{! Dark Theme Newmips CSS !}
+			{! Dark Theme Nodea CSS !}
 			<link href="/css/Nodea/dark_theme.css" rel="stylesheet" type="text/css">
 		{/ifTrue}
 

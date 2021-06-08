@@ -2,525 +2,7 @@ const fs = require("fs-extra");
 const domHelper = require('../utils/jsDomHelper');
 const translateHelper = require("../utils/translate");
 const dataHelper = require("../utils/data_helper");
-
-function getFieldHtml(type, field, entity, readOnly, file, values, defaultValue) {
-	/* Value in input managment */
-	let value = "";
-	let value2 = "";
-	const placeholder = `{#__ key="entity.${entity}.${field}" /}`;
-	if (file != "create") {
-		value = "{" + field + "}";
-		value2 = field;
-	} else if (defaultValue != null) {
-		switch (type) {
-			case "number" :
-			case "nombre" :
-			case "int" :
-			case "integer" :
-				defaultValue = defaultValue.replace(/\.|,/g, "");
-				if (!isNaN(defaultValue))
-					value = defaultValue;
-				else
-					console.log("ERROR: Invalid default value " + defaultValue + " for number input.")
-				break;
-			case "decimal" :
-			case "double" :
-			case "float" :
-			case "figures" :
-				defaultValue = defaultValue.replace(/,/g, ".");
-				if (!isNaN(defaultValue))
-					value = defaultValue;
-				else
-					console.log("ERROR: Invalid default value " + defaultValue + " for decimal input.")
-				break;
-			case "date" :
-				value = "data-today=1";
-				break;
-			case "datetime" :
-				value = "data-today=1";
-				break;
-			case "boolean" :
-			case "checkbox" :
-			case "case à cocher" :
-				if (["true", "vrai", "1", "checked", "coché", "à coché"].indexOf(defaultValue.toLowerCase()) != -1)
-					value = true;
-				else if (["false", "faux", "0", "unchecked", "non coché", "à non coché"].indexOf(defaultValue.toLowerCase()) != -1)
-					value = false;
-				else
-					console.log("ERROR: Invalid default value " + defaultValue + " for boolean input.")
-				break;
-			case "enum" :
-				value = dataHelper.clearString(defaultValue);
-				break;
-			default :
-				value = defaultValue;
-				break;
-		}
-	}
-
-	// Radiobutton HTML can't understand a simple readOnly ... So it's disabled for them
-	const disabled = readOnly ? 'disabled' : '';
-	readOnly = readOnly ? 'readOnly' : '';
-
-	let str = `\
-	<div data-field='${field}' class='col-12'>\n\
-		<div class='form-group'>\n\
-			<label for='${field}'>\n\
-				<!--{#__ key="entity.${entity}.${field}"/}-->&nbsp;\n\
-				<!--{@inline_help field="${field}"}-->\n\
-					<i data-field="${field}" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>\n\
-				<!--{/inline_help}-->\n\
-			</label>\n`;
-
-	let inputType;
-	const clearValues = [];
-	let clearDefaultValue = "";
-	// Check type of field
-	switch (type) {
-		case "string" :
-		case "":
-			str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
-			break;
-		case "color" :
-		case "colour":
-		case "couleur":
-			if (value == "")
-				value = "#000000";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='color' maxLength='255' " + readOnly + " " + disabled + "/>\n";
-			break;
-		case "money":
-		case "currency":
-		case "dollar":
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fas fa-dollar-sign'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='currency' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "euro":
-		case "devise":
-		case "argent":
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fas fa-euro-sign'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='currency' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "qrcode":
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-qrcode'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			if (file == "show")
-				str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "'  type='text' data-type='qrcode' " + readOnly + "/>\n";
-			else
-				str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "'  type='text' maxLength='255' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "ean8":
-		case "ean13":
-		case "upc":
-		case "code39":
-		case "code128":
-			inputType = 'number';
-			if (type === "code39" || type === "code128")
-				inputType = 'text';
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-barcode'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			if (file == "show")
-				str += "	<input class='form-control' data-custom-type='" + type + "' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' show='true' type='text' data-type='barcode' " + readOnly + "/>\n";
-			else
-				str += "	<input class='form-control' data-custom-type='" + type + "' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' data-type='barcode' type='" + inputType + "'" + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "url" :
-		case "lien" :
-		case "link" :
-			if (file == 'show') {
-				str += "	<br><a href='" + value + "' target='_blank' type='url' data-type='url' style='display: table-cell;padding-right: 5px;'>" + value + "</a>\n";
-				str += "	<!--{?" + value2 + "}-->"
-				str += "		<div class='copy-button'>\n";
-				str += "			<i class='fa fa-copy'></i>\n";
-				str += "		</div>\n";
-				str += "	<!--{/" + value2 + "}-->"
-			} else {
-				str += "	<div class='input-group'>\n";
-				str += "		<div class='input-group-prepend'>\n";
-				str += "			<span class='input-group-text'>\n";
-				str += "				<i class='fa fa-link'></i>\n";
-				str += "			</span>\n";
-				str += "		</div>\n";
-				str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='url' data-type='url' " + readOnly + "/>\n";
-				str += "	</div>\n";
-			}
-			break;
-		case "password" :
-		case "mot de passe":
-		case "secret":
-			str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='password' " + readOnly + "/>\n";
-			break;
-		case "number" :
-		case "nombre" :
-		case "int" :
-		case "integer" :
-			str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' max='2147483648' " + readOnly + "/>\n";
-			break;
-		case "big number" :
-		case "big int" :
-		case "big integer" :
-		case "grand nombre" :
-			str += "<input class='form-control' data-custom-type='bigint' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' max='9223372036854775807' " + readOnly + "/>\n";
-			break;
-		case "decimal" :
-		case "double" :
-		case "float" :
-		case "figures" :
-			str += "		<input class='form-control' data-custom-type='decimal' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
-			break;
-		case "date" :
-			str += "   <div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-calendar'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			if (file == "show") {
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
-			} else if (file == "update") {
-				str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
-			} else if (file == "create") {
-				str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
-			}
-			str += "	</div>\n";
-			break;
-		case "datetime" :
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-calendar'></i>&nbsp;+&nbsp;<i class='fas fa-clock'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			if (file == "show")
-				str += "		<input class='form-control' placeholder='" + placeholder + "' value='{" + value2 + "|datetime}' type='text' " + readOnly + "/>\n";
-			else if (file == "update")
-				str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|datetime}' type='text' " + readOnly + "/>\n";
-			else if (file == "create")
-				str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "time" :
-		case "heure" :
-			if (file == "show") {
-				str += "	<div class='bootstrap-timepicker'>\n";
-				str += "		<div class='input-group'>\n";
-				str += "			<div class='input-group-prepend'>\n";
-				str += "				<span class='input-group-text'>\n";
-				str += "					<i class='fas fa-clock'></i>\n";
-				str += "				</span>\n";
-				str += "			</div>\n";
-				str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|time}' type='text' " + readOnly + "/>\n";
-				str += "		</div>\n";
-				str += "	</div>\n";
-			} else {
-				str += "	<div class='bootstrap-timepicker'>\n";
-				str += "		<div class='input-group'>\n";
-				str += "			<div class='input-group-prepend'>\n";
-				str += "				<span class='input-group-text'>\n";
-				str += "					<i class='fas fa-clock'></i>\n";
-				str += "				</span>\n";
-				str += "			</div>\n";
-				str += "			<input class='form-control timepicker' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
-				str += "		</div>\n";
-				str += "	</div>\n";
-			}
-			break;
-		case "email" :
-		case "mail" :
-		case "e-mail" :
-		case "mel" :
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fas fa-envelope'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='email' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "tel" :
-		case "téléphone" :
-		case "portable" :
-		case "phone" :
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-phone'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='tel' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "fax" :
-			str += "	<div class='input-group'>\n";
-			str += "		<div class='input-group-prepend'>\n";
-			str += "			<span class='input-group-text'>\n";
-			str += "				<i class='fa fa-fax'></i>\n";
-			str += "			</span>\n";
-			str += "		</div>\n";
-			str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' " + readOnly + "/>\n";
-			str += "	</div>\n";
-			break;
-		case "boolean" :
-		case "checkbox" :
-		case "case à cocher" :
-			str += "	&nbsp;\n<br>\n";
-			if (file == "create") {
-				if (value === true)
-					str += "	<input class='form-control' name='" + field + "' type='checkbox' checked />\n";
-				else
-					str += "	<input class='form-control' name='" + field + "' type='checkbox' />\n";
-			} else {
-				str += "	<!--{@ifTrue key=" + field + "}-->";
-				str += "		<input class='form-control' name='" + field + "' value='" + value + "' type='checkbox' checked " + disabled + "/>\n";
-				str += "	<!--{:else}-->";
-				str += "		<input class='form-control' name='" + field + "' value='" + value + "' type='checkbox' " + disabled + "/>\n";
-				str += "	<!--{/ifTrue}-->";
-			}
-			break;
-		case "radio" :
-		case "case à sélectionner" :
-			for (let i = 0; i < values.length; i++)
-				clearValues[i] = dataHelper.clearString(values[i]);
-
-			if (typeof defaultValue !== "undefined" && defaultValue != "" && defaultValue != null)
-				clearDefaultValue = dataHelper.clearString(defaultValue);
-
-			if (file == "create") {
-				if (clearDefaultValue != "") {
-					str += "<span class='radio-group' data-radio='" + field + "'>\n";
-					str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-					str += "		<label class='no-weight'>";
-					str += "		<!--{@eq key=\"" + clearDefaultValue + "\" value=\"{.value}\" }-->\n";
-					str += "			<input name='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-					str += "		<!--{:else}-->\n";
-					str += "			<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-					str += "		<!--{/eq}-->\n";
-					str += "		</label>";
-					str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
-					str += "<span>\n";
-				} else {
-					str += "<span class='radio-group' data-radio='" + field + "'>\n";
-					str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-					str += "		<label class='no-weight'>\n";
-					str += "			<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-					str += "		</label>";
-					str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
-					str += "<span>\n";
-				}
-			} else if (file == "show") {
-				str += "<span class='radio-group' data-radio='" + field + "'>\n";
-				str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-				str += "		<label class='no-weight'>";
-				str += "		<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-				str += "			<input name='" + entity + "." + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-				str += "		<!--{:else}-->\n";
-				str += "			<input name='" + entity + "." + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-				str += "		<!--{/eq}-->\n";
-				str += "		</label>";
-				str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
-				str += "<span>\n";
-			} else {
-				str += "<span class='radio-group' data-radio='" + field + "'>\n";
-				str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-				str += "	<label class='no-weight'>";
-				str += "	<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-				str += "		<input name='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-				str += "	<!--{:else}-->\n";
-				str += "		<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
-				str += "	<!--{/eq}-->\n";
-				str += "	</label>";
-				str += "<!--{/enum_radio." + entity + "." + field + "}-->\n";
-				str += "<span>\n";
-			}
-			break;
-		case "enum" :
-			if (file == "show") {
-				str += "	<!--{^" + value2 + "}-->\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' type='text' " + readOnly + "/>\n";
-				str += "	<!--{/" + value2 + "}-->\n";
-				str += "	<!--{#enum_radio." + entity + "." + field + "}-->\n";
-				str += "		<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-				str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{.translation}' type='text' " + readOnly + "/>\n";
-				str += "		<!--{/eq}-->\n";
-				str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
-			} else if (file != "create") {
-				str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
-				str += "		<option value=''><!--{#__ key=\"select.default\" /}--></option>\n";
-				str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
-				str += "			<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-				str += "				<option value=\"{.value}\" selected> {.translation} </option>\n";
-				str += "			<!--{:else}-->\n";
-				str += "				<option value=\"{.value}\"> {.translation} </option>\n";
-				str += "			<!--{/eq}-->\n";
-				str += "		<!--{/enum_radio." + entity + "." + field + "}-->\n";
-				str += "	</select>\n";
-			} else if (value != "") {
-				str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
-				str += "		<option value=''><!--{#__ key=\"select.default\" /}--></option>\n";
-				str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
-				str += "			<!--{@eq key=\"" + value + "\" value=\"{.value}\" }-->\n";
-				str += "				<option value=\"{.value}\" selected> {.translation} </option>\n";
-				str += "			<!--{:else}-->\n";
-				str += "				<option value=\"{.value}\"> {.translation} </option>\n";
-				str += "			<!--{/eq}-->\n";
-				str += "		<!--{/enum_radio." + entity + "." + field + "}-->\n";
-				str += "	</select>\n";
-			} else {
-				str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
-				str += "		<option value='' selected><!--{#__ key=\"select.default\" /}--></option>\n";
-				str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
-				str += "			<option value=\"{.value}\"> {.translation} </option>\n";
-				str += "		<!--{/enum_radio." + entity + "." + field + "}-->\n";
-				str += "	</select>\n";
-			}
-			break;
-		case "text" :
-		case "texte" :
-			if (file == 'show')
-				str += "	<div class='show-textarea'>{" + field + "|s}</div>\n";
-			else if (file == 'create')
-				str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">" + value + "</textarea>\n";
-			else
-				str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">{" + value2 + "|s}</textarea>\n";
-
-			break;
-		case "regular text" :
-		case "texte standard" :
-			value = "{" + field + "|s}";
-			if (file == 'show')
-				str += "	<textarea readonly='readonly' class='show-textarea regular-textarea'>" + value + "</textarea>\n";
-			else
-				str += "	<textarea class='form-control textarea regular-textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' type='text' " + readOnly + ">" + value + "</textarea>\n";
-			break;
-		case "localfile" :
-		case "fichier":
-		case "file":
-			if (file == 'create') {
-				str += "	<div class='nodea-dropzone'><i class='fas fa-download'></i>&nbsp;&nbsp;<!--{#__ key=\"message.insert_file\" /}--></div>\n";
-				str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
-			} else if (file == 'update') {
-				str += '	<div class="nodea-dropzone">\n';
-				str += '		<!--{#'+field+'}-->\n';
-				str += '			<div class="dropzonefile">\n';
-				str += '				{.}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i>\n';
-				str += '			</div>\n';
-				str += '		<!--{:else}-->\n';
-				str += '			<!--{#__ key="message.insert_file" /}-->\n';
-				str += '		<!--{/'+field+'}-->\n';
-				str += '	</div>\n';
-				str += '	<input type="file" name="' + field + '" value="' + value + '" style="display: none;"/>\n';
-				str += '	<input type="hidden" name="' + field + '_modified" value="false" />\n';
-			} else {
-				str += "	<div class='input-group'>\n";
-				str += "		{?" + value2 + "}\n";
-				str += "			<div class='input-group-prepend'>\n";
-				str += "				<span class='input-group-text'>\n";
-				str += "					<i class='fa fa-download'></i>\n";
-				str += "				</span>\n";
-				str += "			</div>\n";
-				str += "			<input data-entity=" + entity + " data-field=" + value2 + " data-id='{id}' class='form-control text-left preview_file' name='" + field + "' value='{" + value2 + "|filename}' />\n";
-				str += "		{:else}\n";
-				str += "			{#__ key=\"message.empty_file\" /}\n";
-				str += "		{/" + value2 + "}\n";
-				str += "	</div>\n";
-			}
-			break;
-		case "img":
-		case "picture":
-		case "image":
-		case "photo":
-			if (file == 'create') {
-				str += "	<div class='nodea-dropzone image'><i class='fas fa-download'></i>&nbsp;&nbsp;<!--{#__ key=\"message.insert_file\" /}--></div>\n";
-				str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
-			} else if (file == 'update') {
-				str += '	<div class="nodea-dropzone image">{#'+field+'}<div class="dropzonefile">{.}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i></div>{/'+field+'}</div>\n';
-				str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
-				str += "	<input type='hidden' name='"+ field + "_modified' value='false' />\n";
-			} else if (file == 'show') {
-				str += "	<div class='input-group'>\n";
-				str += "		<a href='/app/download?entity=" + entity + "&field=" + value2 + "&id={id}'><img src=data:image/;base64,{" + value2 + ".buffer}  class='img-fluid' data-type='picture' alt=" + value + " name=" + field + "  " + readOnly + " height='400' width='400' /></a>\n";
-				str += "	</div>\n";
-			}
-			break;
-		default:
-			str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
-			break;
-	}
-
-	str += '\
-		</div>\n\
-	</div>\n';
-
-	return str;
-}
-
-function getFieldInHeaderListHtml(type, fieldName, entityName) {
-	const entity = entityName.toLowerCase();
-	const field = fieldName.toLowerCase();
-	const result = {
-		headers: '',
-		body: ''
-	};
-
-	/* ------------- Add new FIELD in headers ------------- */
-	const str = `\
-	<th data-field="${field}" data-col="${field}" data-type="${type}" >\
-		<!--{#__ key="entity.${entity}.${field}"/}-->\
-	</th>`;
-
-	result.headers = str;
-	return result;
-}
-
-async function updateFile(fileBase, file, string) {
-	const fileToWrite = fileBase + '/' + file + '.dust';
-	const $ = await domHelper.read(fileToWrite);
-
-	// TODO: Make a function that gives a jsDom ready string (comment dust, format placeholders)
-	// Use it everywhere code is directly appended to dom, and remove manualy added comments
-	// string = commentDust(string);
-	string = string.replace(/placeholder=["'](.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="$1\'$2\'$3"');
-
-	$("#fields").append(string);
-	domHelper.write(fileToWrite, $);
-	return;
-}
-
-async function updateListFile(fileBase, file, thString) {
-	const fileToWrite = fileBase + '/' + file + '.dust';
-	const $ = await domHelper.read(fileToWrite)
-
-	// Add to header thead and filter thead
-	$(".fields").each(function () {
-		$(this).append(thString);
-	});
-
-	// Write back to file
-	domHelper.write(fileToWrite, $);
-	return;
-}
+const fieldHelper = require("../helpers/field");
 
 exports.setupField = async (data) => {
 
@@ -584,143 +66,46 @@ exports.setupField = async (data) => {
 		toSyncObject[entity_name].attributes = {};
 
 	let typeForModel = "STRING";
-	let typeForDatalist = "string";
-
 	switch (field_type) {
 		case "password":
-		case "mot de passe":
-		case "secret":
-			typeForModel = "STRING";
-			typeForDatalist = "password";
-			break;
 		case "color":
-		case "colour":
-		case "couleur":
-			typeForModel = "STRING";
-			typeForDatalist = "color";
-			break;
-		case "number":
-		case "int":
-		case "integer":
-		case "nombre":
-			typeForModel = "INTEGER";
-			typeForDatalist = "integer";
-			break;
-		case "big number":
-		case "big int":
-		case "big integer":
-		case "grand nombre":
-			typeForModel = "BIGINT";
-			typeForDatalist = "integer";
-			break;
 		case "url":
-		case "lien":
-		case "link":
-			typeForModel = "STRING"
-			typeForDatalist = "url";
-			break;
-		case "code barre":
-		case "codebarre":
+		case "decimal":
+		case "email":
+		case "phone":
+		case "fax":
+		case "file":
+		case "picture":
 		case "qrcode":
 		case "barcode":
 			typeForModel = "STRING";
 			break;
-		case "money":
-		case "currency":
-		case "dollar":
-		case "devise":
-		case "euro":
-		case "argent":
-			typeForModel = "DOUBLE";
-			typeForDatalist = "currency";
+		case "number":
+			typeForModel = "INTEGER";
 			break;
-		case "float":
-		case "double":
-		case "decimal":
-		case "figures":
-			typeForModel = "STRING";
+		case "big number":
+			typeForModel = "BIGINT";
+			break;
+		case "currency":
+			typeForModel = "DOUBLE";
 			break;
 		case "date":
-			typeForModel = "DATE";
-			typeForDatalist = "date";
-			break;
 		case "datetime":
 			typeForModel = "DATE";
-			typeForDatalist = "datetime";
 			break;
 		case "time":
-		case "heure":
 			typeForModel = "TIME";
-			typeForDatalist = "time";
 			break;
-		case "email":
-		case "mail":
-		case "e-mail":
-		case "mel":
-			typeForModel = "STRING";
-			typeForDatalist = "email";
-			field_type = "email";
-			break;
-		case "phone":
-		case "tel":
-		case "téléphone":
-		case "portable":
-			typeForModel = "STRING";
-			typeForDatalist = "tel";
-			break;
-		case "fax":
-			typeForModel = "STRING";
-			break;
-		case "checkbox":
 		case "boolean":
-		case "case à cocher":
 			typeForModel = "BOOLEAN";
-			typeForDatalist = "boolean";
 			break;
 		case "radio":
-		case "case à sélectionner":
-			typeForModel = "ENUM";
-			typeForDatalist = "enum";
-			break;
 		case "enum":
 			typeForModel = "ENUM";
-			typeForDatalist = "enum";
 			break;
 		case "text":
-		case "texte":
 		case "regular text":
-		case "texte standard":
 			typeForModel = "TEXT";
-			typeForDatalist = "text";
-			break;
-		case "localfile":
-		case "file":
-		case "fichier":
-			typeForModel = "STRING";
-			typeForDatalist = "file";
-			break;
-		case "img":
-		case "image":
-		case "picture":
-		case "photo":
-			typeForModel = "STRING";
-			typeForDatalist = "picture";
-			field_type = 'picture';
-			break;
-		case "ean8":
-		case "ean13":
-		case "upca":
-		case "codecip":
-		case "cip":
-		case "isbn":
-		case "issn":
-			typeForModel = "STRING";
-			typeForDatalist = "barcode";
-			break;
-		case "code39":
-		case "code128":
-			typeForModel = "TEXT";
-			typeForDatalist = "barcode";
 			break;
 		default:
 			typeForModel = "STRING";
@@ -753,13 +138,13 @@ exports.setupField = async (data) => {
 		attributesObject[field_name] = {
 			"type": typeForModel,
 			"values": cleanEnumValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
 			"values": cleanEnumValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 	} else if (field_type == "radio") {
@@ -773,34 +158,34 @@ exports.setupField = async (data) => {
 		attributesObject[field_name] = {
 			"type": typeForModel,
 			"values": cleanRadioValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
 			"values": cleanRadioValues,
-			"newmipsType": "enum",
+			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
 		attributesObject[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type
+			"nodeaType": field_type
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type
+			"nodeaType": field_type
 		}
 	} else {
 		attributesObject[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type,
+			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": typeForModel,
-			"newmipsType": field_type,
+			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		}
 	}
@@ -859,20 +244,28 @@ exports.setupField = async (data) => {
 
 	const filePromises = [];
 	/* show_fields.dust file with a disabled input */
-	let field_html = getFieldHtml(field_type, field_name, entity_name, true, "show", field_values, defaultValue);
-	filePromises.push(updateFile(fileBase, "show_fields", field_html));
+	const htmlFieldData = {
+		type: field_type,
+		givenType: data.options.givenType || null,
+		field: field_name,
+		entity: entity_name,
+		values: field_values,
+		defaultValue: defaultValue
+	};
+	let field_html = fieldHelper.getFieldHtml(htmlFieldData, true, "show");
+	filePromises.push(fieldHelper.updateFile(fileBase, "show_fields", field_html));
 
 	/* create_fields.dust */
-	field_html = getFieldHtml(field_type, field_name, entity_name, false, "create", field_values, defaultValue);
-	filePromises.push(updateFile(fileBase, "create_fields", field_html));
+	field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "create");
+	filePromises.push(fieldHelper.updateFile(fileBase, "create_fields", field_html));
 
 	/* update_fields.dust */
-	field_html = getFieldHtml(field_type, field_name, entity_name, false, "update", field_values, defaultValue);
-	filePromises.push(updateFile(fileBase, "update_fields", field_html));
+	field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "update");
+	filePromises.push(fieldHelper.updateFile(fileBase, "update_fields", field_html));
 
 	/* list_fields.dust */
-	field_html = getFieldInHeaderListHtml(typeForDatalist, field_name, entity_name);
-	filePromises.push(updateListFile(fileBase, "list_fields", field_html.headers));
+	field_html = fieldHelper.getFieldInHeaderListHtml(field_name, entity_name, field_type);
+	filePromises.push(fieldHelper.updateListFile(fileBase, "list_fields", field_html.headers));
 
 	await Promise.all(filePromises);
 	// Field application locales
@@ -945,7 +338,7 @@ exports.setRequiredAttribute = async (data) => {
 	if (attributesObj[data.options.value]) {
 		// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
 		// In script you can set required a field in user, role or group but it crash the user admin autogeneration
-		// becaude the required field is not given during the creation
+		// because the required field is not given during the creation
 		if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
 			attributesObj[data.options.value].allowNull = set;
 		// Alter column to set default value in DB if models already exist
@@ -1143,7 +536,7 @@ exports.setupRelatedToField = async (data) => {
 
 	const fileBase = __dirname + '/../workspace/' + data.application.name + '/app/views/' + source;
 	let file = 'create_fields';
-	await updateFile(fileBase, file, select);
+	fieldHelper.updateFile(fileBase, file, select);
 
 	// --- UPDATE_FIELD ---
 	select = `
@@ -1164,7 +557,7 @@ exports.setupRelatedToField = async (data) => {
 	</div>`;
 
 	file = 'update_fields';
-	await updateFile(fileBase, file, select);
+	fieldHelper.updateFile(fileBase, file, select);
 
 	// --- SHOW_FIELD ---
 	// Add read only field in show file. No tab required
@@ -1203,7 +596,7 @@ exports.setupRelatedToField = async (data) => {
 			<!--{#__ key="entity.${source}.${alias}"/}-->&nbsp;-&nbsp;<!--{#__ key="entity.${target}.${targetField}"/}-->
 		</th>`;
 
-		await updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+		fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
 	}
 
 	await translateHelper.writeLocales(data.application.name, "aliasfield", source, [alias, data.options.showAs], data.googleTranslate);
@@ -1272,7 +665,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 			<select multiple="multiple" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
 			</select>
 		`);
-	await updateFile(fileBase, 'create_fields', createField);
+	fieldHelper.updateFile(fileBase, 'create_fields', createField);
 
 	// UPDATE_FIELD
 	let updateField;
@@ -1297,7 +690,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 				<!--{/${alias}}-->
 			</select>
 		`);
-	await updateFile(fileBase, 'update_fields', updateField);
+	fieldHelper.updateFile(fileBase, 'update_fields', updateField);
 
 	// SHOW_FIELD
 	let showField;
@@ -1505,5 +898,3 @@ exports.deleteField = async (data) => {
 	translateHelper.removeLocales(data.application.name, "field", [data.entity.name, fieldToDropInTranslate])
 	return info;
 }
-
-exports.updateListFile = updateListFile;

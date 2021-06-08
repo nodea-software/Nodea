@@ -56,7 +56,19 @@ class ImportExport extends CoreImportExport {
 			access_import: [
 				access.entityAccessMiddleware("import_export"),
 				access.entityAccessMiddleware("access_tool"),
-				access.actionAccessMiddleware("access_tool", "create")
+				access.actionAccessMiddleware("access_tool", "create"),
+				(req, res, next) => {
+					const fileMiddleware = multer.fields([{
+						name: 'import_file',
+						maxCount: 1
+					}]);
+
+					fileMiddleware(req, res, err => {
+						if (err)
+							return next(err);
+						next();
+					});
+				}
 			]
 		}
 	}

@@ -8,15 +8,44 @@ const SELECT_PAGE_SIZE = 10;
 // Models
 const models = require('@app/models/');
 
+/**
+ * An object providing association function and its parameter.
+ * @memberof CoreEntity
+ * @typedef {object} associationObject
+ * @property {string} func - Sequelize alias function (Ex: setR_user) used to create association in database
+ * @property {number|number[]} value - Parameter of alias function. Id or array of ids to associate
+ * @example
+ * const association = {func: 'setR_user', value: [42, 84]};
+ * await entityInstance[association.func](association.value);
+ */
+
+/**
+ * File object built from multer data in `model_builder.parseBody()`
+ * @memberof CoreEntity
+ * @typedef {object} fileObject
+ * @property {boolean} isPicture - If file is for a picture field
+ * @property {boolean} isModified - True when any modification occur client side. Used to know if a previous version need to be deleted
+ * @property {string} attribute - Field attribute of the file
+ * @property {string} finalPath - Secured and formated filepath
+ * @property {buffer} [buffer] - If there is no buffer, the file as been removed from form data and needs to be deleted on disk
+ * @property {function} [func=undefined] - Function called in `res.success()` with the fileObject as parameter. Default function that write or remove file to/from disk is added in '/create' and '/update' routes. Provide your own to change how file is handled
+ */
+
+/**
+ * <p>Abstract class extended by entity route classes found in /app/routes</p>
+ * <p>CoreEntity methods present in the `registeredRoutes` array and `additionalRoutes` parameter will be provided as route definition to expressjs</p>
+ * <p>Behavior of route methods can be altered by using its hooks from the child class, or by overriding the method</p>
+ */
+
 class CoreEntity extends Route {
 
 	/**
-	 * Represents an entity.
 	 * @constructor
 	 * @param {string} e_entity - The name of the entity.
 	 * @param {object} attributes - The models attributes of the entity.
 	 * @param {array} options - The models options of the entity.
-	 * @param {array} [additionalRoutes] - The models attributes of the entity.
+	 * @param {object} helpers - Helpers modules found in `/_core/helpers`.
+	 * @param {array} [additionalRoutes] - Additional routes implemented in CoreEntity child class.
 	 */
 	constructor(e_entity, attributes, options, helpers, additionalRoutes = []) {
 		const registeredRoutes = [
@@ -60,67 +89,100 @@ class CoreEntity extends Route {
 	//
 
 	/**
-	 * GET- Get the entity list view
-	 * @namespace
+	 * GET - Render the entity's list file
+	 * @namespace CoreEntity#list
 	 */
 	list() {
 		this.router.get('/list', ...this.middlewares.list, this.asyncRoute(async(data) => {
 			data.tableUrl = `/${this.entity}/datalist`;
+			data.renderFile = `${this.e_entity}/list`;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#list#start
+		     * @memberof CoreEntity#list
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {string} data.tableUrl - Url for the ajax datalist
+		     * @param {string} data.renderFile - Dust file to render
+		     */
 			if (await this.getHook('list', 'start', data) === false)
 				return;
 
 			/**
-		     * Just before rendering de list.dust file
-		     *
-		     * @event Entity#list#beforeRender
+		     * Called before rendering
+		     * @function CoreEntity#list#beforeRender
+		     * @memberof CoreEntity#list
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {string} data.tableUrl - Url for the datalist
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {string} data.tableUrl - Url for the ajax datalist
+		     * @param {string} data.renderFile - Dust file to render
 		     */
 			if (await this.getHook('list', 'beforeRender', data) === false)
 				return;
 
-			data.res.success(_ => data.res.render(this.e_entity + '/list', data));
+			data.res.success(_ => data.res.render(data.renderFile, data));
 		}));
 	}
 
 	/**
 	 * POST - Ajax route use by the datalist
-	 * @namespace
+	 * @namespace CoreEntity#datalist
 	 */
 	datalist() {
 		this.router.post('/datalist', ...this.middlewares.datalist, this.asyncRoute(async(data) => {
 			data.speInclude = null;
 			data.speWhere = null;
+			data.tableInfo = data.req.body;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#datalist#start
+		     * @memberof CoreEntity#datalist
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     */
 			if (await this.getHook('datalist', 'start', data) === false)
 				return;
 
 			/**
-		     * Before retrieving data from the database for the datalist
-		     *
-		     * @event Entity#datalist#beforeDatatableQuery
+		     * Called before datatable query build and execution
+		     * @function CoreEntity#datalist#beforeDatatableQuery
+		     * @memberof CoreEntity#datalist
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {string} data.speInclude - Use to inject association inclusion in datalist query
-		     * @param {string} data.speWhere - Use to inject WHERE condition
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
 		     */
 			if (await this.getHook('datalist', 'beforeDatatableQuery', data) === false)
 				return;
 
-			data.rawData = await this.helpers.datatable(this.E_entity, data.req.body, data.speInclude, data.speWhere);
+			data.rawData = await this.helpers.datatable(this.E_entity, data.tableInfo, data.speInclude, data.speWhere);
 
 			/**
-		     * Before sending the prepared data to the datalist
-		     *
-		     * @event Entity#datalist#afterDatatableQuery
+		     * Called after datatable query execution, before post processing of results
+		     * @function CoreEntity#datalist#afterDatatableQuery
+		     * @memberof CoreEntity#datalist
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {string} data.rawData - Data just retrieve from database
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     * @param {string} data.rawData - Result of the datatable query as raw data
 		     */
 			if (await this.getHook('datalist', 'afterDatatableQuery', data) === false)
 				return;
@@ -128,13 +190,18 @@ class CoreEntity extends Route {
 			data.preparedData = await this.helpers.entity.prepareDatalistResult(this.e_entity, this.attributes, this.options, data.rawData, data.req.session.lang_user)
 
 			/**
-		     * Just before sending the prepared data to the datalist
-		     *
-		     * @event Entity#datalist#beforeResponse
+		     * Called before json response
+		     * @function CoreEntity#datalist#beforeResponse
+		     * @memberof CoreEntity#datalist
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {string} data.preparedData - Data that are prepared to be display in the datalist
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     * @param {string} data.rawData - Result of the datatable query as raw data
+		     * @param {string} data.preparedData - Post processed data of datatable query results. This is the data sent as response
 		     */
 			if (await this.getHook('datalist', 'beforeResponse', data) === false)
 				return;
@@ -145,65 +212,147 @@ class CoreEntity extends Route {
 
 	/**
 	 * POST - Ajax route use by the datalist in tab (like has many tab)
-	 * @namespace
+	 * @namespace CoreEntity#subdatalist
 	 */
 	subdatalist() {
 		this.router.post('/subdatalist', ...this.middlewares.subdatalist, this.asyncRoute(async(data) => {
 			data.speWhere = [];
 			data.speInclude = [];
+			data.tableInfo = {...data.req.body, ...data.req.query};
 
-			if (await this.getHook('datalist', 'start', data) === false)
+			/**
+		     * Called at route start
+		     * @function Core#CoreEntity#subdatalist#start
+		     * @memberof CoreEntity#subdatalist
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {string} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     */
+			if (await this.getHook('subdatalist', 'start', data) === false)
 				return;
 
+			/**
+		     * Called before datatable query build and execution
+		     * @function CoreEntity#subdatalist#beforeDatatableQuery
+		     * @memberof CoreEntity#subdatalist
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {string} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     */
 			if (await this.getHook('subdatalist', 'beforeDatatableQuery', data) === false)
 				return;
 
-			const rawData = await this.helpers.datatable(this.E_entity, {...data.req.body, ...data.req.query}, data.speInclude, data.speWhere, true);
+			data.rawData = await this.helpers.datatable(this.E_entity, data.tableInfo, data.speInclude, data.speWhere, true);
 
+			/**
+		     * Called after datatable query execution, before post processing of results
+		     * @function CoreEntity#subdatalist#afterDatatableQuery
+		     * @memberof CoreEntity#subdatalist
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     * @param {object} data.rawData - Result of the datatable query as raw data
+		     */
 			if (await this.getHook('subdatalist', 'afterDatatableQuery', data) === false)
 				return;
 
-			const preparedData = await this.helpers.entity.prepareDatalistResult(data.req.query.subentityModel, this.attributes, this.options, rawData, data.req.session.lang_user);
+			data.preparedData = await this.helpers.entity.prepareDatalistResult(data.req.query.subentityModel, this.attributes, this.options, data.rawData, data.req.session.lang_user);
 
+			/**
+		     * Called before json response
+		     * @function CoreEntity#subdatalist#beforeResponse
+		     * @memberof CoreEntity#subdatalist
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+		     * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
+		     * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
+		     * @param {object} data.tableInfo - Table information from client
+		     * @param {object} data.rawData - Result of the datatable query as raw data
+		     * @param {object} data.preparedData - Post processed data of datatable query results. This is the data sent as response
+		     */
 			if (await this.getHook('subdatalist', 'beforeResponse', data) === false)
 				return;
 
-			data.res.success(_ => data.res.send(preparedData).end());
+			data.res.success(_ => data.res.send(data.preparedData).end());
 		}));
 	}
 
 	/**
 	 * GET - Route that display row information of an entity
-	 * @namespace
+	 * @namespace CoreEntity#show
 	 */
 	show() {
 		this.router.get('/show', ...this.middlewares.show, this.asyncRoute(async(data) => {
 			data.idEntity = data.req.query.id;
-			data.tab = data.req.query.tab;
 			data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 			data.renderFile = this.e_entity + '/show';
+			// TODO: Check if hideButton is still useful
+			/* If we arrive from an associated tab, hide the create and the list button */
+			data.hideButton = data.req.query.hideButton !== 'undefined';
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#show#start
+		     * @memberof CoreEntity#show
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {number} data.idEntity - Id of entity to show
+			 * @param {boolean} data.hideButton - Wether to hide buttons or not
+			 */
 			if (await this.getHook('show', 'start', data) === false)
 				return;
 
-			/* If we arrive from an associated tab, hide the create and the list button */
-			if (typeof data.req.query.hideButton !== 'undefined')
-				data.hideButton = data.req.query.hideButton;
-
+			/**
+		     * Called before querying data of entity to show
+		     * @function CoreEntity#show#beforeEntityQuery
+		     * @memberof CoreEntity#show
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {number} data.idEntity - Id of entity to show
+			 * @param {boolean} data.hideButton - Wether to hide buttons or not
+			 */
 			if (await this.getHook('show', 'beforeEntityQuery', data) === false)
 				return;
 
+			// TODO: use data.entityData instead of data[this.e_entity] to normalize content of data object between entities
 			data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
 
 			/**
-		     * After the entity request in database
-		     *
-		     * @event Entity#show#afterEntityQuery
+		     * Called after querying data of entity to show
+		     * @function CoreEntity#show#afterEntityQuery
+		     * @memberof CoreEntity#show
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.e_entity - Entity row data
-		     */
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {number} data.idEntity - Id of entity to show
+			 * @param {boolean} data.hideButton - Wether to hide buttons or not
+			 * @param {object} data."e_entity" - Entity row to show
+			 */
 			if (await this.getHook('show', 'afterEntityQuery', data) === false)
 				return;
 
@@ -224,20 +373,26 @@ class CoreEntity extends Route {
 				data.renderFile = this.helpers.entity.getOverlayFile(data.req.query.associationSource, data.req.query.associationAlias, 'show');
 				data.subentity = this.entity;
 				data.e_subentity = this.e_entity;
-				data.tabType = 'show';
 				data.entityData = data[this.e_entity].get({plain: true});
 			}
 
 			/**
-		     * Before rendering show.dust
-		     *
-		     * @event Entity#show#beforeRender
+		     * Called before show file rendering
+		     * @function CoreEntity#show#beforeRender
+		     * @memberof CoreEntity#show
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.e_entity - e_entity to be replace with your current entity name, contain the row to be shown
-		     * @param {object} data.componentAddressConfig - The configuration for potential component address
-		     */
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {number} data.idEntity - Id of entity to show
+			 * @param {boolean} data.hideButton - Wether to hide buttons or not
+			 * @param {object} data."e_entity" - Entity row to show
+			 * @param {object} data.entityData - ajax request only - Equals to data."e_entity" whitout sequelize wrapping
+			 * @param {string} [data.subentity] - ajax request only - entity name without prefix
+			 * @param {string} [data.e_subentity] - ajax request only - entity name with prefix
+			 */
 			if (await this.getHook('show', 'beforeRender', data) === false)
 				return;
 
@@ -246,16 +401,30 @@ class CoreEntity extends Route {
 	}
 
 	/**
-	 * GET - Display the creation formulaire of an entity
-	 * @namespace
+	 * GET - Display the creation form of an entity
+	 * @namespace CoreEntity#create_form
 	 */
 	create_form() {
 		this.router.get('/create_form', ...this.middlewares.create_form, this.asyncRoute(async(data) => {
 			data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 			data.renderFile = `${this.e_entity}/create`;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#create_form#start
+		     * @memberof CoreEntity#create_form
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 */
 			if (await this.getHook('create_form', 'start', data) === false)
 				return;
+
+			// Get association data that needed to be load directly here (to do so set loadOnStart param to true in options).
+			await this.helpers.entity.getLoadOnStartData(data, this.options);
 
 			if (typeof data.req.query.associationFlag !== 'undefined') {
 				data.associationFlag = data.req.query.associationFlag;
@@ -266,46 +435,54 @@ class CoreEntity extends Route {
 				if (data.req.query.ajax) {
 					data.renderFile = this.helpers.entity.getOverlayFile(data.associationSource, data.associationAlias, 'create_form');
 					data.subentity = this.entity;
-					data.tabType = 'create_form';
 					data.action = `/${this.entity}/create`;
 					data.method = 'post';
 					data.fieldsFile = `${this.e_entity}/create_fields`;
 				}
 
 				/**
-			     * In case the creation form was called from an entity tab, it mean that it's an association creation
-			     *
-			     * @event Entity#create_form#ifFromAssociation
+			     * In case the creation form was called from an entity tab, it means that we've got to associate the created entity to a parent
+			     * @function CoreEntity#create_form#ifFromAssociation
+			     * @memberof CoreEntity#create_form
 			     * @param {object} data
-			     * @param {object} data.req - Request
-			     * @param {object} data.res - Response
-			     * @param {object} data.enum_radio - Contain key and translation for enums and radios
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+				 * @param {object} data.enum_radio - Entity enum fields translations
+				 * @param {string} data.renderFile - Dust file to render
 			     * @param {integer} data.associationFlag - ID of the entity that ask for a creation formulaire of the current entity
 			     * @param {string} data.associationSource - Entity name that ask for a creation formulaire of the current entity
 			     * @param {string} data.associationUrl - The url string of the entity source
 			     * @param {integer} data.associationForeignKey - The concerned foreign key between the two entities
 			     * @param {string} data.associationAlias - Alias that represent the relation between the two entities
+ 				 * @param {string} data.subentity=this.entity - ajax request only - Name of entity without prefix
+				 * @param {string} data.action=/this.entity/create - ajax request only - Action of create form
+				 * @param {string} data.method=post - ajax request only - Method of create form
+				 * @param {string} data.fieldsFile=this.e_entity/create_fields - ajax request only - Fields file to insert into the form
 			     */
 				if (await this.getHook('create_form', 'ifFromAssociation', data) === false)
 					return;
 			}
 
-			// Get association data that needed to be load directly here (to do so set loadOnStart param to true in options).
-			await this.helpers.entity.getLoadOnStartData(data, this.options);
-
 			/**
-		     * Before rendering the creation form
-		     *
-		     * @event Entity#create_form#beforeRender
+		     * Called before render of data.renderFile
+		     * @function CoreEntity#create_form#beforeRender
+		     * @memberof CoreEntity#create_form
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.enum_radio - Contain key and translation for enums and radios
-		     * @param {integer} [data.associationFlag] - ID of the entity that ask for a creation formulaire of the current entity
-		     * @param {string} [data.associationSource] - Entity name that ask for a creation formulaire of the current entity
-		     * @param {string} [data.associationUrl] - The url string of the entity source
-		     * @param {integer} [data.associationForeignKey] - The concerned foreign key between the two entities
-		     * @param {string} [data.associationAlias] - Alias that represent the relation between the two entities
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+		     * @param {integer} data.associationFlag - ID of the entity that ask for a creation formulaire of the current entity
+		     * @param {string} data.associationSource - Entity name that ask for a creation formulaire of the current entity
+		     * @param {string} data.associationUrl - The url string of the entity source
+		     * @param {integer} data.associationForeignKey - The concerned foreign key between the two entities
+		     * @param {string} data.associationAlias - Alias that represent the relation between the two entities
+			 * @param {string} data.subentity=this.entity - ajax request only - Name of entity without prefix
+			 * @param {string} data.action=/this.entity/create - ajax request only - Action of create form
+			 * @param {string} data.method=post - ajax request only - Method of create form
+			 * @param {string} data.fieldsFile=this.e_entity/create_fields - ajax request only - Fields file to insert into the form
 		     */
 			if (await this.getHook('create_form', 'beforeRender', data) === false)
 				return;
@@ -316,37 +493,41 @@ class CoreEntity extends Route {
 
 	/**
 	 * POST - Creation of an entity row
-	 * @namespace
+	 * @namespace CoreEntity#create
 	 */
 	create() {
 		this.router.post('/create', ...this.middlewares.create, this.asyncRoute(async(data) => {
 			data.transaction = await models.sequelize.transaction();
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#create#start
+		     * @memberof CoreEntity#create
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 */
 			if (await this.getHook('create', 'start', data) === false)
 				return;
 
 			const [createObject, createAssociations, createFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
 			data.createObject = createObject;
 			data.createAssociations = createAssociations;
-			data.files = data.req.files = createFiles;
-
-			for (const file of data.files)
-				if (file.buffer)
-					file.func = async file => {
-						await this.helpers.file.write(file.finalPath, file.buffer);
-						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
-					}
+			data.files = createFiles;
 
 			/**
-		     * Before creating the row in the database
-		     *
-		     * @event Entity#create#beforeCreateQuery
+		     * Called before entity creation in database
+		     * @function CoreEntity#create#beforeCreateQuery
+		     * @memberof CoreEntity#create
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.createObject - The object that will be used to create the row in database
-		     */
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {object} data.createObject - Parsed form values used to create row in database
+			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
+			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+			 */
 			if (await this.getHook('create', 'beforeCreateQuery', data) === false)
 				return;
 
@@ -372,7 +553,7 @@ class CoreEntity extends Route {
 				if (!association)
 					throw new Error("Association not found.");
 
-				const modelName = data.req.query.associationAlias.charAt(0).toUpperCase() + data.req.query.associationAlias.slice(1).toLowerCase();
+				const modelName = data.req.query.associationAlias.capitalizeFirstLetter();
 				if (typeof association['add' + modelName] !== 'undefined') {
 					await association['add' + modelName](data.createdRow.id, {transaction: data.transaction});
 
@@ -387,7 +568,6 @@ class CoreEntity extends Route {
 							ids: data.createdRow.id
 						});
 					}
-
 				} else {
 					const obj = {};
 					obj[data.req.query.associationForeignKey] = data.createdRow.id;
@@ -398,6 +578,15 @@ class CoreEntity extends Route {
 				}
 			}
 
+			// Add default write to disk function to file if none set through hooks
+			// These functions will be executed on route success before transaction commit
+			for (const file of data.files)
+				if (!file.func && file.buffer)
+					file.func = async file => {
+						await this.helpers.file.write(file.finalPath, file.buffer);
+						if (file.isPicture)
+							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+					}
 			// Add associations
 			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
 
@@ -408,15 +597,17 @@ class CoreEntity extends Route {
 				data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];
 
 			/**
-		     * Before the redirection
-		     *
-		     * @event Entity#create#beforeRedirect
+		     * Called before redirection to data.redirect
+		     * @function CoreEntity#create#beforeRedirect
+		     * @memberof CoreEntity#create
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.createObject - The object used to create the row in database
-		     * @param {object} data.createdRow - The created row in database
-		     */
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {object} data.createObject - Parsed form values used to create row in database
+			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
+			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+			 */
 			if (await this.getHook('create', 'beforeRedirect', data) === false)
 				return;
 
@@ -425,16 +616,27 @@ class CoreEntity extends Route {
 	}
 
 	/**
-	 * GET - Display the update formulaire of an entity
-	 * @namespace
+	 * GET - Display the update form of an entity
+	 * @namespace CoreEntity#update_form
 	 */
 	update_form() {
 		this.router.get('/update_form', ...this.middlewares.update_form, this.asyncRoute(async(data) => {
-
 			data.idEntity = data.req.query.id;
 			data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 			data.renderFile = `${this.e_entity}/update`;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#update_form#start
+		     * @memberof CoreEntity#update_form
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of entity to update
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 */
 			if (await this.getHook('update_form', 'start', data) === false)
 				return;
 
@@ -447,6 +649,19 @@ class CoreEntity extends Route {
 					});
 				});
 
+			/**
+		     * Called before querying entity to update
+		     * @function CoreEntity#update_form#afterEntityQuery
+		     * @memberof CoreEntity#update_form
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of entity to update
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {object} data."e_entity" - Entity row to update
+			 */
 			if (await this.getHook('update_form', 'afterEntityQuery', data) === false)
 				return;
 
@@ -480,14 +695,18 @@ class CoreEntity extends Route {
 			await this.helpers.entity.getLoadOnStartData(data.req.query.ajax ? data[this.e_entity].dataValues : data, this.options);
 
 			/**
-		     * Before rendering the update form
-		     *
-		     * @event Entity#update_form#beforeRender
+		     * Called before render of data.renderFile
+		     * @function CoreEntity#update_form#beforeRender
+		     * @memberof CoreEntity#update_form
 		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.e_entity - Contain key and translation for enums and radios
-		     */
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of entity to update
+			 * @param {object} data.enum_radio - Entity enum fields translations
+			 * @param {string} data.renderFile - Dust file to render
+			 * @param {object} data."e_entity" - Entity row to update
+			 */
 			if (await this.getHook('update_form', 'beforeRender', data) === false)
 				return;
 
@@ -497,13 +716,23 @@ class CoreEntity extends Route {
 
 	/**
 	 * POST - Update of an entity row
-	 * @namespace
+	 * @namespace CoreEntity#update
 	 */
 	update() {
 		this.router.post('/update', ...this.middlewares.update, this.asyncRoute(async(data) => {
 			data.transaction = await models.sequelize.transaction();
 			data.idEntity = parseInt(data.req.body.id);
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#update#start
+		     * @memberof CoreEntity#update
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {number} data.idEntity - Id of entity to update
+			 */
 			if (await this.getHook('update', 'start', data) === false)
 				return;
 
@@ -549,6 +778,18 @@ class CoreEntity extends Route {
 				data.updateObject.version = 0;
 			data.updateObject.version++;
 
+			/**
+		     * Called before entity update in database
+		     * @function CoreEntity#update#beforeUpdate
+		     * @memberof CoreEntity#update
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {object} data.updateObject - Parsed form values used to update row in database
+			 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
+			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+			 */
 			if (await this.getHook('update', 'beforeUpdate', data) === false)
 				return;
 
@@ -566,6 +807,18 @@ class CoreEntity extends Route {
 				level: "success"
 			}];
 
+			/**
+		     * Called before redirecting to data.redirect
+		     * @function CoreEntity#update#beforeRedirect
+		     * @memberof CoreEntity#update
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {object} data.updateObject - Parsed form values used to update row in database
+			 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
+			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+			 */
 			if (await this.getHook('update', 'beforeRedirect', data) === false)
 				return;
 
@@ -574,18 +827,28 @@ class CoreEntity extends Route {
 	}
 
 	/**
-	 * GET - Trigger when clicking on show tab, load ajax for tabs
-	 * @namespace
+	 * GET - Default route called to load entity tabs from show page
+	 * @namespace CoreEntity#loadtab
 	 */
 	loadtab() {
 		this.router.get('/loadtab/:id/:alias', ...this.middlewares.loadtab, this.asyncRoute(async(data) => {
 			data.alias = data.req.params.alias;
 			data.id = data.req.params.id;
+			data.isAllowed = false;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#loadtab#start
+		     * @memberof CoreEntity#loadtab
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {string} data.alias - Alias of relation between source entity and tab entity
+			 * @param {boolean} data.isAllowed=false - Boolean to block tab loading. Set it to true to skip default verifications
+			 */
 			if (await this.getHook('loadtab', 'start', data) === false)
-				return;
-
-			if (await this.getHook('loadtab', 'beforeValidityCheck', data) === false)
 				return;
 
 			// Find tab option
@@ -598,10 +861,38 @@ class CoreEntity extends Route {
 				return data.res.error(_ => data.res.status(404).end());
 			data.renderFile = `${__appPath}/views/${this.e_entity}/${data.option.as}/tab`;
 
-			// Check access rights to subentity
-			if (!this.helpers.access.entityAccess(data.req.user.r_group, data.option.target.substring(2)))
-				return data.res.error(_ => data.res.status(403).end());
+			/**
+		     * Called before checking access rights to this tab for logged user
+		     * @function CoreEntity#loadtab#beforeValidityCheck
+		     * @memberof CoreEntity#loadtab
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {string} data.alias - Alias of relation between source entity and tab entity
+			 * @param {boolean} data.isAllowed=false - Boolean to block tab loading. Set it to true to skip default access rights verifications
+			 */
+			if (await this.getHook('loadtab', 'beforeValidityCheck', data) === false)
+				return;
 
+			// Check access rights to subentity
+			if (!data.isAllowed && !this.helpers.access.entityAccess(data.req.user.r_group, data.option.target.substring(2)))
+				return data.res.error(_ => data.res.status(403).end());
+			data.isAllowed = true;
+
+			/**
+		     * Called after checking access rights, if allowed
+		     * @function CoreEntity#loadtab#afterValidityCheck
+		     * @memberof CoreEntity#loadtab
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {string} data.alias - Alias of relation between source entity and tab entity
+			 * @param {boolean} data.isAllowed - Now true because we're after validity check
+			 */
 			if (await this.getHook('loadtab', 'afterValidityCheck', data) === false)
 				return;
 
@@ -619,13 +910,46 @@ class CoreEntity extends Route {
 			data.E_entity = this.E_entity;
 			data.e_entity = this.e_entity;
 			data.entity = this.entity;
+			data.dustData = null;
 
+			/**
+		     * Called before querying data of tab
+		     * @function CoreEntity#loadtab#beforeDataQuery
+		     * @memberof CoreEntity#loadtab
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {string} data.alias - Alias of relation between source entity and tab entity
+			 * @param {boolean} data.isAllowed - Now true because we're after validity check
+			 * @param {string} data.E_entity - Entity model name
+			 * @param {string} data.e_entity - Prefixed entity name
+			 * @param {string} data.entity - Entity name
+			 * @param {object} [data.dustData] - Data provided to rendered data.renderFile. If data.dustData as no value, tab's default value will be loaded using `helpers.entity.getTabData()`. Set your data to avoid execution of default.
+			 */
 			if (await this.getHook('loadtab', 'beforeDataQuery', data) === false)
 				return;
 
 			if (!data.dustData)
 				data.dustData = await this.helpers.entity.getTabData(data);
 
+			/**
+		     * Called before rendering data.renderFile
+		     * @function CoreEntity#loadtab#beforeRender
+		     * @memberof CoreEntity#loadtab
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {string} data.alias - Alias of relation between source entity and tab entity
+			 * @param {boolean} data.isAllowed - Now true because we're after validity check
+			 * @param {string} data.E_entity - Entity model name
+			 * @param {string} data.e_entity - Prefixed entity name
+			 * @param {string} data.entity - Entity name
+			 * @param {object} [data.dustData] - Data provided to rendered data.renderFile.
+			 */
 			if (await this.getHook('loadtab', 'beforeRender', data) === false)
 				return;
 
@@ -634,8 +958,8 @@ class CoreEntity extends Route {
 	}
 
 	/**
-	 * GET - Changing the status of an entity
-	 * @namespace
+	 * GET - Change the status of an entity
+	 * @namespace CoreEntity#set_status
 	 */
 	set_status() {
 		this.router.get('/set_status/:entity_id/:status/:id_new_status', ...this.middlewares.set_status, this.asyncRoute(async(data) => {
@@ -645,6 +969,20 @@ class CoreEntity extends Route {
 			data.idNewStatus = data.req.params.id_new_status;
 			data.isAllowed = false;
 
+			/**
+		     * Called at route start
+		     * @function CoreEntity#set_status#start
+		     * @memberof CoreEntity#set_status
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.redirect - Redirection route when status is set
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {number} data.idNewStatus - Id of target status
+			 * @param {string} data.statusName - Status's name
+			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
+			 */
 			if (await this.getHook('set_status', 'start', data) === false)
 				return;
 
@@ -660,6 +998,21 @@ class CoreEntity extends Route {
 				return data.res.error(_ => data.res.redirect(data.redirect));
 			}
 
+			/**
+		     * Called before calling `helpers.status.isAllowed()`
+		     * @function CoreEntity#set_status#beforeAllowedCheck
+		     * @memberof CoreEntity#set_status
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.redirect - Redirection route when status is set
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {number} data.idNewStatus - Id of target status
+			 * @param {string} data.statusName - Status's name
+			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
+			 * @param {object} data.entity - Entity on which status is to be set, with its current status included
+			 */
 			if (await this.getHook('set_status', 'beforeAllowedCheck', data) === false)
 				return;
 
@@ -671,11 +1024,43 @@ class CoreEntity extends Route {
 
 			data.actions = await this.helpers.status.getActions(data.idNewStatus);
 
+			/**
+		     * Called before executing target status actions. Alter `data.actions` to add/remove actions
+		     * @function CoreEntity#set_status#beforeActionsExecution
+		     * @memberof CoreEntity#set_status
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.redirect - Redirection route when status is set
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {number} data.idNewStatus - Id of target status
+			 * @param {string} data.statusName - Status's name
+			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
+			 * @param {object} data.entity - Entity on which status is to be set, with its current status included
+			 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
+			 */
 			if (await this.getHook('set_status', 'beforeActionsExecution', data) === false)
 				return;
 
 			await this.helpers.status.executeActions(this.E_entity, data.idEntity, data.actions, data.transaction);
 
+			/**
+		     * Called before setting target status using `helpers.status.setStatus()`
+		     * @function CoreEntity#set_status#beforeSetStatus
+		     * @memberof CoreEntity#set_status
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.redirect - Redirection route when status is set
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {number} data.idNewStatus - Id of target status
+			 * @param {string} data.statusName - Status's name
+			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
+			 * @param {object} data.entity - Entity on which status is to be set, with its current status included
+			 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
+			 */
 			if (await this.getHook('set_status', 'beforeSetStatus', data) === false)
 				return;
 
@@ -685,6 +1070,22 @@ class CoreEntity extends Route {
 				transaction: data.transaction
 			});
 
+			/**
+		     * Called before redirecting to `data.redirect`
+		     * @function CoreEntity#set_status#beforeRedirect
+		     * @memberof CoreEntity#set_status
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {number} data.redirect - Redirection route when status is set
+			 * @param {number} data.idEntity - Id of source entity
+			 * @param {number} data.idNewStatus - Id of target status
+			 * @param {string} data.statusName - Status's name
+			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
+			 * @param {object} data.entity - Entity on which status is to be set, with its current status included
+			 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
+			 */
 			if (await this.getHook('set_status', 'beforeRedirect', data) === false)
 				return;
 
@@ -693,8 +1094,8 @@ class CoreEntity extends Route {
 	}
 
 	/**
-	 * POST - Search route use by the select2
-	 * @namespace
+	 * POST - Search route of entity. Mainly used by ajax selects
+	 * @namespace CoreEntity#search
 	 */
 	search() {
 		this.router.post('/search', ...this.middlewares.search, this.asyncRoute(async(data) => {
@@ -703,6 +1104,19 @@ class CoreEntity extends Route {
 			data.limit = SELECT_PAGE_SIZE;
 			data.offset = (data.req.body.page - 1) * data.limit;
 
+			/**
+		     * Called to search entity results paginated and / or filtered. This route is used by ajax select
+		     * @function CoreEntity#search#start
+		     * @memberof CoreEntity#search
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.search - The search filter wrapped in '%' char. If no filter is provided `data.search` will equals to '%%'
+			 * @param {string[]} data.searchField - The field on which the search filter is to be applied
+			 * @param {number} data.limit=SELECT_PAGE_SIZE - Limit the number of results. Defaults to `SELECT_PAGE_SIZE` global
+			 * @param {number} data.offset - The offset of search results. Equals to page number * `data.limit`
+			 */
 			if (await this.getHook('search', 'start', data) === false)
 				return;
 
@@ -733,6 +1147,20 @@ class CoreEntity extends Route {
 			// Format value like date / datetime / etc...
 			this.helpers.entity.search.formatValue(this.attributes, data.results, data.req.session.lang_user, this.e_entity);
 
+			/**
+		     * Called before json response
+		     * @function CoreEntity#search#beforeResponse
+		     * @memberof CoreEntity#search
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.search - The search filter wrapped in '%' char. If no filter is provided `data.search` will equals to '%%'
+			 * @param {string[]} data.searchField - The field on which the search filter is to be applied
+			 * @param {number} data.limit=SELECT_PAGE_SIZE - Limit the number of results. Defaults to `SELECT_PAGE_SIZE` global
+			 * @param {number} data.offset - The offset of search results. Equals to page number * `data.limit`
+			 * @param {object} data.results - Search result sent to response
+			 */
 			if (await this.getHook('search', 'beforeResponse', data) === false)
 				return;
 
@@ -817,16 +1245,37 @@ class CoreEntity extends Route {
 
 	/**
 	 * POST - Destroying an entity row
-	 * @namespace
+	 * @namespace CoreEntity#destroy
 	 */
 	destroy() {
 		this.router.post('/delete', ...this.middlewares.destroy, this.asyncRoute(async(data) => {
 			data.idEntity = parseInt(data.req.body.id);
 
+			/**
+		     * Called to delete an entity row in database
+		     * @function CoreEntity#destroy#start
+		     * @memberof CoreEntity#destroy
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.idEntity - Id of entity to delete
+			 */
 			if (await this.getHook('destroy', 'start', data) === false)
 				return;
 
-			await this.getHook('destroy', 'beforeEntityQuery', data);
+			/**
+		     * Called before fetching row to delete
+		     * @function CoreEntity#destroy#beforeEntityQuery
+		     * @memberof CoreEntity#destroy
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.idEntity - Id of entity to delete
+			 */
+			if (await this.getHook('destroy', 'beforeEntityQuery', data) === false)
+				return;
 
 			data.deleteObject = await models[this.E_entity].findOne({
 				where: {id: data.idEntity}
@@ -837,6 +1286,17 @@ class CoreEntity extends Route {
 					message: 'Entity row not found'
 				}));
 
+			/**
+		     * Called before deleting row in database
+		     * @function CoreEntity#destroy#beforeEntityQuery
+		     * @memberof CoreEntity#destroy
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.idEntity - Id of entity to delete
+			 * @param {object} data.deleteObject - Instance of entity to delete
+			 */
 			if (await this.getHook('destroy', 'beforeDestroy', data) === false)
 				return;
 
@@ -853,6 +1313,18 @@ class CoreEntity extends Route {
 
 			await this.helpers.entity.removeFiles(data.deleteObject, this.attributes);
 
+			/**
+		     * Called before redirecting to `data.redirect`
+		     * @function CoreEntity#destroy#beforeEntityQuery
+		     * @memberof CoreEntity#destroy
+		     * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {string} data.idEntity - Id of entity to delete
+			 * @param {object} data.deleteObject - Instance of entity to delete
+			 * @param {string} data.redirect - Where to redirect the response
+			 */
 			if (await this.getHook('destroy', 'beforeRedirect', data) === false)
 				return;
 

@@ -1,7 +1,10 @@
-<form action="/{entity}/fieldset/{alias}/add" class="ajax" method="post" style="margin-bottom: 20px;">
+<form action="/{entity}/fieldset/{alias}/add" class="fieldset-add ajax" method="post" style="margin-bottom: 20px;">
 	<div class='btn-group'>
-		<select data-url="/{subentity}/search" data-using="{usingField}" class="form-control" style="width:200px;" name="ids" required="" multiple=""></select>
-		<button style="margin-left:7px;" type="submit" class="btn btn-success">{#__ key="button.add"/}</button>
+		<select data-url="/{subentity}/search" data-using="{usingField}" class="fieldset-select form-control" style="width:200px;" name="ids" required="" multiple=""></select>
+		<button style="margin-left:7px;" type="submit" class="btn btn-success">
+			<i class="fas fa-plus"></i>&nbsp;&nbsp;
+			{#__ key="button.add"/}
+		</button>
 		<input type="hidden" value="{entityId}" name="idEntity">
 	</div>
 </form>

@@ -7,7 +7,7 @@ global.__configPath = __dirname + '/config';
 global.__corePath = __dirname + '/_core';
 global.__appPath = __dirname + '/app';
 
-// Autologin for newmips's "iframe" live preview context
+// Autologin for Nodea's "iframe" live preview context
 global.auto_login = false;
 if (process.argv[2] == 'autologin')
 	global.auto_login = true;

@@ -159,18 +159,20 @@ exports.formatSearch = (column, searchValue, type) => {
 //	options: entity options
 //	body: request body
 // RETURN:
-//	Returns an array of two values [fieldObject, associationArray] :
+//	Returns an array of three values [fieldObject, associationArray, fileArray] :
 //		fieldObject: Entity create/update object built from body
 //		associationArray: An array of association that need to be updated. Contains alias function, association ids, and association option
 //			[{func: "setR_user", data: [42, 84], option: relationOption}]
+//		fileArray: Array of file to create/delete
+//			[{...multer.file, isPicture: bool, isModified: bool, attribute: string, finalPath: string}]
 exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 	const object = {}, associations = [], files = [];
 
 	for (const attribute in attributes) {
 		// Files
-		if (["file", "picture"].includes(attributes[attribute].newmipsType)) {
+		if (["file", "picture"].includes(attributes[attribute].nodeaType)) {
 			const file = {
-				isPicture: attributes[attribute].newmipsType === 'picture',
+				isPicture: attributes[attribute].nodeaType === 'picture',
 				isModified: body[attribute + '_modified'] && body[attribute + '_modified'] === "true",
 				attribute
 			};
@@ -200,9 +202,9 @@ exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 			body[attribute] = null;
 		object[attribute] = body[attribute];
 
-		if (body[attribute] != null && !!attributes[attribute].newmipsType) {
+		if (body[attribute] != null && !!attributes[attribute].nodeaType) {
 			// We encryt all password attributes
-			if (attributes[attribute].newmipsType === "password")
+			if (attributes[attribute].nodeaType === "password")
 				object[attribute] = bcrypt.hashSync(body[attribute], null, null);
 		}
 	}
@@ -263,7 +265,7 @@ exports.buildSequelizeAttributes = (DataTypes, attributes, recursionLevel = 0) =
 			else
 				object[prop] = this.buildSequelizeAttributes(DataTypes, attrDef, recursionLevel+1);
 		}
-		else if (typeof attrDef === 'string' && prop != 'newmipsType')
+		else if (typeof attrDef === 'string' && prop != 'nodeaType')
 			object[prop] = DataTypes[attrDef];
 		else
 			object[prop] = attrDef;

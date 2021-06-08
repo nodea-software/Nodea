@@ -27,11 +27,13 @@ function fetchStatus() {
                     if (data.answers[i].instruction){
                         if(data.answers[i].error) {
                             $("#answers").html("<i>" + data.answers[i].instruction + "</i>:<br><span style='color: #ff2700;'><i class='fa fa-exclamation-circle'></i>&nbsp;&nbsp;<b>" + data.answers[i].message + "</b></span><br><br>" + $("#answers").html());
-                            $("#goTo").replaceWith(
-                                `<button type='button' class="btn btn-danger deleteAppForm fromScript" data-name='${data.data.application._displayName}' data-codename='${data.data.application._name}'>
-                                    <i class="fa fa-trash fa-md"></i>&nbsp;&nbsp;
-                                    <span>Supprimer l'application</span>
-                                </button><br>`).show();
+                            if(data.data) {
+                                $("#goTo").replaceWith(
+                                    `<button type='button' class="btn btn-danger deleteAppForm fromScript" data-name='${data.data.application._displayName}' data-codename='${data.data.application._name}'>
+                                        <i class="fa fa-trash fa-md"></i>&nbsp;&nbsp;
+                                        <span>Supprimer l'application</span>
+                                    </button><br>`).show();
+                            }
                         }
                         else
                             $("#answers").html("<i>" + data.answers[i].instruction + "</i>:<br><span style='color: #007A2E;'><i class='fa fa-check'></i>&nbsp;&nbsp;<b>" + data.answers[i].message + "</b></span><br><br>" + $("#answers").html());
@@ -69,7 +71,7 @@ function fetchStatus() {
 $(function() {
 
     // Get last written script
-    var lastWrittenScript = JSON.parse(localStorage.getItem("newmips_last_written_script"));
+    var lastWrittenScript = JSON.parse(localStorage.getItem("nodea_last_written_script"));
     if(!lastWrittenScript)
         lastWrittenScript = [];
 
@@ -101,7 +103,7 @@ $(function() {
         $("#createScriptTextarea").val(lastWrittenScript[$(this).attr('data-index')].content)
     })
 
-    $("#instructionsScript").submit(function() {
+    $("#instructionsScript").on('submit', function() {
         $("#goTo").hide();
         $("#scriptSubmit").prop('disabled', true);
         $("#scriptSubmit").hide();
@@ -135,7 +137,7 @@ $(function() {
                     date: moment().format("DD MMM, HH:mm"),
                     content: $("#createScriptTextarea").val()
                 });
-                localStorage.setItem("newmips_last_written_script", JSON.stringify(lastWrittenScript));
+                localStorage.setItem("nodea_last_written_script", JSON.stringify(lastWrittenScript));
             }
 
             $.ajax({

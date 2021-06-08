@@ -91,7 +91,7 @@
                                         </span>
                                     </a>&nbsp;
                                 {/actionAccess}
-                                {^hideButton}
+                                {@ifTrue key=hideButton}
                                     {#actionAccess entity="user" action="create"}
                                         <a href="/user/create_form" class="btn btn-success">
                                             <i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
@@ -120,7 +120,7 @@
                                             {/f_enabled}
                                         {/f_email}
                                     {/actionAccess}
-                                {/hideButton}
+                                {/ifTrue}
                             </div>
                         {/e_user}
                     </div>

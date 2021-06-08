@@ -79,7 +79,7 @@
 					<li class="nav-item">
 						<a class="nav-link" href="#">
 							<span class="badge badge-warning navbar-badge" style="margin-top: 5px;">
-								{#__ key="app.version"/}&nbsp;{config.versionAppli}.{config.version}
+								{#__ key="app.version"/}&nbsp;{config.version}
 							</span>
 						</a>
 					</li>
@@ -330,7 +330,7 @@
 		</script>
 		{! HTML encode / decode functions !}
 		<script src="/core/js/html_encode_decode.js?v={config.version}" type='text/javascript'></script>
-		{! Newmips App !}
+		{! Nodea App !}
 		<script src="/core/js/nodea.js?v={config.version}" type='text/javascript'></script>
 
 		{+custom_js /}

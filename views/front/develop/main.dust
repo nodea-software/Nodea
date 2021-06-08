@@ -43,11 +43,11 @@
 					<div class="col-12">
 						<div class="card main-card">
 							<div class="card-header d-flex p-0">
-								<h3 class="card-title p-3">
+								<h3 class="card-title p-3 powertip" powertip-content='{#__ key="powertip.develop.1" /}' powertip-order='1'>
 									<img class="animate__animated" src="/img/picto/list.png" alt="List picto">
 									{#__ key="menu.develop" /}
 								</h3>
-								<ul class="nav nav-pills ml-auto p-3">
+								<ul class="nav nav-pills ml-auto p-3 powertip" powertip-content='{#__ key="powertip.develop.2" /}' powertip-order='2'>
 									<span style="margin-top: 7px;"><b>Application:</b>&nbsp;&nbsp;</span>
 									<select id="develop_current_app" class="select2" style='width:200px;'>
 										{#allApps}
@@ -72,22 +72,22 @@
 											{#__ key="build.tabs.home"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.develop.4" /}' powertip-order='4'>
 										<a class="nav-link" href="#backlog" data-toggle="tab">
 											{#__ key="develop.tabs.backlog"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.develop.5" /}' powertip-order='5'>
 										<a class="nav-link" href="#mytasks" data-toggle="tab">
 											{#__ key="develop.tabs.mytasks"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.develop.6" /}' powertip-order='6'>
 										<a class="nav-link" href="#versioning" data-toggle="tab">
 											{#__ key="develop.tabs.versioning"/}
 										</a>
 									</li>
-									<li class="nav-item">
+									<li class="nav-item powertip" powertip-content='{#__ key="powertip.develop.7" /}' powertip-order='7'>
 										<a class="nav-link" href="#documentation" data-toggle="tab">
 											{#__ key="develop.tabs.documentation"/}
 										</a>
@@ -157,7 +157,7 @@
 										<br>
 										<h4>Dernières activités</h4>
 										<hr>
-										<div class="row">
+										<div class="row powertip" powertip-content='{#__ key="powertip.develop.3" /}' powertip-order='3'>
 											<div class="col-md-12">
 												<div class="timeline">
 													<div class="time-label">

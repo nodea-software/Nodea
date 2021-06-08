@@ -33,7 +33,7 @@
 					</div>
 					<div class="col-xs-12 col-sm">
 						<a class="home-card" href="/develop">
-							<div class="card card-widget widget-user">
+							<div class="card card-widget widget-user powertip" powertip-content='{#__ key="powertip.home.3" /}' powertip-order='3'>
 								<div class="widget-user-header">
 									<h3 class="widget-user-username">{#__ key="menu.develop" /}</h3>
 									<h6 class="widget-user-desc">{#__ key="develop.subtitle" /}</h6>
@@ -46,7 +46,7 @@
 					</div>
 					<div class="col-xs-12 col-sm">
 						{! <a class="home-card" href="#"> !}
-							<div class="card card-widget widget-user wip-card">
+							<div class="card card-widget widget-user wip-card powertip" powertip-content='{#__ key="powertip.home.4" /}' powertip-order='4'>
 								<div class="widget-user-header">
 									<h3 class="widget-user-username">{#__ key="menu.test" /}</h3>
 									<h6 class="widget-user-desc">{#__ key="test.subtitle" /}</h6>
@@ -59,7 +59,7 @@
 					</div>
 					<div class="col-xs-12 col-sm">
 						{! <a class="home-card" href="#"> !}
-							<div class="card card-widget widget-user wip-card">
+							<div class="card card-widget widget-user wip-card powertip" powertip-content='{#__ key="powertip.home.5" /}' powertip-order='5'>
 								<div class="widget-user-header">
 									<h3 class="widget-user-username">{#__ key="menu.deploy" /}</h3>
 									<h6 class="widget-user-desc">{#__ key="deploy.subtitle" /}</h6>
@@ -72,7 +72,7 @@
 					</div>
 					<div class="col-xs-12 col-sm">
 						<a class="home-card" href="/configure">
-							<div class="card card-widget widget-user powertip" powertip-content='{#__ key="powertip.home.3" /}' powertip-order='3'>
+							<div class="card card-widget widget-user powertip" powertip-content='{#__ key="powertip.home.6" /}' powertip-order='6'>
 								<div class="widget-user-header">
 									<h3 class="widget-user-username">{#__ key="menu.configure" /}</h3>
 									<h6 class="widget-user-desc">{#__ key="configure.subtitle" /}</h6>

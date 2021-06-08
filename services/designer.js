@@ -64,13 +64,16 @@ exports.help = async _ => { // eslint-disable-line
 }
 
 exports.deploy = async (data) => {
-	// Generator DB
-	const dbApp = await models.Application.findOne({
-		name: data.application.name
-	});
 
-	data.appID = dbApp.id;
-	return await cloud_manager.deploy(data);
+	throw new Error('Instruction disabled. Will be added in future release');
+
+	// Generator DB
+	// const dbApp = await models.Application.findOne({
+	// 	name: data.application.name
+	// });
+
+	// data.appID = dbApp.id;
+	// return await cloud_manager.deploy(data);
 }
 
 exports.restart = async _ => { // eslint-disable-line
@@ -630,7 +633,7 @@ exports.setFieldKnownAttribute = async (data) => {
 	data.field = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true).getField(data.options.value);
 
 	// Standard field not found, looking for related to field
-	if (!data.field) {
+	if (!data.field || data.field.type == 'relatedTo') {
 		const optionsArray = JSON.parse(fs.readFileSync(__workspacePath + '/' + data.application.name + '/app/models/options/' + data.entity_name + '.json'));
 		for (let i = 0; i < optionsArray.length; i++) {
 			if (optionsArray[i].showAs == data.options.showValue) {
@@ -1188,7 +1191,7 @@ exports.createNewHasManyPreset = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}
@@ -1329,7 +1332,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}
@@ -1414,7 +1417,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 	// Generate html code in dust file
 	await structure_field.setupRelatedToField(data);
 
-	data.source_entity.addField('f_' + data.options.urlAs, data.options.showAs);
+	data.source_entity.addField('f_' + data.options.urlAs, data.options.showAs, 'relatedTo');
 
 	return {
 		entity: data.source_entity,
@@ -1459,7 +1462,7 @@ exports.createNewFieldRelatedToMultiple = async (data) => {
 			} else {
 				data.options.usingField[i] = {
 					value: data.options.usingField[i],
-					type: attributeTarget[data.options.usingField[i]].newmipsType
+					type: attributeTarget[data.options.usingField[i]].nodeaType
 				}
 			}
 		}
@@ -1544,7 +1547,7 @@ exports.createNewFieldRelatedToMultiple = async (data) => {
 	// Generate HTML code
 	await structure_field.setupRelatedToMultipleField(data);
 
-	data.source_entity.addField('f_' + data.options.urlAs, data.options.showAs);
+	data.source_entity.addField('f_' + data.options.urlAs, data.options.showAs, 'relatedToMany');
 
 	return {
 		message: 'structure.association.relatedToMultiple.success',

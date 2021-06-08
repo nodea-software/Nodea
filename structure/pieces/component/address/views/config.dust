@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <h1 class="m-0">
-                    {#__ key="module.custom_module"/}&nbsp;
+                    {#__ key="module.administration"/}&nbsp;
                     <small>
                         {#__ key="module.module"/}
                     </small>
@@ -27,7 +27,7 @@
                     </li>
                     <!-- SUB MODULE - DO NOT REMOVE -->
                     <li class="breadcrumb-item active">
-                        {#__ key="module.m_COMPONENT_VALUE_MODULE"/}
+                        {#__ key="module.administration"/}
                     </li>
                 </ol>
             </div>

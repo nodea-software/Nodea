@@ -98,6 +98,9 @@ module.exports = {
 
 			case 'hasManyPreset':
 				dustData.tabType = 'has_many_preset';
+				dustData.entity = tabInfo.entity
+				dustData.alias = tabInfo.option.as
+				dustData.entityId = tabInfo.entityId
 				dustData.e_subentity = tabInfo.e_subentity
 				dustData.subentity = tabInfo.subentity
 				dustData.tableUrl = `/${tabInfo.entity}/subdatalist?subentityAlias=${tabInfo.option.as}&subentityModel=${tabInfo.option.target}&sourceId=${tabInfo.entityId}&paginate=false`;
@@ -109,7 +112,36 @@ module.exports = {
 		}
 		return dustData;
 	},
-	postProcessEntityData: async function (entity, lang = 'fr-FR') {
+	// Process entity data after beeing fetched from DB
+	postProcessEntityData: async function (entity, options = {}) {
+		const lang = options.lang || 'fr-FR';
+
+		const defaultProcessors = {
+			enum: (entityName, entity, attribute, attributeDef) => {
+				entity[attribute] = {
+					value: entity[attribute],
+					translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
+				};
+			},
+			boolean: (entityName, entity, attribute, attributeDef) => {
+				let boolTrad;
+				if (lang == 'fr-FR')
+					boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
+				else
+					boolTrad = entity[attribute] == true ? 'Yes' : 'No';
+				entity[attribute] = {
+					value: entity[attribute],
+					translation: boolTrad
+				}
+			},
+			file: (entityName, entity, attribute, attributeDef) => {
+				entity[attribute] = file_helper.originalFilename(entity[attribute]);
+			},
+			picture: (...args) => {
+				defaultProcessors.file(...args);
+			}
+		}
+
 		let entityName, attributes;
 		try {
 			entityName = entity.constructor.name.toLowerCase();
@@ -121,31 +153,16 @@ module.exports = {
 		}
 		for (const attribute in attributes) {
 			const attributeDef = attributes[attribute];
+			const nodeaType = attributeDef.nodeaType;
+
 			if (!entity[attribute])
 				continue;
+			if (options[nodeaType] === false)
+				continue;
 
-			switch (attributeDef.newmipsType) {
-				case 'enum':
-					entity[attribute] = {
-						value: entity[attribute],
-						translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
-					};
-					break;
-				case 'boolean': {
-					let boolTrad;
-					if (lang == 'fr-FR')
-						boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
-					else
-						boolTrad = entity[attribute] == true ? 'Yes' : 'No';
-					entity[attribute] = {
-						value: entity[attribute],
-						translation: boolTrad
-					}
-					break;
-				}
-				default:
-					break;
-			}
+			const processor = typeof options[nodeaType] === 'function' ? options[nodeaType] : defaultProcessors[nodeaType];
+			if (processor)
+				processor(entityName, entity, attribute, attributeDef);
 		}
 
 		const childrenPromises = [];
@@ -176,7 +193,7 @@ module.exports = {
 				// Fetch thumbnails buffers
 				// Get attribute value
 				const value = data.data[i][field];
-				if (typeof attributes[field] != 'undefined' && attributes[field].newmipsType == 'picture' && value != null) {
+				if (typeof attributes[field] != 'undefined' && attributes[field].nodeaType == 'picture' && value != null) {
 					const filePath = `thumbnail/${value}`;
 					(thumbnailTask => {
 						thumbnailPromises.push((async _ => {
@@ -308,7 +325,7 @@ module.exports = {
 
 			const promises = [];
 			for (const key in entity.dataValues) {
-				if (!attributes[key] || attributes[key].newmipsType != 'picture')
+				if (!attributes[key] || attributes[key].nodeaType != 'picture')
 					continue;
 
 				if (!entity.dataValues[key] || entity.dataValues[key] === "")
@@ -337,7 +354,7 @@ module.exports = {
 		const deletePromises = [];
 		// Remove all the files and pictures associated to an entity row
 		for (const attribute in attributes) {
-			const type = attributes[attribute].newmipsType;
+			const type = attributes[attribute].nodeaType;
 			if (!['file', 'picture'].includes(type))
 				continue;
 			if (!entity[attribute] || entity[attribute] === "")
@@ -424,7 +441,7 @@ module.exports = {
 				for (let i = 0; i < results.rows.length; i++)
 					for (const fieldSelect in results.rows[i])
 						if (fieldSelect == field && results.rows[i][fieldSelect] && results.rows[i][fieldSelect] != "")
-							switch (attributes[field].newmipsType) {
+							switch (attributes[field].nodeaType) {
 								case "date":
 									results.rows[i][fieldSelect] = moment(results.rows[i][fieldSelect]).format(lang == "fr-FR" ? "DD/MM/YYYY" : "YYYY-MM-DD")
 									break;

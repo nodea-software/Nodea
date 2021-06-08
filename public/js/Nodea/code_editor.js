@@ -296,7 +296,7 @@ $(document).ready(function() {
     };
 
     /* -------- Load a file in the editor -------- */
-    $(document).on("click", ".load-file", function() {
+    $(document).on("click", ".load-file", function(event, refreshFromInstruction) {
 
         var ajaxData = {
             path: $(this).attr("data-path")
@@ -363,9 +363,15 @@ $(document).ready(function() {
                 } else {
                     /* Tab already exist */
                     $("li[data-path='"+data.path+"']").addClass("active");
-                    /* Get the old content */
-                    myEditor.setValue(editorContent[data.path]);
-                    myEditor.scrollTo(editorScrollContent[data.path].left, editorScrollContent[data.path].top);
+                    if(refreshFromInstruction) {
+                        editorContent[data.path] = data.html;
+                        editorSaveContent[data.path] = data.html;
+                        myEditor.setValue(data.html);
+                    } else {
+                        /* Get the old content */
+                        myEditor.setValue(editorContent[data.path]);
+                        myEditor.scrollTo(editorScrollContent[data.path].left, editorScrollContent[data.path].top);
+                    }
 
                     if(isToDisable)
                         myEditor.setOption("readOnly", true);
