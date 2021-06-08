@@ -19,17 +19,17 @@ $(document).ready(function() {
 
 				// generate some dynamic content
 				$(this).data('powertip' , '\
-					<div style="width: 12%;float: left;">\
+					<div style="width: 15%;float: left;">\
 						<img src="/img/mascot/body.png" alt="Nodea img" class="powertip-nodea">\
 					</div>\
-					<div style="width: 88%;float:right;">\
+					<div style="width: 85%;float:right;padding:5px;">\
 						' + content + '\
 					</span>\
-					<br>\
+					<br><br>\
 					<div class="text-right">\
-						<a href="#" class="powertip-stopit" data-order="' + order + '">' + stopTutoTrad + '</a>\
+						<a href="#" class="powertip-stopit btn btn-danger" data-order="' + order + '">' + stopTutoTrad + '&nbsp;&nbsp;<i class="fas fa-times"></i></a>\
 						&nbsp;|&nbsp;\
-						<a href="#" class="powertip-gotit" data-order="' + order + '">' + nextTutoTrad + '</a>\
+						<a href="#" class="powertip-gotit btn btn-info" data-order="' + order + '">' + nextTutoTrad + '&nbsp;&nbsp;<i class="fas fa-caret-right"></i></a>\
 					</div>');
 			}
 		});

@@ -44,6 +44,8 @@ router.post('/update_file', block_access.hasAccessApplication, function(req, res
 	res.json(true);
 
 	gitHelper.gitCommit({
+		currentUser: req.session.passport.user,
+		code_platform: req.session.code_platform,
 		function: "Saved a file from editor: " + req.body.path,
 		application: {
 			name: req.session.app_name

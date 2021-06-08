@@ -80,7 +80,7 @@ class CoreParamEntity extends CoreEntity {
 				return;
 
 			for (const attrName in this.attributes)
-				if (['file', 'picture'].includes(this.attributes[attrName].newmipsType) && data[this.e_entity][attrName])
+				if (['file', 'picture'].includes(this.attributes[attrName].nodeaType) && data[this.e_entity][attrName])
 					data[this.e_entity][attrName] = this.helpers.file.originalFilename(data[this.e_entity][attrName]);
 			data[this.e_entity].dataValues.enum_radio = data.enum_radio;
 			enums_radios.translateUsingField(data[this.e_entity], this.options, data.enum_radio);

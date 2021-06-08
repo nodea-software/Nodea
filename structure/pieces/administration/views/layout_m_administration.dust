@@ -500,7 +500,7 @@
                 </p>
                 <i class="right fas fa-angle-left"></i>
             </a>
-            <ul class="nav nav-treeview">
+            <ul id="menu_configuration" class="nav nav-treeview">
                 {#entityAccess entity="document_template"}
                     {#actionAccess entity="document_template" action="read"}
                         <li class="nav-item">

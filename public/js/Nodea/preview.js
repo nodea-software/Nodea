@@ -1,24 +1,23 @@
 $(document).ready(function() {
-	function getTranslation(key, params, callback) {
-		var ajaxData = {
-			key: key,
-			params: params,
-			lang: user_lang
-		};
-		$.ajax({
-			url: '/default/ajaxtranslate',
-			type: 'POST',
-			data: JSON.stringify(ajaxData),
-			dataType: 'json',
-			contentType: "application/json",
-			context: this,
-			success: function(answer) {
-				callback(answer.value);
-			},
-			error: function(error) {
-				console.error(error);
-				callback(key);
-			}
+
+	function getTranslation(key, params) {
+		return new Promise(resolve => {
+			$.ajax({
+				url: '/default/ajaxtranslate',
+				type: 'POST',
+				data: {
+					key: key,
+					params: params,
+					lang: user_lang
+				},
+				success: function(answer) {
+					resolve(answer.value);
+				},
+				error: function(error) {
+					console.error(error);
+					resolve(key);
+				}
+			});
 		});
 	}
 
@@ -42,7 +41,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.ge-addRowGroup', function() {
 		var newRow = $("body").find('.ui-sortable').last().parent();
-		newRow.find('.ge-add-row').click();
+		newRow.find('.ge-add-row').trigger('click');
 		newRow.find('.ge-content').remove();
 	});
 
@@ -50,7 +49,7 @@ $(document).ready(function() {
 		width: '100%'
 	});
 
-	$("#entitySelect").change(function() {
+	$("#entitySelect").on('change', function() {
 		$("#pages").slideUp();
 		if ($(this).val()) {
 			$("#pages a").data('entity', $(this).val());
@@ -59,13 +58,14 @@ $(document).ready(function() {
 	});
 
 	var entity, page;
-	$(".ui_editor_page").click(function() {
+	$(".ui_editor_page").on('click', function() {
 		var self = this;
 		entity = $(this).data('entity');
 		page = $(this).data('page');
 		$.ajax({
 			url: '/ui_editor/getPage/' + entity + '/' + page,
 			success: function(pageHtml) {
+				console.log(pageHtml);
 				$("#ui_editor").html(pageHtml);
 				// Remove mainControls who are not removed by modifying html
 				$(".ge-mainControls").remove();
@@ -86,7 +86,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$("#ui_editor_save").click(function() {
+	$("#ui_editor_save").on('click', function() {
 		var html = $("#ui_editor").gridEditor('getHtml');
 		var currentScreenMode = $(".ge-layout-mode button span").text();
 		$(this).text(loadingButtonText);
@@ -116,6 +116,36 @@ $(document).ready(function() {
 	/////////
 	// Editor
 	/////////
+	// Load file/folder sidebar
+	function generateSidebarEditor(menu, tabMargin = 0, content = "") {
+		for (var i = 0; i < menu.length; i++) {
+			if (typeof menu[i].path !== "undefined") {
+				content += "" +
+					"<li class='nav-item has-treeview'>" +
+					"   <a class='load-file nav-link' href='#' data-path=" + menu[i].path + " data-filename=" + menu[i].title + " style='margin-left: " + tabMargin + "px'>" +
+					"       <i class='fa fa-file'></i>" +
+					"       &nbsp;&nbsp;" + menu[i].title +
+					"   </a>" +
+					"</li>";
+			} else if (typeof menu[i].under !== "undefined") {
+				content += "" +
+					"<li class='nav-item has-treeview'>" +
+					"    <a href='#' class='nav-link' style='margin-left: " + tabMargin + "px'>" +
+					"        <i class='fa fa-folder'></i>&nbsp;&nbsp;" +
+					"        <span>" + menu[i].title + "</span>&nbsp;&nbsp;" +
+					"        <i class='fas fa-angle-left right'></i>" +
+					"    </a>" +
+					"    <ul class='nav nav-treeview'>";
+				var newMargin = tabMargin + 15;
+				content = generateSidebarEditor(menu[i].under, newMargin, content);
+				content += "" +
+					"    </ul>" +
+					"</li>";
+			}
+		}
+		return content;
+	}
+
 	var isEditorStarted = false;
 	$(document).on("click", "#start-editor", function() {
 		if (!isEditorStarted) {
@@ -154,37 +184,8 @@ $(document).ready(function() {
 				// $("#codemirror-menu ul#editor-menu").tree();
 				$("#loadingEditorIframe").remove();
 			}, 500);
-			// Load file/folder sidebar
-			var side_menu_html = "";
 
-			function generateSidebarEditor(menu, tabMargin) {
-				for (var i = 0; i < menu.length; i++) {
-					if (typeof menu[i].path !== "undefined") {
-						side_menu_html += "" +
-							"<li class='nav-item has-treeview'>" +
-							"   <a class='load-file nav-link' href='#' data-path=" + menu[i].path + " data-filename=" + menu[i].title + " style='margin-left: " + tabMargin + "px'>" +
-							"       <i class='fa fa-file'></i>" +
-							"       &nbsp;&nbsp;" + menu[i].title +
-							"   </a>" +
-							"</li>";
-					} else if (typeof menu[i].under !== "undefined") {
-						side_menu_html += "" +
-							"<li class='nav-item has-treeview'>" +
-							"    <a href='#' class='nav-link' style='margin-left: " + tabMargin + "px'>" +
-							"        <i class='fa fa-folder'></i>&nbsp;&nbsp;" +
-							"        <span>" + menu[i].title + "</span>&nbsp;&nbsp;" +
-							"        <i class='fas fa-angle-left right'></i>" +
-							"    </a>" +
-							"    <ul class='nav nav-treeview'>";
-						var newMargin = tabMargin + 15;
-						generateSidebarEditor(menu[i].under, newMargin)
-						side_menu_html += "" +
-							"    </ul>" +
-							"</li>";
-					}
-				}
-			}
-			generateSidebarEditor(workspaceFolder, 0)
+			var side_menu_html = generateSidebarEditor(workspaceFolder);
 			$("#codemirror-menu ul#editor-menu").append(side_menu_html);
 		}
 	});
@@ -247,11 +248,18 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on("submit", "form#previewForm", function(e) {
+	$(document).on("submit", "form#previewForm", async(e) => {
+		e.preventDefault();
+
 		if ($("#instruction").val() == "") {
-			toastr.error("Error, empty instruction.");
+			toastr.error(await getTranslation('preview.empty_instruction'));
 			return false;
 		}
+
+		// File is currently modified in code editor and not save
+		if($("#codemirror-editor li.load-file.modified").length != 0)
+			if(!confirm(await getTranslation('preview.modified_file_instruction')))
+				return false;
 
 		var setLogoInstructions = ["add logo", "add a logo", "set a logo", "set logo", "mettre un logo", "mettre logo", "ajouter logo", "ajouter un logo"];
 		var givenInstruction = $("#instruction").val().toLowerCase().trim();
@@ -278,11 +286,19 @@ $(document).ready(function() {
 		$("#execute_instruction").html("Loading...");
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
+
 		$.ajax({
 			url: "/application/preview",
 			method: 'POST',
-			data: $(this).serialize(),
+			data: {
+				iframe_url: $(this).find('input[name="iframe_url"]').val(),
+				chat: $(this).find('input[name="chat"]').val(),
+				instruction: $(this).find('input[name="instruction"]').val()
+			},
 			success: function(data) {
+
+				$("#errorIframe").hide();
+				$('iframe#iframe').show();
 
 				if (data.toRedirect)
 					return window.location.href = data.url;
@@ -315,7 +331,7 @@ $(document).ready(function() {
 
 				// Nodea answer
 				var mipsyItem = data.chat.items[data.chat.items.length - 1];
-				getTranslation(mipsyItem.content, mipsyItem.params, function(mipsyAnswer) {
+				getTranslation(mipsyItem.content, mipsyItem.params).then(mipsyAnswer => {
 					let contentMipsy = `<div><img src="/img/mascot/head.png" alt="Nodea picture" class="mipsy-img"><div class="timeline-item mipsy-item"><span class="time"><i class="fas fa-clock"></i>&nbsp;${mipsyItem.dateEmission}</span><h3 class="timeline-header">${mipsyItem.user}</h3><div class="timeline-body mipsy-answer"><span class="standard-writing">${mipsyAnswer}</span></div></div></div>`;
 					if (mipsyItem.isError)
 						contentMipsy = `<div><img src="/img/mascot/head.png" alt="Nodea picture" class="mipsy-img"><div class="timeline-item mipsy-item"><span class="time"><i class="fas fa-clock"></i>&nbsp;${mipsyItem.dateEmission}</span><h3 class="timeline-header">${mipsyItem.user}</h3><div class="timeline-body mipsy-answer"><span class="standard-writing" style="color:#e33939;"><i class='fa fa-exclamation-circle'></i>&nbsp;${mipsyAnswer}</span></div></div></div>`;
@@ -351,37 +367,14 @@ $(document).ready(function() {
 						$("#entitySelect").append("<option value='" + data.entities[i]._name + "'>" + data.entities[i]._displayName + "</option>");
 
 					// Update Editor file selection
-					$("ul#sortable.sidebar-menu").empty();
+					var content = generateSidebarEditor(data.workspaceFolder);
+					$("#codemirror-menu ul#editor-menu").empty().append(content);
 
-					function recursiveEditorFolders(folder) {
-						var tmpContent = "";
-						if (folder) {
-							for (var i = 0; i < folder.length; i++) {
-								var file = folder[i];
-								if (typeof file.path !== "undefined") {
-									tmpContent += "<li><a href='#' data-path='" + file.path + "' data-filename='" + file.title + "' class='load-file'><i class='fa fa-file'></i> " + file.title + "</a></li>";
-								} else if (typeof file.under !== "undefined") {
-									tmpContent += "<li style='display:block;' class='ui-state-default treeview'><a href='#'><i class='fa fa-folder'></i><span>" + file.title + "</span><i class='fa pull-right fa-angle-left'></i></a><ul class='treeview-menu'>";
-									tmpContent += recursiveEditorFolders(file.under);
-									tmpContent += "</ul></li>";
-								}
-							}
-						}
-						return tmpContent;
-					}
-					var content = recursiveEditorFolders(data.workspaceFolder);
-					$("ul#sortable.sidebar-menu").append(content);
-					$(".sidebar .treeview").tree();
-					// Reset Code Editor
+					// Refresh Code Editor Tabs
 					if (typeof myEditor !== "undefined") {
 						$("#codemirror-editor li.load-file").each(function() {
-							$(this).remove();
+							$(this).trigger('click', true).removeClass("modified");
 						});
-						myEditor.setValue("");
-						myEditor.clearHistory();
-						myEditor.refresh();
-						myEditor.clearGutter();
-						$(".CodeMirror-code").empty();
 					}
 
 					// Reset UI Editor
@@ -401,7 +394,7 @@ $(document).ready(function() {
 			},
 			error: function(error) {
 				console.error(error);
-				toastr.error("Sorry, an error occured :/");
+				toastr.error(error.message);
 			}
 		});
 		return false;

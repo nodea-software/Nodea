@@ -1,5 +1,5 @@
 exports.getValidator = function(attrDef) {
-	switch (attrDef.newmipsType) {
+	switch (attrDef.nodeaType) {
 		case 'enum':
 		case 'radio':
 			return {isIn: {

@@ -78,17 +78,13 @@
 											</td>
 											<td></td>
 											{#allGroups currentModule=.}
-												{@ne key=name value="home"}
-														<td>
-															{@isGroupChecked source=currentModule target=f_label}
-																<input name="module.{name}.{f_label}" checked type="checkbox">
-															{:else}
-																<input name="module.{name}.{f_label}" type="checkbox">
-															{/isGroupChecked}
-														</td>
-												{:else}
-													<td><input name="module.{name}" style="display:none;" disabled readonly checked></td>
-												{/ne}
+												<td>
+													{@isGroupChecked source=currentModule target=f_label}
+														<input name="module.{name}.{f_label}" checked type="checkbox">
+													{:else}
+														<input name="module.{name}.{f_label}" type="checkbox">
+													{/isGroupChecked}
+												</td>
 											{/allGroups}
 										</tr>
 										{#entities}

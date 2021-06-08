@@ -91,7 +91,7 @@
 										</span>
 									</a>&nbsp;
 								{/actionAccess}
-								{^hideButton}
+								{@ifTrue key=hideButton}
 									{#actionAccess entity="status" action="create"}
 										<a href="/status/create_form" class="btn btn-success">
 											<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
@@ -108,7 +108,7 @@
 											</span>
 										</a>&nbsp;
 									{/actionAccess}
-								{/hideButton}
+								{/ifTrue}
 							</div>
 						{/e_status}
 					</div>

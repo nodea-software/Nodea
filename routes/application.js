@@ -37,6 +37,9 @@ const excludeFile = [".git_keep", "database.js", "global.js", "icon_list.json", 
 // No git commit for these instructions
 const noGitFunctions = ['restart', 'gitPush', 'gitPull', 'installNodePackage'];
 
+// Exclude from UI Editor
+const excludeUIEditor = ['e_role', 'e_group', 'e_api_credentials', 'e_synchronization', 'e_synchro_credentials', 'e_translation', 'e_media', 'e_action', 'e_robot', 'e_task', 'e_documents_task', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_execution', 'e_process', 'e_program', 'e_page', 'e_notification', 'e_inline_help', 'e_user_guide', 'e_document_template', 'e_image_ressources'];
+
 const mandatoryInstructions = require('../structure/mandatory_instructions');
 
 function initPreviewData(appName, data){
@@ -53,7 +56,7 @@ function initPreviewData(appName, data){
 	data.entities = [];
 	for (let i = 0; i < modules.length; i++)
 		for (let j = 0; j < modules[i].entities.length; j++)
-			if(modules[i].entities[j].name.indexOf('_history_') == -1)
+			if(!excludeUIEditor.includes(modules[i].entities[j].name) && !modules[i].entities[j].name.includes('_history_'))
 				data.entities.push(modules[i].entities[j]);
 
 	function sortEntities(entities, idx) {
@@ -128,7 +131,7 @@ async function execute(req, instruction, __, data = {}, saveMetadata = true) {
 		throw __(err.message ? err.message : err, err.messageParams || []);
 	}
 
-	if(data.function == 'deleteApplication' && req.session.nodea_chats[data.options.value])
+	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])
 		req.session.nodea_chats[data.options.value] = {}
 
 	const newData = session_manager.setSession(data.function, req, info, data);
@@ -174,12 +177,10 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 
 	models.Application.findOne({where: {name: appName}}).then(db_app => {
 
-		const env = Object.create(process.env);
 		const port = math.add(9000, db_app.id);
-		env.PORT = port;
 
 		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
-			process_server_per_app[appName] = process_manager.launchChildProcess(req, appName, env);
+			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 
 		data.session = session_manager.getSession(req)
 
@@ -249,10 +250,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	(async () => {
 
 		const db_app = await models.Application.findOne({where: {name: appName}});
-
 		const port = math.add(9000, db_app.id);
-		const env = Object.create(process.env);
-		env.PORT = port;
 
 		const {protocol} = globalConf;
 		const {host} = globalConf;
@@ -261,15 +259,15 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		// Current application url
 		data.iframe_url = process_manager.childUrl(req, db_app.id);
 
+		/* Add instruction in chat */
+		setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
+
 		if(appProcessing[appName])
 			throw new Error('structure.global.error.alreadyInProcess');
 		appProcessing[appName] = true;
 
 		if(parser.parse(instruction).function == 'createNewApplication')
 			throw new Error('preview.no_create_app');
-
-		/* Add instruction in chat */
-		setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
 
 		const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
 
@@ -297,7 +295,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		if (data.function == "deleteApplication") {
 			// Kill server
 			if(process_server_per_app[appName])
-				await process_manager.killChildProcess(process_server_per_app[appName].pid);
+				await process_manager.killChildProcess(process_server_per_app[appName]);
 			process_server_per_app[appName] = null;
 			data.toRedirect = true;
 			data.url = "/"; // Generator home
@@ -317,12 +315,11 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 
 		if(data.restartServer) {
 			// Kill server first
-			await process_manager.killChildProcess(process_server_per_app[appName].pid);
+			await process_manager.killChildProcess(process_server_per_app[appName]);
 			// Launch a new server instance to reload resources
-			process_server_per_app[appName] = process_manager.launchChildProcess(req, appName, env);
-			const initialTimestamp = new Date().getTime();
+			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 			console.log('Starting server...');
-			await process_manager.checkServer(appBaseUrl + '/app/status', initialTimestamp, timeoutServer);
+			await process_manager.checkServer(appBaseUrl + '/app/status', new Date().getTime(), timeoutServer);
 		}
 
 		data.session = session_manager.getSession(req);

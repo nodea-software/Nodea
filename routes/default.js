@@ -39,7 +39,7 @@ router.post('/update_logs', block_access.isLoggedIn, function(req, res) {
 	}
 });
 
-router.get('/completion', function(req, res) {
+router.get('/completion', block_access.isLoggedIn, function(req, res) {
 	try {
 		res.send(bot.complete(req.query.str));
 	} catch (e) {
@@ -48,7 +48,7 @@ router.get('/completion', function(req, res) {
 	}
 });
 
-router.post('/ajaxtranslate', function(req, res) {
+router.post('/ajaxtranslate', block_access.isLoggedIn, function(req, res) {
 	res.json({
 		value: language(req.body.lang).__(req.body.key, req.body.params)
 	});

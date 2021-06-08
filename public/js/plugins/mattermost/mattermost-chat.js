@@ -112,7 +112,7 @@
                                 messageText = messageText.substring(indexofsplit+2, messageText.length);
                                 var userImg = "/img/avatar.png";
                             } else {
-                                var userName = "Newmips";
+                                var userName = "Nodea";
                                 var userImg = "/img/FAVICON-GRAND-01.png";
                             }
 

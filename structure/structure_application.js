@@ -17,13 +17,12 @@ const exec = require('child_process').exec;
 
 function installAppModules(data) {
 	return new Promise((resolve, reject) => {
-		const dir = __dirname;
 
 		// Mandatory workspace folder
 		if (!fs.existsSync(__workspacePath))
 			fs.mkdirSync(__workspacePath);
 
-		if (fs.existsSync(dir + '/../workspace/node_modules')) {
+		if (fs.existsSync(__dirname + '/../workspace/node_modules')) {
 			console.log("Everything's ok about global workspaces node modules.");
 
 			if (typeof data !== "undefined") {
@@ -36,7 +35,7 @@ function installAppModules(data) {
 				console.log("Executing " + command + " in application: " + data.application.name + "...");
 
 				exec(command, {
-					cwd: dir + '/../workspace/' + data.application.name + '/'
+					cwd: __dirname + '/../workspace/' + data.application.name + '/'
 				}, err => {
 					if (err)
 						return reject(err);
@@ -49,13 +48,15 @@ function installAppModules(data) {
 		} else {
 			// We need to reinstall node modules properly
 			console.log("Workspaces node modules initialization...");
-			fs.copySync(path.join(dir, 'template', 'package.json'), path.join(dir, '..', 'workspace', 'package.json'))
+			fs.copySync(path.join(__dirname, 'template', 'package.json'), path.join(__dirname, '..', 'workspace', 'package.json'))
 
-			exec('npm -s install', {
-				cwd: dir + '/../workspace/'
+			exec('npm install', {
+				cwd: __dirname + '/../workspace/'
 			}, err => {
-				if (err)
+				if (err){
+					console.error(err)
 					return reject(err);
+				}
 				console.log('Workspaces node modules successfuly initialized.');
 				resolve();
 			});
@@ -470,7 +471,7 @@ const process_manager = require('../services/process_manager.js');
 exports.deleteApplication = async(data) => {
 	const app_name = data.application.name;
 	// Kill spawned child process by preview
-	const process_server = process_manager.process_server;
+	const process_server = process_manager.process_server_per_app[app_name];
 	const pathToWorkspace = __dirname + '/../workspace/' + app_name;
 	const pathToAppLogs = __dirname + '/../workspace/logs/app_' + app_name + '.log';
 
@@ -533,7 +534,7 @@ exports.deleteApplication = async(data) => {
 	}
 
 	if (process_server != null) {
-		await process_manager.killChildProcess(process_server.pid);
+		await process_manager.killChildProcess(process_server);
 		process_manager.process_server_per_app[app_name] = null;
 	}
 

@@ -40,13 +40,6 @@
 		"login_fail": "The login and / or password is not correct, please try again.",
 		"logout_success": "You have been successfully logged out."
 	},
-	"deploy": {
-		"deploying": "Deploying...",
-		"please_wait": "We're deploying your application, this can take a few minutes, please wait...",
-		"ready": "Your application is ready",
-		"goto": "Go to your application",
-		"stayonpage": "You should stay on this page during your application's deployment."
-	},
 	"menu": {
 		"home": "Home",
 		"module": "Module",
@@ -149,7 +142,12 @@
 		"subtitle": "Test and validate applications"
 	},
 	"deploy": {
-		"subtitle": "Deploy and administrate"
+		"subtitle": "Deploy and administrate",
+		"deploying": "Deploying...",
+		"please_wait": "We're deploying your application, this can take a few minutes, please wait...",
+		"ready": "Your application is ready",
+		"goto": "Go to your application",
+		"stayonpage": "You should stay on this page during your application's deployment."
 	},
 	"configure": {
 		"subtitle": "Settings",
@@ -250,6 +248,7 @@
 		"change_password": "Reset your password",
 		"reset_button": "Reset",
 		"sure_reset": "Are you sure ? You will logout, your password will be reset and you\\'ll receive an email to set a new one.",
+		"sure_reset_other": "Are you sure ? This user's password will be reset and he will receive an email to configure a new one.",
 		"activate_translation": "Activate automatic translation (Internet connection and valid Google API Key is required)",
 		"english": "English",
 		"french": "French",
@@ -266,6 +265,8 @@
 		"server_timeout": "Server timed out, please check the application logs.",
 		"disable_log_refresh": "Disable logs refresh",
 		"no_create_app": "You cannot create a new application from the preview, please go to the generator home page.",
+		"empty_instruction": "You have not filled in an instruction, please fill in the field.",
+		"modified_file_instruction": "You have a file being edited in the code editor, if you execute an instruction the unsaved content will be lost. Would you like to continue ?",
 		"session": {
 			"noApplication": "No application selected",
 			"noModule": "No module selected",
@@ -546,16 +547,39 @@
 		"stop": "Stop the tuto",
 		"next": "Next",
 		"home": {
-			"1": "Welcome to Nodea !<br> Follow me, I will show you the main menus.",
-			"2": "Here is the Build menu where you will create, generate and manage your applications.",
-			"3": "Here is the Configure menu where you will access to your account and all the parameters for your Nodea environment."
+			"1": "Welcome to Nodea! <br> To start, I will present the different menus to you.",
+			"2": "Here is the Build menu. Through this menu you can generate and manage your Nodea applications!",
+			"3": "In the Develop menu you will find a follow-up of the activities as well as the interactions with the source code manager of the generator.",
+			"4": "The Test menu will allow you to set up testing and validation phases for your generated applications! It is currently under development.",
+			"5": "In this menu you will find the interface for preparing and organizing the deployment of your applications. It is currently under development.",
+			"6": "The Configure menu allows you to customize your Nodea generator as well as to administer your account."
 		},
 		"build": {
-			"1": "Here you can create an empty application ready to be completed.",
-			"2": "Here you can write a script or even load an instruction file in order to generate a complete application in a few minutes!",
-			"3": "If you have an already existing application on another Nodea generator, you can import it here.",
+			"1": "Here you can create a standard application ready to be customized!",
+			"2": "Here you can write a script or load an instruction file to generate a complete application in a few minutes!",
+			"3": "If you have an already existing application on another Nodea generator, you can import it here!",
 			"4": "You can consult all the applications here, and thus export them, clone the source code or even delete them.",
 			"5": "Here you will find quick access to all your applications!"
+		},
+		"preview": {
+			"1": "Welcome to the preview page of your application! I will explain the various elements currently in front of you.",
+			"2": "In this area is your application, it is currently usable and you can already navigate in it to try it!",
+			"3": "Here you can type instructions to modify your application. Try 'Add Person Entity' for example!",
+			"4": "Once an instruction has been executed, I will answer you here :) I will give you some tips from time to time!",
+			"5": "The session allows you to know on which Application, which module and which entity you are currently on! It is important to know on which elements will apply your instructions.",
+			"6": "You have some action and quick access buttons available here.",
+			"7": "The UI Editor allows you to modify the order and the width of your fields!",
+			"8": "Here you can access an online code editor that provides the current application code!",
+			"9": "The logs allow you to display the feedback from your application, useful to understand what is going on!"
+		},
+		"develop": {
+			"1": "Welcome to the Develop menu! Here you will find information about the source code manager connected to the generator (ex Gitlab).",
+			"2": "You can choose the application you want to view here.",
+			"3": "Here are the last commits made on the repository of your application.",
+			"4": "You find in Tasks all the issues coming from the source code manager.",
+			"5": "Here you will find the tasks assigned to you.",
+			"6": "The different versions of the application will be listed here",
+			"7": "Developer documentation as well as API documentation can be accessed here!"
 		}
 	},
 	"code_platform": {

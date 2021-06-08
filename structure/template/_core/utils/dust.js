@@ -131,48 +131,62 @@ module.exports = {
 				return true;
 			return false;
 		}
+
 		function buildContext(ctx){
 			let newContext = {};
 			for (const obj in ctx) {
-				if (obj == 'dataValues')
-					newContext = {...newContext,
-						...ctx[obj]
-					};
-				else if (ctx[obj] && typeof ctx[obj] === 'object' && ctx[obj].dataValues)
-					newContext[obj] = buildContext(ctx[obj]);
-				else if (!obj.startsWith('_')) // Skip Sequelize private variable
-					newContext[obj] = ctx[obj];
+				if(obj.startsWith('_')) // Ignore private keys
+					continue;
+
+				if(['req', 'res'].includes(obj)) // Ignore request, response for performance issue
+					continue;
+
+				switch (typeof ctx[obj]) {
+					case 'object':
+						if(obj == 'dataValues')
+							newContext = {
+								...newContext,
+								...ctx[obj]
+							}
+						else
+							newContext[obj] = buildContext(ctx[obj]);
+						break;
+					case 'string':
+					case 'number':
+					case 'boolean':
+						newContext[obj] = ctx[obj];
+						break;
+					default:
+						break;
+				}
 			}
 			return newContext;
 		}
 
-		function diveContext(ctx) {
-			let current, results = [];
+		function diveContext(ctx, results = []) {
+			let current;
 			for (const obj in ctx) {
 				current = ctx[obj];
 				if (typeof current === 'object') {
 					switch (obj) {
 						case 'stack':
 						case 'tail':
-							results = diveContext(current);
+							diveContext(current, results);
 							break;
 						case 'head':
-							if (!("tail" in current))
-								results.push(JSON.stringify(buildContext(current), null, 2));
+							results.push(buildContext(current));
 							break;
 						default:
-							results = diveContext(current);
 							break;
 					}
 				}
 			}
 			return results;
 		}
+
 		dust.helpers.contextUpperDump = function(chunk, context) {
 			const results = diveContext(context);
-			for (let i = 0; i < results.length; i++)
-				results[i] = results[i].replace(/</g, '\\u003c');
-			chunk = chunk.write(results);
+			chunk = chunk.write(JSON.stringify(results));
 		}
 
 		// Default inline help helper return false, helpers override on route call in @core/render.js

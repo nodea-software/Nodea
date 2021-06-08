@@ -93,34 +93,33 @@ exports.setupModule = async (data) => {
 
 exports.deleteModule = async (data) => {
 	const moduleFilename = 'layout_' + data.np_module.name + '.dust';
-	const layoutsPath = __workspacePath + data.application.name + '/views/';
+	const appPath = __workspacePath + '/' + data.application.name + '/app';
 
 	// Remove layout
-	fs.unlinkSync(layoutsPath + moduleFilename);
-	fs.unlinkSync(layoutsPath + "/app/" + data.np_module.name + ".dust");
+	fs.unlinkSync(appPath + '/views/' + moduleFilename);
 
 	// Clean default.js route GET
-	let defaultRouteContent = fs.readFileSync(__workspacePath + data.application.name + '/routes/app.js', 'utf8');
+	let defaultRouteContent = fs.readFileSync(appPath + '/routes/app.js', 'utf8');
 	const regex = new RegExp("router\\.get\\('\\/" + data.np_module.name.substring(2) + "'([\\s\\S]*?)(?=router)");
 	defaultRouteContent = defaultRouteContent.replace(regex, "");
-	fs.writeFileSync(__workspacePath + data.application.name + '/routes/app.js', defaultRouteContent);
+	fs.writeFileSync(appPath + '/routes/app.js', defaultRouteContent);
 
 	// Clean up access config
-	const access = JSON.parse(fs.readFileSync(__workspacePath + data.application.name + '/config/access.json', 'utf8'));
+	const access = JSON.parse(fs.readFileSync(__workspacePath + '/' + data.application.name + '/config/access.json', 'utf8'));
 	for (const np_module in access) {
 		if (np_module == data.np_module.name.substring(2))
 			delete access[np_module];
 	}
 
-	fs.writeFileSync(__workspacePath + data.application.name + '/config/access.json', JSON.stringify(access, null, 4));
-	fs.writeFileSync(__workspacePath + data.application.name + '/config/access.lock.json', JSON.stringify(access, null, 4));
+	fs.writeFileSync(__workspacePath + '/' + data.application.name + '/config/access.json', JSON.stringify(access, null, 4));
+	fs.writeFileSync(__workspacePath + '/' + data.application.name + '/config/access.lock.json', JSON.stringify(access, null, 4));
 
-	const layoutFiles = fs.readdirSync(layoutsPath).filter(file => file.indexOf('.') !== 0 && file.indexOf('layout_') === 0);
+	const layoutFiles = fs.readdirSync(appPath + '/views/').filter(file => file.indexOf('.') !== 0 && file.indexOf('layout_') === 0);
 
 	for (let i = 0; i < layoutFiles.length; i++) {
-		const $ = await domHelper.read(layoutsPath + layoutFiles[i]); // eslint-disable-line
+		const $ = await domHelper.read(appPath + '/views/' + layoutFiles[i]); // eslint-disable-line
 		$("option[data-module='" + data.np_module.name + "']").remove();
-		domHelper.write(layoutsPath + layoutFiles[i], $); // eslint-disable-line
+		domHelper.write(appPath + '/views/' + layoutFiles[i], $); // eslint-disable-line
 	}
 
 	translateHelper.removeLocales(data.application.name, "module", data.np_module.name);

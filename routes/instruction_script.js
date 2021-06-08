@@ -357,7 +357,7 @@ function executeFile(req, userID, __) {
 		// Kill the application server if it's running, it will be restarted when accessing it
 		const process_server_per_app = process_manager.process_server_per_app;
 		if (process_server_per_app[currentApplication.name] != null && typeof process_server_per_app[currentApplication.name] !== "undefined"){
-			await process_manager.killChildProcess(process_server_per_app[currentApplication.name].pid)
+			await process_manager.killChildProcess(process_server_per_app[currentApplication.name])
 			process_server_per_app[currentApplication.name] = null;
 		}
 

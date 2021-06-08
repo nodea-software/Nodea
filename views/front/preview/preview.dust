@@ -7,18 +7,16 @@
 				<div class="input-group-prepend">
 					<button type="button" class="btn btn-default" id="btn-speech"><i class="fa fa-microphone fa-md"></i></button>
 				</div>
-				<input class="form-control" id="instruction" name="instruction" type="text" autocomplete="off" autofocus="autofocus" required="required" x-webkit-speech="x-webkit-speech" placeholder='{#__ key="preview.execute"/}' />
+				<input class="form-control powertip" powertip-content='{#__ key="powertip.preview.3" /}' powertip-order='3' id="instruction" name="instruction" type="text" autocomplete="off" autofocus="autofocus" required="required" x-webkit-speech="x-webkit-speech" placeholder='{#__ key="preview.execute"/}' />
 				<span class="input-group-append">
 					<button type="submit" class="btn btn-success" id="execute_instruction">{#__ key="button.execute"/}</button>
 				</span>
 			</div>
 		</form>
-		<div class="responsive-iframe" style="position: relative;">
-			{@ne key=iframe_url value=-1}
-				<iframe id="iframe" height="700px" width="100%" src="{iframe_url}" webkitAllowFullScreen="webkitAllowFullScreen" mozallowfullscreen="mozallowfullscreen" allowFullScreen="allowFullScreen" style="border: 1px solid grey;border-radius: 3px;"></iframe>
-			{/ne}
-			<div id="errorIframe" {@eq key=iframe_url value=-1} style='display: block;'{/eq}>
-				<img src="/img/mascot/body.png" alt="Error" />
+		<div class="responsive-iframe powertip" powertip-content='{#__ key="powertip.preview.2" /}' powertip-order='2' style="position: relative;">
+			<iframe id="iframe" {@eq key=iframe_url value=-1}style='display: none;'{/eq} src="{iframe_url}" webkitAllowFullScreen="webkitAllowFullScreen" mozallowfullscreen="mozallowfullscreen" allowFullScreen="allowFullScreen"></iframe>
+			<div id="errorIframe" {@eq key=iframe_url value=-1}style='display: block;'{/eq}>
+				<img src="/img/mascot/body_sad.png" alt="Error" />
 			</div>
 			<div id="loadingIframe">
 				<img class="animate__animated animate__pulse animate__infinite" src="/img/logo/transparent_white.png" alt="Loading" />
@@ -27,7 +25,7 @@
 		</div>
 	</div>
 	<div class="col-xs-12 col-md-4 col-lg-3">
-		<div class="timeline" id="chat-box">
+		<div class="timeline powertip" powertip-content='{#__ key="powertip.preview.4" /}' powertip-order='4' id="chat-box">
 			{#chat.items}
 				<div>
 					{@eq key=user value="Nodea"}
@@ -72,7 +70,7 @@
 		<!-- Session-->
 		<div class="box box-solid" style="margin-bottom:0px;">
 			<div class="box-body">
-				<div class="callout callout-info">
+				<div class="callout callout-info powertip" powertip-content='{#__ key="powertip.preview.5" /}' powertip-order='5'>
 					<h5 class="box-title"><i class="fas fa-server"></i> Session</h5>
 					<hr>
 					{#session}
@@ -96,7 +94,7 @@
 					{/session}
 				</div>
 			</div>
-			<div class="box-footer">
+			<div class="box-footer powertip" powertip-content='{#__ key="powertip.preview.6" /}' powertip-order='6'>
 				<div class="text-center">
 					<a class="btn btn-app" id="restart-server" href="#">
 						<i style='margin-top: 5px;' class="fas fa-sync-alt"></i>{#__ key="preview.reload"/}

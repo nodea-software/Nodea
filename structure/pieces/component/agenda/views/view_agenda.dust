@@ -1,7 +1,7 @@
 {>"layout_m_home"/}
 
 {<custom_css_2}
-	<link href='/js/plugins/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+	<link href='/js/plugins/fullcalendar/lib/main.min.css' rel='stylesheet' />
 	<style>
 		.pendingEvent{
 			padding: 5px 5px 5px 12px;
@@ -63,7 +63,7 @@
 							{/categories}
 						</select>
 						<div style="margin-top: 10px;" class="input-group">
-							<input id="new-event-title" type="text" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control"/>
+							<input id="new-event-title" type="text" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control"/>
 							<div class="input-group-btn">
 								<button id="add-new-event" type="button" class="btn btn-success btn-flat">{#__ key="button.add"/}</button>
 							</div>
@@ -91,7 +91,7 @@
 				<div class="card">
 					<div class="card-header">
 						<h3 class="card-title">
-							{#__ key="global_component.agenda.menu"/}
+							{#__ key="component.CODE_NAME_LOWER.label_component" /}
 						</h3>
 						<div class="card-tools">
 							<button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -126,10 +126,10 @@
 						{/categories}
 					</select>
 					<div style="margin-top: 10px;width: 100%;" class="input-group">
-						<input type="text" id="modalCreateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+						<input type="text" id="modalCreateTitle" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control" autofocus/>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
-						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<label>{#__ key="entity.CODE_NAME_EVENT_LOWER.f_all_day"/}</label><br>
 						<input class='form-control input' id="createEventAllDayCheckbox" type='checkbox'>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
@@ -137,7 +137,7 @@
 						<div class='input-group'>
 							<div class='input-group-prepend'>
 								<span class='input-group-text'>
-									<i class='fa fa-clock-o'></i>
+									<i class='far fa-clock'></i>
 								</span>
 							</div>
 							<input class='form-control input timepicker' id="modalCreateStartTime" type='text' />
@@ -148,7 +148,7 @@
 						<div class='input-group'>
 							<div class='input-group-prepend'>
 								<span class='input-group-text'>
-									<i class='fa fa-clock-o'></i>
+									<i class='fas fa-clock'></i>
 								</span>
 							</div>
 							<input class='form-control input timepicker' id="modalCreateEndTime" type='text' />
@@ -173,7 +173,6 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<input type="hidden" id="modalUpdateEventID" />
 					<input type="hidden" id="modalUpdateID" />
 					<select style="width: 100%;" class="form-control selectCategoryColor" id="modalUpdateCategory">
 						<option data-backgroundcolor="#CCCCCC" value="">{#__ key="global_component.agenda.no_category"/}</option>
@@ -182,10 +181,10 @@
 						{/categories}
 					</select>
 					<div style="margin-top: 10px;width: 100%;" class="input-group">
-						<input type="text" id="modalUpdateTitle" placeholder='{#__ key="entity.e_agenda_event.f_title"/}' class="form-control" autofocus/>
+						<input type="text" id="modalUpdateTitle" placeholder='{#__ key="entity.CODE_NAME_EVENT_LOWER.f_title"/}' class="form-control" autofocus/>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
-						<label>{#__ key="entity.e_agenda_event.f_all_day"/}</label><br>
+						<label>{#__ key="entity.CODE_NAME_EVENT_LOWER.f_all_day"/}</label><br>
 						<input class='form-control input' id="updateEventAllDayCheckbox" type='checkbox'>
 					</div>
 					<div style="margin-top: 10px" class='bootstrap-timepicker'>
@@ -193,7 +192,7 @@
 						<div class='input-group'>
 							<div class='input-group-prepend'>
 								<span class='input-group-text'>
-									<i class='fa fa-clock-o'></i>
+									<i class='far fa-clock'></i>
 								</span>
 							</div>
 							<input class='form-control input timepicker' id="modalUpdateStartTime" type='text' />
@@ -204,7 +203,7 @@
 						<div class='input-group'>
 							<div class='input-group-prepend'>
 								<span class='input-group-text'>
-									<i class='fa fa-clock-o'></i>
+									<i class='fas fa-clock'></i>
 								</span>
 							</div>
 							<input class='form-control input timepicker' id="modalUpdateEndTime" type='text' />
@@ -213,7 +212,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" id="updateEvent" >{#__ key="button.save" /}</button>
-					<button type="button" class="btn btn-danger" id="deleteEvent" data-dismiss="modal">{#__ key="button.delete" /}</button>
+					<button type="button" class="btn btn-danger" id="deleteEvent">{#__ key="button.delete" /}</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.cancel" /}</button>
 				</div>
 			</div>
@@ -223,15 +222,44 @@
 
 {<custom_js}
 	<script src='/AdminLTE/plugins/jquery-ui/jquery-ui.min.js'></script>
-	<script src='/js/plugins/fullcalendar/fullcalendar.min.js'></script>
-	<script src='/js/plugins/fullcalendar/locale-all.js'></script>
-	<script>
-		var FILL_TITLE_AGENDA = '{#__ key="global_component.agenda.fill_title" /}';
-		var END_BEFORE_START_MSG = '{#__ key="global_component.agenda.end_before_start" /}';
-	</script>
-	<script>var usersRessources = [];</script>
+	<script src='/js/plugins/fullcalendar/lib/main.min.js'></script>
+    <script>
+        let calendarLocales = {
+            lang: 'en',
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day',
+			users: 'Users',
+            customTimelineDay: "Timeline/Day",
+            customTimelineWeek: "Timeline/Week"
+        };
+        const FILL_TITLE_AGENDA = '{#__ key="global_component.agenda.fill_title" /}';
+		const END_BEFORE_START_MSG = '{#__ key="global_component.agenda.end_before_start" /}';
+        const usersRessources = [];
+    </script>
 	{#users}
 		<script>usersRessources.push({id:{id}, title: "{f_login}"});</script>
 	{/users}
+    {@eq key=lang_user value="fr-FR"}
+	    <script src='/js/plugins/fullcalendar/lib/locales/fr.js'></script>
+        <script>
+            calendarLocales = {
+                lang: 'fr',
+                today: "Aujourd'hui",
+                month: 'Mois',
+                week: 'Semaine',
+                day: 'Jour',
+				users: 'Utilisateurs',
+                customTimelineDay: "Timeline/Jour",
+                customTimelineWeek: "Timeline/Semaine"
+            };
+        </script>
+    {/eq}
 	<script src='/core/js/component/agenda.js'></script>
+	<script type="text/javascript">
+		$(function() {
+			NodeaForms();
+		});
+	</script>
 {/custom_js}
