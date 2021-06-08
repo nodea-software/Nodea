@@ -12,7 +12,7 @@ function firstElementFocus(tab, idx) {
 
 const addressMapsInstance = [];
 function initMap(mapElement, options) {
-	// Dynamically load OpenLayer script to avoid unnecessarily loading it on pages without addresses or even without maps enabled
+	// Dynamically load OpenLayer script to avoid unnecessarily loading it on pages without addresses or without maps enabled
 	if (!this.isOpenLayerLoaded) {
 		$.getScript('/js/plugins/ol/ol.js', _ => {
 			this.isOpenLayerLoaded = true;
@@ -179,160 +179,6 @@ function ajax_select(select, placeholder) {
 }
 
 var NodeaForms = (_ => {
-	function fullElementList(overrideDefaults = {}) {
-		return Object.entries({...defaults.elements, ...overrideDefaults.elements}).map(([key]) => key);
-	}
-
-	// Check if a string has a valid JSON syntax to parse it
-	function isValidJSON(string) {
-		if (/^[\],:{}\s]*$/.test(string.replace(/\\["\\\/bfnrtu]/g, '@')
-				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-				.replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
-			return true;
-		else
-			return false;
-	}
-
-	// Handle form submission
-	function handleSubmit(form, event, overrideDefaults = {}) {
-        // Prevent multiple submission (double click)
-        if (form.data('submitting') === true) {
-            event.preventDefault();event.stopProppagation();
-            return false;
-        }
-        form.data('submitting', true);
-
-        let enableTmsp;
-        function enableForm() {
-        	if (enableTmsp)
-        		clearTimeout(enableTmsp);
-            form.data('submitting', false);
-        }
-        // Re-enable form after some time in case something went wrong
-        enableTmsp = setTimeout(enableForm, 3000);
-
-        // Invalid form, block submission
-        if (!validate(form, overrideDefaults)) {
-            enableForm();
-            return false;
-        }
-
-        // Valid form, submit as ajax or return true
-        if (form.hasClass('ajax')) {
-        	const handleSuccess = overrideDefaults.handleSuccess || defaults.handleSuccess;
-        	const handleError = overrideDefaults.handleError || defaults.handleError;
-    		const originAction = form.attr('action');
-        	let action;
-        	try {
-        		const currentTab = NodeaTabs.current.tab;
-        		action = originAction.includes('?')
-        			? originAction + '&ajax=true&' + NodeaTabs.buildAssociationHref(currentTab)
-        			: originAction + '?ajax=true&' + NodeaTabs.buildAssociationHref(currentTab)
-        	} catch (err) {
-        		action = originAction.includes('?')
-        			? originAction + '&ajax=true'
-        			: originAction + '?ajax=true'
-        	}
-    		let ajaxOptions = {
-	            url: action,
-	            method: form.attr('method') || 'post',
-	            success: function (...args) {
-	            	enableForm();
-	            	handleSuccess(...args)
-	            },
-	            error: function(...args) {
-	                enableForm();
-	                handleError(...args);
-	            },
-	            timeout: 15000
-	        }
-	        // Form contains files, we can't just serialize
-	        if (form.attr('enctype') === 'multipart/form-data') {
-	        	ajaxOptions = {
-	        		...ajaxOptions,
-		            processData: false,
-		            contentType: false,
-		            enctype: form.attr('enctype'),
-		            data: new FormData(form[0])
-	        	}
-	        }
-	        else
-	        	ajaxOptions.data = form.serialize();
-	        $.ajax(ajaxOptions);
-	        return false;
-        }
-        return true;
-	}
-
-	// Ajax form default success callback
-	function handleSuccess(data) {
-		try {
-			const currentTab = NodeaTabs.current.tab;
-			if (currentTab) {
-				NodeaTabs.closeOverlay();
-				NodeaTabs.reloadTab();
-			}
-		} catch (err) {
-			console.error(err);
-		}
-	}
-
-    // Server side you can:
-    // Show an error message: return res.status(500).send("My Error Message");
-    // Show multiple message: return res.status(500).send([{message: "Message One",level: "warning"}, {message: "Message Two",level: "error"}, ...]);
-    // You can also force the page to refresh like this: return res.status(500).send({refresh: true});
-	function handleError(error, par2, par3) {
-		try {
-			if (isValidJSON(error.responseText)) {
-				var errorObj = JSON.parse(error.responseText);
-				if (errorObj.refresh)
-					return location.reload();
-				if (errorObj instanceof Array) {
-					for (var i = 0; i < errorObj.length; i++)
-						toastr[errorObj[i].level](errorObj[i].message);
-				} else
-					toastr.error(error.responseText);
-			} else {
-				if (typeof error.responseText === "string")
-					return toastr.error(error.responseText);
-				throw 'unknown';
-			}
-		} catch (e) {
-			console.error(error, par2, par3);
-			return toastr.error(ERROR_MSG)
-		}
-	}
-
-	function validate(form, overrideDefaults = {}) {
-		let isValid = true;
-		const formModifications = [];
-		// Get list of element merged from defaults and overrideDefaults
-		const elementsList = fullElementList(overrideDefaults);
-		// For each element, call provided or default validator
-		for (const element of elementsList) {
-			const overrideElement = overrideDefaults.elements && overrideDefaults.elements[element];
-			let {selector, initializer, validator} = defaults.elements[element] || {};
-			selector = (overrideElement && overrideElement.selector) || selector || "";
-			validator = (overrideElement && overrideElement.validator) || validator || (_ => {});
-			form.find(selector).each(function() {
-				const element = $(this);
-				const res = validator(element, form);
-				if (res === false)
-					isValid = false;
-				else if (Array.isArray(res) && res.length)
-					formModifications.push(...res);
-			});
-		}
-
-		// Invalid form, block submission
-		if (!isValid)
-			return false;
-		// Valid form, apply modifications before submitting
-        for (const formModification of formModifications)
-            formModification();
-        return true;
-    }
-
 	const defaults = {
 		handleSubmit,
 		handleSuccess,
@@ -936,9 +782,10 @@ var NodeaForms = (_ => {
 				    	$(this).val($(this).val().toUpperCase());
 				    });
 				    element.find(".clear-address-search").click(function() {
-				    	$(".address_component input[name!=address_id]").val("");
+				    	console.log($(".address_component input[name!=address_id]"));
+				    	element.find("input[name!=address_id]").val("");
 				    	return false;
-				    })
+				    });
 
 				    function initSearchInput(searchInput) {
 				    	searchInput.autocomplete({
@@ -1067,17 +914,161 @@ var NodeaForms = (_ => {
 		}
 	};
 
+	function mergeElements(overrideDefaults = {}) {
+		const elementsList = Object.entries({...defaults.elements, ...overrideDefaults.elements}).map(([key]) => key);
+		const mergedElements = {};
+		for (const element of elementsList) {
+			mergedElements[element] = {
+				selector: "", initializer: _ => {}, validator: _ => {},
+				...defaults.elements[element],
+				...overrideDefaults && overrideDefaults.elements && overrideDefaults.elements[element]
+			};
+		}
+		return mergedElements;
+	}
+
+	// Handle form submission
+	function handleSubmit(form, event, overrideDefaults = {}) {
+        // Prevent multiple submission (double click)
+        if (form.data('submitting') === true) {
+            event.preventDefault();event.stopProppagation();
+            return false;
+        }
+        form.data('submitting', true);
+
+        let enableTmsp;
+        function enableForm() {
+        	if (enableTmsp)
+        		clearTimeout(enableTmsp);
+            form.data('submitting', false);
+        }
+        // Re-enable form after some time in case something went wrong
+        enableTmsp = setTimeout(enableForm, 3000);
+
+        // Invalid form, block submission
+        if (!validate(form, overrideDefaults)) {
+            enableForm();
+            return false;
+        }
+
+        // Valid form, submit as ajax or return true
+        if (form.hasClass('ajax')) {
+        	const handleSuccess = overrideDefaults.handleSuccess || defaults.handleSuccess;
+        	const handleError = overrideDefaults.handleError || defaults.handleError;
+    		const originAction = form.attr('action');
+        	let action;
+        	try {
+        		const currentTab = NodeaTabs.current.tab;
+        		action = originAction.includes('?')
+        			? originAction + '&ajax=true&' + NodeaTabs.buildAssociationHref(currentTab)
+        			: originAction + '?ajax=true&' + NodeaTabs.buildAssociationHref(currentTab)
+        	} catch (err) {
+        		action = originAction.includes('?')
+        			? originAction + '&ajax=true'
+        			: originAction + '?ajax=true'
+        	}
+    		let ajaxOptions = {
+	            url: action,
+	            method: form.attr('method') || 'post',
+	            success: function (...args) {
+	            	enableForm();
+	            	handleSuccess(...args)
+	            },
+	            error: function(...args) {
+	                enableForm();
+	                handleError(...args);
+	            },
+	            timeout: 15000
+	        }
+	        // Form contains files, we can't just serialize
+	        if (form.attr('enctype') === 'multipart/form-data') {
+	        	ajaxOptions = {
+	        		...ajaxOptions,
+		            processData: false,
+		            contentType: false,
+		            enctype: form.attr('enctype'),
+		            data: new FormData(form[0])
+	        	}
+	        }
+	        else
+	        	ajaxOptions.data = form.serialize();
+	        $.ajax(ajaxOptions);
+	        return false;
+        }
+        return true;
+	}
+
+	// Ajax form default success callback
+	function handleSuccess(data) {
+		try {
+			const currentTab = NodeaTabs.current.tab;
+			if (currentTab) {
+				NodeaTabs.closeOverlay();
+				NodeaTabs.reloadTab();
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+    // Server side you can:
+    // Show an error message: return res.status(500).send("My Error Message");
+    // Show multiple message: return res.status(500).send([{message: "Message One",level: "warning"}, {message: "Message Two",level: "error"}, ...]);
+    // You can also force the page to refresh like this: return res.status(500).send({refresh: true});
+	function handleError(error, par2, par3) {
+		try {
+			if (typeof error.responseText === "string")
+				return toastr.error(error.responseText);
+
+			var errorObj = JSON.parse(error.responseText);
+			if (errorObj.refresh)
+				return location.reload();
+			if (errorObj instanceof Array) {
+				for (var i = 0; i < errorObj.length; i++)
+					toastr[errorObj[i].level](errorObj[i].message);
+			} else
+				toastr.error(error.responseText);
+		} catch (e) {
+			console.error(error, par2, par3);
+			return toastr.error(ERROR_MSG)
+		}
+	}
+
+	function validate(form, overrideDefaults = {}) {
+		let isValid = true;
+		const formModifications = [];
+		// Get list of element merged from defaults and overrideDefaults
+		const mergedElements = mergeElements(overrideDefaults);
+
+		// For each element, call validator
+		for (const element in mergedElements) {
+			const {selector, initializer, validator} = mergedElements[element];
+			form.find(selector).each(function() {
+				const element = $(this);
+				const res = validator(element, form);
+				if (res === false)
+					isValid = false;
+				else if (Array.isArray(res) && res.length)
+					formModifications.push(...res);
+			});
+		}
+
+		// Invalid form, block submission
+		if (!isValid)
+			return false;
+		// Valid form, apply modifications before submitting
+        for (const formModification of formModifications)
+            formModification();
+        return true;
+    }
+
 	function initialize(context = document, overrideDefaults = {}) {
 		// Get list of element merged from defaults and overrideDefaults
-		const elementsList = fullElementList(overrideDefaults);
+		const mergedElements = mergeElements(overrideDefaults);
 		// For each element, call default or overridden selector/initializer
 		const formModifications = [], isValid = true;
-		for (const element of elementsList) {
-			const overrideElement = overrideDefaults.elements && overrideDefaults.elements[element];
-			let {selector, initializer} = defaults.elements[element] || {};
-			selector = (overrideElement && overrideElement.selector) || selector || "";
-			initializer = (overrideElement && overrideElement.initializer) || initializer || (_ => {});
-
+		for (const element in mergedElements) {
+			let {selector, initializer} = mergedElements[element];
 			// Initialize form defaults
 			$(selector, context).each(function() {
 				if ($(this).data('initialized') === true)

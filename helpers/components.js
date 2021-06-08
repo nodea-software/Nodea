@@ -41,11 +41,11 @@ module.exports = {
 				createHtml += "							<i class='fa fa-map-marker' aria-hidden='true'></i>\n";
 				createHtml += "						</span>\n";
 				createHtml += "					</div>\n";
-				createHtml += "					<div class='input-group-prepend'>"
-				createHtml += "						<button class='input-group-text clear-address-search'>"
-				createHtml += "							<i class='fa fa-times' style='color: red;'></i>"
-				createHtml += "						</button>"
-				createHtml += "					</div>"
+				createHtml += "					<div class='input-group-prepend'>\n"
+				createHtml += "						<button type='button' class='input-group-text clear-address-search'>\n"
+				createHtml += "							<i class='fa fa-times' style='color: red;'></i>\n"
+				createHtml += "						</button>\n"
+				createHtml += "					</div>\n"
 				createHtml += "					<input class='input form-control address_search_input' id='address_search_input'  type='text' name='f_address_label' placeholder='{#__ key=\"entity." + componentCodeName + ".search\"/}' >\n";
 				createHtml += "				</div>\n";
 				createHtml += "			</div>\n";
@@ -60,11 +60,11 @@ module.exports = {
 				updateHtml += "							<i class='fa fa-map-marker' aria-hidden='true'></i>\n";
 				updateHtml += "						</span>\n";
 				updateHtml += "					</div>\n";
-				updateHtml += "					<div class='input-group-prepend'>"
-				updateHtml += "						<button class='input-group-text clear-address-search'>"
-				updateHtml += "							<i class='fa fa-times' style='color: red;'></i>"
-				updateHtml += "						</button>"
-				updateHtml += "					</div>"
+				updateHtml += "					<div class='input-group-prepend'>\n"
+				updateHtml += "						<button type='button' class='input-group-text clear-address-search'>\n"
+				updateHtml += "							<i class='fa fa-times' style='color: red;'></i>\n"
+				updateHtml += "						</button>\n"
+				updateHtml += "					</div>\n"
 				updateHtml += "					<input class='input form-control address_search_input' id='address_search_input'  type='text' name='f_address_label' value='{r_address.f_address_label}' placeholder='{#__ key=\"entity." + componentCodeName + ".search\"/}' >\n";
 				updateHtml += "				</div>\n";
 				updateHtml += "				<input class='input form-control'  type='hidden'  name='address_id' value='{r_address.id}' >\n";
