@@ -5,7 +5,7 @@ const attributes = require('@app/models/attributes/e_program');
 const models = require('@app/models');
 
 const helpers = require('@core/helpers');
-const access = helpers.access;
+const middlewares = helpers.middlewares;
 
 const upload = require('multer');
 const multer = upload();
@@ -20,7 +20,7 @@ class Program extends Entity {
 	}
 
 	generate_and_replace() {
-		this.router.get('/generate_and_replace', access.actionAccessMiddleware('program', 'create'), this.asyncRoute(async (data) => {
+		this.router.get('/generate_and_replace', middlewares.actionAccess('program', 'create'), this.asyncRoute(async (data) => {
 			const idProgram = data.req.query.id;
 			const zipFilePath = await helpers.program.generateZip(idProgram);
 
@@ -45,7 +45,7 @@ class Program extends Entity {
 	}
 
 	generate() {
-		this.router.get('/generate', access.actionAccessMiddleware('program', 'create'), this.asyncRoute(async (data) => {
+		this.router.get('/generate', middlewares.actionAccess('program', 'create'), this.asyncRoute(async (data) => {
 			const idProgram = data.req.query.id;
 
 			const zipFilePath = await helpers.program.generateZip(idProgram);
@@ -56,7 +56,7 @@ class Program extends Entity {
 	}
 
 	duplicate() {
-		this.router.get('/duplicate', access.actionAccessMiddleware('program', 'create'), this.asyncRoute(async (data) => {
+		this.router.get('/duplicate', middlewares.actionAccess('program', 'create'), this.asyncRoute(async (data) => {
 			const idProgram = data.req.query.id;
 
 			const include = helpers.model_builder.getIncludeFromFields(models, 'e_program', ['r_page.id' ]);
@@ -146,85 +146,49 @@ class Program extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				access.actionAccessMiddleware(this.entity, "create"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.actionAccess(this.entity, "create"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			update_form: [
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				access.actionAccessMiddleware(this.entity, "update"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.actionAccess(this.entity, "update"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			loadtab: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				access.actionAccessMiddleware(this.entity, "read"),
-				access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

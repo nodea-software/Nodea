@@ -4,10 +4,7 @@ const options = require('@app/models/options/ENTITY_NAME');
 const attributes = require('@app/models/attributes/ENTITY_NAME');
 
 const helpers = require('@core/helpers');
-const access = helpers.access;
-
-const upload = require('multer');
-const multer = upload();
+const middlewares = helpers.middlewares;
 
 class MODEL_NAME extends CoreParamEntity {
 	constructor() {
@@ -36,32 +33,14 @@ class MODEL_NAME extends CoreParamEntity {
 	get middlewares() {
 		return {
 			update_form: [
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				access.actionAccessMiddleware(this.entity, "update"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.actionAccess(this.entity, "update"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			search: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			]
 		}
 	}

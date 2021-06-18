@@ -24,7 +24,7 @@ class CoreImportExport extends Route {
 	}
 
 	db_show() {
-		this.router.get('/db_show', this.middlewares.db_show, (req, res) => {
+		this.router.get('/db_show', ...this.middlewares.db_show, (req, res) => {
 			if (dbConfig.dialect != "mysql" && dbConfig.dialect != "mariadb") {
 				req.session.toastr = [{
 					message: 'administration.import_export.db.wrong_dialect',
@@ -70,7 +70,7 @@ class CoreImportExport extends Route {
 	}
 
 	db_export() {
-		this.router.post('/db_export', this.middlewares.db_export, (req, res) => {
+		this.router.post('/db_export', ...this.middlewares.db_export, (req, res) => {
 			if (dbConfig.password != req.body.db_password) {
 				req.session.toastr = [{
 					message: 'administration.import_export.db.wrong_db_pwd',
@@ -168,7 +168,7 @@ class CoreImportExport extends Route {
 	}
 
 	db_import() {
-		this.router.post('/db_import', this.middlewares.db_import, this.asyncRoute(async (data) => {
+		this.router.post('/db_import', ...this.middlewares.db_import, this.asyncRoute(async (data) => {
 
 			if (data.req.files.import_file.length == 0) {
 				data.req.session.toastr = [{
@@ -262,13 +262,13 @@ class CoreImportExport extends Route {
 	}
 
 	access_show() {
-		this.router.get('/access_show', this.middlewares.access_show, (req, res) => {
+		this.router.get('/access_show', ...this.middlewares.access_show, (req, res) => {
 			res.render('import_export/access_show');
 		})
 	}
 
 	access_export() {
-		this.router.get('/access_export', this.middlewares.access_export, (req, res) => {
+		this.router.get('/access_export', ...this.middlewares.access_export, (req, res) => {
 			const dumpPath = __configPath + '/access.json';
 			res.download(dumpPath, "access_conf_" + moment().format("YYYYMMDD-HHmmss") + ".json", err => {
 				if (err) {
@@ -284,7 +284,7 @@ class CoreImportExport extends Route {
 	}
 
 	access_import() {
-		this.router.post('/access_import', this.middlewares.access_import, this.asyncRoute(async (data) => {
+		this.router.post('/access_import', ...this.middlewares.access_import, this.asyncRoute(async (data) => {
 			const access_file = data.req.files.import_file[0];
 			fs.writeFileSync(__configPath + "/access.json", access_file.buffer, 'utf8');
 			data.req.session.toastr.push({

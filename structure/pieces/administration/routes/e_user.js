@@ -1,5 +1,5 @@
 const Entity = require('@core/abstract_routes/entity');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 
 const models = require('@app/models/');
 const options = require('@app/models/options/e_user');
@@ -169,7 +169,7 @@ class E_user extends Entity {
 			create: {
 				// start: async (data) => {},
 				// beforeCreateQuery: async(data) => {},
-				beforeRedirect: async({req}) => {
+				beforeRedirect: ({req}) => {
 					if(req.body.send_first_connection_mail == 'true' && req.body.f_email) {
 						// Send first connection email to new user
 						try {
@@ -189,7 +189,7 @@ class E_user extends Entity {
 				}
 			},
 			update_form: {
-				start: async (data) => {
+				start: (data) => {
 					if(data.idEntity == 1) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
@@ -203,7 +203,7 @@ class E_user extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			update: {
-				start: async (data) => {
+				start: (data) => {
 					if(data.idEntity == 1) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
@@ -239,7 +239,7 @@ class E_user extends Entity {
 				// beforeResponse: async (data) => {}
 			},
 			destroy: {
-				start: async (data) => {
+				start: (data) => {
 					if(data.idEntity == 1) {
 						if(data.req.query.ajax) {
 							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_admin')));
@@ -264,56 +264,56 @@ class E_user extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			update_form: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			loadtab: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				block_access.actionAccessMiddleware(this.entity, "read"),
-				block_access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			settingsGET: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			settingsPOST: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			resendFirstConnectionEmail: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			]
 		}
 	}

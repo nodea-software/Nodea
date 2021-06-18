@@ -78,9 +78,16 @@ class CoreEntity extends Route {
 		this.options = options;
 		this.helpers = helpers;
 
+		this.fileFields = [];
+		for (const fieldName in this.attributes) {
+			const field = this.attributes[fieldName];
+			if (['file', 'picture'].includes(field.nodeaType))
+				this.fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
+		}
+
 		this.defaultMiddlewares.push(
-			helpers.access.isLoggedIn,
-			helpers.access.entityAccessMiddleware(this.entity)
+			helpers.middlewares.isLoggedIn,
+			helpers.middlewares.entityAccess(this.entity)
 		);
 	}
 

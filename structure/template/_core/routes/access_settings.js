@@ -48,7 +48,7 @@ class CoreAccessSettings extends Route {
 
 	show_group() {
 		this.router.get('/show_group', ...this.middlewares.show_group, this.asyncRoute( async (data) => {
-			const values = await block_access.getPreviewData()
+			const values = await block_access.getGroupRoleList()
 			data.allGroups = values.groups;
 
 			if (await this.getHook('show_group', 'start', data) === false)
@@ -95,7 +95,7 @@ class CoreAccessSettings extends Route {
 
 	show_role() {
 		this.router.get('/show_role', ...this.middlewares.show_role, this.asyncRoute(async (data) => {
-			const values = await block_access.getPreviewData();
+			const values = await block_access.getGroupRoleList();
 			data.allRoles = values.roles;
 
 			if (await this.getHook('show_role', 'start', data) === false)
@@ -161,7 +161,7 @@ class CoreAccessSettings extends Route {
 	}
 
 	set_group_access() {
-		this.router.post('/set_group_access', this.middlewares.set_group_access, this.asyncRoute(async (data) => {
+		this.router.post('/set_group_access', ...this.middlewares.set_group_access, this.asyncRoute(async (data) => {
 			data.form = data.req.body;
 			data.newModuleAccess = {};
 			data.newEntityAccess = {};
@@ -195,7 +195,7 @@ class CoreAccessSettings extends Route {
 	}
 
 	set_role_access() {
-		this.router.post('/set_role_access', this.middlewares.set_role_access, this.asyncRoute(async (data) => {
+		this.router.post('/set_role_access', ...this.middlewares.set_role_access, this.asyncRoute(async (data) => {
 			data.form = data.req.body;
 			data.newActionRoles = {};
 

@@ -10,7 +10,7 @@ const language = helpers.language;
 const entity = helpers.entity;
 const model_builder = helpers.model_builder;
 const datatable = helpers.datatable;
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 
 const sqliteImporter = require('@core/utils/sqlite_importer');
 
@@ -381,25 +381,25 @@ class Synchronization extends Route {
 	get middlewares() {
 		return {
 			show: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			],
 			list_dump: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			],
 			datalist: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			],
 			delete: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			],
 			generate: [
-				block_access.actionAccessMiddleware("synchronization", "create")
+				middlewares.actionAccess("synchronization", "create")
 			],
 			check_state: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			],
 			synchronize: [
-				block_access.actionAccessMiddleware("synchronization", "read")
+				middlewares.actionAccess("synchronization", "read")
 			]
 		}
 	}

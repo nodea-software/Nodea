@@ -8,15 +8,9 @@ function reloadAccess(reload = true) {
 }
 exports.reloadAccess = reloadAccess
 
-exports.disableRoute = ({res}) => {
-	res.render('common/error', {
-		error: 404
-	})
-}
-
 // Get workspace modules and entities list
 // Also get workspace's groups and roles
-exports.getPreviewData = async function() {
+exports.getGroupRoleList = async function() {
 	const values = {};
 	const promises = [models.E_group.findAll(), models.E_role.findAll()];
 
@@ -82,30 +76,6 @@ exports.setRoleAccess = function(entities) {
 	return 1;
 }
 
-// route middleware to make sure
-exports.isLoggedIn = function(req, res, next) {
-	// Autologin for Nodea's "iframe" live preview context
-	if (global.auto_login == true){ // eslint-disable-line
-		global.auto_login = false; // eslint-disable-line
-		models.E_user.findOne({
-			where: {
-				id: 1
-			},
-			include: [{
-				model: models.E_group,
-				as: 'r_group'
-			}, {
-				model: models.E_role,
-				as: 'r_role'
-			}]
-		}).then(user => req.login(user, _ => next()));
-	}
-	else if (req.isAuthenticated())
-		return next();
-	else
-		res.redirect('/login?r=' + req.originalUrl);
-};
-
 // If the user is already identified, he can't access the login page
 exports.loginAccess = function(req, res, next) {
 	// If user is not authenticated in the session, carry on
@@ -148,7 +118,7 @@ function isInBothArray(stringArray, objectArray) {
 	return true;
 }
 // Check if user's group have access to module
-function moduleAccess(userGroups, moduleName) {
+exports.moduleAccess = function (userGroups, moduleName) {
 	try {
 		if(userGroups.length == 0)
 			return false;
@@ -162,31 +132,6 @@ function moduleAccess(userGroups, moduleName) {
 		return false;
 	}
 }
-exports.moduleAccess = moduleAccess;
-
-exports.moduleAccessMiddleware = function(moduleName) {
-	return function(req, res, next) {
-		if (!req.isAuthenticated())
-			return res.redirect('/login');
-		const userGroups = req.session.passport.user.r_group;
-		if (userGroups.length > 0 && moduleAccess(userGroups, moduleName))
-			return next();
-
-		if(userGroups.length == 0){
-			req.session.toastr = [{
-				level: 'error',
-				message: "administration.access_settings.no_group"
-			}];
-			return res.redirect('/logout');
-		}
-
-		req.session.toastr = [{
-			level: 'error',
-			message: "administration.access_settings.no_access_group_module"
-		}];
-		return res.redirect('/');
-	}
-}
 
 exports.haveGroup = function(userGroups, group) {
 	for (let i = 0; i < userGroups.length; i++)
@@ -196,7 +141,7 @@ exports.haveGroup = function(userGroups, group) {
 }
 
 // Check if user's group have access to entity
-function entityAccess(userGroups, entityName) {
+exports.entityAccess = function (userGroups, entityName) {
 	try {
 		if(userGroups.length == 0)
 			return false;
@@ -221,10 +166,9 @@ function entityAccess(userGroups, entityName) {
 		return false;
 	}
 }
-exports.entityAccess = entityAccess;
 
 // Check if user's role can do `action` on entity
-function actionAccess(userRoles, entityName, action) {
+exports.actionAccess = function actionAccess(userRoles, entityName, action) {
 	try {
 		if(userRoles.length == 0)
 			return false;
@@ -239,64 +183,6 @@ function actionAccess(userRoles, entityName, action) {
 	} catch (e) {
 		return false;
 	}
-}
-exports.actionAccess = actionAccess;
-
-exports.entityAccessMiddleware = function(entityName) {
-	return function(req, res, next) {
-		// In case of browser console request or other specific request (like healthcheck or other), user may not be defined
-		if(!req.user)
-			return res.redirect('/');
-		if(req.originalUrl == '/user/settings') {
-			// Exception for /user/settings, only logged access is required
-			return next()
-		} else if (req.originalUrl == `/${entityName}/search`) {
-			// Exception for `/search` routes. We only check for 'read' action access.
-			// Bypass module/entity access check
-			if (actionAccess(req.user.r_role, entityName, 'read'))
-				return next();
-		} else {
-			const userGroups = req.user.r_group;
-			if (userGroups.length > 0 && entityAccess(userGroups, entityName))
-				return next();
-		}
-		req.session.toastr = [{
-			level: 'error',
-			message: "administration.access_settings.no_access_group_entity"
-		}];
-		return res.redirect('/');
-	}
-}
-
-exports.actionAccessMiddleware = function(entityName, action) {
-	return function(req, res, next) {
-		const userRoles = req.user.r_role;
-		if (userRoles && userRoles.length > 0 && actionAccess(userRoles, entityName, action))
-			return next();
-		req.session.toastr = [{
-			level: 'error',
-			message: "administration.access_settings.no_access_role"
-		}];
-		return res.redirect('/');
-	}
-}
-
-exports.apiAuthentication = function(req, res, next) {
-	const token = req.query.token;
-
-	models.E_api_credentials.findOne({
-		where: { f_token: token }
-	}).then(function(credentialsObj) {
-		if (!credentialsObj)
-			return res.status(401).end('Bad Bearer Token');
-
-		const currentTmsp = new Date().getTime();
-		if (parseInt(credentialsObj.f_token_timeout_tmsp) < currentTmsp)
-			return res.status(403).json('Bearer Token expired');
-
-		req.apiCredentials = credentialsObj;
-		next();
-	});
 }
 
 exports.accessFileManagment = function() {
@@ -391,41 +277,4 @@ exports.accessFileManagment = function() {
 		// Write access.json with new entries
 		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
 	}
-}
-
-exports.statusGroupAccess = function(req, res, next) {
-
-	const idNewStatus = parseInt(req.params.id_new_status);
-	const userGroups = req.session.passport.user.r_group;
-
-	models.E_status.findOne({
-		where: { id: idNewStatus },
-		include: [{
-			model: models.E_group,
-			as: "r_accepted_group"
-		}]
-	}).then(newStatus => {
-		if(!newStatus){
-			return next();
-		}
-		if(!newStatus.r_accepted_group || newStatus.r_accepted_group.length == 0){
-			// Not groups defined, open for all
-			return next();
-		}
-		for (let i = 0; i < userGroups.length; i++) {
-			for (let j = 0; j < newStatus.r_accepted_group.length; j++) {
-				if(userGroups[i].id == newStatus.r_accepted_group[j].id){
-					// You are in accepted groups, let's continue
-					return next();
-				}
-			}
-		}
-
-		console.warn("USER "+req.session.passport.user.f_login+" TRYING TO SET STATUS "+idNewStatus+ " BUT IS NOT AUTHORIZED.");
-		req.session.toastr = [{
-			message: "administration.access_settings.no_access_change_status",
-			level: "error"
-		}];
-		return res.redirect("/");
-	})
 }

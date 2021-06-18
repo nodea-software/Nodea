@@ -5,7 +5,7 @@ const attributes = require('@app/models/attributes/e_status');
 
 const models = require('@app/models');
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 
 class E_status extends Entity {
 	constructor() {
@@ -21,7 +21,7 @@ class E_status extends Entity {
 	}
 
 	set_default() {
-		this.router.get('/set_default/:id', block_access.actionAccessMiddleware("status", "update"), this.asyncRoute(async (data) => {
+		this.router.get('/set_default/:id', middlewares.actionAccess("status", "update"), this.asyncRoute(async (data) => {
 			const idStatus = data.req.params.id;
 			data.transaction = await models.sequelize.transaction();
 
@@ -62,13 +62,13 @@ class E_status extends Entity {
 	}
 
 	diagram() {
-		this.router.get('/diagram', block_access.actionAccessMiddleware("status", "read"), this.asyncRoute(async (data) => {
+		this.router.get('/diagram', middlewares.actionAccess("status", "read"), this.asyncRoute(async (data) => {
 			data.res.success(_ => data.res.render('e_status/diagram', {statuses: helpers.status.entityStatusFieldList()}));
 		}));
 	}
 
 	diagramdata() {
-		this.router.post('/diagramdata', block_access.actionAccessMiddleware("status", "read"), this.asyncRoute(async (data) => {
+		this.router.post('/diagramdata', middlewares.actionAccess("status", "read"), this.asyncRoute(async (data) => {
 			const statuses = await models.E_status.findAll({
 				where: {
 					f_entity: data.req.body.f_entity,
@@ -104,7 +104,7 @@ class E_status extends Entity {
 	}
 
 	set_children_diagram() {
-		this.router.post('/set_children_diagram', block_access.actionAccessMiddleware("status", "update"), this.asyncRoute(async (data) => {
+		this.router.post('/set_children_diagram', middlewares.actionAccess("status", "update"), this.asyncRoute(async (data) => {
 			const parent = await models.E_status.findOne({
 				where: { id: data.req.body.parent }
 			});
@@ -114,7 +114,7 @@ class E_status extends Entity {
 	}
 
 	remove_children_diagram() {
-		this.router.post('/remove_children_diagram', block_access.actionAccessMiddleware("status", "update"), this.asyncRoute(async (data) => {
+		this.router.post('/remove_children_diagram', middlewares.actionAccess("status", "update"), this.asyncRoute(async (data) => {
 			const status = await models.E_status.findOne({
 				where: { id: data.req.body.id }
 			})
@@ -136,7 +136,7 @@ class E_status extends Entity {
 	}
 
 	set_children() {
-		this.router.post('/set_children', block_access.actionAccessMiddleware("status", "update"), this.asyncRoute(async (data) => {
+		this.router.post('/set_children', middlewares.actionAccess("status", "update"), this.asyncRoute(async (data) => {
 			const id_status = data.req.body.id_status;
 			let statuses = data.req.body.next_status;
 			if (!statuses)
@@ -324,47 +324,47 @@ class E_status extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			update_form: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			loadtab: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				block_access.actionAccessMiddleware(this.entity, "read"),
-				block_access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

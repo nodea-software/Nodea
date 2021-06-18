@@ -1,5 +1,5 @@
 const CoreRoot = require('@core/routes/root');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 
 class Root extends CoreRoot {
 	constructor() {
@@ -15,7 +15,7 @@ class Root extends CoreRoot {
 		return {
 			root: [],
 			status_comment: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			]
 		}
 	}

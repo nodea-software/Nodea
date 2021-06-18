@@ -1,6 +1,6 @@
 const model_builder = require('@core/helpers/model_builder');
 const status_helper = require('@core/helpers/status');
-const access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 const api_documentation = require('@core/helpers/api_documentation');
 const ApiRoute = require('@core/abstract_routes/api_route');
 
@@ -29,7 +29,7 @@ class ApiEntity extends ApiRoute {
 		this.attributes = attributes;
 		this.options = options;
 
-		this.defaultMiddlewares.push(access.apiAuthentication);
+		this.defaultMiddlewares.push(middlewares.apiAuthentication);
 	}
 
 	find() {

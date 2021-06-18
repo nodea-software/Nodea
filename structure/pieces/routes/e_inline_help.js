@@ -4,7 +4,7 @@ const options = require('@app/models/options/e_inline_help');
 const attributes = require('@app/models/attributes/e_inline_help');
 
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 const language = helpers.language;
 const models = require('@app/models');
 
@@ -16,7 +16,7 @@ class E_inline_help extends Entity {
 		super('e_inline_help', attributes, options, helpers, additionalRoutes);
 
 		this.defaultMiddlewares = [
-			helpers.access.isLoggedIn
+			middlewares.isLoggedIn
 		];
 	}
 
@@ -168,61 +168,61 @@ class E_inline_help extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create")
 			],
 			update_form: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "update")
 			],
 			loadtab: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read"),
-				block_access.statusGroupAccess
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				block_access.entityAccessMiddleware(this.entity),
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

@@ -27,7 +27,7 @@ class CoreApp extends Route {
 	}
 
 	widgets() {
-		this.router.post('/widgets', this.middlewares.widgets, this.asyncRoute(async(data) => {
+		this.router.post('/widgets', ...this.middlewares.widgets, this.asyncRoute(async(data) => {
 			const user = data.req.session.passport.user;
 			const widgetsInfo = data.req.body.widgets;
 			const widgetsPromises = [];
@@ -181,7 +181,7 @@ class CoreApp extends Route {
 	}
 
 	change_language() {
-		this.router.post('/change_language', this.middlewares.change_language, (req, res) => {
+		this.router.post('/change_language', ...this.middlewares.change_language, (req, res) => {
 			req.session.lang_user = req.body.lang;
 			res.locals.lang_user = req.body.lang;
 			res.json({
@@ -191,7 +191,7 @@ class CoreApp extends Route {
 	}
 
 	get_file() {
-		this.router.get('/get_file', this.middlewares.get_file, this.asyncRoute(async (data) => {
+		this.router.get('/get_file', ...this.middlewares.get_file, this.asyncRoute(async (data) => {
 			const entity = data.req.query.entity;
 			const id = data.req.query.id;
 			const field = data.req.query.field;
@@ -212,7 +212,7 @@ class CoreApp extends Route {
 	}
 
 	download() {
-		this.router.get('/download', this.middlewares.download, this.asyncRoute(async (data) => {
+		this.router.get('/download', ...this.middlewares.download, this.asyncRoute(async (data) => {
 			const entity = data.req.query.entity;
 			const id = data.req.query.id;
 			const field = data.req.query.field;

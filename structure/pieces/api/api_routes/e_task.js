@@ -5,7 +5,6 @@ const models = require('@app/models');
 const ApiEntity = require('@core/abstract_routes/api_entity');
 
 const globalConf = require('@config/global');
-const multer = require('multer');
 const crypto = require('../utils/crypto_helper');
 
 class ApiTask extends ApiEntity {

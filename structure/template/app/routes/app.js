@@ -1,5 +1,5 @@
 const CoreApp = require('@core/routes/app');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 
 class App extends CoreApp {
 	constructor() {
@@ -15,22 +15,22 @@ class App extends CoreApp {
 		return {
 			status: [],
 			widgets: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			change_language: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			file_upload: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			get_file: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			download: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			delete_file: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			]
 		}
 	}
