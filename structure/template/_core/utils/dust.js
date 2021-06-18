@@ -9,7 +9,7 @@ const fileHelper = require('@core/helpers/file');
 // {#myHelper} for context helpers (such as authentication access)
 
 module.exports = {
-	locals: function(locals, req, language, block_access) {
+	locals: function(locals, req, language, access) {
 
 		// Translate functions
 		locals.__ = function(ch, con, bo, params) {
@@ -27,24 +27,24 @@ module.exports = {
 			locals.haveGroup = function(chunk, context, bodies, params) {
 				const userGroups = req.session.passport.user.r_group;
 				const group = params.group;
-				return block_access.haveGroup(userGroups, group);
+				return access.haveGroup(userGroups, group);
 			}
 			// Access control
 			locals.moduleAccess = function(chunk, context, bodies, params) {
 				const userGroups = req.session.passport.user.r_group;
 				const moduleName = params.module;
-				return block_access.moduleAccess(userGroups, moduleName);
+				return access.moduleAccess(userGroups, moduleName);
 			};
 			locals.entityAccess = function(chunk, context, bodies, params) {
 				const userGroups = req.session.passport.user.r_group;
 				const entityName = params.entity;
-				return block_access.entityAccess(userGroups, entityName);
+				return access.entityAccess(userGroups, entityName);
 			}
 			locals.actionAccess = function(chunk, context, bodies, params) {
 				const userRoles = req.session.passport.user.r_role;
 				const entityName = params.entity;
 				const action = params.action;
-				return block_access.actionAccess(userRoles, entityName, action);
+				return access.actionAccess(userRoles, entityName, action);
 			}
 			locals.checkStatusPermission = function(chunk, context, bodies, params) {
 				const status = params.status;
@@ -66,7 +66,7 @@ module.exports = {
 		}
 
 		// Add custom locals
-		locals = customDust.locals(locals, req, language, block_access);
+		locals = customDust.locals(locals, req, language, access);
 	},
 	helpers: function(dust) {
 		dust.helpers.findValueInGivenContext = function(chunk, context, bodies, params) {

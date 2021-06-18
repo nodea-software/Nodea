@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const block_access = require('@core/helpers/access');
+const access = require('@core/helpers/access');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio.js');
 const models = require('@app/models');
@@ -37,7 +37,7 @@ class CoreApp extends Route {
 				const modelName = 'E_' + currentWidget.entity.substring(2);
 
 				// Check group and role access to widget's entity
-				if (!block_access.entityAccess(user.r_group, currentWidget.entity.substring(2)) || !block_access.actionAccess(user.r_role, currentWidget.entity.substring(2), 'read'))
+				if (!access.entityAccess(user.r_group, currentWidget.entity.substring(2)) || !access.actionAccess(user.r_role, currentWidget.entity.substring(2), 'read'))
 					continue;
 
 				widgetsPromises.push(((widget, model) => new Promise(resolve => {
@@ -196,7 +196,7 @@ class CoreApp extends Route {
 			const id = data.req.query.id;
 			const field = data.req.query.field;
 
-			if (!block_access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
+			if (!access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
 				return data.res.error(_ => data.res.status(403).end());
 
 			const row = await models[entity.capitalizeFirstLetter()].findOne({where: {id}});
@@ -217,7 +217,7 @@ class CoreApp extends Route {
 			const id = data.req.query.id;
 			const field = data.req.query.field;
 
-			if (!block_access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
+			if (!access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
 				return data.res.error(_ => data.res.status(403).end());
 
 			const row = await models[entity.capitalizeFirstLetter()].findOne({where: {id}});
@@ -249,7 +249,7 @@ class CoreApp extends Route {
 	// 			const folderName = filename.split("-")[0];
 	// 			const filePath = globalConfig.localstorage + entity + '/' + folderName + '/' + filename;
 
-	// 			if (!block_access.entityAccess(req.session.passport.user.r_group, entity.substring(2)))
+	// 			if (!access.entityAccess(req.session.passport.user.r_group, entity.substring(2)))
 	// 				throw new Error("403 - Access forbidden");
 
 	// 			if (!fs.existsSync(filePath))

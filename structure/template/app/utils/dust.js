@@ -9,7 +9,7 @@
 
 // Add your custom Dust Locals | Helper | Filters here =>
 module.exports = {
-	locals: function(locals, req, language, block_access) {
+	locals: function(locals, req, language, access) {
 		// Use example: {#logCurrentUser param="myParam"}{/logCurrentUser}
 		locals.logCurrentUser = function(chunk, context, bodies, params) {
 			console.log(params.param);
