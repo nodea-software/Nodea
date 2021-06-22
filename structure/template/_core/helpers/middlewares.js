@@ -22,8 +22,8 @@ exports.isLoggedIn = function(req, res, next) {
 	}
 	else if (req.isAuthenticated())
 		return next();
-
-	res.redirect('/login?r=' + req.originalUrl);
+	else
+		res.redirect('/login?r=' + req.originalUrl);
 };
 
 // If the user is already identified, he can't access the login page
