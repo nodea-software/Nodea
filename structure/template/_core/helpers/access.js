@@ -76,15 +76,6 @@ exports.setRoleAccess = function(entities) {
 	return 1;
 }
 
-// If the user is already identified, he can't access the login page
-exports.loginAccess = function(req, res, next) {
-	// If user is not authenticated in the session, carry on
-	if (!req.isAuthenticated())
-		return next();
-
-	res.redirect('/module/home');
-};
-
 let ACCESS;
 function getAccess() {
 	if (LOAD_ACCESS_FILE || !ACCESS) {
