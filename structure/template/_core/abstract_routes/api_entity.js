@@ -5,11 +5,7 @@ const api_documentation = require('@core/helpers/api_documentation');
 const ApiRoute = require('@core/abstract_routes/api_route');
 
 const models = require('@app/models');
-
-
-// TODO: Ajouter matomo en default middleware (implique de gerer les defaultMiddleware comme des array et non un getter)
-//const matomoTracker = require('@core/services/matomo_api_tracker');
-
+const matomoTracker = require('@core/services/matomo_api_tracker');
 
 class ApiEntity extends ApiRoute {
 	constructor(e_entity, attributes, options, additionalRoutes) {
@@ -29,30 +25,28 @@ class ApiEntity extends ApiRoute {
 		this.attributes = attributes;
 		this.options = options;
 
-		this.defaultMiddlewares.push(middlewares.apiAuthentication);
+		this.defaultMiddlewares.push(
+			middlewares.apiAuthentication,
+			matomoTracker
+		);
 	}
 
 	find() {
-		this.router.get('/', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				answer: {},
-				limit: parseInt(req.query.limit || 50),
-				offset: parseInt(req.query.offset || 0),
-				error: null
-			};
+		this.router.get('/', this.asyncRoute(async (data) => {
+			data.answer = {};
+			data.limit = parseInt(data.req.query.limit || 50);
+			data.offset = parseInt(data.req.query.offset || 0);
+			data.error = null;
 
 			// Build include from query parameter: `?include=r_asso1,r_asso2`
-			data.query = {limit: data.limit, offset: data.offset, transaction};
-			if (req.query.include)
-				data.query.include = model_builder.getIncludeFromFields(models, this.e_entity, req.query.include.split(','));
+			data.query = {limit: data.limit, offset: data.offset, transaction: data.transaction};
+			if (data.req.query.include)
+				data.query.include = model_builder.getIncludeFromFields(models, this.e_entity, data.req.query.include.split(','));
 
 			data.query.where = {};
-			for (const field in req.query)
+			for (const field in data.req.query)
 				if (field.indexOf('fk_id_') == 0 || field.indexOf('f_') == 0 && this.attributes[field])
-					data.query.where[field] = req.query[field];
+					data.query.where[field] = data.req.query[field];
 
 			await this.getHook('find', 'beforeFind', data);
 
@@ -63,57 +57,47 @@ class ApiEntity extends ApiRoute {
 
 			await this.getHook('find', 'afterFind', data);
 
-			res.success(_ => res.status(200).json(data.answer));
+			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	findOne() {
-		this.router.get('/:id', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				id: parseInt(req.params.id),
-				answer: {},
-				error: null
-			};
+		this.router.get('/:id', this.asyncRoute(async (data) => {
+			data.id = parseInt(data.req.params.id);
+			data.answer = {};
+			data.error = null;
 
 			// Build include from query parameter: `?include=r_asso1,r_asso2`
-			data.query = {where: {id: data.id}, transaction};
-			if (req.query.include)
-				data.query.include = model_builder.getIncludeFromFields(models, this.e_entity, req.query.include.split(','));
+			data.query = {where: {id: data.id}, transaction: data.transaction};
+			if (data.req.query.include)
+				data.query.include = model_builder.getIncludeFromFields(models, this.e_entity, data.req.query.include.split(','));
 
-			for (const field in req.query)
+			for (const field in data.req.query)
 				if (field.indexOf('fk_id_') == 0 || field.indexOf('f_') == 0 && this.attributes[field])
-					data.query.where[field] = req.query[field];
+					data.query.where[field] = data.req.query[field];
 
 			await this.getHook('findOne', 'beforeFind', data);
 
 			const result = await models[this.E_entity].findOne(data.query);
 			if (!result)
-				return res.error(_ => res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
+				return data.res.error(_ => data.res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
 			data.answer[this.entity] = result;
 
 			await this.getHook('findOne', 'afterFind', data);
 
-			res.success(_ => res.status(200).json(data.answer));
+			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	findAssociation() {
-		this.router.get('/:id/:association', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				id: req.params.id,
-				association: req.params.association,
-				answer: {},
-				error: null,
-				limit: parseInt(req.query.limit || 50),
-				offset: parseInt(req.query.offset || 0)
-			};
-			data.query = {where: {id: data.id}, transaction};
+		this.router.get('/:id/:association', this.asyncRoute(async (data) => {
+			data.id = data.req.params.id;
+			data.association = data.req.params.association;
+			data.answer = {};
+			data.error = null;
+			data.limit = parseInt(data.req.query.limit || 50);
+			data.offset = parseInt(data.req.query.offset || 0);
+			data.query = {where: {id: data.id}, transaction: data.transaction};
 
 			data.query.include = null;
 			for (let i = 0; i < this.options.length; i++) {
@@ -131,85 +115,75 @@ class ApiEntity extends ApiRoute {
 			}
 
 			if (data.query.include == null)
-				return res.error(_ => res.status(404).json({error: "No association with "+data.association}));
+				return data.res.error(_ => data.res.status(404).json({error: "No association with "+data.association}));
 
-			for (const field in req.query)
+			for (const field in data.req.query)
 				if (field.indexOf('fk_id_') === 0 || field.indexOf('f_') == 0 && this.attributes[field])
-					data.query.include.where[field] = req.query[field];
+					data.query.include.where[field] = data.req.query[field];
 
 			await this.getHook('findAssociation', 'beforeFind', data);
 
 			const result = await models[this.E_entity].findOne(data.query);
 			if (!result)
-				return res.error(_ => res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
+				return data.res.error(_ => data.res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
 			data.answer[data.association] = result[data.query.include.as];
 
 			await this.getHook('findAssociation', 'afterFind', data);
 
-			res.success(_ => res.status(200).json(data.answer));
+			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	// TODO: Use transactions to rollback on association error
 	create() {
-		this.router.post('/', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				answer: {},
-				error: null
-			};
+		this.router.post('/', this.asyncRoute(async (data) => {
+			data.answer = {};
+			data.error = null;
 
-			const [createObject, createAssociations] = model_builder.parseBody(this.attributes, this.options, req.body);
+			const [createObject, createAssociations] = model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body);
 			data.createObject = createObject;
 			data.createAssociations = createAssociations;
 
 			await this.getHook('create', 'beforeCreate', data);
 
-			const result = await models[this.E_entity].create(data.createObject, {user: req.user, transaction});
+			const result = await models[this.E_entity].create(data.createObject, {user: data.req.user, transaction: data.transaction});
 			// Find createdRow to have fields not in attributes.json included (ie: foreignKeys)
-			const createdRow = await models[this.E_entity].findOne({where: {id: result.id}, transaction});
+			const createdRow = await models[this.E_entity].findOne({where: {id: result.id}, transaction: data.transaction});
 			data.answer[this.entity] = createdRow;
 
 			await this.getHook('create', 'beforeAssociations', data);
 
 			// Set associations
-			await Promise.all(data.createAssociations.map(asso => result[asso.func](asso.value, {transaction})));
+			await Promise.all(data.createAssociations.map(asso => result[asso.func](asso.value, {transaction: data.transaction})));
 
 			await this.getHook('create', 'afterAssociations', data);
 
-			res.success(_ => res.status(200).json(data.answer));
+			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	update() {
-		this.router.put('/:id', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				id: parseInt(req.params.id),
-				answer: {},
-				error: null
-			};
+		this.router.put('/:id', this.asyncRoute(async (data) => {
+			data.id = parseInt(data.req.params.id);
+			data.answer = {};
+			data.error = null;
 
-			const [updateObject, updateAssociations] = model_builder.parseBody(this.attributes, this.options, req.body);
+			const [updateObject, updateAssociations] = model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body);
 			data.updateObject = updateObject;
 			data.updateAssociations = updateAssociations;
 
-			const result = await models[this.E_entity].findOne({where: {id: data.id}, transaction})
+			const result = await models[this.E_entity].findOne({where: {id: data.id}, transaction: data.transaction})
 			if (!result)
-				return res.error(_ => res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
+				return data.res.error(_ => data.res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
 
 			const statusPromises = [];
-			for (const prop in req.body) {
+			for (const prop in data.req.body) {
 				if (prop.indexOf('r_') != 0)
 					continue;
 				for (const option of this.options) {
 					if (option.target == 'e_status' && option.as == prop) {
 						delete data.updateObject[option.foreignKey]
-						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as, req.body[prop]));
+						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as, data.req.body[prop]));
 						break;
 					}
 				}
@@ -217,41 +191,36 @@ class ApiEntity extends ApiRoute {
 
 			await this.getHook('update', 'beforeUpdate', data);
 
-			await result.update(data.updateObject, {where: {id: data.id}}, {user: req.user, transaction});
+			await result.update(data.updateObject, {where: {id: data.id}}, {user: data.req.user, transaction: data.transaction});
 			data.answer[this.entity] = result;
 
 			await this.getHook('update', 'beforeAssociations', data);
 
 			// Set associations
 			await Promise.all([
-				...data.updateAssociations.map(asso => result[asso.func](asso.value, {transaction})),
+				...data.updateAssociations.map(asso => result[asso.func](asso.value, {transaction: data.transaction})),
 				...statusPromises
 			])
 
 			await this.getHook('update', 'afterAssociations', data);
 
-			res.success(_ => res.status(200).json(data.answer));
+			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	destroy() {
-		this.router.delete('/:id', this.asyncRoute(async (req, res, transaction) => {
-			const data = {
-				req,
-				res,
-				transaction,
-				id: req.params.id,
-				answer: {},
-				error: null
-			};
+		this.router.delete('/:id', this.asyncRoute(async (data) => {
+			data.id = data.req.params.id;
+			data.answer = {};
+			data.error = null;
 
 			this.getHook('destroy', 'beforeDestroy', data);
 
-			await models[this.E_entity].destroy({where: {id: data.id}}, {transaction})
+			await models[this.E_entity].destroy({where: {id: data.id}}, {transaction: data.transaction})
 
 			this.getHook('destroy', 'afterDestroy', data);
 
-			res.success(_ => res.status(200).end());
+			data.res.success(_ => data.res.status(200).end());
 		}));
 	}
 

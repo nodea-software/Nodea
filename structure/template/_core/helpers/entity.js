@@ -268,7 +268,7 @@ module.exports = {
 	error: function (err, req, res, redirect, entity) {
 		let isKnownError = false;
 		const toasts = [];
-		const ajax = req.query.ajax || false;
+		const ajax = req.query.ajax || req.baseUrl.indexOf('/api') === 0 || false;
 		const data = {
 			code: 500,
 			message: err.message || null
