@@ -1,10 +1,10 @@
 const attributes = require('@app/models/attributes/e_task');
 const options = require('@app/models/options/e_task');
 const models = require('@app/models');
+const file_helper = require('@core/helpers/file');
 
 const ApiEntity = require('@core/abstract_routes/api_entity');
 
-const globalConf = require('@config/global');
 const crypto = require('../utils/crypto_helper');
 
 class ApiTask extends ApiEntity {
@@ -14,7 +14,8 @@ class ApiTask extends ApiEntity {
 	}
 
 	download_program() {
-		this.router.get('/:id/downloadProgram', this.asyncRoute(async (req, res) => {
+		this.router.get('/:id/downloadProgram', this.asyncRoute(async (data) => {
+			const { req, res } = data;
 			const task = await models.E_task.findOne({
 				where: {id: req.params.id},
 				include: {
@@ -27,19 +28,18 @@ class ApiTask extends ApiEntity {
 				}
 			});
 			if (!task || !task.r_traitement || !task.r_traitement.r_program || !task.r_traitement.r_program.f_fichier_program)
-				return res.sendStatus(404);
-			const fileField = task.r_traitement.r_program.f_fichier_program;
-			const fileFolder = fileField.split('-')[0];
-			const filePath = globalConf.localstorage+'/e_program/'+fileFolder+'/'+fileField;
+				return res.error(_ => res.sendStatus(404));
 
-			res.download(filePath);
+			const filePath = file_helper.fullPath(task.r_traitement.r_program.f_fichier_program);
+
+			res.success(_ => res.download(filePath));
 		}));
 	}
 
 	decrypt() {
 		this.router.post('/decrypt', this.asyncRoute((req, res) => {
 			const text = crypto.decrypt(req.body.value);
-			res.status(200).json(text);
+			res.success(_ => res.status(200).json(text));
 		}));
 	}
 

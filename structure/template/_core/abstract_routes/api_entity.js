@@ -32,7 +32,7 @@ class ApiEntity extends ApiRoute {
 	}
 
 	find() {
-		this.router.get('/', this.asyncRoute(async (data) => {
+		this.router.get('/', ...this.middlewares.find, this.asyncRoute(async (data) => {
 			data.answer = {};
 			data.limit = parseInt(data.req.query.limit || 50);
 			data.offset = parseInt(data.req.query.offset || 0);
@@ -48,21 +48,23 @@ class ApiEntity extends ApiRoute {
 				if (field.indexOf('fk_id_') == 0 || field.indexOf('f_') == 0 && this.attributes[field])
 					data.query.where[field] = data.req.query[field];
 
-			await this.getHook('find', 'beforeFind', data);
+			if (await this.getHook('find', 'beforeFind', data) === false)
+				return;
 
 			const result = await models[this.E_entity].findAndCountAll(data.query);
 			data.answer[this.entity] = result.rows || [];
 			data.answer.totalCount = result.count;
 			data.answer.rowsCount = data.answer[this.entity].length;
 
-			await this.getHook('find', 'afterFind', data);
+			if (await this.getHook('find', 'afterFind', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	findOne() {
-		this.router.get('/:id', this.asyncRoute(async (data) => {
+		this.router.get('/:id', ...this.middlewares.findOne, this.asyncRoute(async (data) => {
 			data.id = parseInt(data.req.params.id);
 			data.answer = {};
 			data.error = null;
@@ -76,21 +78,23 @@ class ApiEntity extends ApiRoute {
 				if (field.indexOf('fk_id_') == 0 || field.indexOf('f_') == 0 && this.attributes[field])
 					data.query.where[field] = data.req.query[field];
 
-			await this.getHook('findOne', 'beforeFind', data);
+			if (await this.getHook('findOne', 'beforeFind', data) === false)
+				return;
 
 			const result = await models[this.E_entity].findOne(data.query);
 			if (!result)
 				return data.res.error(_ => data.res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
 			data.answer[this.entity] = result;
 
-			await this.getHook('findOne', 'afterFind', data);
+			if (await this.getHook('findOne', 'afterFind', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	findAssociation() {
-		this.router.get('/:id/:association', this.asyncRoute(async (data) => {
+		this.router.get('/:id/:association', ...this.middlewares.findAssociation, this.asyncRoute(async (data) => {
 			data.id = data.req.params.id;
 			data.association = data.req.params.association;
 			data.answer = {};
@@ -121,14 +125,16 @@ class ApiEntity extends ApiRoute {
 				if (field.indexOf('fk_id_') === 0 || field.indexOf('f_') == 0 && this.attributes[field])
 					data.query.include.where[field] = data.req.query[field];
 
-			await this.getHook('findAssociation', 'beforeFind', data);
+			if (await this.getHook('findAssociation', 'beforeFind', data) === false)
+				return;
 
 			const result = await models[this.E_entity].findOne(data.query);
 			if (!result)
 				return data.res.error(_ => data.res.status(404).json({error: "No "+this.entity+" with ID "+data.id}));
 			data.answer[data.association] = result[data.query.include.as];
 
-			await this.getHook('findAssociation', 'afterFind', data);
+			if (await this.getHook('findAssociation', 'afterFind', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
@@ -136,7 +142,7 @@ class ApiEntity extends ApiRoute {
 
 	// TODO: Use transactions to rollback on association error
 	create() {
-		this.router.post('/', this.asyncRoute(async (data) => {
+		this.router.post('/', ...this.middlewares.create, this.asyncRoute(async (data) => {
 			data.answer = {};
 			data.error = null;
 
@@ -144,26 +150,29 @@ class ApiEntity extends ApiRoute {
 			data.createObject = createObject;
 			data.createAssociations = createAssociations;
 
-			await this.getHook('create', 'beforeCreate', data);
+			if (await this.getHook('create', 'beforeCreate', data) === false)
+				return;
 
 			const result = await models[this.E_entity].create(data.createObject, {user: data.req.user, transaction: data.transaction});
 			// Find createdRow to have fields not in attributes.json included (ie: foreignKeys)
 			const createdRow = await models[this.E_entity].findOne({where: {id: result.id}, transaction: data.transaction});
 			data.answer[this.entity] = createdRow;
 
-			await this.getHook('create', 'beforeAssociations', data);
+			if (await this.getHook('create', 'beforeAssociations', data) === false)
+				return;
 
 			// Set associations
 			await Promise.all(data.createAssociations.map(asso => result[asso.func](asso.value, {transaction: data.transaction})));
 
-			await this.getHook('create', 'afterAssociations', data);
+			if (await this.getHook('create', 'afterAssociations', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	update() {
-		this.router.put('/:id', this.asyncRoute(async (data) => {
+		this.router.put('/:id', ...this.middlewares.update, this.asyncRoute(async (data) => {
 			data.id = parseInt(data.req.params.id);
 			data.answer = {};
 			data.error = null;
@@ -189,12 +198,14 @@ class ApiEntity extends ApiRoute {
 				}
 			}
 
-			await this.getHook('update', 'beforeUpdate', data);
+			if (await this.getHook('update', 'beforeUpdate', data) === false)
+				return;
 
 			await result.update(data.updateObject, {where: {id: data.id}}, {user: data.req.user, transaction: data.transaction});
 			data.answer[this.entity] = result;
 
-			await this.getHook('update', 'beforeAssociations', data);
+			if (await this.getHook('update', 'beforeAssociations', data) === false)
+				return;
 
 			// Set associations
 			await Promise.all([
@@ -202,23 +213,26 @@ class ApiEntity extends ApiRoute {
 				...statusPromises
 			])
 
-			await this.getHook('update', 'afterAssociations', data);
+			if (await this.getHook('update', 'afterAssociations', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
 
 	destroy() {
-		this.router.delete('/:id', this.asyncRoute(async (data) => {
+		this.router.delete('/:id', ...this.middlewares.destroy, this.asyncRoute(async (data) => {
 			data.id = data.req.params.id;
 			data.answer = {};
 			data.error = null;
 
-			this.getHook('destroy', 'beforeDestroy', data);
+			if (await this.getHook('destroy', 'beforeDestroy', data) === false)
+				return;
 
 			await models[this.E_entity].destroy({where: {id: data.id}}, {transaction: data.transaction})
 
-			this.getHook('destroy', 'afterDestroy', data);
+			if (await this.getHook('destroy', 'afterDestroy', data) === false)
+				return;
 
 			data.res.success(_ => data.res.status(200).end());
 		}));
