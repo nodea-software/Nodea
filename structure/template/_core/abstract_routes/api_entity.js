@@ -2,10 +2,11 @@ const model_builder = require('@core/helpers/model_builder');
 const status_helper = require('@core/helpers/status');
 const middlewares = require('@core/helpers/middlewares');
 const api_documentation = require('@core/helpers/api_documentation');
-const ApiRoute = require('@core/abstract_routes/api_route');
 
 const models = require('@app/models');
 const matomoTracker = require('@core/services/matomo_api_tracker');
+
+const ApiRoute = require('@core/abstract_routes/api_route');
 
 class ApiEntity extends ApiRoute {
 	constructor(e_entity, attributes, options, additionalRoutes) {
@@ -140,9 +141,9 @@ class ApiEntity extends ApiRoute {
 		}));
 	}
 
-	// TODO: Use transactions to rollback on association error
 	create() {
 		this.router.post('/', ...this.middlewares.create, this.asyncRoute(async (data) => {
+			data.transaction = await models.sequelize.transaction();
 			data.answer = {};
 			data.error = null;
 
@@ -173,6 +174,7 @@ class ApiEntity extends ApiRoute {
 
 	update() {
 		this.router.put('/:id', ...this.middlewares.update, this.asyncRoute(async (data) => {
+			data.transaction = await models.sequelize.transaction();
 			data.id = parseInt(data.req.params.id);
 			data.answer = {};
 			data.error = null;
@@ -222,6 +224,7 @@ class ApiEntity extends ApiRoute {
 
 	destroy() {
 		this.router.delete('/:id', ...this.middlewares.destroy, this.asyncRoute(async (data) => {
+			data.transaction = await models.sequelize.transaction();
 			data.id = data.req.params.id;
 			data.answer = {};
 			data.error = null;
