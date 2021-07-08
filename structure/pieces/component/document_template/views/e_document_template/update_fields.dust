@@ -18,7 +18,7 @@
                     {@eq key=f_format_pair value="{code}"}
                         <option selected="" value="{code}">{label}</option>
                     {:else}
-                        <option selected="" value="{code}">{label}</option>
+                        <option value="{code}">{label}</option>
                     {/eq}
                 {/format_pairs}
             </select>
