@@ -496,7 +496,8 @@ const DUST_FILTERS = [
 	"datetimeTZ",
 	"time",
 	"filename",
-	"urlencode"
+	"urlencode",
+	"htmlencode"
 ];
 
 exports.setupRelatedToField = async (data) => {

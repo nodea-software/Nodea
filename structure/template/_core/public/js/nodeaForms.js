@@ -300,6 +300,7 @@ var NodeaForms = (_ => {
 					];
 					if (element.hasClass("no-toolbar"))
 						toolbar = [];
+					element.text(HtmlDecode(element.text()));
 					element.summernote({
 						height: 200,
 						toolbar: toolbar,

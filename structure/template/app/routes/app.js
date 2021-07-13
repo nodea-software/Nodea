@@ -20,16 +20,10 @@ class App extends CoreApp {
 			change_language: [
 				middlewares.isLoggedIn
 			],
-			file_upload: [
-				middlewares.isLoggedIn
-			],
 			get_file: [
 				middlewares.isLoggedIn
 			],
 			download: [
-				middlewares.isLoggedIn
-			],
-			delete_file: [
 				middlewares.isLoggedIn
 			]
 		}
