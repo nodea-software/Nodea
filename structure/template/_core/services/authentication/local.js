@@ -22,12 +22,13 @@ passport.use(new LocalStrategy({
 	}).then(function(user) {
 
 		function accessForbidden(msg){
+			console.error('LOGIN ERROR => ' + msg);
 			if(!req.session.loginAttempt)
 				req.session.loginAttempt = 0;
 			req.session.loginAttempt++;
 
 			req.session.toastr = [{
-				message: msg,
+				message: "login.login_fail",
 				level: 'error'
 			}];
 
