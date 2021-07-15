@@ -1112,10 +1112,10 @@ class CoreEntity extends Route {
 			data.offset = (data.req.body.page - 1) * data.limit;
 
 			/**
-		     * Called to search entity results paginated and / or filtered. This route is used by ajax select
-		     * @function CoreEntity#search#start
-		     * @memberof CoreEntity#search
-		     * @param {object} data
+			 * Called to search entity results paginated and / or filtered. This route is used by ajax select
+			 * @function CoreEntity#search#start
+			 * @memberof CoreEntity#search
+			 * @param {object} data
 			 * @param {object} data.req - Request - See expressjs definition
 			 * @param {object} data.res - Response - See expressjs definition
 			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1144,6 +1144,19 @@ class CoreEntity extends Route {
 			// Example customwhere in select2, please respect " and ' syntax: data-customwhere='{"myField": "myValue"}'
 			// Note that customwhere feature do not work with related to many field if the field is a foreignKey !
 			this.helpers.entity.search.handleCustomWhere(data.query.where, data.req.body.customwhere);
+
+			/**
+			 * Before the Sequelize query, usefull to customize default query behaviour
+			 * @function CoreEntity#search#beforeQuery
+			 * @memberof CoreEntity#search
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.query - Query object that will be used in Sequelize query, customizable
+			 */
+			if (await this.getHook('search', 'beforeQuery', data) === false)
+				return;
 
 			// If you need to show fields in the select that are in an other associate entity, you have to include those entity here
 			// query.include = [{model: models.E_myentity, as: "r_myentity"}]

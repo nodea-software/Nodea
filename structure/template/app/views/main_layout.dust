@@ -333,6 +333,9 @@
 		{! Nodea App !}
 		<script src="/core/js/nodea.js?v={config.version}" type='text/javascript'></script>
 
+		{! Nodea Tables !}
+		<script src="/core/js/nodeaTable.js" type="text/javascript"></script>
+
 		{+custom_js /}
 	</body>
 </html>

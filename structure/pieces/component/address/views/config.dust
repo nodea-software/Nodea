@@ -94,5 +94,15 @@
 	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
-	<script src="/core/js/nodeaTable.js" type="text/javascript"></script>
+	<!-- Nodea Table initialization  -->
+	<script>
+		/* Datatable throw error instead of alert */
+		$.fn.dataTable.ext.errMode = 'throw';
+
+		$(function() {
+			$("table:not(.no-init)").each(function() {
+				NodeaTable("#"+$(this).attr('id'));
+			});
+		});
+	</script>
 {/custom_js}
