@@ -1,5 +1,5 @@
 const svgCaptcha = require('svg-captcha');
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 
 const globalConf = require('@config/global');
 const models = require('@app/models')
@@ -86,7 +86,7 @@ class CoreLogin extends Route {
 	first_connectionPOST() {
 		this.router.post('/first_connection', ...this.middlewares.first_connectionPOST, (req, res) => {
 			const login = req.body.login;
-			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/);
+			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*])(?=.{8,})/);
 
 			(async () => {
 
@@ -115,10 +115,11 @@ class CoreLogin extends Route {
 				if (user.f_password && user.f_password != '')
 					throw new Error("login.first_connection.alreadyHavePassword");
 
-				const password = bcrypt.hashSync(req.body.confirm_password, null, null);
+				const saltRounds = 10;
+				const hashedPassword = await bcrypt.hash(req.body.confirm_password, saltRounds);
 
 				await user.update({
-					f_password: password,
+					f_password: hashedPassword,
 					f_enabled: 1
 				})
 

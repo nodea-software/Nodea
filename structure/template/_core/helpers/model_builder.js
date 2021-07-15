@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 const validators = require('@core/models/validators')
 const file_helper = require('@core/helpers/file');
 
@@ -205,7 +205,7 @@ exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 		if (body[attribute] != null && !!attributes[attribute].nodeaType) {
 			// We encryt all password attributes
 			if (attributes[attribute].nodeaType === "password")
-				object[attribute] = bcrypt.hashSync(body[attribute], null, null);
+				object[attribute] = bcrypt.hashSync(body[attribute], 10); // 10 is saltRounds - See bcrypt doc
 		}
 	}
 
