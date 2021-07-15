@@ -19,7 +19,7 @@
 					</div>
 				</div>
 			</div>
-			<textarea class="form-control textarea mt-2" placeholder='{#__ key="entity.e_media_sms.f_message" /}' name="f_message" id="f_message_textareaid" type="text">{f_message|s}</textarea>
+			<textarea class="form-control textarea mt-2" placeholder='{#__ key="entity.e_media_sms.f_message" /}' name="f_message" id="f_message_textareaid" type="text">{f_message|htmlencode}</textarea>
 		</div>
 	</div>
 	<div data-field="f_phone_numbers" class="col-12">

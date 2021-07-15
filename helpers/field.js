@@ -358,7 +358,7 @@ module.exports = {
 
 				break;
 			case "regular text" :
-				value = "{" + field + "|htmlencode}";
+				value = "{" + field + "}";
 				if (file == 'show')
 					str += "	<textarea readonly='readonly' class='show-textarea regular-textarea'>" + value + "</textarea>\n";
 				else
