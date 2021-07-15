@@ -6,7 +6,7 @@ const moment = require('moment');
 
 class E_media_sms extends CoreModel {
 	constructor() {
-		super('E_media_sms', 'TABLE_NAME', attributes, relations);
+		super('E_media_sms', 'e_media_sms', attributes, relations);
 	}
 
 	setInstanceMethods(sequelizeModel) {
