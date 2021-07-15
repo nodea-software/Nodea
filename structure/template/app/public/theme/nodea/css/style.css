@@ -16,6 +16,11 @@
   --theme-grey: #929292;
 }
 
+/* Login page background */
+/* body.login-page, .register-page {
+	background: linear-gradient(90deg, var(--theme-info) 0%, var(--theme-primary) 100%);
+} */
+
 /* --- Main header --- */
 
 .main-header {

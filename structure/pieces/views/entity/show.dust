@@ -187,8 +187,15 @@
 	<script src="/core/js/nodeaTabs.js?v={config.version}" type="text/javascript"></script>
 
 	<script type='text/javascript'>
+		/* Datatable throw error instead of alert */
+		$.fn.dataTable.ext.errMode = 'throw';
+
 		$(function() {
 			NodeaForms();
+
+			$("table:not(.no-init)").each(function() {
+				NodeaTable("#"+$(this).attr('id'));
+			});
 		});
 	</script>
 {/custom_js}

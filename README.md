@@ -6,6 +6,7 @@
 
 NODEA is a computer aided software that enable to generate NodeJS applications by giving instructions to a bot.<br>
 Official website: https://nodea-software.com
+Official documentation: https://docs.nodea-software.com
 
 ## Classic Installation
 
@@ -18,12 +19,26 @@ MySQL (5.7 or higher) / MariaDB (v10 or higher) or PostgreSQL server installed a
 
 git clone: <pre>git clone git@github.com:nodea-software/nodea.git</pre>
 
+### Installation with shell
+
 Execute the following instructions:<br/>
 <pre>
 cd nodea
 chmod +x install.sh
 bash install.sh
 </pre>
+
+### Manual installation
+
+If it does not work then follow these steps:
+
+Use .sql file that are in sql/ directory to generate the database, there are 3 files for each available dialect (MariaDB, MySQL, Postgres)
+
+Note that MariaDB is the default dialect, if you want to change please update the dialect key in config/database and structure/template/config/database.js
+
+Execute <b>npm install</b>
+
+### Launch server
 
 Follow the instructions and wait for message :<br>
 <i>Nodea ready to be started -> node server.js</i>

@@ -1,7 +1,4 @@
-
 var NodeaTable = (function() {
-	// Datatable throw error instead of alert
-	$.fn.dataTable.ext.errMode = 'throw';
 
 	// =========================
 	// DataTableBuilder "HOW TO"
@@ -293,7 +290,7 @@ var NodeaTable = (function() {
 		            return value;
 		        },
 		        search: (data) => {
-		    		return defaults.filters.date(data);
+		    		return defaults.columns.date.search(data);
 		    	}
 	    	},
 	    	time: {
@@ -535,7 +532,8 @@ var NodeaTable = (function() {
 		    	binding: ({column, columnDef, entity, element, event, additionalData}) => {
 		    		try {
 						var td = $(element);
-						td.parents('tr').find('.btn-show')[0].click();
+						if(!additionalData.scrolling)
+							td.parents('tr').find('.btn-show')[0].click();
 					} catch(err) {
 						console.error("NodeaTable default binding failed - No `.btn-show` on row");
 					}
@@ -602,7 +600,7 @@ var NodeaTable = (function() {
                 titleAttr: STR_LANGUAGE.scroll_right,
                 action: (event, datatable, button, config) => {
                 	var table = button.parent().siblings('table');
-                    table.parents(".table-responsive").animate({scrollLeft: table.width()}, 800);
+                    table.parents('.dataTables_wrapper').animate({scrollLeft: table.width()}, 800);
                 }
             }
         ],
@@ -695,14 +693,18 @@ var NodeaTable = (function() {
         		targets: idx,
         		visible: false,
         		orderable: false,
-        		...defaults.columns.default,
-        		...defaults.columns[column.type],
-        		...(params.columns ? params.columns.default : {}),
-        		...(params.columns ? params.columns[column.type] : {})
         	};
             if (column.show === true) {
-            	columnDef.visible = true;
-            	columnDef.searchable = !!columnDef.search;
+            	columnDef = {
+					targets: idx,
+					visible: true,
+					orderable: false,
+					searchable: !!columnDef.search,
+					...defaults.columns.default,
+					...defaults.columns[column.type],
+					...(params.columns ? params.columns.default : {}),
+					...(params.columns ? params.columns[column.type] : {})
+				}
 
 	        	// COLUMN RENDER
                 const originalRender = columnDef.render;
@@ -787,40 +789,49 @@ var NodeaTable = (function() {
 			table.tableOptions = tableOptions;
 		    $(tableID, context).data('table', table);
 
-			// Bindings - Table cell click
-		    $(tableID+' tbody', context).on('click', 'td', function (event) {
-		    	if (table.data().length == 0)
-		    		return;
-
-		    	var columnIndex = $(this).parents('tr').find('td').index($(this));
-		    	var column = columns[columnIndex], columnDef = columnDefs[columnIndex];
-
-		    	if (columnDef.binding === false)
-		    		return true;
-
-		    	columnDef.binding({column, columnDef, entity, element: this, event, additionalData});
-		    });
-
 			var x,left = 0,down;
 			/* If we are scrolling horizontaly the datalist then don't trigger the click event */
-			var scrolling = false;
-			$(tableID + ' tbody', context).mousedown(function(e){
-				if(!e.ctrlKey){
+			additionalData.scrolling = false;
+
+			// Bindings - Table cell click
+			$(tableID + ' tbody', context).on('click', 'td', function (event) {
+				if (table.data().length == 0)
+					return;
+
+				var columnIndex = $(this).parents('tr').find('td').index($(this));
+				var column = columns[columnIndex],
+					columnDef = columnDefs[columnIndex];
+
+				if (columnDef.binding === false)
+					return true;
+
+				columnDef.binding({
+					column,
+					columnDef,
+					entity,
+					element: this,
+					event,
+					additionalData
+				});
+			});
+
+			$(tableID + ' tbody', context).mousedown(function (e) {
+				if (!e.ctrlKey) {
 					e.preventDefault();
-					down=true;
-					x=e.pageX;
-					left=$(".dataTables_wrapper", context).scrollLeft();
+					down = true;
+					x = e.pageX;
+					left = $(".dataTables_wrapper", context).scrollLeft();
 				}
 			});
-			$(tableID + ' tbody', context).mousemove(function(e){
-				if(down){
-					scrolling = true;
-					var newX=e.pageX;
-					$(".dataTables_wrapper", context).scrollLeft(left-newX+x);
+			$(tableID + ' tbody', context).mousemove(function (e) {
+				if (down) {
+					additionalData.scrolling = true;
+					var newX = e.pageX;
+					$(".dataTables_wrapper", context).scrollLeft(left - newX + x);
 				}
 			});
-			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){scrolling = false;}, 500);});
-			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
 
 		} catch(err) {
 			console.error("ERROR: NodeaTable "+tableID+" :");
@@ -833,7 +844,3 @@ var NodeaTable = (function() {
 
 	return initDataTable;
 })();
-
-$("table:not(.no-init)").each(function() {
-	NodeaTable("#"+$(this).attr('id'));
-});

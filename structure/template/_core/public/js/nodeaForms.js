@@ -932,7 +932,7 @@ var NodeaForms = (_ => {
 	function handleSubmit(form, event, overrideDefaults = {}) {
         // Prevent multiple submission (double click)
         if (form.data('submitting') === true) {
-            event.preventDefault();event.stopProppagation();
+            event.preventDefault();event.stopPropagation();
             return false;
         }
         form.data('submitting', true);

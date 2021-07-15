@@ -336,6 +336,9 @@
 			Nodea();
 		</script>
 
+		{! Nodea Tables !}
+		<script src="/core/js/nodeaTable.js" type="text/javascript"></script>
+
 		{+custom_js /}
 	</body>
 </html>
