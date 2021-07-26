@@ -453,7 +453,9 @@ var NodeaTable = (function() {
 	    	text: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 			        if(value && value.length > 75){
-		                var shortText = $.parseHTML(value.slice(0, 75))[0].data ? $.parseHTML(value.slice(0, 75))[0].data : $(value).text().slice(0, 75);
+			        	var decoded = HtmlDecode(value);
+		                var shortText = $.parseHTML(decoded.slice(0, 75))[0].data ? $.parseHTML(decoded.slice(0, 75))[0].data : $(decoded).text().slice(0, 75);
+		                shortText = HtmlEncode(shortText);
 		                return "<span style='cursor: pointer;' class='np_text_modal'>" + shortText + "...<span class='full-text' style='display: none;'>" + value + "</span></span>";
 		            }
 		            return value;
@@ -461,11 +463,10 @@ var NodeaTable = (function() {
 	        	binding: (data) => {
 		    		const fullText = $(data.element).find('.full-text');
 		    		if (fullText && fullText.length)
-	    	        	doModal('Contenu', $(data.element).find('.full-text').html());
+	    	        	doModal('Contenu', HtmlDecode($(data.element).find('.full-text').html()));
 	    	        else
 	    	        	defaults.bindings.default(data);
-	    	    },
-	        	htmlencode: false
+	    	    }
 	    	},
     		show: {
     			render: ({value, row, column, entity, additionalData}) => {

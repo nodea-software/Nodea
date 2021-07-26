@@ -1,17 +1,16 @@
 {
-	"name": "nodea_app",
-	"version": "3.0.1",
-	"description": "A Nodea generated application",
-	"repository": "https://github.com/nodea-software/nodea",
-	"README": "https://github.com/nodea-software/nodea/blob/master/README.md",
+	"name": "newmipsWorkspace",
+	"description": "A newmips generated workspace",
+	"repository": "https://github.com/newmips/newmips",
+	"README": "https://github.com/newmips/newmips/blob/master/README.md",
 	"license": "GPL-3.0",
 	"main": "server.js",
 	"scripts": {
 		"lint": "reset;eslint ./;",
-		"jsdoc": "./node_modules/.bin/jsdoc ./_core/abstract_routes --recurse -c ./jsdoc.conf.json -d docs -t ./node_modules/foodoc/template"
+		"jsdoc": "./node_modules/.bin/jsdoc ./app/routes --recurse -c ./jsdoc.conf.json -d docs -t ./node_modules/foodoc/template"
 	},
 	"dependencies": {
-		"bcrypt-nodejs": "0.0.3",
+		"bcrypt": "^5.0.1",
 		"body-parser": "^1.18.3",
 		"connect-flash": "~0.1.1",
 		"connect-pg-simple": "^6.2.1",

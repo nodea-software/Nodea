@@ -246,7 +246,7 @@ var HtmlCharMap = {
 };
 
 HtmlDecode = function(string) {
-    if (typeof string !== 'string')
+    if (typeof string !== 'string' || string === "")
         return string;
 
     for (var key in HtmlCharMap) {
@@ -260,7 +260,7 @@ HtmlDecode = function(string) {
 }
 
 HtmlEncode = function(string) {
-    if (typeof string !== 'string')
+    if (typeof string !== 'string' || string === "")
         return string;
 
     string = string.replace(/&/g, '&amp;');

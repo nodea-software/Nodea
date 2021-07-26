@@ -232,39 +232,6 @@ class CoreApp extends Route {
 			}));
 		}));
 	}
-
-	// TODO: OBSOLETE
-	// delete_file() {
-	// 	this.router.post('/delete_file', this.middlewares.delete_file, (req, res) => {
-	// 		try {
-
-	// 			const entity = req.body.entity;
-	// 			const filename = req.body.filename;
-	// 			let cleanFilename = filename.substring(16);
-
-	// 			// Remove uuid
-	// 			if(cleanFilename[32] == '_')
-	// 				cleanFilename = cleanFilename.substring(33);
-
-	// 			const folderName = filename.split("-")[0];
-	// 			const filePath = globalConfig.localstorage + entity + '/' + folderName + '/' + filename;
-
-	// 			if (!access.entityAccess(req.session.passport.user.r_group, entity.substring(2)))
-	// 				throw new Error("403 - Access forbidden");
-
-	// 			if (!fs.existsSync(filePath))
-	// 				throw new Error("404 - File not found: " + filePath);
-
-	// 			fs.unlinkSync(filePath);
-
-	// 			res.success(_ => res.status(200).send(true));
-
-	// 		} catch (err) {
-	// 			console.error(err);
-	// 			res.error(_ => res.status(500).send(err));
-	// 		}
-	// 	});
-	// }
 }
 
 module.exports = CoreApp;

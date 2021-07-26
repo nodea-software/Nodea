@@ -9,7 +9,8 @@ const mailer = require('@core/services/mailer');
 
 const globalConfig = require('@config/global');
 
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 class E_user extends Entity {
 	constructor() {
@@ -58,40 +59,31 @@ class E_user extends Entity {
 
 	settingsPOST() {
 		this.router.post('/settings', this.middlewares.settingsPOST, this.asyncRoute(async({req, res}) => {
-
-			let updateObject = {};
+			const updateObject = {};
 
 			if (req.body.f_email && req.body.f_email != '')
 				updateObject.f_email = req.body.f_email
 
 			const user = await models.E_user.findByPk(req.session.passport.user.id);
 
-			const newPassword = new Promise((resolve, reject) => {
-				if (!req.body.old_password || req.body.old_password == "")
-					return resolve(updateObject);
-
-				if(!user.f_password) {
-					updateObject.f_password = bcrypt.hashSync(req.body.new_password_1, null, null)
-					return resolve(updateObject);
-				}
-				else if (req.body.new_password_1 == "" && req.body.new_password_2 == "")
-					return reject(new Error("settings.error1"));
-				else if (req.body.new_password_1 != req.body.new_password_2)
-					return reject(new Error("settings.error2"));
-				else if (req.body.new_password_1.length < 4)
-					return reject(new Error("settings.error3"));
-
-				bcrypt.compare(req.body.old_password, user.f_password, (err, check) => {
-					if (!check)
-						return reject(new Error("settings.error4"));
-
-					updateObject.f_password = bcrypt.hashSync(req.body.new_password_1, null, null);
-					resolve(updateObject);
-				})
-			})
-
 			try {
-				updateObject = await newPassword;
+				if (req.body.old_password && req.body.old_password !== "") {
+					if(!user.f_password)
+						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
+					else {
+						if (req.body.new_password_1 == "" && req.body.new_password_2 == "")
+							new Error("settings.error1");
+						else if (req.body.new_password_1 != req.body.new_password_2)
+							new Error("settings.error2");
+						else if (req.body.new_password_1.length < 4)
+							new Error("settings.error3");
+
+						if (!await bcrypt.compare(req.body.old_password, user.f_password))
+							new Error("settings.error4");
+
+						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
+					}
+				}
 			} catch(err) {
 				if(err.message.includes('settings.')) {
 					req.session.toastr = [{
