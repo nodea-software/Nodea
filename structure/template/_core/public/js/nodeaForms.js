@@ -116,21 +116,16 @@ function ajax_select(select, placeholder) {
             delay: 250,
             contentType: "application/json",
             data: function (params) {
-                var ajaxdata = {
+				let cleanData = $(this).data();
+				// Clean useless select2 instanciation key to prevent circular recursion of the object
+				// This data is not needed for server side anyway
+				delete cleanData.select2;
+                return JSON.stringify({
                     search: params.term,
                     page: params.page || 1,
-                    searchField: searchField
-                };
-                // customwhere example: data-customwhere='{"myField": "myValue"}'
-                // Do not work for related to many fields if the field is a foreignKey !
-                if (select.data('customwhere') !== undefined) {
-                    // Handle this syntax: {'myField': 'myValue'}, JSON.stringify need "", no ''
-                    if (typeof select.data('customwhere') === "object")
-                        ajaxdata.customwhere = JSON.stringify(select.data('customwhere'));
-                    else
-                        ajaxdata.customwhere = JSON.stringify(JSON.parse(select.data('customwhere').replace(/'/g, '"')));
-                }
-                return JSON.stringify(ajaxdata);
+                    searchField: searchField,
+					attrData: cleanData
+                });
             },
             processResults: function (answer, params) {
                 var dataResults = answer.rows;

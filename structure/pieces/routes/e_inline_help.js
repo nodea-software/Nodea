@@ -142,10 +142,14 @@ class E_inline_help extends Entity {
 			},
 			set_status: {
 				// start: async (data) => {},
+				// beforeAllowedCheck: async (data) => {},
+				// beforeActionsExecution: async (data) => {},
+				// beforeSetStatus: async (data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			search: {
 				// start: async (data) => {},
+				// beforeQuery: async (data) => {}
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {

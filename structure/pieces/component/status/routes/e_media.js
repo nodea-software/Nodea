@@ -149,6 +149,11 @@ class Media extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
+				beforeQuery: async (data) => {
+					data.query.where = {
+						f_target_entity: data.req.body.attrData.statustarget
+					}
+				}
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {

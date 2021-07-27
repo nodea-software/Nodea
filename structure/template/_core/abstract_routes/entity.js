@@ -1141,10 +1141,6 @@ class CoreEntity extends Route {
 
 			data.query.where = this.helpers.entity.search.generateWhere(data.search, data.searchField);
 
-			// Example customwhere in select2, please respect " and ' syntax: data-customwhere='{"myField": "myValue"}'
-			// Note that customwhere feature do not work with related to many field if the field is a foreignKey !
-			this.helpers.entity.search.handleCustomWhere(data.query.where, data.req.body.customwhere);
-
 			/**
 			 * Before the Sequelize query, usefull to customize default query behaviour
 			 * @function CoreEntity#search#beforeQuery

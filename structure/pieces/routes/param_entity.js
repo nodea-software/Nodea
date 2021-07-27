@@ -21,10 +21,12 @@ class MODEL_NAME extends CoreParamEntity {
 			},
 			update: {
 				// start: async (data) => {},
+				// beforeUpdate: async (data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			search: {
 				// start: async (data) => {},
+				// beforeQuery: async (data) => {}
 				// beforeResponse: async (data) => {}
 			}
 		};

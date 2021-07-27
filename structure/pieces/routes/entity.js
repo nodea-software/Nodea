@@ -72,10 +72,8 @@ class MODEL_NAME extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
-				// beforeAllowedCheck: async (data) => {},
-				// beforeActionsExecution: async (data) => {},
-				// beforeSetStatus: async (data) => {},
-				// beforeRedirect: async (data) => {}
+				// beforeQuery: async (data) => {}
+				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
 				// start: async (data) => {},

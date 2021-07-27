@@ -407,34 +407,6 @@ module.exports = {
 			where[models.$or] = $or;
 			return where;
 		},
-		handleCustomWhere: (where, customwhere) => {
-			// Possibility to add custom where in select2 ajax instanciation
-			if (typeof customwhere !== "undefined") {
-				// If customwhere from select HTML attribute, we need to parse to object
-				if (typeof customwhere === "string")
-					customwhere = JSON.parse(customwhere);
-				for (const param in customwhere) {
-					// If the custom where is on a foreign key
-					if (param.indexOf("fk_") != -1) {
-						for (const option in this.options) {
-							// We only add where condition on key that are standard hasMany relation, not belongsToMany association
-							if ((this.options[option].foreignKey == param || this.options[option].otherKey == param) && this.options[option].relation != "belongsToMany") {
-								// Where on include managment if fk
-								if (param.indexOf(".") != -1) {
-									where["$" + param + "$"] = customwhere[param];
-								} else {
-									where[param] = customwhere[param];
-								}
-							}
-						}
-					} else if (param.indexOf(".") != -1) {
-						where["$" + param + "$"] = customwhere[param];
-					} else {
-						where[param] = customwhere[param];
-					}
-				}
-			}
-		},
 		formatValue: (attributes, results, lang, entity) => {
 			// Format value like date / datetime / etc...
 			for (const field in attributes) {

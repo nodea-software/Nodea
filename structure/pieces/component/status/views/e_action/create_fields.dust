@@ -2,7 +2,7 @@
 	<div data-field="f_media" class="col-12">
 		<div class="form-group">
 			<label for="r_media" class="required">{#__ key="entity.e_action.r_media" /}</label>
-			<select class="ajax form-control" required="" data-customwhere='{"f_target_entity": "{status_target}"}' name="r_media" data-source="media" data-using="f_name,f_type">
+			<select class="ajax form-control" required="" data-statustarget="{status_target}" name="r_media" data-source="media" data-using="f_name,f_type">
 				<option value="">{#__ key="select.default" /}</option>
 				{#r_media}
 					<option value="{id}" selected="">{f_name} - </option>
