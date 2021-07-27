@@ -14,7 +14,7 @@
 
 	<div id="error-box"></div>
 
-	<form action="/login" method="post">
+	<form action="/login?r={redirect}" method="post">
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
 			<div class="input-group-append">

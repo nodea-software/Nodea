@@ -2,20 +2,20 @@
     <div data-field="f_name" class="col-12">
         <div class="form-group">
             <label for="f_name" class="required"> {#__ key="entity.e_document_template.f_name"/} </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_document_template.f_name" /}' name="f_name" value="" type="text" required="">
+            <input class="form-control input" placeholder='{#__ key="entity.e_document_template.f_name" /}' name="f_name" value="" type="text" required>
         </div>
     </div>
     <div data-field="f_format_pair" class="col-12">
         <div class="form-group">
-            <label for="f_format_pair">
+            <label for="f_format_pair" class="required">
                 {#__ key="entity.e_document_template.f_format_pair"/}&nbsp;
                 {@inline_help field="f_format_pair"}
-                <i data-field="f_format_pair" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                    <i data-field="f_format_pair" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <select class="form-control" name="f_format_pair" width="100%">
+            <select class="form-control" name="f_format_pair" width="100%" required>
                 {#format_pairs}
-                <option value="{code}">{label}</option>
+                    <option value="{code}">{label}</option>
                 {/format_pairs}
             </select>
         </div>
@@ -31,13 +31,13 @@
             <div class="nodea-dropzone"><i class="fas fa-download"></i>&nbsp;&nbsp;
                 {#__ key="message.insert_file" /}
             </div>
-            <input type="file" name="f_file" value="" style="display: none;">
+            <input type="file" name="f_file" value="" style="display: none;" required>
         </div>
     </div>
     <div data-field="f_entity" class="col-12">
         <div class="form-group">
             <label for="f_entity" class="required"> {#__ key="entity.e_document_template.f_entity"/} </label>
-            <select data-url="/document_template/entity_list" name="f_entity" data-source="document_template" data-using="f_entity" style="width: 100%" class="form-control ajax" id="document_template_select_entity">
+            <select data-url="/document_template/entity_list" name="f_entity" data-source="document_template" data-using="f_entity" style="width: 100%" class="form-control ajax" id="document_template_select_entity" required>
             </select>
         </div>
     </div>
@@ -46,7 +46,7 @@
             <label for="f_group">
                 {#__ key="entity.e_document_template.r_group" /}
                 {@inline_help field="r_group"}
-                <i data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                    <i data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
                 {/inline_help}
             </label>
             <select multiple="multiple" class="ajax form-control" name="r_group" data-source="group" data-using="f_label" width="100%">
@@ -58,7 +58,7 @@
             <label for="f_role">
                 {#__ key="entity.e_document_template.r_role" /}
                 {@inline_help field="r_role"}
-                <i data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                    <i data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
                 {/inline_help}
             </label>
             <select multiple="multiple" class="ajax form-control" name="r_role" data-source="role" data-using="f_label" width="100%">
