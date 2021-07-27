@@ -140,15 +140,17 @@ class CoreParamEntity extends CoreEntity {
 				file.func = async file => {
 					// New file
 					if (file.buffer) {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 					// Replaced or removed file
 					if (file.previousPath) {
-						await this.helpers.file.remove(file.previousPath);
 						if (file.isPicture)
-							await this.helpers.file.remove('thumbnail/'+file.previousPath);
+							await this.helpers.file.removePicture(file.previousPath);
+						else
+							await this.helpers.file.remove(file.previousPath);
 					}
 				}
 			}

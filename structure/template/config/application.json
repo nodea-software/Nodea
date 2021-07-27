@@ -43,5 +43,17 @@
 			"e_media_sms",
 			"e_user"
 		]
+	},
+	"resizePicture": {
+		"enabled": false,
+		"width": 400,
+		"height": 400,
+		"quality": 100
+	},
+	"thumbnail": {
+		"folder": "thumbnail/",
+		"width": 30,
+		"height": 30,
+		"quality": 60
 	}
 }

@@ -590,9 +590,10 @@ class CoreEntity extends Route {
 			for (const file of data.files)
 				if (!file.func && file.buffer)
 					file.func = async file => {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 			// Add associations
 			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
@@ -765,15 +766,17 @@ class CoreEntity extends Route {
 				file.func = async file => {
 					// New file
 					if (file.buffer) {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 					// Replaced or removed file
 					if (file.previousPath) {
-						await this.helpers.file.remove(file.previousPath);
 						if (file.isPicture)
-							await this.helpers.file.remove('thumbnail/'+file.previousPath);
+							await this.helpers.file.removePicture(file.previousPath);
+						else
+							await this.helpers.file.remove(file.previousPath);
 					}
 				}
 			}
