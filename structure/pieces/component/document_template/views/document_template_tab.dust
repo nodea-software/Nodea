@@ -6,7 +6,7 @@
 			<label for="f_model_document" class="required">
 				{#__ key="entity.e_document_template.label_entity"/}
 			</label>
-			<select id="component_document_template" class="ajax form-control" name="id_document" data-source="document_template" data-using="f_name" required style="width: 100%;">
+			<select id="component_document_template" class="ajax form-control" name="id_document" data-source="document_template" data-using="f_name" data-entity="ENTITY" required style="width: 100%;">
 				<option value="">{#__ key="select.default" /}</option>
 			</select>
 		</div>

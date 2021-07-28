@@ -1001,7 +1001,6 @@ exports.createComponentDocumentTemplate = async (data) => {
 		</a>\n\
 	</li>';
 	let newTabContent = fs.readFileSync(piecesPath + 'views/document_template_tab.dust', 'utf8');
-	newTabContent = newTabContent.replace(/ENTITY_DOC/g, data.entity.name.substring(2).charAt(0).toUpperCase() + data.entity.name.substring(2).slice(1));
 	newTabContent = newTabContent.replace(/ENTITY/g, data.entity.name);
 	await addTab(data.entity.name, workspacePath + '/app/views' + '/' + data.entity.name + '/show_fields.dust', newLi, newTabContent);
 

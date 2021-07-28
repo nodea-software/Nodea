@@ -81,20 +81,44 @@ class DocumentTemplate extends CoreDocumentTemplate {
 				}
 			},
 			update: {
+				// start: async (data) => {},
+				// beforeUpdate: async (data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			loadtab: {
-				// tabData: async(data) => {}
+				// start: async (data) => {},
+				// beforeValidityCheck: (data) => {},
+				// afterValidityCheck: (data) => {},
+				// beforeDataQuery: (data) => {},
+				// beforeRender: (data) => {},
 			},
 			set_status: {
-				// beforeStatusChange: async(data) => {},
-				// afterStatusChange: async(data) => {}
+				// start: async (data) => {},
+				// beforeAllowedCheck: async (data) => {},
+				// beforeActionsExecution: async (data) => {},
+				// beforeSetStatus: async (data) => {},
+				// beforeRedirect: async(data) => {}
 			},
-			search: {},
-			fieldset_remove: {},
-			fieldset_add: {},
+			search: {
+				// start: async (data) => {},
+				beforeQuery: async (data) => {
+					data.query.where = {
+						f_entity: data.req.body.attrData.entity
+					}
+				}
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_remove: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_add: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
 			destroy: {
-				// beforeEntityRequest: async(data) => {},
+				// start: async (data) => {},
+				// beforeEntityQuery: async(data) => {},
 				// beforeDestroy: async(data) => {},
 				// beforeRedirect: async(data) => {},
 			}
