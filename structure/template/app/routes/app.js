@@ -8,7 +8,12 @@ class App extends CoreApp {
 	}
 
 	get hooks() {
-		return {}
+		return {
+			widgets: {
+				// start: async (data) => {},
+				// beforeSend: async (data) => {}
+			}
+		}
 	}
 
 	get middlewares() {

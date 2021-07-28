@@ -2,6 +2,7 @@
     "plugins": [],
     "recurseDepth": 10,
     "source": {
+        "exclude": ["./app/public", "./_core/public", "./_core/library"],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": ""
     },

@@ -8,6 +8,10 @@ const Route = require('@core/abstract_routes/route');
 
 class CoreApp extends Route {
 
+	/**
+	 * @constructor
+	 * @param {array} [additionalRoutes] - Additional routes implemented in CoreEntity child class.
+	 */
 	constructor(additionalRoutes = []) {
 		const registeredRoutes = [
 			'status',
@@ -26,8 +30,24 @@ class CoreApp extends Route {
 		});
 	}
 
+	/**
+	 * POST - Route that handle ajax call from application widgets
+	 * @namespace CoreApp#widgets
+	 */
 	widgets() {
 		this.router.post('/widgets', ...this.middlewares.widgets, this.asyncRoute(async(data) => {
+			/**
+			 * Called at route start
+			 * @function CoreApp#widgets#start
+			 * @memberof CoreApp#widgets
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 */
+			if (await this.getHook('widgets', 'start', data) === false)
+				return;
+
 			const user = data.req.session.passport.user;
 			const widgetsInfo = data.req.body.widgets;
 			const widgetsPromises = [];
@@ -171,6 +191,19 @@ class CoreApp extends Route {
 			}
 
 			await Promise.all(widgetsPromises);
+
+			/**
+			 * Called before route end
+			 * @function CoreApp#widgets#beforeSend
+			 * @memberof CoreApp#widgets
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 */
+			if (await this.getHook('widgets', 'beforeSend', data) === false)
+				return;
+
 			data.res.success(_ => data.res.json({
 				...data,
 				transaction: undefined,

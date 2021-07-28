@@ -7,7 +7,8 @@
 	"main": "server.js",
 	"scripts": {
 		"lint": "reset;eslint ./;",
-		"jsdoc": "./node_modules/.bin/jsdoc ./app/routes --recurse -c ./jsdoc.conf.json -d docs -t ./node_modules/foodoc/template"
+		"jsdoc_core": "./node_modules/.bin/jsdoc ./_core --recurse -c ./jsdoc.conf.json -d docs_core -t ./node_modules/foodoc/template",
+		"jsdoc_app": "./node_modules/.bin/jsdoc ./app --recurse -c ./jsdoc.conf.json -d docs_app -t ./node_modules/foodoc/template"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.1",

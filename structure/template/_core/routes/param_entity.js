@@ -92,15 +92,6 @@ class CoreParamEntity extends CoreEntity {
 			// Get association data that needed to be load directly here (to do so set loadOnStart param to true in options).
 			await this.helpers.entity.getLoadOnStartData(data.req.query.ajax ? data[this.e_entity].dataValues : data, this.options);
 
-			/**
-		     * Before rendering the update form
-		     *
-		     * @event Entity#update_form#beforeRender
-		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.e_entity - Contain key and translation for enums and radios
-		     */
 			if (await this.getHook('update_form', 'beforeRender', data) === false)
 				return;
 
