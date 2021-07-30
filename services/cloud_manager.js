@@ -1,57 +1,67 @@
-const request = require('request-promise');
+const fetch = require('node-fetch');
 const json2yaml = require('json2yaml');
 const fs = require('fs-extra');
 const math = require('math');
+const moment = require('moment');
 
 const globalConf = require('../config/global.js');
-const portainerConfig = require('../config/portainer.js');
-const gitlabConfig = require('../config/code_platform.js');
+const portainerCloudConfig = require('../config/cloud_portainer.js');
+const gitlab = require('./code_platform');
 const gitHelper = require("../utils/git_helper");
 let token = "";
 
-// Portainer do not like camelCase and - , _ cf https://github.com/portainer/portainer/issues/2020
-function clearStackname(stackName){
-	return stackName.replace(/[-_.]/g, "").toLowerCase();
+async function request(url, options) {
+	const response = await fetch(url, options);
+	let result;
+	if (response.status < 200 || response.status >= 300) {
+		try {
+			result = await response.json();
+			result = result.message ? result.message : response.statusText;
+		} catch (err) {
+			result = response;
+		}
+		throw result;
+	}
+
+	try {
+		result = await response.json();
+	} catch (err) {
+		result = response;
+	}
+	return result;
 }
 
-// Getting authentication token from portainer with login and pwd
 async function authenticate() {
-	const options = {
-		uri: portainerConfig.url + "/auth",
+	console.log("CALL => Authentication");
+
+	const callResults = await request(portainerCloudConfig.url + "/auth", {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: {
-			Username: portainerConfig.login,
-			Password: portainerConfig.password
-		},
-		json: true // Automatically stringifies the body to JSON
-	};
-
-	console.log("CALL => Authentication");
-	const callResults = await request(options);
+		body: JSON.stringify({
+			Username: portainerCloudConfig.login,
+			Password: portainerCloudConfig.password
+		})
+	});
 
 	// Return full token
-	return "Bearer "+ callResults.jwt;
+	return "Bearer " + callResults.jwt;
 }
 
 async function getStack(stackName) {
-	const options = {
-		uri: portainerConfig.url + "/stacks",
+
+	console.log("CALL => Stack list");
+	let callResults = await request(portainerCloudConfig.url + "/stacks", {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': token
-		},
-		json: true // Automatically stringifies the body to JSON
-	};
-
-	console.log("CALL => Stack list");
-	let callResults = await request(options);
+		}
+	});
 
 	// Looking for stack with given stackName
-	callResults = callResults.filter(x => x.Name == stackName)
+	callResults = callResults.filter(x => x.Name == stackName);
 
 	if(callResults.length == 0)
 		return false;
@@ -60,88 +70,165 @@ async function getStack(stackName) {
 	return callResults[0];
 }
 
-async function updateStack(currentStack, cloudUrl) {
+async function updateStack(currentStack) {
 
-	console.log("updateStack");
-
-	let options = {
-		uri: portainerConfig.url + "/endpoints/1/docker/containers/json",
+	const allContainers = await request(portainerCloudConfig.url + "/endpoints/1/docker/containers/json", {
 		method: "GET",
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			'Authorization': token
-		},
-		json: true
-	};
-
-	console.log("CALL => Docker container list");
-	const allContainers = await request(options);
+		}
+	});
 
 	// Looking for our container ID
 	let ourContainerID = null;
 	for (let i = 0; i < allContainers.length; i++) {
-		for(const item in allContainers[i].Labels){
-			// Matching on traefik labels for cloud application DNS
-			if(item.indexOf("traefik.frontend.rule") != -1 && allContainers[i].Labels[item].indexOf(cloudUrl) != -1){
-				ourContainerID = allContainers[i].Id;
-				break;
-			}
+		if(allContainers[i].Labels['nodea.stackname'] && allContainers[i].Labels['nodea.stackname'] == currentStack.Name) {
+			ourContainerID = allContainers[i].Id;
+			break;
 		}
 	}
 
 	if(!ourContainerID)
 		throw new Error("Cannot find the container to update.");
 
-	console.log("Current container ID: "+ourContainerID);
-
-	options = {
-		uri: portainerConfig.url + "/endpoints/1/docker/containers/"+ourContainerID+"/restart",
+	console.log("CALL => Docker container restart");
+	await request(portainerCloudConfig.url + "/endpoints/1/docker/containers/" + ourContainerID + "/restart", {
 		method: "POST",
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			'Authorization': token
-		},
-		json: true
-	};
-
-	console.log("CALL => Docker container restart");
-	await request(options);
+		}
+	});
 
 	// Return generated stack
 	return currentStack;
 }
 
-async function generateStack(stackName, gitlabUrl, repoName, cloudDbConf, cloudUrl) {
+// Ask portainer for current network, and analyse network availability on nodea_network_*
+async function getLastNodeaNetwork() {
+	let allNetworks = await request(portainerCloudConfig.url + "/endpoints/1/docker/networks", {
+		method: "GET",
+		headers: {
+			'Content-Type': 'multipart/form-data',
+			'Authorization': token
+		},
+		json: true
+	});
 
-	const dbImage = cloudDbConf.dialect == 'postgres' ? 'dockside/newmips-postgres:latest' : 'dockside/newmips-mysql:latest';
+	allNetworks = allNetworks.filter(x => x.Name.includes('nodea_network'));
 
-	// CLOUD APP COMPOSE CONTENT
+	let network_number = 0, network;
+	for (let i = 0; i < allNetworks.length; i++) {
+		const number = parseInt(allNetworks[i].Name.split('nodea_network_')[1]);
+		if(number > network_number) {
+			network_number = number;
+			network = allNetworks[i].Name;
+		}
+	}
+
+	return network;
+}
+
+async function generateStack(data) {
+
+	if(!data.code_platform.user)
+		data.code_platform.user = await gitlab.getUser(data.currentUser);
+
+	// 1 - Generate temporary personnal access token to clone repository on cloud env
+	const today = moment().format('YYYY-MM-DD');
+	// Expire tomorrow
+	const expireAt = moment().add(1, 'd').format('YYYY-MM-DD');
+	const tokenName = 'deploy_token_' + today;
+	const accessToken = await gitlab.generateAccessToken(data.code_platform.user, tokenName, ['read_repository', 'write_repository'], expireAt);
+
+	// 2 - Get project repository name
+	const appNameWithoutPrefix = data.application.name.substring(2);
+	let repoName = globalConf.host + '-' + appNameWithoutPrefix;
+	repoName = repoName.replace(/[.]/g, '-');
+
+	// Get repository name using app remote (more precise)
+	const remotes = await gitHelper.gitRemotes(data);
+	if(remotes.length > 0 && remotes[0].refs && remotes[0].refs.fetch){
+		// Getting actuel .git fetch remote
+		const remote = remotes[0].refs.fetch;
+		repoName = remote.split('/').pop();
+	}
+
+	// 3- Getting repository remote url
+	const gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + data.code_platform.user.username + '/' + repoName + '.git';
+
+	// 4 - Generate final deployed app cloud URL
+	const cloudUrl = data.stackName + "." + globalConf.dns_cloud;
+
+	// 5 - Setup cloud database conf
+	const cloudDbConf = {
+		dbName: "np_" + data.application.name,
+		dbUser: "np_" + data.application.name,
+		dbPwd: "np_" + data.application.name,
+		dbRootPwd: "nodea",
+		dialect: data.appDialect
+	};
+
+	// 6 - Specify database container image depeding of current app dialect
+	let dbImage;
+	switch(cloudDbConf.dialect) {
+		case 'mysql':
+			dbImage = 'nodeasoftware/nodea-database-mysql';
+			break;
+		case 'mariadb':
+			dbImage = 'nodeasoftware/nodea-database-mariadb';
+			break;
+		case 'postgres':
+			dbImage = 'nodeasoftware/nodea-database-postgres';
+			break;
+		default:
+			dbImage = 'nodeasoftware/nodea-database-mariadb';
+			break;
+	}
+
+	// 7 - Getting last nodea_network_* available
+	const chosenNetwork = await getLastNodeaNetwork();
+
+	// console.log(`DEPLOY RECAP:\nCLONE URL -> ${gitlabUrl}\nCLOUD URL -> ${cloudUrl}\nDB_IMAGE -> ${dbImage}\nSTACK_NAME -> ${data.stackName}\nNETWORK -> ${chosenNetwork}`);
+
+	// 8 - Create docker-compose.yml file
 	const composeContent = json2yaml.stringify({
-		"version": "2",
+		"version": "3.3",
 		"services": {
-			"container": {
-				"image": "dockside/container:latest",
+			"application": {
+				"container_name": data.stackName + '_app',
+				"image": "nodeasoftware/application:latest",
 				"links": [
 					"database:database"
 				],
 				"environment": {
-					"GITURL": gitlabUrl,
-					"APPNAME": repoName,
+					"GIT_URL": gitlabUrl,
+					"APP_NAME": repoName,
+					"BRANCH": data.branch,
 					"NODEA_ENV": 'cloud'
 				},
 				"networks": [
-					"proxy"
+					chosenNetwork
 				],
 				"volumes": [
-					stackName+"_app:/app"
+					"app:/app"
 				],
 				"labels": [
 					"traefik.enable=true",
-					"traefik.frontend.rule=Host:"+cloudUrl,
-					"traefik.port=1337"
+					"traefik.docker.network=proxy",
+					"traefik.http.routers." + data.stackName + ".rule=Host(`" + cloudUrl + "`)",
+					"traefik.http.routers." + data.stackName + ".entrypoints=websecure",
+					"traefik.http.services." + data.stackName + ".loadbalancer.server.port=1337",
+					"traefik.http.routers." + data.stackName + ".service=" + data.stackName + "",
+					"traefik.http.routers." + data.stackName + ".tls=true",
+					"traefik.http.routers." + data.stackName + ".tls.options=intermediate@file",
+					"traefik.http.routers." + data.stackName + ".middlewares=secure-headers@file",
+					"nodea.stackname=" + data.stackName
 				]
 			},
 			"database": {
+				"container_name": data.stackName + '_db',
 				"image": dbImage,
 				"environment": {
 					"MYSQL_DATABASE": cloudDbConf.dbName,
@@ -155,84 +242,79 @@ async function generateStack(stackName, gitlabUrl, repoName, cloudDbConf, cloudU
 					"POSTGRES_ROOT_PASSWORD": cloudDbConf.dbRootPwd
 				},
 				"networks": [
-					"proxy"
+					chosenNetwork
 				],
 				"volumes": [
-					stackName + "_db_data:/var/lib/mysql",
-					stackName + "_db_log:/var/log/mysql"
+					"db_data:/var/lib/mysql",
+					"db_log:/var/log/mysql"
 				]
 			}
 		},
 		"networks": {
-			"proxy": {
+			[chosenNetwork]: {
 				"external": {
-					"name": "proxy"
+					"name": chosenNetwork
 				}
 			}
+		},
+		"volumes": {
+			'app': {},
+			'db_data': {},
+			'db_log': {},
 		}
 	});
 
-	const options = {
-		uri: portainerConfig.url + "/stacks",
+	console.log("CALL => Stack generation");
+	const callResults = await request(portainerCloudConfig.url + "/stacks?type=2&method=string&endpointId=1", {
+		method: 'POST',
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			'Authorization': token
 		},
-		qs: {
-			type: 2, // Compose stack (1 is for swarm stack)
-			method: "string", // Could be file or repository
-			endpointId: 1
-		},
-		body: {
-			"Name": stackName,
+		body: JSON.stringify({
+			"Name": data.stackName,
 			"StackFileContent": composeContent
-		},
-		json: true // Automatically stringifies the body to JSON
-	};
-
-	console.log("CALL => Stack generation");
-	const callResults = await request.post(options);
+		})
+	});
 
 	// Return generated stack
 	return callResults;
 }
 
-async function portainerDeploy(repoName, subdomain, appName, gitlabUrl, appDialect){
+async function portainerDeploy(data){
+	const appNameWithoutPrefix = data.application.name.substring(2);
 	// Preparing all needed values
-	let stackName = globalConf.sub_domain + "-" + appName.substring(2) + "-" + globalConf.dns_cloud.replace(".", "-");
-	const cloudUrl = globalConf.sub_domain + "-" + appName.substring(2) + "." + globalConf.dns_cloud;
+	data.stackName = globalConf.sub_domain + "-" + appNameWithoutPrefix;
+	// Portainer do not like camelCase and - , _ cf https://github.com/portainer/portainer/issues/2020
+	// data.stackName = data.stackName.replace(/[-_.]/g, "").toLowerCase();
 
-	// Cloud db conf
-	const cloudDbConf = {
-		dbName: "np_" + appName,
-		dbUser: "np_" + appName,
-		dbPwd: "np_" + appName,
-		dbRootPwd: "p@ssw0rd",
-		dialect: appDialect
-	};
+	if(data.branch != 'master') {
+		const branch = await gitHelper.gitBranch(data);
+		console.log(branch);
+		if(!branch.all.find(x => x == data.branch || x.includes('/' + data.branch)))
+			throw new Error('Specified branch "' + data.branch + '" do not exist on repository.');
 
-	// Portainer fix #2020
-	stackName = clearStackname(stackName);
+		data.stackName = data.stackName + '-' + data.branch.replace(/[_./]/g, "-");
+	}
 
 	// Authenticate in portainer API
 	token = await authenticate();
 
 	// Trying to get if exist the current stack in cloud portainer
-	let currentStack = await getStack(stackName);
-
-	// Generate new cloud stack
+	let currentStack = await getStack(data.stackName);
 	if(!currentStack){
-		console.log("NO STACK FOUND => GENERATING IT...")
-		currentStack = await generateStack(stackName, gitlabUrl, repoName, cloudDbConf, cloudUrl);
+		// Generate new cloud stack
+		console.log("NO STACK FOUND => GENERATING IT...");
+		currentStack = await generateStack(data);
 	} else {
-		console.log("STACK ALREADY EXIST => UPDATING IT...")
 		// Updating a stack
-		currentStack = await updateStack(currentStack, cloudUrl);
+		console.log("STACK ALREADY EXIST => UPDATING IT...")
+		currentStack = await updateStack(currentStack);
 	}
 
 	console.log("DEPLOY DONE");
 	return {
-		url: "/waiting?redirect=https://" + globalConf.sub_domain + "-" + appName.substring(2) + "." + globalConf.dns_cloud
+		url: "/waiting?redirect=https://" + data.stackName + "." + globalConf.dns_cloud
 	};
 }
 
@@ -240,58 +322,47 @@ exports.deploy = async (data) => {
 
 	console.log("STARTING DEPLOY");
 
-	const appName = data.application.name;
-
 	// If local/develop environnement, then just give the generated application url
-	if (globalConf.env != 'studio') {
-		const port = math.add(9000, data.appID);
-		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-		return {
-			message: "botresponse.applicationavailable",
-			messageParams: [url, url]
-		};
-	}
+	// if (globalConf.env != 'studio') {
+	// 	const port = math.add(9000, data.appID);
+	// 	const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+	// 	return {
+	// 		message: "botresponse.applicationavailable",
+	// 		messageParams: [url, url]
+	// 	};
+	// }
 
-	// Get and increment application's version
-	const applicationPath = __dirname + '/../workspace/' + appName;
-	const applicationConf = JSON.parse(fs.readFileSync(applicationPath +'/config/application.json'));
-	applicationConf.version++;
-	fs.writeFileSync(applicationPath +'/config/application.json', JSON.stringify(applicationConf, null, 4), 'utf8');
+	const appName = data.application.name;
+	const workspacePath = __dirname + '/../workspace/' + appName;
+
+	// Get and increment application's deploy count
+	const applicationConf = JSON.parse(fs.readFileSync(workspacePath + '/config/application.json'));
+	applicationConf.build++;
+	fs.writeFileSync(workspacePath +'/config/application.json', JSON.stringify(applicationConf, null, 4), 'utf8');
+
+	// public/version.txt generation
+	const deployVersion = applicationConf.version + "b" + applicationConf.build;
+	const versionTxtContent = moment().format('YYYY-MM-DD HH:mm') + " - " + deployVersion;
+	fs.writeFileSync(workspacePath + '/app/public/version.txt', versionTxtContent, 'utf8');
 
 	// Workspace database dialect
-	const appDialect = require(applicationPath +'/config/database').dialect; // eslint-disable-line
+	data.appDialect = require(workspacePath + '/config/database').dialect; // eslint-disable-line
 
 	// Create toSyncProd.lock file
-	if (fs.existsSync(applicationPath + '/models/toSyncProd.lock.json'))
-		fs.unlinkSync(applicationPath + '/models/toSyncProd.lock.json');
-	fs.copySync(applicationPath + '/models/toSyncProd.json', applicationPath + '/models/toSyncProd.lock.json');
+	if (fs.existsSync(workspacePath + '/app/models/toSyncProd.lock.json'))
+		fs.unlinkSync(workspacePath + '/app/models/toSyncProd.lock.json');
+	fs.copySync(workspacePath + '/app/models/toSyncProd.json', workspacePath + '/app/models/toSyncProd.lock.json');
 
 	// Clear toSyncProd (not locked) file
-	fs.writeFileSync(applicationPath + '/models/toSyncProd.json', JSON.stringify({queries: []}, null, 4), 'utf8');
-
-	// Create deploy.txt file to trigger cloud deploy actions
-	fs.writeFileSync(applicationPath + '/deploy.txt', applicationConf.version, 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, 4), 'utf8');
 
 	// Push on git before deploy
 	await gitHelper.gitCommit(data);
-	await gitHelper.gitTag(data, applicationConf.version);
+	await gitHelper.gitPull(data);
+	await gitHelper.gitTag(data, deployVersion);
 	await gitHelper.gitPush(data);
 
-	const appNameWithoutPrefix = data.application.name.substring(2);
-	const nameRepo = globalConf.host + '-' + appNameWithoutPrefix;
-	const subdomain = globalConf.sub_domain + '-' + appNameWithoutPrefix + '-' + globalConf.dns_cloud.replace('.', '-');
-
-	const remotes = await gitHelper.gitRemotes(data);
-
-	// Gitlab url handling
-	let gitlabUrl = "";
-	if(remotes.length > 0 && remotes[0].refs && remotes[0].refs.fetch)
-		gitlabUrl = remotes[0].refs.fetch; // Getting actuel .git fetch remote
-	else
-		gitlabUrl = gitlabConfig.sshUrl + ":" + data.gitlabUser.username + "/" + nameRepo + ".git"; // Generating manually the remote, can generate clone error if the connected user is note the owning user of the gitlab repo
-
-	console.log('Cloning in cloud: ' + gitlabUrl);
-	const {url} = await portainerDeploy(nameRepo, subdomain, data.application.name, gitlabUrl, appDialect);
+	const {url} = await portainerDeploy(data);
 	return {
 		message: "botresponse.deployment",
 		messageParams: [url, url]

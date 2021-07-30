@@ -1,74 +1,137 @@
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<title>{#__ key="app.name" /}</title>
-		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-		<!-- Bootstrap 3.0.2-->
-		<link href="/css/Bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css" />
-		<!-- Font Awesome-->
-		<link href="/css/Fonts/font-awesome.min.css" rel="stylesheet" type="text/css" />
-		<!-- Admin LTE Skin-->
-		<link href="/css/AdminLteV2/skins/skin-blue-light.min.css" rel="stylesheet" type="text/css" data-type="skin" data-skin="blue-light" />
-		<!-- Toastr-->
-		<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
-		<!-- Bootstrap Datepicker-->
-		<link href="/css/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
-		<!-- Bootstrap Timepicker-->
-		<link href="/css/timepicker/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
-		<!-- Bootstrap DateTimepicker-->
-		<link href="/css/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
-		<!-- select2-->
-		<link href="/css/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
-		<!-- Dropzone-->
-		<link href="/css/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
-		<!-- Newmips-->
-		<link href="/css/newmips.css" rel="stylesheet" type="text/css" />
-		<link href="/css/animate.min.css" rel="stylesheet" type="text/css" />
-		<link href="/css/waiting_room.css" rel="stylesheet" type="text/css" />
-		<script src="/js/Newmips/navigation.js" type="text/javascript"></script>
-	</head>
-	<body id="top">
-		<header>
-			<div class="header-sunrise">
-				<div class="header-content">
-					<div class="logo"><a href="/"><img alt="Newmips Logo" src="/img/LOGO-BLANC-01-ROGNER.png" /></a></div>
-					<div class="header-center"><br />
-						<div class="col-xs-12 logo-center"><img class="img-responsive animated pulse infinite" id="pulse-newmips" alt="Newmips Logo" src="/img/LOGO-PNG-01.png" style="width:350px;" /></div>
-						<div class="col-xs-12 first-title text-center">
-							<h1>{#__ key="deploy.deploying" /}</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{#__ key="app.name"/}</title>
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+	{! Animated CSS !}
+	<link href="/css/animate.min.css" rel="stylesheet" type="text/css">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.min.css">
+	<!-- Nodea style -->
+	<link rel="stylesheet" href="/css/Nodea/nodea.css">
+
+	{! Favicon !}
+	<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/img/favicons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/img/favicons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/img/favicons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/img/favicons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/img/favicons/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+	<style>
+		body {
+			color: #FFF;
+		}
+
+		.logo-center {
+			margin-top: 300px;
+			margin-bottom: 50px;
+		}
+
+		#pulse-newmips {
+			display: block;
+			margin: auto;
+			width: 150px;
+		}
+
+		#down-arrow {
+			display: block;
+			margin: auto;
+			margin-top: 200px;
+			width: 100px;
+		}
+
+		#nodea-mascot {
+			display: block;
+			margin: auto;
+			margin-top: 0px;
+			margin-bottom: 50px;
+			width: 100px;
+		}
+
+		#goto {
+			margin-top: 50px;
+			border-radius: 15px;
+			padding: 15px;
+			padding-left: 25px;
+			padding-right: 25px;
+		}
+
+		#down-arrow-scroll-to {
+			padding-top: 200px;
+			display: none;
+			height: 850px;
+		}
+	</style>
+</head>
+<body class="hold-transition login-page">
+	<div class="header-content">
+		<div class="header-center">
+			<div class="col-12 logo-center">
+				<img class="animate__animated animate__pulse animate__infinite" id="pulse-newmips" alt="Nodea Logo" src="/img/logo/transparent_white.png"/>
+			</div>
+			<div class="col-12 first-title text-center">
+				<h1>{#__ key="deploy_content.deploying" /}</h1>
+			</div>
+			<div class="col-12 second-title text-center">
+				<h2>{#__ key="deploy_content.please_wait" /}</h2>
+			</div>
+			<div class="col-12">
+				<a id="scroll-to-trigger" style="display:none;" href="#down-arrow-scroll-to">
+					<img class="animate__animated animate__slideInDown animate__infinite" id="down-arrow" alt="Flèche vers le bas" src="/img/down_arrow.png" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="body-content">
+		<section id="down-arrow-scroll-to">
+			<div class="container">
+				<div class="row">
+					<div class="col-12 text-center">
+						<div>
+							<img class="animate__animated animate__bounce animate__delay-2s" id="nodea-mascot" alt="Nodea mascot" src="/img/mascot/body.png" />
+							<h1>{#__ key="deploy_content.ready" /}</h1>
+							<a class="btn btn-default" id="goto" href="{redirect}/first_connection" target="_blank">
+								<b><i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;{#__ key="deploy_content.goto" /}</b>
+							</a>
 						</div>
-						<div class="col-xs-12 second-title text-center">
-							<h2>{#__ key="deploy.please_wait" /}</h2>
-						</div><br />
-						<div class="col-xs-12"><a id="scroll-to-trigger" style="display:none;" href="#down-arrow-scroll-to"><img class="animated pulse infinite" id="down-arrow" alt="Flèche vers le bas" src="/img/ICONE-FLECHE-BAS-01.png" /></a></div>
 					</div>
 				</div>
 			</div>
-		</header>
-		<div id="body-content">
-			<section id="down-arrow-scroll-to" style="padding-top:250px;display:none;height:850px;">
-				<div class="container">
-					<div class="row">
-						<div class="col-xs-12 text-center">
-							<div>
-								<h1>{#__ key="deploy.ready" /}</h1><br /><a class="btn-fill sign-up-btn hover" id="goto" href="{redirect}/first_connection" target="_blank" style="padding: 15px;width: 30%;">{#__ key="deploy.goto" /}</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-		</div>
-	</body>
-	<script src="/js/jQuery/jquery.min.js"></script>
+		</section>
+	</div>
+
+	<!-- jQuery -->
+	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="/AdminLTE/dist/js/adminlte.min.js"></script>
+	<script type="text/javascript">
+	</script>
 	<script>
 		var redirect = "{redirect}";
 		var checkLeaving = true;
-		var messageStayOnPage = '#{#__ key="deploy.stayonpage" /}';
+		var messageStayOnPage = '#{#__ key="deploy_content.stayonpage" /}';
 		function checkDeployStatus() {
 			$.ajax({
 				url: '/waiting',
 				method: 'post',
-				data: {redirect: redirect},
+				data: {
+					redirect: redirect},
 				success: function(data) {
 					setTimeout(function() {
 						$("#pulse-newmips").removeClass("infinite");
@@ -83,10 +146,11 @@
 				error: function(par1, par2, par3) {
 					setTimeout(function() {
 						checkDeployStatus();
-					}, 500);
+					}, 1000);
 				}
 			});
 		}
+
 		$(document).ready(function() {
 			$('a[href*=\\#]:not([href=\\#])').click(function() {
 				if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname){
@@ -95,7 +159,7 @@
 					if (target.length) {
 						$('html,body').animate({
 							scrollTop: target.offset().top
-						}, 2000);
+						}, 3000);
 						return false;
 					}
 				}

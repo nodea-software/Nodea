@@ -46,7 +46,7 @@ async function initializeGit(repoInfo, user) {
 		await gitProcesses[repoInfo.origin][user.id].simpleGit.add('.');
 		const commitSummary = await gitProcesses[repoInfo.origin][user.id].simpleGit.commit("First commit - Workspace initialization");
 		console.log(commitSummary);
-		// await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.url);
+		await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.url);
 		gitProcesses[repoInfo.origin][user.id].simpleGit.push(['-u', repoInfo.origin, 'master']);
 	} catch(err) {
 		gitProcesses[repoInfo.origin].isProcessing = false;
@@ -317,6 +317,36 @@ module.exports = {
 			const remotes = await gitProcesses[repoInfo.origin][data.currentUser.id].simpleGit.getRemotes(true);
 			gitProcesses[repoInfo.origin].isProcessing = false;
 			return remotes;
+		} catch(err) {
+			gitProcesses[repoInfo.origin].isProcessing = false;
+			throw err;
+		}
+	},
+	gitBranch: async (data) => {
+
+		if(!checkRequirements(data))
+			return;
+
+		const appName = data.application.name
+		const repoInfo = await getRepoInfo(appName);
+
+		// Workspace path
+		const workspacePath = __dirname + '/../workspace/' + appName;
+		initRepoGitProcess(repoInfo, data, workspacePath);
+
+		if (gitProcesses[repoInfo.origin].isProcessing)
+			throw new Error('structure.global.error.alreadyInProcessGit');
+
+		console.log("GIT => BRANCH " + repoInfo.origin);
+
+		// Set gitProcesses to prevent any other git command during this process
+		gitProcesses[repoInfo.origin].isProcessing = true;
+		try {
+			await gitProcesses[repoInfo.origin][data.currentUser.id].simpleGit.fetch('-a');
+			await gitProcesses[repoInfo.origin][data.currentUser.id].simpleGit.pull();
+			const branch = await gitProcesses[repoInfo.origin][data.currentUser.id].simpleGit.branch(['-a']);
+			gitProcesses[repoInfo.origin].isProcessing = false;
+			return branch;
 		} catch(err) {
 			gitProcesses[repoInfo.origin].isProcessing = false;
 			throw err;

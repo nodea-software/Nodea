@@ -141,12 +141,12 @@
 	"test": {
 		"subtitle": "Test and validate applications"
 	},
-	"deploy": {
+	"deploy_content": {
 		"subtitle": "Deploy and administrate",
 		"deploying": "Deploying...",
 		"please_wait": "We're deploying your application, this can take a few minutes, please wait...",
-		"ready": "Your application is ready",
-		"goto": "Go to your application",
+		"ready": "Your application is ready !",
+		"goto": "Let's go !",
 		"stayonpage": "You should stay on this page during your application's deployment."
 	},
 	"configure": {
@@ -517,7 +517,7 @@
 	"botresponse": {
 		"help" : "You need help. Please subscribe to our <a href='https://www.youtube.com/channel/UCOF9iI9Wwe8iucSd7ayHlMQ' target=_blank>YouTube channel</a> or have a look to the online documentation here <a href='https://docs.nodea-software.com/' target='_blank'>https://docs.nodea-software.com/</a>",
 		"applicationavailable": "The application is available here : <br> <a href='%s' target='_blank'>%s</a>",
-		"deployment": "We are currently deploying your application...<br> As it may take a while, please wait and then click on the following link :<br> <a href='%s' target='_blank'>%s</a>"
+		"deployment": "We are currently deploying your application...<br> As it may take a while, I invite you to click on the following link :<br> <a href='%s' target='_blank'>%s</a>"
 	},
 	"users":{
 		"connected_as": "Connected as",

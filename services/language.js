@@ -2,6 +2,9 @@ const languages = [];
 
 function fetchText(key, params, lang) {
 
+	if(!key || typeof key === 'undefined')
+		return "Sorry, I can't handle the message.";
+
 	if(typeof lang === "undefined")
 		lang = "fr-FR";
 
@@ -12,7 +15,7 @@ function fetchText(key, params, lang) {
 			return key.toString();
 		} catch(err) {
 			console.error(err)
-			return "Sorry, I can't handle the error message.";
+			return "Sorry, I can't handle the message.";
 		}
 	}
 

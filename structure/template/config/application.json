@@ -1,6 +1,7 @@
 {
 	"appname": "nodea_workspace",
 	"version": "1.0.0",
+	"build": 0,
 	"maintenance": false,
 	"api_enabled": true,
 	"lang": "fr-FR",
