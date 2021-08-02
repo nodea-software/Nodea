@@ -344,3 +344,23 @@ exports.createTag = async(projectID, data) => {
 		body: JSON.stringify(data)
 	});
 }
+
+exports.generateAccessToken = async(gitlabUser, name, rights, expireAt) => {
+	console.log('CALL => generateAccessToken');
+
+	const accessToken = await request(gitlabURL + `/users/${gitlabUser.id}/personal_access_tokens`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Private-Token': token
+		},
+		body: JSON.stringify({
+			user_id: gitlabUser.id,
+			name: name,
+			scopes: rights,
+			expires_at: expireAt
+		})
+	});
+
+	return accessToken.name + ':' + accessToken.token;
+}

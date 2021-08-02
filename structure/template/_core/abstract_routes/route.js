@@ -1,13 +1,13 @@
 const express = require('express');
 const entity_helper = require('@core/helpers/entity');
 
-async function success(data) {
+async function routeSuccess(data) {
 	const haveTransaction = data.transaction !== undefined;
 	if (data.files && data.files.length) {
 		const filePromises = [];
 		for (const file of data.files)
 			filePromises.push(file.func(file));
-		// TODO: Delete succesfuly created files and call `res.error()`
+		// TODO: Delete succesfuly created files and call `res.error()` upon file creation error
 		await Promise.all(filePromises);
 	}
 
@@ -15,7 +15,7 @@ async function success(data) {
 		await data.transaction.commit();
 }
 
-async function error(data) {
+async function routeError(data) {
 	const haveTransaction = data.transaction !== undefined;
 	if (haveTransaction && !data.transaction.finished)
 		await data.transaction.rollback();
@@ -53,13 +53,13 @@ class Route {
 				res,
 				transaction: undefined,
 				files: []
-			}
+			};
 			let properRouteEnd = false;
 
 			res.success = async successClbk => {
 				properRouteEnd = true;
 				try {
-					await success(data);
+					await routeSuccess(data);
 					await successClbk();
 				} catch(err) {
 					res.error(_ => entity_helper.error(err, req, res, req.referer, "e_" + req.originalUrl.split("/")[1]));
@@ -68,7 +68,7 @@ class Route {
 			res.error = async errorClbk => {
 				properRouteEnd = true;
 				try {
-					await error(data);
+					await routeError(data);
 					await errorClbk();
 				} catch(err) {
 					entity_helper.error(err, data.req, data.res, data.req.referer, "e_" + data.req.originalUrl.split("/")[1])

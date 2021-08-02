@@ -2,7 +2,6 @@ const ApiRoute = require('@core/abstract_routes/api_route');
 const models = require('@app/models');
 
 const hat = require('hat');
-const fs = require('fs-extra');
 
 class CoreApiRoot extends ApiRoute {
 	constructor(additionalRoutes) {
@@ -14,8 +13,9 @@ class CoreApiRoot extends ApiRoute {
 	}
 
 	getToken() {
-		this.router.get('/getToken', this.asyncRoute(async (req, res) => {
-			const {authorization} = req.headers;
+		this.router.get('/getToken', this.asyncRoute(async (data) => {
+			const { req, res } = data;
+			const { authorization } = req.headers;
 			// No authorization header
 			if (!authorization)
 				return res.status(500).json({error: 'No authorization header'});
@@ -26,7 +26,7 @@ class CoreApiRoot extends ApiRoute {
 				return res.status(500).json({error: 'Bad authorization header'});
 
 			const sheme = parts[0];
-			const credentials = new Buffer(parts[1], 'base64').toString().split(':');
+			const credentials = new Buffer.from(parts[1], 'base64').toString().split(':');
 			// Bad authorization header
 			if (!/Basic/i.test(sheme))
 				return res.status(500).json({error: 'Bad authorization header'});
@@ -50,7 +50,7 @@ class CoreApiRoot extends ApiRoute {
 			const token = hat();
 			// timeout is one day (86400000)
 			const token_timeout_tmsp = new Date().getTime() + 86400000;
-			await credentialsObj.update({f_token_timeout_tmsp: token_timeout_tmsp, f_token: token}, {user: req.user});
+			await credentialsObj.update({f_token_timeout_tmsp: token_timeout_tmsp, f_token: token}, {user: false});
 			// Send back new token
 			res.status(200).json({token: credentialsObj.f_token});
 		}));

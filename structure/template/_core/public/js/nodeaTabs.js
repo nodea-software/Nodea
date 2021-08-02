@@ -47,7 +47,8 @@ $(function() {
             var subentityAlias = tab.prop('id');
 
             // Build url.
-            var url = '/' + sourceName + '/loadtab/' + sourceId + '/' + subentityAlias + '?ajax=true&' + buildAssociationHref(tab);
+            var url = tab.data('url') || `/${sourceName}/loadtab/${sourceId}/${subentityAlias}?ajax=true&${buildAssociationHref(tab)}`;
+            currentTab.url = url;
 
             // Loading icon until ajax callback
             tab.find('.ajax-content').html('<div style="width:100%;text-align:center;"><i class="fa fa-circle-o-notch fa-spin fa-3x" style="color:#ABABAB;margin-top: 100px;margin-bottom: 100px;"></i></div>');
@@ -123,7 +124,7 @@ $(function() {
             }, 500);
         });
 
-        $(document).on('click', 'a.ajax', function(event) {
+        $(document).on('click', '.tab-pane a.ajax', function(event) {
             loadOverlay($(this).data('href') || $(this).attr('href'), event);
         });
 

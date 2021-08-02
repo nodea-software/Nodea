@@ -25,7 +25,7 @@ const express = require('express');
 const app = express();
 
 const globalConf = require('@config/global');
-const block_access = require('@core/helpers/access');
+const access = require('@core/helpers/access');
 const language = require('@core/helpers/language');
 
 // Set up public files access (js/css...)
@@ -58,7 +58,7 @@ const dustFn = require("@core/utils/dust"); // eslint-disable-line
 // Insert locals function in dustData
 dust.insertLocalsFn = (locals, request) => {
 	dustFn.helpers(dust);
-	dustFn.locals(locals, request, language(request.session.lang_user), block_access);
+	dustFn.locals(locals, request, language(request.session.lang_user), access);
 	dustFn.filters(dust, request.session.lang_user);
 }
 
@@ -132,7 +132,7 @@ require('@core/server/database').then(_ => {
 	}
 
 	// Handle and prepare access.json file for various situation
-	block_access.accessFileManagment();
+	access.accessFileManagment();
 
 	// Start server on port
 	server.listen(globalConf.port);

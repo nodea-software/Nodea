@@ -3,7 +3,7 @@ const Entity = require('@core/abstract_routes/entity');
 const options = require('@app/models/options/e_media_mail');
 const attributes = require('@app/models/attributes/e_media_mail');
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 const status = helpers.status;
 
 const models = require('@app/models')
@@ -15,7 +15,7 @@ class MediaMail extends Entity {
 	}
 
 	entity_tree() {
-		this.router.get('/entityTree', block_access.isLoggedIn, this.asyncRoute(async (req, res) => {
+		this.router.get('/entityTree', middlewares.isLoggedIn, this.asyncRoute(async (req, res) => {
 			res.json(status.entityFieldTree('e_media_mail'));
 		}));
 	}
@@ -135,47 +135,47 @@ class MediaMail extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			update_form: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				block_access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			loadtab: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				block_access.actionAccessMiddleware(this.entity, "read"),
-				block_access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				block_access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				block_access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				block_access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

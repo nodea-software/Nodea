@@ -1,9 +1,10 @@
 const models = require('@app/models');
+const ormHelper = require('@core/helpers').orm;
 
 module.exports = (async() => {
 	await models.sequelize.sync({logging: false, hooks: false});
 
-	await models.sequelize.customAfterSync();
+	await ormHelper.customAfterSync();
 
 	const users = await models.E_user.findAll();
 

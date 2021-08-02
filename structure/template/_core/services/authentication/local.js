@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 const models = require('@app/models');
 
 // Default authentication strategy : passport.authenticate('local')
@@ -22,12 +22,13 @@ passport.use(new LocalStrategy({
 	}).then(function(user) {
 
 		function accessForbidden(msg){
+			console.error('LOGIN ERROR => ' + msg);
 			if(!req.session.loginAttempt)
 				req.session.loginAttempt = 0;
 			req.session.loginAttempt++;
 
 			req.session.toastr = [{
-				message: msg,
+				message: "login.login_fail",
 				level: 'error'
 			}];
 
@@ -68,12 +69,6 @@ passport.serializeUser(function(user_id, done) {
 passport.deserializeUser(function(user_id, done) {
 	done(null, user_id);
 });
-
-// exports.isLoggedIn = passport.authenticate('local', (err, user, info) => {
-// 	console.log(err);
-// 	console.log(user);
-// 	console.log(info);
-// });
 
 exports.isLoggedIn = passport.authenticate('local', {
 	failureRedirect: '/login',

@@ -3,7 +3,7 @@ const dust = require('dustjs-linkedin');
 
 const Route = require('@core/abstract_routes/route');
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const access = helpers.access;
 const language = helpers.language;
 
 // Entity that shall be ignored to build group/role menu
@@ -48,7 +48,7 @@ class CoreAccessSettings extends Route {
 
 	show_group() {
 		this.router.get('/show_group', ...this.middlewares.show_group, this.asyncRoute( async (data) => {
-			const values = await block_access.getPreviewData()
+			const values = await access.getGroupRoleList()
 			data.allGroups = values.groups;
 
 			if (await this.getHook('show_group', 'start', data) === false)
@@ -95,7 +95,7 @@ class CoreAccessSettings extends Route {
 
 	show_role() {
 		this.router.get('/show_role', ...this.middlewares.show_role, this.asyncRoute(async (data) => {
-			const values = await block_access.getPreviewData();
+			const values = await access.getGroupRoleList();
 			data.allRoles = values.roles;
 
 			if (await this.getHook('show_role', 'start', data) === false)
@@ -161,7 +161,7 @@ class CoreAccessSettings extends Route {
 	}
 
 	set_group_access() {
-		this.router.post('/set_group_access', this.middlewares.set_group_access, this.asyncRoute(async (data) => {
+		this.router.post('/set_group_access', ...this.middlewares.set_group_access, this.asyncRoute(async (data) => {
 			data.form = data.req.body;
 			data.newModuleAccess = {};
 			data.newEntityAccess = {};
@@ -185,7 +185,7 @@ class CoreAccessSettings extends Route {
 				}
 			}
 
-			block_access.setGroupAccess(data.newModuleAccess, data.newEntityAccess);
+			access.setGroupAccess(data.newModuleAccess, data.newEntityAccess);
 
 			if (await this.getHook('set_group_access', 'beforeRedirect', data) === false)
 				return;
@@ -195,7 +195,7 @@ class CoreAccessSettings extends Route {
 	}
 
 	set_role_access() {
-		this.router.post('/set_role_access', this.middlewares.set_role_access, this.asyncRoute(async (data) => {
+		this.router.post('/set_role_access', ...this.middlewares.set_role_access, this.asyncRoute(async (data) => {
 			data.form = data.req.body;
 			data.newActionRoles = {};
 
@@ -215,7 +215,7 @@ class CoreAccessSettings extends Route {
 					data.newActionRoles[parts[0]][parts[2]].push(parts[1]);
 			}
 
-			block_access.setRoleAccess(data.newActionRoles);
+			access.setRoleAccess(data.newActionRoles);
 
 			if (await this.getHook('set_group_access', 'beforeRedirect', data) === false)
 				return;

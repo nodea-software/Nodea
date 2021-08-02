@@ -1,5 +1,5 @@
 const CoreLogin = require('@core/routes/login.js');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 const auth = require('@app/services/authentication');
 
 class Login extends CoreLogin {
@@ -15,26 +15,26 @@ class Login extends CoreLogin {
 	get middlewares() {
 		return {
 			loginGET: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			loginPOST: [
 				auth.isLoggedIn
 			],
 			refresh_login_captcha: [],
 			first_connectionGET: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			first_connectionPOST: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			reset_passwordGET: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			reset_passwordPOST: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			reset_password_token: [
-				block_access.loginAccess
+				middlewares.loginAccess
 			],
 			logout: []
 		}

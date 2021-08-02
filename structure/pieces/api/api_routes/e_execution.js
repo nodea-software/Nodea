@@ -4,11 +4,8 @@ const models = require('@app/models');
 
 const ApiEntity = require('@core/abstract_routes/api_entity');
 
-const globalConf = require('@config/global');
-const multer = require('multer');
-const upload = multer().single('file');
-const moment = require('moment');
-const fs = require('fs-extra');
+const middlewares = require('@core/helpers/middlewares');
+const file_helper = require('@core/helpers/file');
 
 class ApiExecution extends ApiEntity {
 	constructor() {
@@ -17,47 +14,29 @@ class ApiExecution extends ApiEntity {
 	}
 
 	log_file() {
-		this.router.get('/:id/logFile', this.asyncRoute(async (req, res) => {
-			await new Promise((resolve, reject) => {
-				upload(req, res, error => {
-					if (error) {
-						console.error(error);
-						return reject(error);
-					}
-					if (!req.file) {
-						console.error("No file found in request");
-						return reject("No file found in request");
-					}
-					resolve();
-				});
-			});
-
+		this.router.get('/:id/logFile', middlewares.fileInfo(['file']), this.asyncRoute(async (data) => {
+			const { req, res } = data;
 			const execution = await models.E_execution.findOne({where: {id: req.params.id}});
 			if (!execution) {
 				console.error("Execution not found");
-				return res.status(500).end("Execution not found");
+				return res.error(_ => res.status(404).end("Execution not found"));
 			}
-			const folderName = moment().format('YYYYMMDD');
-			const fileName = `${folderName}-${moment().format('hhmmss')}_${req.file.originalname}`;
-			const basePath = `${globalConf.localstorage}/e_execution/${folderName}/`;
-			fs.mkdirSync(basePath, {recursive: true});
-			const outStream = fs.createWriteStream(basePath+fileName);
-			await new Promise((resolve, reject) => {
-				outStream.write(req.file.buffer);
-				outStream.end();
-				outStream.on('finish', err => {
-					if (err) {
-						console.error("Couldn't create task's error file");
-						return reject(err);
-					}
-					resolve();
-				})
+
+			const file = req.files['file'] && req.files['file'][0];
+			if (!file)
+				throw new Error("No file found in request");
+
+			const [filePath, filename] = file_helper.createPathAndName(this.e_entity, file.originalname);
+			const finalPath = filePath + filename;
+			data.files.push({
+				...file,
+				finalPath
 			});
 			await execution.update({
-				f_logs: fileName,
+				f_logs: filename,
 			}, {user: req.user})
-			console.log("Execution's error file created");
-			res.end();
+
+			res.success(_ => res.end());
 		}));
 	}
 

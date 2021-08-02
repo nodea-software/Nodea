@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const block_access = require('@core/helpers/access');
+const access = require('@core/helpers/access');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio.js');
 const models = require('@app/models');
@@ -8,6 +8,10 @@ const Route = require('@core/abstract_routes/route');
 
 class CoreApp extends Route {
 
+	/**
+	 * @constructor
+	 * @param {array} [additionalRoutes] - Additional routes implemented in CoreEntity child class.
+	 */
 	constructor(additionalRoutes = []) {
 		const registeredRoutes = [
 			'status',
@@ -26,8 +30,24 @@ class CoreApp extends Route {
 		});
 	}
 
+	/**
+	 * POST - Route that handle ajax call from application widgets
+	 * @namespace CoreApp#widgets
+	 */
 	widgets() {
-		this.router.post('/widgets', this.middlewares.widgets, this.asyncRoute(async(data) => {
+		this.router.post('/widgets', ...this.middlewares.widgets, this.asyncRoute(async(data) => {
+			/**
+			 * Called at route start
+			 * @function CoreApp#widgets#start
+			 * @memberof CoreApp#widgets
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 */
+			if (await this.getHook('widgets', 'start', data) === false)
+				return;
+
 			const user = data.req.session.passport.user;
 			const widgetsInfo = data.req.body.widgets;
 			const widgetsPromises = [];
@@ -37,7 +57,7 @@ class CoreApp extends Route {
 				const modelName = 'E_' + currentWidget.entity.substring(2);
 
 				// Check group and role access to widget's entity
-				if (!block_access.entityAccess(user.r_group, currentWidget.entity.substring(2)) || !block_access.actionAccess(user.r_role, currentWidget.entity.substring(2), 'read'))
+				if (!access.entityAccess(user.r_group, currentWidget.entity.substring(2)) || !access.actionAccess(user.r_role, currentWidget.entity.substring(2), 'read'))
 					continue;
 
 				widgetsPromises.push(((widget, model) => new Promise(resolve => {
@@ -171,6 +191,19 @@ class CoreApp extends Route {
 			}
 
 			await Promise.all(widgetsPromises);
+
+			/**
+			 * Called before route end
+			 * @function CoreApp#widgets#beforeSend
+			 * @memberof CoreApp#widgets
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 */
+			if (await this.getHook('widgets', 'beforeSend', data) === false)
+				return;
+
 			data.res.success(_ => data.res.json({
 				...data,
 				transaction: undefined,
@@ -181,7 +214,7 @@ class CoreApp extends Route {
 	}
 
 	change_language() {
-		this.router.post('/change_language', this.middlewares.change_language, (req, res) => {
+		this.router.post('/change_language', ...this.middlewares.change_language, (req, res) => {
 			req.session.lang_user = req.body.lang;
 			res.locals.lang_user = req.body.lang;
 			res.json({
@@ -191,12 +224,12 @@ class CoreApp extends Route {
 	}
 
 	get_file() {
-		this.router.get('/get_file', this.middlewares.get_file, this.asyncRoute(async (data) => {
+		this.router.get('/get_file', ...this.middlewares.get_file, this.asyncRoute(async (data) => {
 			const entity = data.req.query.entity;
 			const id = data.req.query.id;
 			const field = data.req.query.field;
 
-			if (!block_access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
+			if (!access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
 				return data.res.error(_ => data.res.status(403).end());
 
 			const row = await models[entity.capitalizeFirstLetter()].findOne({where: {id}});
@@ -212,12 +245,12 @@ class CoreApp extends Route {
 	}
 
 	download() {
-		this.router.get('/download', this.middlewares.download, this.asyncRoute(async (data) => {
+		this.router.get('/download', ...this.middlewares.download, this.asyncRoute(async (data) => {
 			const entity = data.req.query.entity;
 			const id = data.req.query.id;
 			const field = data.req.query.field;
 
-			if (!block_access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
+			if (!access.entityAccess(data.req.session.passport.user.r_group, entity.substring(2)))
 				return data.res.error(_ => data.res.status(403).end());
 
 			const row = await models[entity.capitalizeFirstLetter()].findOne({where: {id}});
@@ -232,39 +265,6 @@ class CoreApp extends Route {
 			}));
 		}));
 	}
-
-	// TODO: OBSOLETE
-	// delete_file() {
-	// 	this.router.post('/delete_file', this.middlewares.delete_file, (req, res) => {
-	// 		try {
-
-	// 			const entity = req.body.entity;
-	// 			const filename = req.body.filename;
-	// 			let cleanFilename = filename.substring(16);
-
-	// 			// Remove uuid
-	// 			if(cleanFilename[32] == '_')
-	// 				cleanFilename = cleanFilename.substring(33);
-
-	// 			const folderName = filename.split("-")[0];
-	// 			const filePath = globalConfig.localstorage + entity + '/' + folderName + '/' + filename;
-
-	// 			if (!block_access.entityAccess(req.session.passport.user.r_group, entity.substring(2)))
-	// 				throw new Error("403 - Access forbidden");
-
-	// 			if (!fs.existsSync(filePath))
-	// 				throw new Error("404 - File not found: " + filePath);
-
-	// 			fs.unlinkSync(filePath);
-
-	// 			res.success(_ => res.status(200).send(true));
-
-	// 		} catch (err) {
-	// 			console.error(err);
-	// 			res.error(_ => res.status(500).send(err));
-	// 		}
-	// 	});
-	// }
 }
 
 module.exports = CoreApp;

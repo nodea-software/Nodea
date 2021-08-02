@@ -1,5 +1,5 @@
 FROM node:fermium
-MAINTAINER Nodea contact@nodea-software.com
+LABEL maintainer.name="Nodea" maintainer.email="contact@nodea-software.com"
 
 # Clean node_modules && workspace for image creation
 RUN rm -rf node_modules/

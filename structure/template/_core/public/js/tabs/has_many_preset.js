@@ -2,16 +2,16 @@ $(function() {
 	const tab = NodeaTabs.current.tab;
 	const tableId = tab.find('table').attr('id');
 	const fieldsetSelect = tab.find('select.fieldset-select');
-
 	NodeaForms.elements.ajax_select.initializer(fieldsetSelect);
+
     NodeaTable('#' + tableId, {
+    	hide: ['update'],
     	columns: {
     		update: {
 				render: ({value, row, column, entity, additionalData}) => {
 					return '';
 				},
-    			hidden: true,
-    			searchable: false,
+    			search: false,
     			orderable: false
     		},
     		delete: {
@@ -26,7 +26,7 @@ $(function() {
 					</form>`;
 					return form;
 				},
-    			searchable: false,
+    			search: false,
     			orderable: false
 			}
 		}

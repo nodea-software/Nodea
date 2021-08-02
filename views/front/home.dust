@@ -62,7 +62,7 @@
 							<div class="card card-widget widget-user wip-card powertip" powertip-content='{#__ key="powertip.home.5" /}' powertip-order='5'>
 								<div class="widget-user-header">
 									<h3 class="widget-user-username">{#__ key="menu.deploy" /}</h3>
-									<h6 class="widget-user-desc">{#__ key="deploy.subtitle" /}</h6>
+									<h6 class="widget-user-desc">{#__ key="deploy_content.subtitle" /}</h6>
 								</div>
 								<div class="widget-user-image">
 									<img class="animate__animated" src="/img/picto/cloud.png" alt="Cloud picto">
