@@ -1,7 +1,7 @@
 const globalConf = require('@config/global');
 const appConf = require('@config/application');
 const language = require('@core/helpers/language');
-const block_access = require('@core/helpers/access');
+const access = require('@core/helpers/access');
 
 module.exports = (dust, dustFn) => (req, res, next) => {
 
@@ -33,7 +33,7 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 
 	// Helpers / Locals / Filters
 	dustFn.helpers(dust);
-	dustFn.locals(res.locals, req, language(req.session.lang_user), block_access);
+	dustFn.locals(res.locals, req, language(req.session.lang_user), access);
 	dustFn.filters(dust, req.session.lang_user);
 
 	next();

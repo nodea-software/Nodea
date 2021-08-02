@@ -1,6 +1,6 @@
 const Route = require('@core/abstract_routes/route');
 const models = require('@app/models');
-const access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 
 class CoreNotification extends Route {
 	constructor(additionalRoutes) {
@@ -11,7 +11,7 @@ class CoreNotification extends Route {
 		]
 		super([...routes, ...additionalRoutes]);
 
-		this.defaultMiddlewares = [access.isLoggedIn];
+		this.defaultMiddlewares = [middlewares.isLoggedIn];
 	}
 
 	load() {

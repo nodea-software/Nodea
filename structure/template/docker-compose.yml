@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  application:
+    container_name: nodea_standalone_app
+    image: nodeasoftware/application:latest
+    links:
+      - "database:database"
+    networks:
+      - nodea_network
+    volumes:
+      - app:/app
+    environment:
+        GIT_URL: "https://[TOKEN_NAME]:[TOKEN]@[REPO_URL]"
+        BRANCH: "master"
+        APP_NAME: ""
+        NODEA_ENV: "cloud"
+  database:
+    container_name: nodea_standalone_db
+    image: nodeasoftware/nodea-database-mariadb:latest # nodea-database-mysql || nodea-database-mariadb || nodea-database-postgres
+    networks:
+      - nodea_network
+    volumes:
+      - db_data:/var/lib/mysql
+      - db_log:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: ""
+      MYSQL_USER: ""
+      MYSQL_PASSWORD: ""
+      PG_DATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_DB: "",
+      POSTGRES_USER: "",
+      POSTGRES_PASSWORD: "",
+      POSTGRES_ROOT_PASSWORD: ""
+
+networks:
+  nodea_network:
+
+volumes:
+  db_data:
+  db_log:
+  app:

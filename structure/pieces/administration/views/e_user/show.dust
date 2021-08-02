@@ -144,20 +144,25 @@
     <script src="/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
     <script src="/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
     <script src="/AdminLTE/plugins/jszip/jszip.min.js"></script>
-    <script src="/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
     <script src="/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
     <script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
     {! Nodea encapsulations !}
-    <script src="/core/js/nodeaTable.js?v={config.version}" type="text/javascript"></script>
     <script src="/core/js/nodeaTabs.js?v={config.version}" type="text/javascript"></script>
 
     <script type='text/javascript'>
         var RESEND_MAIL_SUCCESS = '{#__ key="administration.user.resend_email_success" /}';
+
+        /* Datatable throw error instead of alert */
+        $.fn.dataTable.ext.errMode = 'throw';
+
         $(function() {
             NodeaForms();
+        
+            $("table:not(.no-init)").each(function() {
+                NodeaTable("#"+$(this).attr('id'));
+            });
 
             $(document).on('click', '#resend_first_connection', function() {
                 $(this).replaceWith('<button disabled class="btn btn-info"><i class="fas fa-check"></i></button>');

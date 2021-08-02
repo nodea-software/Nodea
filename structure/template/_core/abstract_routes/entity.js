@@ -78,9 +78,16 @@ class CoreEntity extends Route {
 		this.options = options;
 		this.helpers = helpers;
 
+		this.fileFields = [];
+		for (const fieldName in this.attributes) {
+			const field = this.attributes[fieldName];
+			if (['file', 'picture'].includes(field.nodeaType))
+				this.fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
+		}
+
 		this.defaultMiddlewares.push(
-			helpers.access.isLoggedIn,
-			helpers.access.entityAccessMiddleware(this.entity)
+			helpers.middlewares.isLoggedIn,
+			helpers.middlewares.entityAccess(this.entity)
 		);
 	}
 
@@ -583,9 +590,10 @@ class CoreEntity extends Route {
 			for (const file of data.files)
 				if (!file.func && file.buffer)
 					file.func = async file => {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 			// Add associations
 			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
@@ -758,15 +766,17 @@ class CoreEntity extends Route {
 				file.func = async file => {
 					// New file
 					if (file.buffer) {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 					// Replaced or removed file
 					if (file.previousPath) {
-						await this.helpers.file.remove(file.previousPath);
 						if (file.isPicture)
-							await this.helpers.file.remove('thumbnail/'+file.previousPath);
+							await this.helpers.file.removePicture(file.previousPath);
+						else
+							await this.helpers.file.remove(file.previousPath);
 					}
 				}
 			}
@@ -1105,10 +1115,10 @@ class CoreEntity extends Route {
 			data.offset = (data.req.body.page - 1) * data.limit;
 
 			/**
-		     * Called to search entity results paginated and / or filtered. This route is used by ajax select
-		     * @function CoreEntity#search#start
-		     * @memberof CoreEntity#search
-		     * @param {object} data
+			 * Called to search entity results paginated and / or filtered. This route is used by ajax select
+			 * @function CoreEntity#search#start
+			 * @memberof CoreEntity#search
+			 * @param {object} data
 			 * @param {object} data.req - Request - See expressjs definition
 			 * @param {object} data.res - Response - See expressjs definition
 			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1134,9 +1144,18 @@ class CoreEntity extends Route {
 
 			data.query.where = this.helpers.entity.search.generateWhere(data.search, data.searchField);
 
-			// Example customwhere in select2, please respect " and ' syntax: data-customwhere='{"myField": "myValue"}'
-			// Note that customwhere feature do not work with related to many field if the field is a foreignKey !
-			this.helpers.entity.search.handleCustomWhere(data.query.where, data.req.body.customwhere);
+			/**
+			 * Before the Sequelize query, usefull to customize default query behaviour
+			 * @function CoreEntity#search#beforeQuery
+			 * @memberof CoreEntity#search
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			 * @param {object} data.query - Query object that will be used in Sequelize query, customizable
+			 */
+			if (await this.getHook('search', 'beforeQuery', data) === false)
+				return;
 
 			// If you need to show fields in the select that are in an other associate entity, you have to include those entity here
 			// query.include = [{model: models.E_myentity, as: "r_myentity"}]

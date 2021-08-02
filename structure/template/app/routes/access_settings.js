@@ -1,6 +1,6 @@
 const CoreAccessSettings = require('@core/routes/access_settings.js');
 const helpers = require('@core/helpers');
-const access = helpers.access;
+const middlewares = helpers.middlewares;
 
 class AccessSettings extends CoreAccessSettings {
 	constructor() {
@@ -15,28 +15,28 @@ class AccessSettings extends CoreAccessSettings {
 	get middlewares() {
 		return {
 			show_api: [
-				access.entityAccessMiddleware("access_settings_api"),
-				access.actionAccessMiddleware("access_settings", "read")
+				middlewares.entityAccess("access_settings_api"),
+				middlewares.actionAccess("access_settings", "read")
 			],
 			show_group: [
-				access.entityAccessMiddleware("access_settings_group"),
-				access.actionAccessMiddleware("access_settings", "read")
+				middlewares.entityAccess("access_settings_group"),
+				middlewares.actionAccess("access_settings", "read")
 			],
 			show_role: [
-				access.entityAccessMiddleware("access_settings_role"),
-				access.actionAccessMiddleware("access_settings", "read")
+				middlewares.entityAccess("access_settings_role"),
+				middlewares.actionAccess("access_settings", "read")
 			],
 			enable_disable_api: [
-				access.entityAccessMiddleware("access_settings_api"),
-				access.actionAccessMiddleware("access_settings", "create")
+				middlewares.entityAccess("access_settings_api"),
+				middlewares.actionAccess("access_settings", "create")
 			],
 			set_group_access: [
-				access.entityAccessMiddleware("access_settings_group"),
-				access.actionAccessMiddleware("access_settings", "create")
+				middlewares.entityAccess("access_settings_group"),
+				middlewares.actionAccess("access_settings", "create")
 			],
 			set_role_access: [
-				access.entityAccessMiddleware("access_settings_role"),
-				access.actionAccessMiddleware("access_settings", "create")
+				middlewares.entityAccess("access_settings_role"),
+				middlewares.actionAccess("access_settings", "create")
 			]
 		}
 	}

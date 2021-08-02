@@ -92,15 +92,6 @@ class CoreParamEntity extends CoreEntity {
 			// Get association data that needed to be load directly here (to do so set loadOnStart param to true in options).
 			await this.helpers.entity.getLoadOnStartData(data.req.query.ajax ? data[this.e_entity].dataValues : data, this.options);
 
-			/**
-		     * Before rendering the update form
-		     *
-		     * @event Entity#update_form#beforeRender
-		     * @param {object} data
-		     * @param {object} data.req - Request
-		     * @param {object} data.res - Response
-		     * @param {object} data.e_entity - Contain key and translation for enums and radios
-		     */
 			if (await this.getHook('update_form', 'beforeRender', data) === false)
 				return;
 
@@ -140,15 +131,17 @@ class CoreParamEntity extends CoreEntity {
 				file.func = async file => {
 					// New file
 					if (file.buffer) {
-						await this.helpers.file.write(file.finalPath, file.buffer);
 						if (file.isPicture)
-							await this.helpers.file.writeThumbnail('thumbnail/'+file.finalPath, file.buffer);
+							await this.helpers.file.writePicture(file.finalPath, file.buffer);
+						else
+							await this.helpers.file.write(file.finalPath, file.buffer);
 					}
 					// Replaced or removed file
 					if (file.previousPath) {
-						await this.helpers.file.remove(file.previousPath);
 						if (file.isPicture)
-							await this.helpers.file.remove('thumbnail/'+file.previousPath);
+							await this.helpers.file.removePicture(file.previousPath);
+						else
+							await this.helpers.file.remove(file.previousPath);
 					}
 				}
 			}

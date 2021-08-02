@@ -141,12 +141,12 @@
 	"test": {
 		"subtitle": "Testez vos applications"
 	},
-	"deploy": {
+	"deploy_content": {
 		"subtitle": "Suivez vos déploiements",
 		"deploying": "Déploiement en cours...",
 		"please_wait": "Nous déployons votre application. Cette opération peut prendre quelques minutes. Veuillez patienter...",
-		"ready": "Votre application est prête.",
-		"goto": "Aller vers votre application.",
+		"ready": "Votre application est prête !",
+		"goto": "C'est parti !",
 		"stayonpage": "Vous devriez rester sur cette page pendant le déploiement de votre application."
 	},
 	"configure": {
@@ -517,7 +517,7 @@
 	"botresponse": {
 		"help" : "Vous avez demandé de l'aide. Accédez aux vidéos d'aide sur notre <a href='https://www.youtube.com/channel/UCOF9iI9Wwe8iucSd7ayHlMQ' target=_blank>chaîne YouTube</a> ou à la documentation en ligne ici <a href='https://docs.nodea-software.com/' target='_blank'>https://docs.nodea-software.com/</a>",
 		"applicationavailable": "L'application est disponible ici : <br> <a href='%s' target='_blank'>%s</a>",
-		"deployment": "Nous déployons votre application...<br> Cela peut prendre quelques minutes, attendez son déploiement puis cliquez sur le lien suivant :<br> <a href='%s' target='_blank'>%s</a>"
+		"deployment": "Nous déployons votre application...<br> Cela peut prendre quelques minutes, je vous invite à cliquer sur le lien suivant :<br> <a href='%s' target='_blank'>%s</a>"
 	},
 	"users": {
 		"connected_as": "Connecté en tant que",

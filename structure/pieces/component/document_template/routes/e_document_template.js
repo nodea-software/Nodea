@@ -6,10 +6,7 @@ const attributes = require('@app/models/attributes/e_document_template');
 const appConf = require('@config/application');
 
 const helpers = require('@core/helpers');
-const access = helpers.access;
-
-const upload = require('multer');
-const multer = upload();
+const middlewares = helpers.middlewares;
 
 function getLabelFromFormatCode(code) {
 	const format = appConf.document_template.format_pairs.filter(f => f.code == code)
@@ -22,7 +19,7 @@ class DocumentTemplate extends CoreDocumentTemplate {
 		super('e_document_template', attributes, options, helpers, additionalRoutes);
 
 		this.defaultMiddlewares = [
-			access.isLoggedIn
+			middlewares.isLoggedIn
 		];
 	}
 
@@ -84,20 +81,44 @@ class DocumentTemplate extends CoreDocumentTemplate {
 				}
 			},
 			update: {
+				// start: async (data) => {},
+				// beforeUpdate: async (data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			loadtab: {
-				// tabData: async(data) => {}
+				// start: async (data) => {},
+				// beforeValidityCheck: (data) => {},
+				// afterValidityCheck: (data) => {},
+				// beforeDataQuery: (data) => {},
+				// beforeRender: (data) => {},
 			},
 			set_status: {
-				// beforeStatusChange: async(data) => {},
-				// afterStatusChange: async(data) => {}
+				// start: async (data) => {},
+				// beforeAllowedCheck: async (data) => {},
+				// beforeActionsExecution: async (data) => {},
+				// beforeSetStatus: async (data) => {},
+				// beforeRedirect: async(data) => {}
 			},
-			search: {},
-			fieldset_remove: {},
-			fieldset_add: {},
+			search: {
+				// start: async (data) => {},
+				beforeQuery: async (data) => {
+					data.query.where = {
+						f_entity: data.req.body.attrData.entity
+					}
+				}
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_remove: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
+			fieldset_add: {
+				// start: async (data) => {},
+				// beforeResponse: async (data) => {}
+			},
 			destroy: {
-				// beforeEntityRequest: async(data) => {},
+				// start: async (data) => {},
+				// beforeEntityQuery: async(data) => {},
 				// beforeDestroy: async(data) => {},
 				// beforeRedirect: async(data) => {},
 			}
@@ -107,114 +128,78 @@ class DocumentTemplate extends CoreDocumentTemplate {
 	get middlewares() {
 		return {
 			entity_list: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			// Access to generate is checked inside the route using template's r_role/r_group
 			// Nothing to do here
 			generate: [],
 			help: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			help_entity: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			list: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "create"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			update_form: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "update"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "update"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			loadtab: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read"),
-				access.statusGroupAccess
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				access.entityAccessMiddleware(this.entity),
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.entityAccess(this.entity),
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

@@ -354,11 +354,11 @@ module.exports = {
 				else if (file == 'create')
 					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">" + value + "</textarea>\n";
 				else
-					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">{" + value2 + "|s}</textarea>\n";
+					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">{" + value2 + "|htmlencode}</textarea>\n";
 
 				break;
 			case "regular text" :
-				value = "{" + field + "|s}";
+				value = "{" + field + "}";
 				if (file == 'show')
 					str += "	<textarea readonly='readonly' class='show-textarea regular-textarea'>" + value + "</textarea>\n";
 				else

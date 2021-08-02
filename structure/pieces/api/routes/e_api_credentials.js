@@ -4,7 +4,7 @@ const options = require('@app/models/options/e_api_credentials');
 const attributes = require('@app/models/attributes/e_api_credentials');
 
 const helpers = require('@core/helpers');
-const access = helpers.access;
+const middlewares = helpers.middlewares;
 
 const randomString = require('randomstring');
 
@@ -96,47 +96,47 @@ class E_api_credentials extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			update_form: [
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			loadtab: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				access.actionAccessMiddleware(this.entity, "read"),
-				access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

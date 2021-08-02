@@ -1,9 +1,10 @@
 const Route = require('@core/abstract_routes/route');
 
 class CoreRoot extends Route {
-	constructor() {
+	constructor(additionalRoutes) {
 		const registeredRoutes = [
-			'root'
+			'root',
+			...additionalRoutes
 		];
 		super(registeredRoutes);
 	}

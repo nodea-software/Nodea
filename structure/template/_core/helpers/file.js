@@ -1,4 +1,5 @@
 const globalConf = require('@config/global');
+const appConf = require('@config/application');
 const moment = require('moment');
 const uuidV4 = require('uuid').v4;
 const fs = require('fs-extra');
@@ -67,21 +68,49 @@ function write(filePath, buffer, encoding = 'utf8') {
 	});
 }
 
-function writeThumbnail(filePath, buffer, encoding = 'utf8') {
+function writePicture(filePath, buffer, encoding = 'utf8') {
 	return new Promise((resolve, reject) => {
-
 		Jimp.read(buffer, (err, imgThumb) => {
 			if (err)
-				return console.error(err);
+				return reject(err);
 
-			const thumbnailWidth = globalConf.thumbnail.width;
-			const thumbnailHeight = globalConf.thumbnail.height;
-			const thumbnailQuality = globalConf.thumbnail.quality;
-			imgThumb.resize(thumbnailWidth, thumbnailHeight).quality(thumbnailQuality).getBuffer(Jimp.AUTO, (err, buffer) => {
-				if (err)
-					return reject(err);
-				resolve(write(filePath, buffer, encoding));
-			});
+			const promises = [];
+
+			// Default image resize if needed
+			if(appConf.resizePicture.enabled) {
+				promises.push(new Promise((resolve, reject) => {
+					const pictureWidth = appConf.resizePicture.width;
+					const pictureHeight = appConf.resizePicture.height;
+					const pictureQuality = appConf.resizePicture.quality;
+					imgThumb.resize(pictureWidth, pictureHeight).quality(pictureQuality).getBuffer(Jimp.AUTO, (err, buffer) => {
+						if (err)
+							return reject(err);
+						// If the picture is a .gif or other complicated extension then JIMP return buffer as a Promise
+						Promise.resolve(buffer).then(bufferReady => {
+							resolve(write(filePath, bufferReady, encoding));
+						}).catch(err => reject(err));
+					});
+				}));
+			} else {
+				promises.push(write(filePath, buffer, encoding));
+			}
+
+			// Picture thumbnail generation
+			promises.push(new Promise((resolve, reject) => {
+				const thumbnailWidth = appConf.thumbnail.width;
+				const thumbnailHeight = appConf.thumbnail.height;
+				const thumbnailQuality = appConf.thumbnail.quality;
+				imgThumb.resize(thumbnailWidth, thumbnailHeight).quality(thumbnailQuality).getBuffer(Jimp.AUTO, (err, buffer) => {
+					if (err)
+						return reject(err);
+					// If the picture is a .gif or other complicated extension then JIMP return buffer as a Promise
+					Promise.resolve(buffer).then(bufferReady => {
+						resolve(write(appConf.thumbnail.folder + filePath, bufferReady, encoding));
+					}).catch(err => reject(err));
+				});
+			}));
+
+			Promise.all(promises).then(resolve()).catch(err => reject(err));
 		});
 	});
 }
@@ -125,6 +154,27 @@ function remove(filePath) {
 	});
 }
 
+function removePicture(filePath) {
+	return new Promise((resolve, reject) => {
+		let securedPath, securedPathThumbnail;
+		try {
+			securedPath = securePath(globalConf.localstorage, filePath);
+			securedPathThumbnail = securePath(globalConf.localstorage, appConf.thumbnail.folder, filePath);
+		} catch(err) {
+			return reject(err);
+		}
+		// Remove picture
+		fs.unlink(securedPath, err => {
+			if (err) return reject(err);
+			// Remove thumbnail
+			fs.unlink(securedPathThumbnail, err => {
+				if (err) return reject(err);
+				resolve();
+			});
+		});
+	});
+}
+
 function fullPath(filePath) {
 	const securedPath = securePath(globalConf.localstorage, filePath);
 	return securedPath;
@@ -134,10 +184,11 @@ module.exports = {
 	createPathAndName,
 	originalFilename,
 	write,
-	writeThumbnail,
+	writePicture,
 	read,
 	readBuffer,
 	remove,
+	removePicture,
 	securePath,
 	fullPath
 }

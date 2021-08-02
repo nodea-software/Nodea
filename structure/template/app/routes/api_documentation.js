@@ -1,5 +1,5 @@
 const Route = require('@core/abstract_routes/route');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 const apiLoader = require('@app/api/');
 
 class ApiDocumentation extends Route {
@@ -8,7 +8,7 @@ class ApiDocumentation extends Route {
 	}
 
 	api_documentation() {
-		this.router.get('/', block_access.isLoggedIn, block_access.entityAccessMiddleware('api_documentation'), this.asyncRoute(async ({req, res}) => {
+		this.router.get('/', middlewares.isLoggedIn, middlewares.entityAccess('api_documentation'), this.asyncRoute(async ({req, res}) => {
 			const apiInstances = apiLoader.instances;
 			const data = {
 				api_files: []

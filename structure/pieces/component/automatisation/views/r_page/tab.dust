@@ -11,33 +11,31 @@
                         const incrementBtn = "<button class='btn btn-default order-increment' data-id='"+row.id+"'><i class='fa fa-arrow-down'></i></button>";
                         return decrementBtn + incrementBtn;
 					},
-	    			searchable: false,orderable: false,htmlencode: false
-				}
-			},
-			bindings: {
-				ordering: ({column, columnDef, entity, element, event, additionalData}) => {
-					let target = $(event.target);
-					if (target.is("i")) {
-						target = target.parents('button');
-					}
-					const elemId = target.data('id');
-					let orderType;
-					if (target.hasClass('order-increment')) {
-						orderType = 'increment';
-					}
-					else if (target.hasClass('order-decrement')) {
-						orderType = 'decrement';
-					}
-					else {
-						return;
-					}
-					$.ajax({
-						url: '/page/reorder?id='+elemId+'&type='+orderType,
-						success: function() {
-							const table = $(tableId).data('table');
-							table.ajax.reload();
+					binding: ({column, columnDef, entity, element, event, additionalData}) => {
+						let target = $(event.target);
+						if (target.is("i")) {
+							target = target.parents('button');
 						}
-					});
+						const elemId = target.data('id');
+						let orderType;
+						if (target.hasClass('order-increment')) {
+							orderType = 'increment';
+						}
+						else if (target.hasClass('order-decrement')) {
+							orderType = 'decrement';
+						}
+						else {
+							return;
+						}
+						$.ajax({
+							url: '/page/reorder?id='+elemId+'&type='+orderType,
+							success: function() {
+								const table = $(tableId).data('table');
+								table.ajax.reload();
+							}
+						});
+					},
+	    			search: false, orderable: false, htmlencode: false
 				}
 			}
 		});

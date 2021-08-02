@@ -1,7 +1,4 @@
-
 var NodeaTable = (function() {
-	// Datatable throw error instead of alert
-	$.fn.dataTable.ext.errMode = 'throw';
 
 	// =========================
 	// DataTableBuilder "HOW TO"
@@ -96,150 +93,33 @@ var NodeaTable = (function() {
 	    };
 	}
 
-	function formatDateTimeFR(value) {
-	    if (value == '')
-	        return value;
-
-	    var dateBuild = '';
-
-	    // Day provided
-	    if (value.length <= 2)
-	        return '-' + value;
-	    dateBuild = '-' + value.substring(0, 2);
-
-	    // Month provided
-	    if (value.length <= 4)
-	        return '-' + value.substring(2, 4) + dateBuild;
-	    dateBuild = '-' + value.substring(2, 4) + dateBuild;
-
-	    // Year prodived
-	    if (value.length <= 8)
-	        return value.substring(4, 8) + dateBuild;
-	    dateBuild = value.substring(4, 8) + dateBuild + ' ';
-
-	    // Hour provided
-	    if (value.length <= 10)
-	        return dateBuild + value.substring(8, 10) + ':';
-	    dateBuild = dateBuild + value.substring(8, 10) + ':';
-
-	    // Minutes provided
-	    if (value.length <= 12)
-	        return dateBuild + value.substring(10, 12) + ':';
-	    dateBuild = dateBuild + value.substring(10, 12) + ':';
-
-	    // Seconds provided
-	    if (value.length <= 14)
-	        return dateBuild + value.substring(12, 14);
-	    dateBuild = dateBuild + value.substring(12, 14);
-
-	    // Seconds provided
-	    return dateBuild + value.substring(14, 16);
-	}
-
-	function formatDateTimeEN(value) {
-	    if (value == '')
-	        return value;
-
-	    var dateBuild = '';
-
-	    // Day provided
-	    if (value.length <= 4)
-	        return value + '-';
-	    dateBuild = value.substring(0, 4) + '-';
-
-	    // Month provided
-	    if (value.length <= 6)
-	        return dateBuild + value.substring(4, 6) + '-';
-	    dateBuild = dateBuild + value.substring(4, 6) + '-';
-
-	    // Year prodived
-	    if (value.length <= 8)
-	        return dateBuild + value.substring(6, 8);
-	    dateBuild = dateBuild + value.substring(6, 8) + ' ';
-
-	    // Hour provided
-	    if (value.length <= 10)
-	        return dateBuild + value.substring(8, 10) + ':';
-	    dateBuild = dateBuild + value.substring(8, 10) + ':';
-
-	    // Minutes provided
-	    if (value.length <= 12)
-	        return dateBuild + value.substring(10, 12) + ':';
-	    dateBuild = dateBuild + value.substring(10, 12) + ':';
-
-	    // Seconds provided
-	    if (value.length <= 14)
-	        return dateBuild + value.substring(12, 14);
-	    dateBuild = dateBuild + value.substring(12, 14);
-
-	    // Seconds provided
-	    return dateBuild + value.substring(14, 16);
-	}
-
-	function formatTime(value) {
-	    if (value == '')
-	        return value;
-
-	    var timeBuild = '';
-
-	    if (value.length <= 2)
-	        return value;
-	    timeBuild = value.substr(0, 2) + ':';
-
-	    if (value.length <= 4)
-	        return timeBuild + value.substring(2, 4);
-	    timeBuild = timeBuild + value.substring(2, 4) + ':';
-
-	    return timeBuild + value.substring(4, 6);
-	}
-
-	function formatDateFR(value) {
-	    if (value == '')
-	        return value;
-
-	    var timeBuild = '';
-
-	    if (value.length <= 2)
-	        return '-' + value;
-	    timeBuild = value.substr(0, 2);
-
-	    if (value.length <= 4)
-	        return timeBuild + value.substring(2, 4);
-	    timeBuild = value.substring(2, 4) + '-' + timeBuild;
-
-	    return value.substring(4, 8) + '-' + timeBuild;
-	}
-
-	function formatDateEN(value) {
-	    if (value == '')
-	        return value;
-
-	    var timeBuild = '';
-
-	    if (value.length <= 4)
-	        return value + '-';
-	    timeBuild = value.substr(0, 4) + '-';
-
-	    if (value.length <= 4)
-	        return timeBuild + value.substring(4, 6) + '-';
-	    timeBuild = timeBuild + value.substring(4, 6) + '-';
-
-	    return timeBuild + value.substring(6, 8);
-	}
-
 	// Dive trough the object to find the key we are looking for
-	function diveObj(obj, idx, keys){
+	function diveObj(obj, keys, idx = 0){
 	    if(!obj)
 	        return '-';
 
 	    if(Array.isArray(obj[keys[idx]]) && obj[keys[idx]].length > 0)
-	        return diveObj(obj[keys[idx]][0], ++idx, keys);
+	        return diveObj(obj[keys[idx]][0], keys, ++idx);
 	    else if(typeof obj[keys[idx]] === 'object')
-	        return diveObj(obj[keys[idx]], ++idx, keys);
+	        return diveObj(obj[keys[idx]], keys, ++idx);
 	    else if(obj[keys[idx]] && typeof obj[keys[idx]] !== undefined)
 	        return obj;
 	    else
 	        return '-';
+	}
+
+	function mergedColumnTypes(customColumns) {
+		if (!customColumns)
+			return defaults.columns;
+		const typeList = Object.entries({...defaults.columns, ...customColumns}).map(([key]) => key);
+		const mergedTypes = {};
+		for (const type in typeList)
+			mergedTypes[type] = {
+				...defaults.columns.default,
+				...customColumns.default,
+				...customColumns[type]
+			}
+		return mergedTypes;
 	}
 
 	// Generate the column selector on datatable button click
@@ -360,7 +240,39 @@ var NodeaTable = (function() {
 		            else
 		                value = "-";
 		            return value;
-		        }
+		        },
+		        search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
+					var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
+					var mask;
+					if (lang_user == 'fr-FR')
+						mask = {
+							inputFormat: "dd/mm/yyyy",
+							alias: 'datetime',
+							placeholder: "jj/mm/aaaa"
+						}
+					else
+						mask = {
+							inputFormat: "yyyy-mm-dd",
+							alias: 'datetime',
+							placeholder: "yyyy-mm-dd"
+						}
+					element.inputmask(mask);
+					element.on("keyup", function(){
+			            var searchValue = element.inputmask('unmaskedvalue');
+						if (!element.inputmask("isComplete") && searchValue !== '')
+							return;
+						if (lang_user == 'fr-FR') {
+							var date = element.val().split("/");
+							if (date.length > 1) {
+								var newDate = date[2] + "-" + date[1] + "-" + date[0];
+
+								searchValue = newDate;
+							}
+						}
+			            triggerSearch(searchValue, 'date');
+	                });
+	                return element;
+		    	}
 	    	},
 	    	datetime: {
 	    		render: ({value, row, column, entity, additionalData}) => {
@@ -376,14 +288,50 @@ var NodeaTable = (function() {
 		            else
 		                value = "-";
 		            return value;
-		        }
+		        },
+		        search: (data) => {
+		    		return defaults.columns.date.search(data);
+		    	}
+	    	},
+	    	time: {
+	    		render: ({value, row, column, entity, additionalData}) => {
+		            if(value && value.length == 8)
+		                return value.substring(0, value.length - 3);
+		            return value;
+	        	},
+	        	search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
+					var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
+					element.inputmask({
+	                    mask: "99:99", placeholder: "hh:mm"
+	                });
+					element.on("keyup", function(){
+			            var searchValue = element.val();
+						if (!element.inputmask("isComplete") && searchValue !== '')
+							return;
+			            triggerSearch(searchValue, 'time');
+	                });
+	                return element;
+		    	},
 	    	},
 	    	boolean: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		    		return value == 'true' || value == '1'
 		    			? '<i class="far fa-check-square fa-lg"><span style="visibility: hidden;">1</span></i>'
 		    			: '<i class="far fa-square fa-lg"><span style="visibility: hidden;">0</span></i>';
-	    		}
+	    		},
+	    		search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
+		    		var element = $(`<select data-type='boolean' style='width: 100% !important;' class='form-control input'>
+					                    <option value='' selected>${STR_LANGUAGE.boolean_filter.all}</option>
+					                    <option value='null'>${STR_LANGUAGE.boolean_filter.null}</option>
+					                    <option value='checked'>${STR_LANGUAGE.boolean_filter.checked}</option>
+					                    <option value='unchecked'>${STR_LANGUAGE.boolean_filter.unchecked}</option>
+					                </select>`);
+					element.change(function(){
+			            var searchValue = element.val();
+			            triggerSearch(searchValue, 'boolean');
+	                });
+	                return element;
+		    	},
 	    	},
 	    	color: {
 	    		render: ({value, row, column, entity, additionalData}) => {
@@ -393,7 +341,7 @@ var NodeaTable = (function() {
 	    	status: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            var keys = column.data.split(".");
-		            var statusObj = diveObj(row, 0, keys);
+		            var statusObj = diveObj(row, keys);
 		            if (statusObj.f_name)
 		                return '<span class="badge" style="background: ' + statusObj.f_color + ';">' + statusObj.f_name + '</span>';
 		            else
@@ -409,7 +357,15 @@ var NodeaTable = (function() {
 				    else if(typeof value === 'number')
 				        value = value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
 		    		return '<span data-type="currency">' + value + '</span>';
-	    		}
+	    		},
+	    		search: ({triggerSearch, title, savedFilter, ...rest}) => {
+	        		var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
+	        		element.keyup(function() {
+			            var searchValue = element.val();
+			            triggerSearch(searchValue, 'currency');
+	        		});
+	        		return element;
+		    	},
 	    	},
 	    	email: {
 	    		render: ({value, row, column, entity, additionalData}) => {
@@ -430,14 +386,49 @@ var NodeaTable = (function() {
 			        if (value != null && value.buffer != '')
 			            return '<img class="file" style="max-width: 50px;" data-entity="' + entity + '" data-value="' + value.value + '" src=data:image/;base64,' + value.buffer + ' />';
 			        return '';
-		    	}
+		    	},
+		    	binding: (data) => {
+		    		defaults.columns.file.binding(data);
+		    	},
 	    	},
 	    	file: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            if(value != "" && value != null)
 		                return '<a class="file" style="white-space: nowrap;" href="#" data-entity="' + entity + '" data-value="' + value + '" data-name="' + column.data + '"><i class="fa fa-download"></i>&nbsp;&nbsp;' + STR_LANGUAGE.download_file + '</a>';
 		            return '';
-	        	}
+	        	},
+	        	binding: ({column, columnDef, entity, element, event, additionalData}) => {
+			        if (typeof column === 'undefined')
+			            return;
+			        else if (column.type == 'file')
+			        	element = $(element).find('a');
+			        else if (column.type == 'picture')
+			        	element = $(element).find('img');
+			        if (!element.length)
+			        	return;
+
+			        const rowId = element.parents('tr').data('id');
+			        const field = column.data;
+			        const downloadParams = `entity=${entity}&field=${field}&id=${rowId}`;
+			        $.ajax({
+			            url: '/app/get_file?'+downloadParams,
+			            type: 'GET',
+			            success: function (result) {
+			                let fileDisplay;
+			                if(result.file.substring(result.file.length, result.file.length - 4).toLowerCase() == '.pdf') {
+			                    var binaryPDF = generateFileViewer(result.data);
+			                    fileDisplay = '<iframe src=/js/plugins/pdf/web/viewer.html?file=' + encodeURIComponent(binaryPDF) + ' style="width:100%;min-height:500px !important;" allowfullscreen webkitallowfullscreen ></iframe>';
+			                }
+			                else
+			                	fileDisplay = '<p><img class="img-fluid" src=data:image/;base64,' + result.data + ' alt=' + result.file + '/></p>';
+			                doModal(
+			                	result.file,
+			                	`${fileDisplay}<a href="/app/download?${downloadParams}" class="btn btn-primary"><i class="fa fa-download"></i>&nbsp;&nbsp;${STR_LANGUAGE.download_file}</a>
+			                `);
+			            },
+			            error: console.error
+			        });
+		    	},
 	    	},
 	    	filename: {
 	    		render: ({value, row, column, entity, additionalData}) => {
@@ -454,13 +445,6 @@ var NodeaTable = (function() {
 		            return value;
 	        	}
 	    	},
-	    	time: {
-	    		render: ({value, row, column, entity, additionalData}) => {
-		            if(value && value.length == 8)
-		                return value.substring(0, value.length - 3);
-		            return value;
-	        	}
-	    	},
 	    	password: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 	            	return '●●●●●●●●●';
@@ -469,12 +453,20 @@ var NodeaTable = (function() {
 	    	text: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 			        if(value && value.length > 75){
-		                var shortText = $.parseHTML(value.slice(0, 75))[0].data ? $.parseHTML(value.slice(0, 75))[0].data : $(value).text().slice(0, 75);
+			        	var decoded = HtmlDecode(value);
+		                var shortText = $.parseHTML(decoded.slice(0, 75))[0].data ? $.parseHTML(decoded.slice(0, 75))[0].data : $(decoded).text().slice(0, 75);
+		                shortText = HtmlEncode(shortText);
 		                return "<span style='cursor: pointer;' class='np_text_modal'>" + shortText + "...<span class='full-text' style='display: none;'>" + value + "</span></span>";
 		            }
 		            return value;
 	        	},
-	        	htmlencode: false
+	        	binding: (data) => {
+		    		const fullText = $(data.element).find('.full-text');
+		    		if (fullText && fullText.length)
+	    	        	doModal('Contenu', HtmlDecode($(data.element).find('.full-text').html()));
+	    	        else
+	    	        	defaults.bindings.default(data);
+	    	    }
 	    	},
     		show: {
     			render: ({value, row, column, entity, additionalData}) => {
@@ -486,9 +478,9 @@ var NodeaTable = (function() {
 						</a>`;
 					return aTag;
 				},
-    			searchable: false,
-    			orderable: false,
-    			binding: false
+    			search: false,
+    			binding: false,
+    			orderable: false
     		},
     		update: {
     			render: ({value, row, column, entity, additionalData}) => {
@@ -500,9 +492,9 @@ var NodeaTable = (function() {
 					</a>`;
 					return aTag;
 				},
-    			searchable: false,
+    			search: false,
+    			binding: false,
     			orderable: false,
-    			binding: false
     		},
     		delete: {
     			render: ({value, row, column, entity, additionalData}) => {
@@ -515,151 +507,39 @@ var NodeaTable = (function() {
 					</form>`;
 					return form;
 				},
-    			searchable: false,
-    			orderable: false,
+				binding: ({column, columnDef, entity, element, event, additionalData}) => {
+		    		event.stopPropagation();event.preventDefault();
+			        if (confirm(DEL_CONFIRM_TEXT))
+						NodeaForms.handleSubmit($(element).find('form'), event, {
+				    		handleSuccess: _ => {
+				    			$(element).parents('table').data('table').ajax.reload(null, false)
+				    		}
+				    	});
+		    	},
+    			search: false,
+    			orderable: false
 			},
 	    	default: {
-	    		render: ({value}) => value
-	    	}
-	    },
-	    filters: {
-	    	date: ({column, title, savedFilter, filterTh, triggerFilter, additionalData}) => {
-				var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-				var mask;
-				if (lang_user == 'fr-FR')
-					mask = {
-						inputFormat: "dd/mm/yyyy",
-						alias: 'datetime',
-						placeholder: "jj/mm/aaaa"
+	    		render: ({value}) => value,
+	    		search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
+	        		const element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
+	        		element.keyup(function() {
+			            const searchValue = element.val();
+			            triggerSearch(searchValue);
+	        		});
+	        		return element;
+		    	},
+		    	binding: ({column, columnDef, entity, element, event, additionalData}) => {
+		    		try {
+						var td = $(element);
+						if(!additionalData.scrolling)
+							td.parents('tr').find('.btn-show')[0].click();
+					} catch(err) {
+						console.error("NodeaTable default binding failed - No `.btn-show` on row");
 					}
-				else
-					mask = {
-						inputFormat: "yyyy-mm-dd",
-						alias: 'datetime',
-						placeholder: "yyyy-mm-dd"
-					}
-				element.inputmask(mask);
-				element.on("keyup", function(){
-		            var searchValue = element.inputmask('unmaskedvalue');
-					if (!element.inputmask("isComplete") && searchValue !== '')
-						return;
-					if (lang_user == 'fr-FR') {
-						var date = element.val().split("/");
-						if (date.length > 1) {
-							var newDate = date[2] + "-" + date[1] + "-" + date[0];
-
-							searchValue = newDate;
-						}
-					}
-		            triggerFilter(searchValue, 'date');
-                });
-                return element;
-	    	},
-	    	time: ({column, title, savedFilter, filterTh, triggerFilter, additionalData}) => {
-				var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-				element.inputmask({
-                    mask: "99:99", placeholder: "hh:mm"
-                });
-				element.on("keyup", function(){
-		            var searchValue = element.val();
-					if (!element.inputmask("isComplete") && searchValue !== '')
-						return;
-		            triggerFilter(searchValue, 'time');
-                });
-                return element;
-	    	},
-	    	datetime: (data) => {
-	    		return defaults.filters.date(data);
-	    	},
-	    	boolean: ({column, title, savedFilter, filterTh, triggerFilter, additionalData}) => {
-	    		var element = $(`<select data-type='boolean' style='width: 100% !important;' class='form-control input'>
-				                    <option value='' selected>${STR_LANGUAGE.boolean_filter.all}</option>
-				                    <option value='null'>${STR_LANGUAGE.boolean_filter.null}</option>
-				                    <option value='checked'>${STR_LANGUAGE.boolean_filter.checked}</option>
-				                    <option value='unchecked'>${STR_LANGUAGE.boolean_filter.unchecked}</option>
-				                </select>`);
-				element.change(function(){
-		            var searchValue = element.val();
-		            triggerFilter(searchValue, 'boolean');
-                });
-                return element;
-	    	},
-	    	currency: ({triggerFilter, title, savedFilter, ...rest}) => {
-        		var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-        		element.keyup(function() {
-		            var searchValue = element.val();
-		            triggerFilter(searchValue, 'currency');
-        		});
-        		return element;
-	    	},
-	    	default: ({column, title, savedFilter, filterTh, triggerFilter, additionalData}) => {
-        		var element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-        		element.keyup(function() {
-		            var searchValue = element.val();
-		            triggerFilter(searchValue);
-        		});
-        		return element;
-	    	}
-	    },
-	    bindings: {
-	    	delete: ({column, columnDef, entity, element, event, additionalData}) => {
-	    		event.stopPropagation();event.preventDefault();
-		        if (confirm(DEL_CONFIRM_TEXT))
-					NodeaForms.handleSubmit($(element).find('form'), event, {
-			    		handleSuccess: _ => {
-			    			$(element).parents('table').data('table').ajax.reload(null, false)
-			    		}
-			    	});
-	    	},
-	    	text: (data) => {
-	    		const fullText = $(data.element).find('.full-text');
-	    		if (fullText && fullText.length)
-    	        	doModal('Contenu', $(data.element).find('.full-text').html());
-    	        else
-    	        	defaults.bindings.default(data);
-    	    },
-	    	file: ({column, columnDef, entity, element, event, additionalData}) => {
-		        if (typeof column === 'undefined')
-		            return;
-		        else if (column.type == 'file')
-		        	element = $(element).find('a');
-		        else if (column.type == 'picture')
-		        	element = $(element).find('img');
-		        if (!element.length)
-		        	return;
-
-		        const rowId = element.parents('tr').data('id');
-		        const field = column.data;
-		        const downloadParams = `entity=${entity}&field=${field}&id=${rowId}`;
-		        $.ajax({
-		            url: '/app/get_file?'+downloadParams,
-		            type: 'GET',
-		            success: function (result) {
-		                let fileDisplay;
-		                if(result.file.substring(result.file.length, result.file.length - 4).toLowerCase() == '.pdf') {
-		                    var binaryPDF = generateFileViewer(result.data);
-		                    fileDisplay = '<iframe src=/js/plugins/pdf/web/viewer.html?file=' + encodeURIComponent(binaryPDF) + ' style="width:100%;min-height:500px !important;" allowfullscreen webkitallowfullscreen ></iframe>';
-		                }
-		                else
-		                	fileDisplay = '<p><img class="img-fluid" src=data:image/;base64,' + result.data + ' alt=' + result.file + '/></p>';
-		                doModal(
-		                	result.file,
-		                	`${fileDisplay}<a href="/app/download?${downloadParams}" class="btn btn-primary"><i class="fa fa-download"></i>&nbsp;&nbsp;${STR_LANGUAGE.download_file}</a>
-		                `);
-		            },
-		            error: console.error
-		        });
-	    	},
-	    	picture: (data) => {
-	    		defaults.bindings.file(data);
-	    	},
-	    	default: ({column, columnDef, entity, element, event, additionalData}) => {
-	    		try {
-					var td = $(element);
-					td.parents('tr').find('.btn-show')[0].click();
-				} catch(err) {
-					console.error("NodeaTable default binding failed - No `.btn-show` on row");
-				}
+		    	},
+		    	orderable: true,
+        		htmlencode: true
 	    	}
 	    },
 	    buttons: [
@@ -720,7 +600,7 @@ var NodeaTable = (function() {
                 titleAttr: STR_LANGUAGE.scroll_right,
                 action: (event, datatable, button, config) => {
                 	var table = button.parent().siblings('table');
-                    table.parents(".table-responsive").animate({scrollLeft: table.width()}, 800);
+                    table.parents('.dataTables_wrapper').animate({scrollLeft: table.width()}, 800);
                 }
             }
         ],
@@ -758,7 +638,7 @@ var NodeaTable = (function() {
 		if (!tableID)
 			throw new Error("No tableID provided");
 
-	    var table,
+	    let table,
 	    	context = params.context || document,
 	    	columns = [],
 	    	columnDefs = [],
@@ -771,26 +651,21 @@ var NodeaTable = (function() {
     			clearTimeout(this.timeout);
 			this.timeout = setTimeout(_ => {
 	            defaults.saveFilterVal(tableID, columns[colIdx].data, value);
-	            let search;
-	            if (!value || value == "")
-	                search = "";
-	            else
-	            	search = JSON.stringify({type, value});
-
+	            const search = value && value != "" ? JSON.stringify({type, value}) : "";
 				table.columns(colIdx).search(search).draw();
 			}, 300);
     	}
 
         // Fetch hidden columns from localStorage
-	    var hiddenColumns;
+	    let hiddenColumns;
 	    try {
-	    	hiddenColumns = JSON.parse(localStorage.getItem("nodea_hidden_columns_save_" + tableID.substring(1)));
+	    	hiddenColumns = JSON.parse(localStorage.getItem("nodea_hidden_columns_save_" + tableID.replace(/#/g, '')));
 	    } catch(err){
 	    	console.warn("Couldn't get localstorage hidden columns");
 	    }
     	// Build each column
 	    $(tableID + " .main th", context).each(function(idx) {
-            var column = {
+            let column = {
             	index: idx,
             	data: $(this).data('col') || null,
             	type: $(this).data('type'),
@@ -798,54 +673,48 @@ var NodeaTable = (function() {
             	hidden: $(this).attr("data-hidden") == "true",
             	defaultContent: " - "
             };
-            var filterTh = $(tableID + " .filters th:eq("+ idx +")", context);
+            let searchTh = $(tableID + " .filters th:eq("+ idx +")", context);
 
             for (const hideCol of params.hide || []) {
             	// Hidden using index
-            	if (!isNaN(parseInt(hideCol)) && parseInt(hideCol) == idx)
-            		column.hidden = true;
+            	if (parseInt(hideCol) == idx
             	// Hidden using col name
-            	else if (column.data === hideCol)
-            		column.hidden = true;
+            	|| column.data === hideCol
             	// Hidden using col type
-            	else if (column.type === hideCol)
+            	|| column.type === hideCol)
             		column.hidden = true;
             }
 		    // Check if column is hidden from columnSelector or through `data-hidden="true"` setting. data-hidden forces column hide
 		    column.show = column.hidden === true
 		    	? false
-		    	: hiddenColumns === null || !hiddenColumns.includes(column.data)
+		    	: !hiddenColumns || !hiddenColumns.includes(column.data)
 
             var columnDef = {
         		targets: idx,
-        		render: defaults.columns.default.render,
         		visible: false,
-        		searchable: false,
         		orderable: false,
-        		htmlencode: true,
-        		binding: true
         	};
             if (column.show === true) {
-            	columnDef.visible = true;
-            	columnDef.searchable = !$(this).data('searchable') || $(this).data('searchable') === 'true' ? true : false;
-            	columnDef.orderable = !$(this).data('orderable') || $(this).data('orderable') === 'true' ? true : false;
+            	columnDef = {
+					targets: idx,
+					visible: true,
+					orderable: false,
+					searchable: !!columnDef.search,
+					...defaults.columns.default,
+					...defaults.columns[column.type],
+					...(params.columns ? params.columns.default : {}),
+					...(params.columns ? params.columns[column.type] : {})
+				}
 
 	        	// COLUMN RENDER
-                var columnTypeDef = params.columns && params.columns[column.type]
-                	? params.columns[column.type]
-                	: defaults.columns[column.type]
-                		? defaults.columns[column.type]
-                		: params.columns && params.columns.default || defaults.columns.default;
-                columnDef = {...columnDef, ...columnTypeDef};
-
-                var originalRender = columnDef.render;
+                const originalRender = columnDef.render;
             	columnDef.render = (data, type, row, meta) => {
-            		var value = "", fieldPath = columns[meta.col].data;
+            		let value = "", fieldPath = columns[meta.col].data;
 	                // Associated field. Go down object to find the right value
 	                if (fieldPath) {
 		                if (fieldPath.indexOf('.') != -1) {
-		                    var keys = fieldPath.split(".");
-		                    value = diveObj(row, 0, keys);
+		                    const keys = fieldPath.split(".");
+		                    value = diveObj(row, keys);
 		                    if(typeof value === 'object')
 		                        value = value[keys.slice(-1)[0]];
 		                }
@@ -860,24 +729,18 @@ var NodeaTable = (function() {
             	}
 
 	            // COLUMN FILTER
-	            if (filterTh.length && columnDef.searchable === true) {
-	            	var savedFilter = defaults.getFilterVal(tableID, filterTh.data('field'));
-	            	var title = filterTh.text();
-
-	            	var filterParams = {
-	            		column, savedFilter, filterTh, title, additionalData,
-	            		triggerFilter: (value, type) =>  executeFilter(idx, value, type)
-	            	};
-	            	var filterElement = params.filters && params.filters[column.type]
-	            		? params.filters[column.type](filterParams)
-	            		: defaults.filters[column.type]
-	            			? defaults.filters[column.type](filterParams)
-	            			: (params.filters && params.filters.default || defaults.filters.default)(filterParams);
-	            	filterTh.html('').append(filterElement);
+	            if (searchTh.length && columnDef.search) {
+	            	var savedFilter = defaults.getFilterVal(tableID, searchTh.data('field'));
+	            	var title = searchTh.text();
+	            	const searchElement = columnDef.search({
+	            		column, savedFilter, searchTh, title, additionalData,
+	            		triggerSearch: (value, type) =>  executeFilter(idx, value, type)
+	            	});
+	            	searchTh.html('').append(searchElement);
 	            }
             }
             else
-            	filterTh.hide();
+            	searchTh.hide();
 
             // Look for default order on field. Presence of `data-default-order` gives the index, value gives direction.
             // Ex: <th data-default-order="ASC" data-col="id">
@@ -926,45 +789,49 @@ var NodeaTable = (function() {
 			table.tableOptions = tableOptions;
 		    $(tableID, context).data('table', table);
 
-			// Bindings - Table cell click
-		    $(tableID+' tbody', context).on('click', 'td', function (event) {
-		    	if (table.data().length == 0)
-		    		return;
-
-		    	var columnIndex = $(this).parents('tr').find('td').index($(this));
-		    	var column = columns[columnIndex], columnDef = columnDefs[columnIndex];
-
-		    	if (columnDef.binding === false)
-		    		return true;
-
-		    	var bindingFunc = params.bindings && params.bindings[column.type]
-	    			? params.bindings[column.type]
-	    			: defaults.bindings[column.type]
-	    				? defaults.bindings[column.type]
-	    				: params.bindings && params.bindings.default || defaults.bindings.default;
-	    		bindingFunc({column, columnDef, entity, element: this, event, additionalData});
-		    });
-
 			var x,left = 0,down;
-			/* If we are scrolling horizontaly the datalist then don't trigger the click event to go on the show */
-			var scrolling = false;
-			$(tableID + ' tbody', context).mousedown(function(e){
-				if(!e.ctrlKey){
+			/* If we are scrolling horizontaly the datalist then don't trigger the click event */
+			additionalData.scrolling = false;
+
+			// Bindings - Table cell click
+			$(tableID + ' tbody', context).on('click', 'td', function (event) {
+				if (table.data().length == 0)
+					return;
+
+				var columnIndex = $(this).parents('tr').find('td').index($(this));
+				var column = columns[columnIndex],
+					columnDef = columnDefs[columnIndex];
+
+				if (columnDef.binding === false)
+					return true;
+
+				columnDef.binding({
+					column,
+					columnDef,
+					entity,
+					element: this,
+					event,
+					additionalData
+				});
+			});
+
+			$(tableID + ' tbody', context).mousedown(function (e) {
+				if (!e.ctrlKey) {
 					e.preventDefault();
-					down=true;
-					x=e.pageX;
-					left=$(".dataTables_wrapper", context).scrollLeft();
+					down = true;
+					x = e.pageX;
+					left = $(".dataTables_wrapper", context).scrollLeft();
 				}
 			});
-			$(tableID + ' tbody', context).mousemove(function(e){
-				if(down){
-					scrolling = true;
-					var newX=e.pageX;
-					$(".dataTables_wrapper", context).scrollLeft(left-newX+x);
+			$(tableID + ' tbody', context).mousemove(function (e) {
+				if (down) {
+					additionalData.scrolling = true;
+					var newX = e.pageX;
+					$(".dataTables_wrapper", context).scrollLeft(left - newX + x);
 				}
 			});
-			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){scrolling = false;}, 500);});
-			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
 
 		} catch(err) {
 			console.error("ERROR: NodeaTable "+tableID+" :");
@@ -977,7 +844,3 @@ var NodeaTable = (function() {
 
 	return initDataTable;
 })();
-
-$("table:not(.no-init)").each(function() {
-	NodeaTable("#"+$(this).attr('id'));
-});

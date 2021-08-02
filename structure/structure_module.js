@@ -18,14 +18,6 @@ exports.setupModule = async (data) => {
 	module_template = module_template.replace(/MODULE_NAME/g, url_name_module.charAt(0).toUpperCase() + url_name_module.toLowerCase().slice(1));
 	module_template = module_template.replace(/MODULE_URL/g, url_name_module);
 
-	// const defaultjs = fs.readFileSync(file, 'utf8');
-	// // Add new module route to routes/app.js file
-	// let str = '// *** Dynamic Module | Do not remove ***\n\n';
-	// str += 'router.get(\'/' + url_name_module.toLowerCase() + '\', block_access.isLoggedIn, block_access.moduleAccessMiddleware("' + url_name_module + '"), function(req, res) {\n';
-	// str += '	res.render(\'default/' + name_module.toLowerCase() + '\');\n';
-	// str += '});';
-	// const result = defaultjs.replace('// *** Dynamic Module | Do not remove ***', str);
-
 	fs.writeFileSync(`${__workspacePath}/${appName}/app/routes/${url_name_module}.js`, module_template, 'utf8');
 
 	// Create views/modules/m_module.dust file

@@ -1,5 +1,5 @@
 const Route = require('@core/abstract_routes/route');
-const block_access = require('@core/helpers/access');
+const middlewares = require('@core/helpers/middlewares');
 
 class CoreModule extends Route {
 
@@ -16,7 +16,7 @@ class CoreModule extends Route {
 		super(registeredRoutes);
 		this.moduleName = moduleName.toLowerCase();
 
-		this.defaultMiddlewares = [block_access.isLoggedIn];
+		this.defaultMiddlewares = [middlewares.isLoggedIn];
 	}
 
 	//

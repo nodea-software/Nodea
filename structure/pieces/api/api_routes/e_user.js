@@ -1,6 +1,5 @@
 const attributes = require('@app/models/attributes/e_user');
 const options = require('@app/models/options/e_user');
-const access = require('@core/helpers/access');
 
 const ApiEntity = require('@core/abstract_routes/api_entity');
 

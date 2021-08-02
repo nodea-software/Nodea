@@ -8,17 +8,6 @@ class ApiRoute extends Route {
 		super(routes);
 	}
 
-	asyncRoute(fn) {
-		return (...args) => {
-			const fnReturn = fn(...args);
-			const res = args[1];
-			return Promise.resolve(fnReturn).catch(error => {
-				console.error(error);
-				res.status(500).json({error});
-			});
-		}
-	}
-
 	docData() {
 		console.warn("WARN: ApiRoute virtual `docData()` called. Provide your documentation definition by implementing `docData()` on your ApiRoute subclass.")
 	}

@@ -5,7 +5,7 @@ const attributes = require('@app/models/attributes/e_URL_ROUTE_event');
 const options = require('@app/models/options/e_URL_ROUTE_event');
 
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 const model_builder = helpers.model_builder;
 const entity_helper = helpers.entity;
 
@@ -240,25 +240,25 @@ class Agenda extends Route {
 	get middlewares() {
 		return {
 			main: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			get_event: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", "read")
+				middlewares.actionAccess("URL_ROUTE_event", "read")
 			],
 			add_event: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", "create")
+				middlewares.actionAccess("URL_ROUTE_event", "create")
 			],
 			resize_event: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", "create")
+				middlewares.actionAccess("URL_ROUTE_event", "create")
 			],
 			update_event: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", "update")
+				middlewares.actionAccess("URL_ROUTE_event", "update")
 			],
 			update_event_drop: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", 'update')
+				middlewares.actionAccess("URL_ROUTE_event", 'update')
 			],
 			delete_event: [
-				block_access.actionAccessMiddleware("URL_ROUTE_event", "delete")
+				middlewares.actionAccess("URL_ROUTE_event", "delete")
 			]
 		}
 	}

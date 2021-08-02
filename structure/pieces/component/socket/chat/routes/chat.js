@@ -1,7 +1,7 @@
 const Route = require('@core/abstract_routes/route');
 const models = require('@app/models');
 const helpers = require('@core/helpers');
-const block_access = helpers.access;
+const middlewares = helpers.middlewares;
 
 class Chat extends Route {
 
@@ -61,10 +61,10 @@ class Chat extends Route {
 	get middlewares() {
 		return {
 			user_search: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			],
 			channel_search: [
-				block_access.isLoggedIn
+				middlewares.isLoggedIn
 			]
 		}
 	}

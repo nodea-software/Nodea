@@ -4,10 +4,7 @@ const options = require('@app/models/options/ENTITY_NAME');
 const attributes = require('@app/models/attributes/ENTITY_NAME');
 
 const helpers = require('@core/helpers');
-const access = helpers.access;
-
-const upload = require('multer');
-const multer = upload();
+const middlewares = helpers.middlewares;
 
 class MODEL_NAME extends Entity {
 	constructor() {
@@ -75,10 +72,8 @@ class MODEL_NAME extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
-				// beforeAllowedCheck: async (data) => {},
-				// beforeActionsExecution: async (data) => {},
-				// beforeSetStatus: async (data) => {},
-				// beforeRedirect: async (data) => {}
+				// beforeQuery: async (data) => {}
+				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
 				// start: async (data) => {},
@@ -100,85 +95,49 @@ class MODEL_NAME extends Entity {
 	get middlewares() {
 		return {
 			list: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			datalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			subdatalist: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			show: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			create_form: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			create: [
-				access.actionAccessMiddleware(this.entity, "create"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.actionAccess(this.entity, "create"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			update_form: [
-				access.actionAccessMiddleware(this.entity, "update")
+				middlewares.actionAccess(this.entity, "update")
 			],
 			update: [
-				access.actionAccessMiddleware(this.entity, "update"),
-				(req, res, next) => {
-					const fileFields = [];
-					for (const fieldName in this.attributes) {
-						const field = this.attributes[fieldName];
-						if (['file', 'picture'].includes(field.nodeaType))
-							fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
-					}
-					let fileMiddleware;
-					if (fileFields.length == 0)
-						fileMiddleware = multer.none();
-					else
-						fileMiddleware = multer.fields(fileFields);
-
-					fileMiddleware(req, res, err => {
-						if (err)
-							return next(err);
-						next();
-					});
-				}
+				middlewares.actionAccess(this.entity, "update"),
+				middlewares.fileInfo(this.fileFields)
 			],
 			loadtab: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			set_status: [
-				access.actionAccessMiddleware(this.entity, "read"),
-				access.statusGroupAccess
+				middlewares.actionAccess(this.entity, "read"),
+				middlewares.statusGroupAccess
 			],
 			search: [
-				access.actionAccessMiddleware(this.entity, "read")
+				middlewares.actionAccess(this.entity, "read")
 			],
 			fieldset_remove: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			],
 			fieldset_add: [
-				access.actionAccessMiddleware(this.entity, "create")
+				middlewares.actionAccess(this.entity, "create")
 			],
 			destroy: [
-				access.actionAccessMiddleware(this.entity, "delete")
+				middlewares.actionAccess(this.entity, "delete")
 			]
 		}
 	}

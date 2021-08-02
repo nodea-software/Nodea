@@ -332,6 +332,12 @@
 		<script src="/core/js/html_encode_decode.js?v={config.version}" type='text/javascript'></script>
 		{! Nodea App !}
 		<script src="/core/js/nodea.js?v={config.version}" type='text/javascript'></script>
+		<script type="text/javascript">
+			Nodea();
+		</script>
+
+		{! Nodea Tables !}
+		<script src="/core/js/nodeaTable.js" type="text/javascript"></script>
 
 		{+custom_js /}
 	</body>
