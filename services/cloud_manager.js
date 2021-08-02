@@ -8,6 +8,7 @@ const globalConf = require('../config/global.js');
 const portainerCloudConfig = require('../config/cloud_portainer.js');
 const gitlab = require('./code_platform');
 const gitHelper = require("../utils/git_helper");
+const dataHelper = require("../utils/data_helper");
 let token = "";
 
 async function request(url, options) {
@@ -281,6 +282,7 @@ async function generateStack(data) {
 	return callResults;
 }
 
+const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/);
 async function portainerDeploy(data){
 	const appNameWithoutPrefix = data.application.name.substring(2);
 	// Preparing all needed values
@@ -288,14 +290,20 @@ async function portainerDeploy(data){
 	// Portainer do not like camelCase and - , _ cf https://github.com/portainer/portainer/issues/2020
 	// data.stackName = data.stackName.replace(/[-_.]/g, "").toLowerCase();
 
+	// Looking for given branch if not master default
 	if(data.branch != 'master') {
 		const branch = await gitHelper.gitBranch(data);
-		console.log(branch);
-		if(!branch.all.find(x => x == data.branch || x.includes('/' + data.branch)))
+		console.log(branch.all);
+		if(!branch.all.find(x => x == data.branch || x.endsWith(data.branch)))
 			throw new Error('Specified branch "' + data.branch + '" do not exist on repository.');
 
-		data.stackName = data.stackName + '-' + data.branch.replace(/[_./]/g, "-");
+		// Cleaning branch name and adding it to stackName
+		data.stackName = data.stackName + '-' + dataHelper.clearString(data.branch).replace(/[_./]/g, "-");
 	}
+
+	// Validate DNS regex
+	if(data.stackName.length > 60 || !dnsRegex.test(data.stackName))
+		throw new Error('DNS validation error for URL:<br>' + data.stackName + '<br>Please check, simplify, reduce your git branch name in order to be URL compatible.');
 
 	// Authenticate in portainer API
 	token = await authenticate();
@@ -323,14 +331,14 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	// if (globalConf.env != 'studio') {
-	// 	const port = math.add(9000, data.appID);
-	// 	const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-	// 	return {
-	// 		message: "botresponse.applicationavailable",
-	// 		messageParams: [url, url]
-	// 	};
-	// }
+	if (globalConf.env != 'studio') {
+		const port = math.add(9000, data.appID);
+		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+		return {
+			message: "botresponse.applicationavailable",
+			messageParams: [url, url]
+		};
+	}
 
 	const appName = data.application.name;
 	const workspacePath = __dirname + '/../workspace/' + appName;
