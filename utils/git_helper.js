@@ -46,7 +46,11 @@ async function initializeGit(repoInfo, user) {
 		await gitProcesses[repoInfo.origin][user.id].simpleGit.add('.');
 		const commitSummary = await gitProcesses[repoInfo.origin][user.id].simpleGit.commit("First commit - Workspace initialization");
 		console.log(commitSummary);
-		await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.url);
+		try {
+			await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.url);
+		} catch(err) {
+			console.error(err.message);
+		}
 		gitProcesses[repoInfo.origin][user.id].simpleGit.push(['-u', repoInfo.origin, 'master']);
 	} catch(err) {
 		gitProcesses[repoInfo.origin].isProcessing = false;
