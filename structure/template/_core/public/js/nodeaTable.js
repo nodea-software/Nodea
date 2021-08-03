@@ -692,19 +692,22 @@ var NodeaTable = (function() {
             var columnDef = {
         		targets: idx,
         		visible: false,
-        		orderable: false,
+        		orderable: false
         	};
+
             if (column.show === true) {
             	columnDef = {
 					targets: idx,
 					visible: true,
 					orderable: false,
-					searchable: !!columnDef.search,
 					...defaults.columns.default,
 					...defaults.columns[column.type],
 					...(params.columns ? params.columns.default : {}),
 					...(params.columns ? params.columns[column.type] : {})
 				}
+
+				// Needed to be done after destructuring in order to have columnDef.search key in columnDef obj
+				columnDef.searchable = !!columnDef.search;
 
 	        	// COLUMN RENDER
                 const originalRender = columnDef.render;
