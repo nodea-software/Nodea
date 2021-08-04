@@ -2,44 +2,44 @@ const globalConf = require('./global');
 
 const databaseConf = {
 	develop: {
-		host: process.env.DATABASE_IP || '127.0.0.1',
-		port: '3306', // mysql: 3306 - postgres: 5432
-		user: 'nodea',
-		password: 'nodea',
-		database: 'nodea',
-		dialect: 'mysql' // mysql || mariadb || postgres
+		host: process.env.APP_DB_IP || '127.0.0.1',
+		port: process.env.APP_DB_PORT || '3306', // mysql: 3306 - postgres: 5432
+		user: process.env.APP_DB_USER || 'nodea',
+		password: process.env.APP_DB_PWD || 'nodea',
+		database: process.env.APP_DB_NAME || 'nodea',
+		dialect: process.env.APP_DB_DIALECT || 'mysql' // mysql || mariadb || postgres
 	},
 	test: {
-		host: '127.0.0.1',
-		port: '3306',
-		user: 'nodea',
-		password: 'nodea',
-		database: 'nodea',
-		dialect: 'mariadb'
+		host: process.env.APP_DB_IP || '127.0.0.1',
+		port: process.env.APP_DB_PORT || '3306', // mysql: 3306 - postgres: 5432
+		user: process.env.APP_DB_USER || 'nodea',
+		password: process.env.APP_DB_PWD || 'nodea',
+		database: process.env.APP_DB_NAME || 'nodea',
+		dialect: process.env.APP_DB_DIALECT || 'mariadb' // mysql || mariadb || postgres
 	},
 	production: {
-		host: '127.0.0.1',
-		port: '3306',
-		user: 'nodea',
-		password: 'nodea',
-		database: 'nodea',
-		dialect: 'mariadb'
+		host: process.env.APP_DB_IP || '127.0.0.1',
+		port: process.env.APP_DB_PORT || '3306', // mysql: 3306 - postgres: 5432
+		user: process.env.APP_DB_USER || 'nodea',
+		password: process.env.APP_DB_PWD || 'nodea',
+		database: process.env.APP_DB_NAME || 'nodea',
+		dialect: process.env.APP_DB_DIALECT || 'mariadb' // mysql || mariadb || postgres
 	},
 	studio: {
-		host: process.env.DATABASE_IP || 'database',
-		port: '3306',
-		user: 'nodea',
-		password: 'nodea',
-		database: 'nodea',
-		dialect: 'mariadb'
+		host: process.env.APP_DB_IP || '127.0.0.1',
+		port: process.env.APP_DB_PORT || '3306', // mysql: 3306 - postgres: 5432
+		user: process.env.APP_DB_USER || 'nodea',
+		password: process.env.APP_DB_PWD || 'nodea',
+		database: process.env.APP_DB_NAME || 'nodea',
+		dialect: process.env.APP_DB_DIALECT || 'mariadb' // mysql || mariadb || postgres
 	},
 	cloud: {
-		host: process.env.DATABASE_IP || 'database',
-		port: '3306',
-		user: 'nodea',
-		password: 'nodea',
-		database: 'nodea',
-		dialect: 'mariadb'
+		host: process.env.APP_DB_IP || '127.0.0.1',
+		port: process.env.APP_DB_PORT || '3306', // mysql: 3306 - postgres: 5432
+		user: process.env.APP_DB_USER || 'nodea',
+		password: process.env.APP_DB_PWD || 'nodea',
+		database: process.env.APP_DB_NAME || 'nodea',
+		dialect: process.env.APP_DB_DIALECT || 'mariadb' // mysql || mariadb || postgres
 	},
 	tablet: {
 		dialect: 'sqlite',
