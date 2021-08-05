@@ -264,12 +264,12 @@ async function generateStack(data) {
 					"APP_NAME": repoName,
 					"BRANCH": data.branch,
 					"NODEA_ENV": 'cloud',
-					"APP_DB_IP": chosenNetwork.databaseIP,
-					"APP_DB_PORT": dbPort,
-					"APP_DB_USER": cloudDbConf.dbUser,
-					"APP_DB_PWD": cloudDbConf.dbPwd,
-					"APP_DB_NAME": cloudDbConf.dbName,
-					"APP_DB_DIALECT": cloudDbConf.dialect
+					"DATABASE_IP": chosenNetwork.databaseIP,
+					"DATABASE_PORT": dbPort,
+					"DATABASE_USER": cloudDbConf.dbUser,
+					"DATABASE_PWD": cloudDbConf.dbPwd,
+					"DATABASE_NAME": cloudDbConf.dbName,
+					"DATABASE_DIALECT": cloudDbConf.dialect
 				},
 				"networks": {
 					[chosenNetwork.name]: {
@@ -397,14 +397,14 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	// if (globalConf.env != 'studio') {
-	// 	const port = math.add(9000, data.appID);
-	// 	const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-	// 	return {
-	// 		message: "botresponse.applicationavailable",
-	// 		messageParams: [url, url]
-	// 	};
-	// }
+	if (globalConf.env != 'studio') {
+		const port = math.add(9000, data.appID);
+		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+		return {
+			message: "botresponse.applicationavailable",
+			messageParams: [url, url]
+		};
+	}
 
 	const appName = data.application.name;
 	const workspacePath = __dirname + '/../workspace/' + appName;
