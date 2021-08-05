@@ -7,7 +7,7 @@ const databaseConf = {
 		user: process.env.DATABASE_USER || 'nodea',
 		password: process.env.DATABASE_PWD || 'nodea',
 		database: process.env.DATABASE_NAME || 'nodea',
-		dialect: 'mariadb' //mysql || mariadb || postgres
+		dialect: process.env.DATABASE_DIALECT || 'mariadb' //mysql || mariadb || postgres
 	},
 	studio: {
 		host: process.env.DATABASE_IP || '127.0.0.1',
@@ -15,7 +15,7 @@ const databaseConf = {
 		user: process.env.DATABASE_USER || 'nodea',
 		password: process.env.DATABASE_PWD || 'nodea',
 		database: process.env.DATABASE_NAME || 'nodea',
-		dialect: 'mariadb'
+		dialect: process.env.DATABASE_DIALECT || 'mariadb'
 	}
 }
 
