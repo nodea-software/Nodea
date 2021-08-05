@@ -72,8 +72,11 @@ exports.getIncludeFromFields = (models, headEntity, fieldsArray) => {
 		}
 	}
 
-	for (let field = 0; fieldsArray[field] && field < fieldsArray.length; field++) {
-		const current = fieldsArray[field];
+	for (let i = 0; i < fieldsArray.length; i++) {
+		const current = fieldsArray[i];
+
+		if(!current || current == '')
+			continue;
 
 		let depths, options;
 		if (typeof current === 'string')

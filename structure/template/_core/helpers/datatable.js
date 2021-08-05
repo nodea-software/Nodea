@@ -110,11 +110,14 @@ module.exports = async (modelName, params, speInclude, speWhere, isSubdatalist =
 
 	// Loop over columns array
 	for (let i = 0, columns = params.columns; i < columns.length; i++) {
-		if (columns[i].searchable == 'false')
+		if(!columns[i].data || columns[i].data == '')
 			continue;
 
 		// Push column's field into toInclude. toInclude will be used to build the sequelize include. Ex: toInclude = ['r_alias.r_other_alias.f_field', 'f_name']
 		toInclude.push(columns[i].data);
+
+		if (columns[i].searchable == 'false')
+			continue;
 
 		// Add column own search
 		if (columns[i].search.value != "") {

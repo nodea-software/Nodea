@@ -113,22 +113,52 @@ async function getLastNodeaNetwork() {
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			'Authorization': token
-		},
-		json: true
+		}
 	});
 
 	allNetworks = allNetworks.filter(x => x.Name.includes('nodea_network'));
 
-	let network_number = 0, network;
+	let network_number = 0, network_id, network_name, network_baseIP;
 	for (let i = 0; i < allNetworks.length; i++) {
 		const number = parseInt(allNetworks[i].Name.split('nodea_network_')[1]);
 		if(number > network_number) {
 			network_number = number;
-			network = allNetworks[i].Name;
+			network_id = allNetworks[i].Id;
+			network_name = allNetworks[i].Name;
+			network_baseIP = allNetworks[i].IPAM.Config[0].Gateway.slice(0, -1)
 		}
 	}
 
-	return network;
+	const inspectNetwork = await request(portainerCloudConfig.url + "/endpoints/1/docker/networks/" + network_id, {
+		method: "GET",
+		headers: {
+			'Content-Type': 'multipart/form-data',
+			'Authorization': token
+		}
+	});
+
+	// Inspect network container to find pair IP not used
+	const IPused = [];
+	for(const containerID in inspectNetwork.Containers) {
+		const container = inspectNetwork.Containers[containerID];
+		const ipv4IP = container.IPv4Address.replace('/16', '').split('.').pop();
+		IPused.push(parseInt(ipv4IP));
+	}
+
+	let appIP, databaseIP;
+	for (let ip = 1; ip < 100; ip++) {
+		if(!IPused.includes(ip) && !IPused.includes(ip + 1)){
+			appIP = ip
+			databaseIP = ip + 1;
+			break;
+		}
+	}
+
+	return {
+		name: network_name,
+		appIP: network_baseIP + appIP,
+		databaseIP: network_baseIP + databaseIP
+	};
 }
 
 async function generateStack(data) {
@@ -150,48 +180,77 @@ async function generateStack(data) {
 
 	// Get repository name using app remote (more precise)
 	const remotes = await gitHelper.gitRemotes(data);
+	let remote;
 	if(remotes.length > 0 && remotes[0].refs && remotes[0].refs.fetch){
 		// Getting actuel .git fetch remote
-		const remote = remotes[0].refs.fetch;
+		remote = remotes[0].refs.fetch;
 		repoName = remote.split('/').pop();
+		if(repoName.endsWith('.git'))
+			repoName = repoName.slice(0, -4);
 	}
 
 	// 3- Getting repository remote url
-	const gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + data.code_platform.user.username + '/' + repoName + '.git';
+	let gitlabUrl = ""
+	if(data.application && data.application.codePlatformRepoHTTP) {
+		// Use metadata codePlatformRepoHTTP key
+		// Cut http remote to inject accessToken
+		let splitRemote = data.application.codePlatformRepoHTTP.split(gitlab.config.url + '/')[1];
+		if(!splitRemote)
+			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
+
+		if(splitRemote.endsWith('.git'))
+			splitRemote = splitRemote.slice(0, -4);
+		gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
+	} else if(remote) {
+		// Use git remote
+		let splitRemote = remote.split(gitlab.config.url + '/')[1];
+		if(!splitRemote)
+			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
+
+		if(splitRemote.endsWith('.git'))
+			splitRemote = splitRemote.slice(0, -4);
+		gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
+	} else {
+		throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.')
+	}
 
 	// 4 - Generate final deployed app cloud URL
 	const cloudUrl = data.stackName + "." + globalConf.dns_cloud;
 
 	// 5 - Setup cloud database conf
 	const cloudDbConf = {
-		dbName: "np_" + data.application.name,
-		dbUser: "np_" + data.application.name,
-		dbPwd: "np_" + data.application.name,
+		dbName: "nodea_" + data.application.name,
+		dbUser: "nodea_" + data.application.name,
+		dbPwd: "nodea_" + data.application.name,
 		dbRootPwd: "nodea",
 		dialect: data.appDialect
 	};
 
 	// 6 - Specify database container image depeding of current app dialect
-	let dbImage;
+	let dbImage, dbPort;
 	switch(cloudDbConf.dialect) {
 		case 'mysql':
 			dbImage = 'nodeasoftware/nodea-database-mysql';
+			dbPort = 3306;
 			break;
 		case 'mariadb':
 			dbImage = 'nodeasoftware/nodea-database-mariadb';
+			dbPort = 3306;
 			break;
 		case 'postgres':
 			dbImage = 'nodeasoftware/nodea-database-postgres';
+			dbPort = 5432;
 			break;
 		default:
 			dbImage = 'nodeasoftware/nodea-database-mariadb';
+			dbPort = 3306;
 			break;
 	}
 
 	// 7 - Getting last nodea_network_* available
 	const chosenNetwork = await getLastNodeaNetwork();
 
-	// console.log(`DEPLOY RECAP:\nCLONE URL -> ${gitlabUrl}\nCLOUD URL -> ${cloudUrl}\nDB_IMAGE -> ${dbImage}\nSTACK_NAME -> ${data.stackName}\nNETWORK -> ${chosenNetwork}`);
+	// console.log(`DEPLOY RECAP:\nCLONE URL -> ${gitlabUrl}\nCLOUD URL -> ${cloudUrl}\nDB_IMAGE -> ${dbImage}\nSTACK_NAME -> ${data.stackName}\nNETWORK -> ${chosenNetwork.name} - ${chosenNetwork.appIP} - ${chosenNetwork.databaseIP}`);
 
 	// 8 - Create docker-compose.yml file
 	const composeContent = json2yaml.stringify({
@@ -200,18 +259,23 @@ async function generateStack(data) {
 			"application": {
 				"container_name": data.stackName + '_app',
 				"image": "nodeasoftware/application:latest",
-				"links": [
-					"database:database"
-				],
 				"environment": {
 					"GIT_URL": gitlabUrl,
 					"APP_NAME": repoName,
 					"BRANCH": data.branch,
-					"NODEA_ENV": 'cloud'
+					"NODEA_ENV": 'cloud',
+					"DATABASE_IP": chosenNetwork.databaseIP,
+					"DATABASE_PORT": dbPort,
+					"DATABASE_USER": cloudDbConf.dbUser,
+					"DATABASE_PWD": cloudDbConf.dbPwd,
+					"DATABASE_NAME": cloudDbConf.dbName,
+					"DATABASE_DIALECT": cloudDbConf.dialect
 				},
-				"networks": [
-					chosenNetwork
-				],
+				"networks": {
+					[chosenNetwork.name]: {
+						"ipv4_address": chosenNetwork.appIP
+					}
+				},
 				"volumes": [
 					"app:/app"
 				],
@@ -242,9 +306,11 @@ async function generateStack(data) {
 					"POSTGRES_PASSWORD": cloudDbConf.dbPwd,
 					"POSTGRES_ROOT_PASSWORD": cloudDbConf.dbRootPwd
 				},
-				"networks": [
-					chosenNetwork
-				],
+				"networks": {
+					[chosenNetwork.name]: {
+						"ipv4_address": chosenNetwork.databaseIP
+					}
+				},
 				"volumes": [
 					"db_data:/var/lib/mysql",
 					"db_log:/var/log/mysql"
@@ -252,9 +318,9 @@ async function generateStack(data) {
 			}
 		},
 		"networks": {
-			[chosenNetwork]: {
+			[chosenNetwork.name]: {
 				"external": {
-					"name": chosenNetwork
+					"name": chosenNetwork.name
 				}
 			}
 		},
