@@ -264,12 +264,12 @@ async function generateStack(data) {
 					"APP_NAME": repoName,
 					"BRANCH": data.branch,
 					"NODEA_ENV": 'cloud',
-					"DATABASE_IP": chosenNetwork.databaseIP,
-					"DATABASE_PORT": dbPort,
-					"DATABASE_USER": cloudDbConf.dbUser,
-					"DATABASE_PWD": cloudDbConf.dbPwd,
-					"DATABASE_NAME": cloudDbConf.dbName,
-					"DATABASE_DIALECT": cloudDbConf.dialect
+					"APP_DB_IP": chosenNetwork.databaseIP,
+					"APP_DB_PORT": dbPort,
+					"APP_DB_USER": cloudDbConf.dbUser,
+					"APP_DB_PWD": cloudDbConf.dbPwd,
+					"APP_DB_NAME": cloudDbConf.dbName,
+					"APP_DB_DIALECT": cloudDbConf.dialect
 				},
 				"networks": {
 					[chosenNetwork.name]: {
