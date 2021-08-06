@@ -30,7 +30,6 @@ exports.launchChildProcess = function(sessionID, appName, port) {
 
 	const env = Object.create(process.env);
 	env.PORT = port;
-	env.APP_DB_IP = env.DATABASE_IP;
 
 	const process_server = spawn('node', [__dirname + "/../workspace/" + appName + "/server.js", 'autologin'], {
 		env: env
