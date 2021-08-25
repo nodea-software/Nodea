@@ -32,7 +32,7 @@ class Route {
 	get routes() {
 		for (const route of this.registeredRoutes) {
 			if (!this[route])
-				console.warn(`WARN: ${route} route provided in additionalRoutes but no implementation found`)
+				console.warn(`WARN: ${route} route provided in registeredRoutes but no implementation found`)
 			else
 				this[route]();
 		}
@@ -43,7 +43,6 @@ class Route {
 	async getHook(route, hook, data) {
 		if(this.hooks && this.hooks[route] && this.hooks[route][hook])
 			return await this.hooks[route][hook](data);
-		return;
 	}
 
 	asyncRoute(routeFunc) {
