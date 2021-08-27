@@ -31,10 +31,23 @@ class Route {
 
 	get routes() {
 		for (const route of this.registeredRoutes) {
-			if (!this[route])
+			if (!this[route]) {
 				console.warn(`WARN: ${route} route provided in registeredRoutes but no implementation found`)
-			else
-				this[route]();
+				continue;
+			}
+			const routeConf = this[route]();
+			if (!routeConf) {
+				console.warn(`WARN: Route ${route} is directly declaring itself to express router. It should return a configuration object.`);
+				continue;
+			}
+
+			try {
+				const {method, path, middlewares, func} = routeConf;
+				this.router[method](path, ...middlewares, func);
+			} catch(err) {
+				console.error(`Something whent wrong trying to register route ${route}`);
+				console.error(err);
+			}
 		}
 
 		return this.router;

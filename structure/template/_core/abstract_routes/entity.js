@@ -100,40 +100,45 @@ class CoreEntity extends Route {
 	 * @namespace CoreEntity#list
 	 */
 	list() {
-		this.router.get('/list', ...this.middlewares.list, this.asyncRoute(async(data) => {
-			data.tableUrl = `/${this.entity}/datalist`;
-			data.renderFile = `${this.e_entity}/list`;
+		return {
+			method: 'get',
+			path: '/list',
+			middlewares: this.middlewares.list,
+			route: async(data) => {
+				data.tableUrl = `/${this.entity}/datalist`;
+				data.renderFile = `${this.e_entity}/list`;
 
-			/**
-		     * Called at route start
-		     * @function CoreEntity#list#start
-		     * @memberof CoreEntity#list
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-		     * @param {string} data.tableUrl - Url for the ajax datalist
-		     * @param {string} data.renderFile - Dust file to render
-		     */
-			if (await this.getHook('list', 'start', data) === false)
-				return;
+				/**
+			     * Called at route start
+			     * @function CoreEntity#list#start
+			     * @memberof CoreEntity#list
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			     * @param {string} data.tableUrl - Url for the ajax datalist
+			     * @param {string} data.renderFile - Dust file to render
+			     */
+				if (await this.getHook('list', 'start', data) === false)
+					return;
 
-			/**
-		     * Called before rendering
-		     * @function CoreEntity#list#beforeRender
-		     * @memberof CoreEntity#list
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-		     * @param {string} data.tableUrl - Url for the ajax datalist
-		     * @param {string} data.renderFile - Dust file to render
-		     */
-			if (await this.getHook('list', 'beforeRender', data) === false)
-				return;
+				/**
+			     * Called before rendering
+			     * @function CoreEntity#list#beforeRender
+			     * @memberof CoreEntity#list
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+			     * @param {string} data.tableUrl - Url for the ajax datalist
+			     * @param {string} data.renderFile - Dust file to render
+			     */
+				if (await this.getHook('list', 'beforeRender', data) === false)
+					return;
 
-			data.res.success(_ => data.res.render(data.renderFile, data));
-		}));
+				data.res.success(_ => data.res.render(data.renderFile, data));
+			}
+		}
 	}
 
 	/**
