@@ -11,7 +11,7 @@ exports.attributesValidation = (attributes) => {
 	for (let field in attributes) {
 		field = attributes[field];
 		let validation;
-		if (field.validate == true && (validation = validators.getValidator(field)))
+		if (field.validate == true && (validation = validators(field)))
 			field.validate = validation;
 		else
 			delete field.validate;
