@@ -801,12 +801,24 @@ var NodeaTable = (function() {
 				if (table.data().length == 0)
 					return;
 
+				// In case of hidden col, then no <td> is generated in the table
+				// Then the problem is that the <th> index does not correspond with the <td> index
+				// _DT_CellIndex.column seems to reveal the real <td index depending on the number of <th>
+				// Then use it instead of <td> index if possible
 				var columnIndex = $(this).parents('tr').find('td').index($(this));
+				if($(this)[0] && $(this)[0]._DT_CellIndex && $(this)[0]._DT_CellIndex.column)
+					columnIndex = $(this)[0]._DT_CellIndex.column;
+
 				var column = columns[columnIndex],
 					columnDef = columnDefs[columnIndex];
 
 				if (columnDef.binding === false)
 					return true;
+
+				if(!columnDef.binding) {
+					console.error('Missing binding function on column definition. Please check if given index match with columnDefs array index. Potential source of the issue: hidden column.');
+					return true
+				}
 
 				columnDef.binding({
 					column,
@@ -818,7 +830,7 @@ var NodeaTable = (function() {
 				});
 			});
 
-			$(tableID + ' tbody', context).mousedown(function (e) {
+			$(tableID + ' tbody', context).on('mousedown', function (e) {
 				if (!e.ctrlKey) {
 					e.preventDefault();
 					down = true;
@@ -826,15 +838,25 @@ var NodeaTable = (function() {
 					left = $(".dataTables_wrapper", context).scrollLeft();
 				}
 			});
-			$(tableID + ' tbody', context).mousemove(function (e) {
+			$(tableID + ' tbody', context).on('mousemove', function (e) {
 				if (down) {
 					additionalData.scrolling = true;
 					var newX = e.pageX;
 					$(".dataTables_wrapper", context).scrollLeft(left - newX + x);
 				}
 			});
-			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
-			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).on('mouseup', function (e) {
+				down = false;
+				setTimeout(function () {
+					additionalData.scrolling = false;
+				}, 500);
+			});
+			$(tableID + ' tbody', context).on('mouseleave', function (e) {
+				down = false;
+				setTimeout(function () {
+					additionalData.scrolling = false;
+				}, 500);
+			});
 
 		} catch(err) {
 			console.error("ERROR: NodeaTable "+tableID+" :");
