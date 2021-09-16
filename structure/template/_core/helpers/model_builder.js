@@ -292,15 +292,17 @@ exports.buildSequelizeAssociations = (models, modelName, options) => {
 	}
 }
 
+/** Param hooks expected format :
+ * {
+ *   'hookName': {
+ *     type: 'beforeCreate', // Sequelize hook type
+ *     func: (model, args) => {}
+ *   }
+ * }
+ */
 exports.buildSequelizeHooks = (sequelizeModel, hooks) => {
-	for (const hookType in hooks) {
-		for (let i = 0; i < hooks[hookType].length; i++) {
-			const hook = hooks[hookType][i];
-			if (hook.name)
-				sequelizeModel.addHook(hookType, hook.name, hook.func);
-			else
-				sequelizeModel.addHook(hookType, hook.func);
-		}
+	for (const hookName in hooks) {
+		const {type, func} = hooks[hookName];
+		sequelizeModel.addHook(type, hookName, func);
 	}
-
 }

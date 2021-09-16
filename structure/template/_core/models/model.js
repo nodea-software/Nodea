@@ -6,7 +6,7 @@ class CoreModel {
 		this.modelName = modelName;
 		this.attributes = attributes;
 		this.relations = relations;
-		this.hooks = defaultHooks();
+		this.hooks = defaultHooks;
 
 		this.data = {
 			tableName: tableName,
