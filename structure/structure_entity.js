@@ -219,6 +219,13 @@ exports.setupEntity = async (data) => {
 	// CREATE MODEL OPTIONS (ASSOCIATIONS) FILE
 	fs.writeFileSync(workspacePath + '/app/models/options/' + entity_name + '.json', JSON.stringify([], null, 4));
 
+	// CREATE TEST FILE
+	let testTemplate = fs.readFileSync(__piecesPath + '/tests/entity.test.js', 'utf8');
+	testTemplate = testTemplate.replace(/MODEL_NAME/g, entity_model);
+	testTemplate = testTemplate.replace(/ENTITY_NAME/g, entity_name);
+	testTemplate = testTemplate.replace(/URL_NAME/g, entity_url);
+	fs.writeFileSync(workspacePath + '/tests/' + entity_name + '.test.js', testTemplate);
+
 	// CREATE ROUTE FILE
 	let routeTemplate = '';
 	if(data.options.isParamEntity) {

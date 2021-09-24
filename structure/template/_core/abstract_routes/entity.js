@@ -508,124 +508,129 @@ class CoreEntity extends Route {
 	 * @namespace CoreEntity#create
 	 */
 	create() {
-		this.router.post('/create', ...this.middlewares.create, this.asyncRoute(async(data) => {
-			data.transaction = await models.sequelize.transaction();
+		return {
+			method: 'get',
+			path: '/list',
+			middlewares: this.middlewares.create,
+			route: async(data) => {
+				data.transaction = await models.sequelize.transaction();
 
-			/**
-		     * Called at route start
-		     * @function CoreEntity#create#start
-		     * @memberof CoreEntity#create
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 */
-			if (await this.getHook('create', 'start', data) === false)
-				return;
+				/**
+			     * Called at route start
+			     * @function CoreEntity#create#start
+			     * @memberof CoreEntity#create
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 */
+				if (await this.getHook('create', 'start', data) === false)
+					return;
 
-			const [createObject, createAssociations, createFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
-			data.createObject = createObject;
-			data.createAssociations = createAssociations;
-			data.files = createFiles;
+				const [createObject, createAssociations, createFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
+				data.createObject = createObject;
+				data.createAssociations = createAssociations;
+				data.files = createFiles;
 
-			/**
-		     * Called before entity creation in database
-		     * @function CoreEntity#create#beforeCreateQuery
-		     * @memberof CoreEntity#create
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 * @param {object} data.createObject - Parsed form values used to create row in database
-			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
-			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-			 */
-			if (await this.getHook('create', 'beforeCreateQuery', data) === false)
-				return;
+				/**
+			     * Called before entity creation in database
+			     * @function CoreEntity#create#beforeCreateQuery
+			     * @memberof CoreEntity#create
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 * @param {object} data.createObject - Parsed form values used to create row in database
+				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
+				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 */
+				if (await this.getHook('create', 'beforeCreateQuery', data) === false)
+					return;
 
-			data.createdRow = await models[this.E_entity].create(data.createObject, {
-				user: data.req.user,
-				transaction: data.transaction
-			});
-
-			data.redirect = '/' + this.entity + '/show?id=' + data.createdRow.id;
-			data.req.session.toastr = [{
-				message: 'message.create.success',
-				level: "success"
-			}];
-
-			// If created from an association, register created row on source entity
-			if (typeof data.req.query.associationFlag !== 'undefined' && data.req.query.associationFlag !== "") {
-				data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
-
-				const association = await models[data.req.query.associationSource.capitalizeFirstLetter()].findOne({
-					where: { id: data.req.query.associationFlag }
+				data.createdRow = await models[this.E_entity].create(data.createObject, {
+					user: data.req.user,
+					transaction: data.transaction
 				});
 
-				if (!association)
-					throw new Error("Association not found.");
+				data.redirect = '/' + this.entity + '/show?id=' + data.createdRow.id;
+				data.req.session.toastr = [{
+					message: 'message.create.success',
+					level: "success"
+				}];
 
-				const modelName = data.req.query.associationAlias.capitalizeFirstLetter();
-				if (typeof association['add' + modelName] !== 'undefined') {
-					await association['add' + modelName](data.createdRow.id, {transaction: data.transaction});
+				// If created from an association, register created row on source entity
+				if (typeof data.req.query.associationFlag !== 'undefined' && data.req.query.associationFlag !== "") {
+					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
 
-					if (globalConfig.env == "tablet") {
-						// Write add association to synchro journal
-						this.helpers.entity.synchro.writeJournal({
-							verb: "associate",
-							id: data.req.query.associationFlag,
-							target: this.e_entity,
-							entityName: data.req.query.associationSource,
-							func: 'add' + modelName,
-							ids: data.createdRow.id
+					const association = await models[data.req.query.associationSource.capitalizeFirstLetter()].findOne({
+						where: { id: data.req.query.associationFlag }
+					});
+
+					if (!association)
+						throw new Error("Association not found.");
+
+					const modelName = data.req.query.associationAlias.capitalizeFirstLetter();
+					if (typeof association['add' + modelName] !== 'undefined') {
+						await association['add' + modelName](data.createdRow.id, {transaction: data.transaction});
+
+						if (globalConfig.env == "tablet") {
+							// Write add association to synchro journal
+							this.helpers.entity.synchro.writeJournal({
+								verb: "associate",
+								id: data.req.query.associationFlag,
+								target: this.e_entity,
+								entityName: data.req.query.associationSource,
+								func: 'add' + modelName,
+								ids: data.createdRow.id
+							});
+						}
+					} else {
+						const obj = {};
+						obj[data.req.query.associationForeignKey] = data.createdRow.id;
+						await association.update(obj, {
+							user: data.req.user,
+							transaction: data.transaction
 						});
 					}
-				} else {
-					const obj = {};
-					obj[data.req.query.associationForeignKey] = data.createdRow.id;
-					await association.update(obj, {
-						user: data.req.user,
-						transaction: data.transaction
-					});
 				}
+
+				// Add default write to disk function to file if none set through hooks
+				// These functions will be executed on route success before transaction commit
+				for (const file of data.files)
+					if (!file.func && file.buffer)
+						file.func = async file => {
+							if (file.isPicture)
+								await this.helpers.file.writePicture(file.finalPath, file.buffer);
+							else
+								await this.helpers.file.write(file.finalPath, file.buffer);
+						}
+				// Add associations
+				await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
+
+				await this.helpers.address.setAddressIfComponentExists(data.createdRow, this.options, data.req.body, data.transaction);
+				const statusToastrs = await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, {transaction: data.transaction, user: data.req.user}) || [];
+
+				if (statusToastrs.length)
+					data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];
+
+				/**
+			     * Called before redirection to data.redirect
+			     * @function CoreEntity#create#beforeRedirect
+			     * @memberof CoreEntity#create
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 * @param {object} data.createObject - Parsed form values used to create row in database
+				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
+				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 */
+				if (await this.getHook('create', 'beforeRedirect', data) === false)
+					return;
+
+				await data.res.success(_ => data.res.redirect(data.redirect));
 			}
-
-			// Add default write to disk function to file if none set through hooks
-			// These functions will be executed on route success before transaction commit
-			for (const file of data.files)
-				if (!file.func && file.buffer)
-					file.func = async file => {
-						if (file.isPicture)
-							await this.helpers.file.writePicture(file.finalPath, file.buffer);
-						else
-							await this.helpers.file.write(file.finalPath, file.buffer);
-					}
-			// Add associations
-			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
-
-			await this.helpers.address.setAddressIfComponentExists(data.createdRow, this.options, data.req.body, data.transaction);
-			const statusToastrs = await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, {transaction: data.transaction, user: data.req.user}) || [];
-
-			if (statusToastrs.length)
-				data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];
-
-			/**
-		     * Called before redirection to data.redirect
-		     * @function CoreEntity#create#beforeRedirect
-		     * @memberof CoreEntity#create
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 * @param {object} data.createObject - Parsed form values used to create row in database
-			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
-			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-			 */
-			if (await this.getHook('create', 'beforeRedirect', data) === false)
-				return;
-
-			data.res.success(_ => data.res.redirect(data.redirect));
-		}));
+		};
 	}
 
 	/**
@@ -732,113 +737,118 @@ class CoreEntity extends Route {
 	 * @namespace CoreEntity#update
 	 */
 	update() {
-		this.router.post('/update', ...this.middlewares.update, this.asyncRoute(async(data) => {
-			data.transaction = await models.sequelize.transaction();
-			data.idEntity = parseInt(data.req.body.id);
+		return {
+			method: 'post',
+			path: '/update',
+			middlewares: this.middlewares.update,
+			route: async(data) => {
+				data.transaction = await models.sequelize.transaction();
+				data.idEntity = parseInt(data.req.body.id);
 
-			/**
-		     * Called at route start
-		     * @function CoreEntity#update#start
-		     * @memberof CoreEntity#update
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 * @param {number} data.idEntity - Id of entity to update
-			 */
-			if (await this.getHook('update', 'start', data) === false)
-				return;
+				/**
+			     * Called at route start
+			     * @function CoreEntity#update#start
+			     * @memberof CoreEntity#update
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 * @param {number} data.idEntity - Id of entity to update
+				 */
+				if (await this.getHook('update', 'start', data) === false)
+					return;
 
-			const [updateObject, updateAssociations, updateFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
-			data.updateObject = updateObject;
-			data.updateAssociations = updateAssociations;
-			data.files = data.req.files = updateFiles;
+				const [updateObject, updateAssociations, updateFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
+				data.updateObject = updateObject;
+				data.updateAssociations = updateAssociations;
+				data.files = data.req.files = updateFiles;
 
-			data.updateRow = await models[this.E_entity].findOne({
-				where: { id: data.idEntity },
-				transaction: data.transaction
-			});
+				data.updateRow = await models[this.E_entity].findOne({
+					where: { id: data.idEntity },
+					transaction: data.transaction
+				});
 
-			if (!data.updateRow)
-				return data.res.error(_ => data.res.render('common/404', {
-					message: 'Entity row not found'
-				}));
+				if (!data.updateRow)
+					return data.res.error(_ => data.res.render('common/404', {
+						message: 'Entity row not found'
+					}));
 
-			for (const file of data.files || []) {
-				// Store old path of modified file before entity update
-				if (file.isModified && data.updateRow[file.attribute])
-					file.previousPath = data.updateRow[file.attribute];
-				file.func = async file => {
-					// New file
-					if (file.buffer) {
-						if (file.isPicture)
-							await this.helpers.file.writePicture(file.finalPath, file.buffer);
-						else
-							await this.helpers.file.write(file.finalPath, file.buffer);
-					}
-					// Replaced or removed file
-					if (file.previousPath) {
-						if (file.isPicture)
-							await this.helpers.file.removePicture(file.previousPath);
-						else
-							await this.helpers.file.remove(file.previousPath);
+				for (const file of data.files || []) {
+					// Store old path of modified file before entity update
+					if (file.isModified && data.updateRow[file.attribute])
+						file.previousPath = data.updateRow[file.attribute];
+					file.func = async file => {
+						// New file
+						if (file.buffer) {
+							if (file.isPicture)
+								await this.helpers.file.writePicture(file.finalPath, file.buffer);
+							else
+								await this.helpers.file.write(file.finalPath, file.buffer);
+						}
+						// Replaced or removed file
+						if (file.previousPath) {
+							if (file.isPicture)
+								await this.helpers.file.removePicture(file.previousPath);
+							else
+								await this.helpers.file.remove(file.previousPath);
+						}
 					}
 				}
+
+				this.helpers.address.updateAddressIfComponentExists(data.updateRow, this.options, data.req.body, data.transaction);
+
+				data.updateObject.version = data.updateRow.version;
+				if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
+					data.updateObject.version = 0;
+				data.updateObject.version++;
+
+				/**
+			     * Called before entity update in database
+			     * @function CoreEntity#update#beforeUpdate
+			     * @memberof CoreEntity#update
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 * @param {object} data.updateObject - Parsed form values used to update row in database
+				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
+				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 */
+				if (await this.getHook('update', 'beforeUpdate', data) === false)
+					return;
+
+				await data.updateRow.update(data.updateObject, {user: data.req.user, transaction: data.transaction});
+
+				// Add associations
+				await Promise.all(data.updateAssociations.map(asso => data.updateRow[asso.func](asso.value, {transaction: data.transaction})));
+
+				data.redirect = '/' + this.entity + '/show?id=' + data.idEntity;
+				if (typeof data.req.query.associationFlag !== 'undefined')
+					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
+
+				data.req.session.toastr = [{
+					message: 'message.update.success',
+					level: "success"
+				}];
+
+				/**
+			     * Called before redirecting to data.redirect
+			     * @function CoreEntity#update#beforeRedirect
+			     * @memberof CoreEntity#update
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+				 * @param {object} data.updateObject - Parsed form values used to update row in database
+				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
+				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 */
+				if (await this.getHook('update', 'beforeRedirect', data) === false)
+					return;
+
+				data.res.success(_ => data.res.redirect(data.redirect));
 			}
-
-			this.helpers.address.updateAddressIfComponentExists(data.updateRow, this.options, data.req.body, data.transaction);
-
-			data.updateObject.version = data.updateRow.version;
-			if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
-				data.updateObject.version = 0;
-			data.updateObject.version++;
-
-			/**
-		     * Called before entity update in database
-		     * @function CoreEntity#update#beforeUpdate
-		     * @memberof CoreEntity#update
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 * @param {object} data.updateObject - Parsed form values used to update row in database
-			 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
-			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-			 */
-			if (await this.getHook('update', 'beforeUpdate', data) === false)
-				return;
-
-			await data.updateRow.update(data.updateObject, {user: data.req.user, transaction: data.transaction});
-
-			// Add associations
-			await Promise.all(data.updateAssociations.map(asso => data.updateRow[asso.func](asso.value, {transaction: data.transaction})));
-
-			data.redirect = '/' + this.entity + '/show?id=' + data.idEntity;
-			if (typeof data.req.query.associationFlag !== 'undefined')
-				data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
-
-			data.req.session.toastr = [{
-				message: 'message.update.success',
-				level: "success"
-			}];
-
-			/**
-		     * Called before redirecting to data.redirect
-		     * @function CoreEntity#update#beforeRedirect
-		     * @memberof CoreEntity#update
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
-			 * @param {object} data.updateObject - Parsed form values used to update row in database
-			 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
-			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-			 */
-			if (await this.getHook('update', 'beforeRedirect', data) === false)
-				return;
-
-			data.res.success(_ => data.res.redirect(data.redirect));
-		}));
+		}
 	}
 
 	/**
@@ -1272,88 +1282,93 @@ class CoreEntity extends Route {
 	 * @namespace CoreEntity#destroy
 	 */
 	destroy() {
-		this.router.post('/delete', ...this.middlewares.destroy, this.asyncRoute(async(data) => {
-			data.idEntity = parseInt(data.req.body.id);
+		return {
+			method: 'post',
+			path: '/delete',
+			middlewares: this.middlewares.destroy,
+			route: async(data) => {
+				data.idEntity = parseInt(data.req.body.id);
 
-			/**
-		     * Called to delete an entity row in database
-		     * @function CoreEntity#destroy#start
-		     * @memberof CoreEntity#destroy
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			 * @param {string} data.idEntity - Id of entity to delete
-			 */
-			if (await this.getHook('destroy', 'start', data) === false)
-				return;
+				/**
+			     * Called to delete an entity row in database
+			     * @function CoreEntity#destroy#start
+			     * @memberof CoreEntity#destroy
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+				 * @param {string} data.idEntity - Id of entity to delete
+				 */
+				if (await this.getHook('destroy', 'start', data) === false)
+					return;
 
-			/**
-		     * Called before fetching row to delete
-		     * @function CoreEntity#destroy#beforeEntityQuery
-		     * @memberof CoreEntity#destroy
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			 * @param {string} data.idEntity - Id of entity to delete
-			 */
-			if (await this.getHook('destroy', 'beforeEntityQuery', data) === false)
-				return;
+				/**
+			     * Called before fetching row to delete
+			     * @function CoreEntity#destroy#beforeEntityQuery
+			     * @memberof CoreEntity#destroy
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+				 * @param {string} data.idEntity - Id of entity to delete
+				 */
+				if (await this.getHook('destroy', 'beforeEntityQuery', data) === false)
+					return;
 
-			data.deleteObject = await models[this.E_entity].findOne({
-				where: {id: data.idEntity}
-			});
+				data.deleteObject = await models[this.E_entity].findOne({
+					where: {id: data.idEntity}
+				});
 
-			if (!data.deleteObject)
-				return data.res.error(_ => data.res.render('common/404', {
-					message: 'Entity row not found'
-				}));
+				if (!data.deleteObject)
+					return data.res.error(_ => data.res.render('common/404', {
+						message: 'Entity row not found'
+					}));
 
-			/**
-		     * Called before deleting row in database
-		     * @function CoreEntity#destroy#beforeEntityQuery
-		     * @memberof CoreEntity#destroy
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			 * @param {string} data.idEntity - Id of entity to delete
-			 * @param {object} data.deleteObject - Instance of entity to delete
-			 */
-			if (await this.getHook('destroy', 'beforeDestroy', data) === false)
-				return;
+				/**
+			     * Called before deleting row in database
+			     * @function CoreEntity#destroy#beforeEntityQuery
+			     * @memberof CoreEntity#destroy
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+				 * @param {string} data.idEntity - Id of entity to delete
+				 * @param {object} data.deleteObject - Instance of entity to delete
+				 */
+				if (await this.getHook('destroy', 'beforeDestroy', data) === false)
+					return;
 
-			await data.deleteObject.destroy({transaction: data.transaction});
+				await data.deleteObject.destroy({transaction: data.transaction});
 
-			data.req.session.toastr = [{
-				message: 'message.delete.success',
-				level: "success"
-			}];
+				data.req.session.toastr = [{
+					message: 'message.delete.success',
+					level: "success"
+				}];
 
-			data.redirect = '/' + this.entity + '/list';
-			if (typeof data.req.query.associationFlag !== 'undefined')
-				data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
+				data.redirect = '/' + this.entity + '/list';
+				if (typeof data.req.query.associationFlag !== 'undefined')
+					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
 
-			await this.helpers.entity.removeFiles(data.deleteObject, this.attributes);
+				await this.helpers.entity.removeFiles(data.deleteObject, this.attributes);
 
-			/**
-		     * Called before redirecting to `data.redirect`
-		     * @function CoreEntity#destroy#beforeEntityQuery
-		     * @memberof CoreEntity#destroy
-		     * @param {object} data
-			 * @param {object} data.req - Request - See expressjs definition
-			 * @param {object} data.res - Response - See expressjs definition
-			 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			 * @param {string} data.idEntity - Id of entity to delete
-			 * @param {object} data.deleteObject - Instance of entity to delete
-			 * @param {string} data.redirect - Where to redirect the response
-			 */
-			if (await this.getHook('destroy', 'beforeRedirect', data) === false)
-				return;
+				/**
+			     * Called before redirecting to `data.redirect`
+			     * @function CoreEntity#destroy#beforeEntityQuery
+			     * @memberof CoreEntity#destroy
+			     * @param {object} data
+				 * @param {object} data.req - Request - See expressjs definition
+				 * @param {object} data.res - Response - See expressjs definition
+				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
+				 * @param {string} data.idEntity - Id of entity to delete
+				 * @param {object} data.deleteObject - Instance of entity to delete
+				 * @param {string} data.redirect - Where to redirect the response
+				 */
+				if (await this.getHook('destroy', 'beforeRedirect', data) === false)
+					return;
 
-			data.res.success(_ => data.res.redirect(data.redirect));
-		}));
+				await data.res.success(_ => data.res.redirect(data.redirect));
+			}
+		}
 	}
 }
 

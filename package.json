@@ -33,6 +33,7 @@
 		"fs-extra": "^9.0.1",
 		"google-translate": "^3.0.0",
 		"html": "^1.0.0",
+		"jest": "^27.2.0",
 		"jimp": "0.9.8",
 		"jison": "~0.4.17",
 		"jquery": "^3.5.1",
