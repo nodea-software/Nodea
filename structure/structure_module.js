@@ -32,7 +32,7 @@ exports.setupModule = async (data) => {
 	let resultDust = dataDust.replace(/custom_module/g, name_module.toLowerCase());
 	if (name_module.toLowerCase() != "m_home") {
 		const moduleAriane = "\
-			<li class='active'>\
+			<li class='breadcrumb-item active'>\
 				{#__ key=\"module." + name_module.toLowerCase() + "\"/}\n\
 			</li>";
 		resultDust = resultDust.replace(/<!-- NEW MODULE -->/g, moduleAriane);

@@ -42,7 +42,12 @@ class CoreImportExport extends Route {
 				// Get primary tables
 				const entityName = file.substring(0, file.length - 5);
 				const modelName = entityName.charAt(0).toUpperCase() + entityName.slice(1);
-				const tableName = models[modelName].getTableName();
+				let tableName;
+				try {
+					tableName = models[modelName].getTableName();
+				} catch(err) {
+					console.error(err);
+				}
 				const entityObject = {
 					tradKey: 'entity.' + entityName + '.label_entity',
 					tableName: tableName
