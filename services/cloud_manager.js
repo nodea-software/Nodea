@@ -390,9 +390,8 @@ async function portainerDeploy(data){
 
 	// Looking for given branch if not master default
 	if(data.branch != 'master') {
-		const branch = await gitHelper.gitBranch(data);
-		console.log(branch.all);
-		if(!branch.all.find(x => x == data.branch || x.endsWith(data.branch)))
+		const branch = await gitlab.getProjectBranch(data.application.repoID);
+		if(!branch.find(x => x.name == data.branch || x.name.endsWith(data.branch)))
 			throw new Error('Specified branch "' + data.branch + '" do not exist on repository.');
 
 		// Cleaning branch name and adding it to stackName
