@@ -431,14 +431,14 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	// if (globalConf.env != 'studio') {
-	// 	const port = math.add(9000, data.appID);
-	// 	const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-	// 	return {
-	// 		message: "botresponse.applicationavailable",
-	// 		messageParams: [url, url]
-	// 	};
-	// }
+	if (globalConf.env != 'studio') {
+		const port = math.add(9000, data.appID);
+		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+		return {
+			message: "botresponse.applicationavailable",
+			messageParams: [url, url]
+		};
+	}
 
 	const appName = data.application.name;
 	const workspacePath = __dirname + '/../workspace/' + appName;
