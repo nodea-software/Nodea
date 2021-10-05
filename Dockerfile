@@ -9,17 +9,17 @@ RUN rm -rf workspace/
 RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano && apt-get -y install mysql-client
 
 # Main folder
-RUN mkdir /app
-WORKDIR /app
-COPY . /app
+RUN mkdir /nodea
+WORKDIR /nodea
+COPY . /nodea
 
 # Workspace folder
-RUN mkdir -p /app/workspace
-COPY /structure/template/package.json /app/workspace
+RUN mkdir -p /nodea/workspace
+COPY /structure/template/package.json /nodea/workspace
 
 # Expose Nodea and workspace ports
 EXPOSE 1337 9001-9100
 
 # Entrypoint
-RUN chmod 777 /app/entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
+RUN chmod 777 /nodea/entrypoint.sh
+ENTRYPOINT ["/nodea/entrypoint.sh"]

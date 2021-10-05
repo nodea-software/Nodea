@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 const json2yaml = require('json2yaml');
 const fs = require('fs-extra');
-const math = require('math');
 const moment = require('moment');
 
 const globalConf = require('../config/global.js');
@@ -71,7 +70,54 @@ async function getStack(stackName) {
 	return callResults[0];
 }
 
-async function updateStack(currentStack) {
+// Generate gitlab url used to clone with access token integrated
+async function generateCloneUrl(data) {
+	// 1 - Generate temporary personnal access token to clone repository on cloud env
+	const today = moment().format('YYYY-MM-DD');
+	// Expire tomorrow
+	const expireAt = moment().add(1, 'd').format('YYYY-MM-DD');
+	const tokenName = 'deploy_token_' + today;
+	const accessToken = await gitlab.generateAccessToken(data.code_platform.user, tokenName, ['read_repository', 'write_repository'], expireAt);
+
+	// Get repository name using app remote (more precise)
+	const remotes = await gitHelper.gitRemotes(data);
+	let remote;
+	if(remotes.length > 0 && remotes[0].refs && remotes[0].refs.fetch){
+		// Getting actuel .git fetch remote
+		remote = remotes[0].refs.fetch;
+		data.repoName = remote.split('/').pop();
+		if(data.repoName.endsWith('.git'))
+			data.repoName = data.repoName.slice(0, -4);
+	}
+
+	let git_url = ""
+	if(data.application && data.application.codePlatformRepoHTTP) {
+		// Use metadata codePlatformRepoHTTP key
+		// Cut http remote to inject accessToken
+		let splitRemote = data.application.codePlatformRepoHTTP.split(gitlab.config.url + '/')[1];
+		if(!splitRemote)
+			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
+
+		if(splitRemote.endsWith('.git'))
+			splitRemote = splitRemote.slice(0, -4);
+		git_url = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
+	} else if(remote) {
+		// Use git remote
+		let splitRemote = remote.split(gitlab.config.url + '/')[1];
+		if(!splitRemote)
+			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
+
+		if(splitRemote.endsWith('.git'))
+			splitRemote = splitRemote.slice(0, -4);
+		git_url = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
+	} else {
+		throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.')
+	}
+
+	return git_url;
+}
+
+async function updateStack(data) {
 
 	const allContainers = await request(portainerCloudConfig.url + "/endpoints/1/docker/containers/json", {
 		method: "GET",
@@ -84,7 +130,7 @@ async function updateStack(currentStack) {
 	// Looking for our container ID
 	let ourContainerID = null;
 	for (let i = 0; i < allContainers.length; i++) {
-		if(allContainers[i].Labels['nodea.stackname'] && allContainers[i].Labels['nodea.stackname'] == currentStack.Name) {
+		if(allContainers[i].Labels['nodea.stackname'] && allContainers[i].Labels['nodea.stackname'] == data.currentStack.Name) {
 			ourContainerID = allContainers[i].Id;
 			break;
 		}
@@ -92,6 +138,42 @@ async function updateStack(currentStack) {
 
 	if(!ourContainerID)
 		throw new Error("Cannot find the container to update.");
+
+	// Getting repository remote url
+	data.git_url = await generateCloneUrl(data);
+
+	console.log("CALL => Docker container exec flag update");
+	const execCmd = await request(portainerCloudConfig.url + "/endpoints/1/docker/containers/" + ourContainerID + "/exec", {
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': token
+		},
+		body: JSON.stringify({
+			"AttachStdin": true,
+			"AttachStdout": true,
+			"AttachStderr": true,
+			"DetachKeys": "ctrl-p,ctrl-q",
+			"Tty": true,
+			"Cmd": [
+				"/bin/bash", "-c", 'echo "'+ data.git_url +'" > update.txt'
+			],
+			"Privileged": true,
+			"User": "root"
+		})
+	});
+
+	await request(portainerCloudConfig.url + "/endpoints/1/docker/exec/" + execCmd.Id + "/start", {
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': token
+		},
+		body: JSON.stringify({
+			"Detach": true,
+			"Tty": false
+		})
+	});
 
 	console.log("CALL => Docker container restart");
 	await request(portainerCloudConfig.url + "/endpoints/1/docker/containers/" + ourContainerID + "/restart", {
@@ -103,7 +185,7 @@ async function updateStack(currentStack) {
 	});
 
 	// Return generated stack
-	return currentStack;
+	return true;
 }
 
 // Ask portainer for current network, and analyse network availability on nodea_network_*
@@ -163,61 +245,13 @@ async function getLastNodeaNetwork() {
 
 async function generateStack(data) {
 
-	if(!data.code_platform.user)
-		data.code_platform.user = await gitlab.getUser(data.currentUser);
+	// Getting repository remote url
+	data.git_url = await generateCloneUrl(data);
 
-	// 1 - Generate temporary personnal access token to clone repository on cloud env
-	const today = moment().format('YYYY-MM-DD');
-	// Expire tomorrow
-	const expireAt = moment().add(1, 'd').format('YYYY-MM-DD');
-	const tokenName = 'deploy_token_' + today;
-	const accessToken = await gitlab.generateAccessToken(data.code_platform.user, tokenName, ['read_repository', 'write_repository'], expireAt);
-
-	// 2 - Get project repository name
-	const appNameWithoutPrefix = data.application.name.substring(2);
-	let repoName = globalConf.host + '-' + appNameWithoutPrefix;
-	repoName = repoName.replace(/[.]/g, '-');
-
-	// Get repository name using app remote (more precise)
-	const remotes = await gitHelper.gitRemotes(data);
-	let remote;
-	if(remotes.length > 0 && remotes[0].refs && remotes[0].refs.fetch){
-		// Getting actuel .git fetch remote
-		remote = remotes[0].refs.fetch;
-		repoName = remote.split('/').pop();
-		if(repoName.endsWith('.git'))
-			repoName = repoName.slice(0, -4);
-	}
-
-	// 3- Getting repository remote url
-	let gitlabUrl = ""
-	if(data.application && data.application.codePlatformRepoHTTP) {
-		// Use metadata codePlatformRepoHTTP key
-		// Cut http remote to inject accessToken
-		let splitRemote = data.application.codePlatformRepoHTTP.split(gitlab.config.url + '/')[1];
-		if(!splitRemote)
-			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
-
-		if(splitRemote.endsWith('.git'))
-			splitRemote = splitRemote.slice(0, -4);
-		gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
-	} else if(remote) {
-		// Use git remote
-		let splitRemote = remote.split(gitlab.config.url + '/')[1];
-		if(!splitRemote)
-			throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.');
-
-		if(splitRemote.endsWith('.git'))
-			splitRemote = splitRemote.slice(0, -4);
-		gitlabUrl = gitlab.config.protocol + '://' + accessToken + '@' + gitlab.config.url + '/' + splitRemote + '.git';
-	} else {
-		throw new Error('Unable to build http gitlab URL needed for cloning repository on cloud.')
-	}
-
-	// 4 - Generate final deployed app cloud URL
+	// Generate final deployed app cloud URL
 	const cloudUrl = data.stackName + "." + globalConf.dns_cloud;
 
-	// 5 - Setup cloud database conf
+	// Setup cloud database conf
 	const cloudDbConf = {
 		dbName: "nodea_" + data.application.name,
 		dbUser: "nodea_" + data.application.name,
@@ -226,7 +260,7 @@ async function generateStack(data) {
 		dialect: data.appDialect
 	};
 
-	// 6 - Specify database container image depeding of current app dialect
+	// Specify database container image depeding of current app dialect
 	let dbImage, dbPort;
 	switch(cloudDbConf.dialect) {
 		case 'mysql':
@@ -250,8 +284,6 @@ async function generateStack(data) {
 	// 7 - Getting last nodea_network_* available
 	const chosenNetwork = await getLastNodeaNetwork();
 
-	// console.log(`DEPLOY RECAP:\nCLONE URL -> ${gitlabUrl}\nCLOUD URL -> ${cloudUrl}\nDB_IMAGE -> ${dbImage}\nSTACK_NAME -> ${data.stackName}\nNETWORK -> ${chosenNetwork.name} - ${chosenNetwork.appIP} - ${chosenNetwork.databaseIP}`);
-
 	// 8 - Create docker-compose.yml file
 	const composeContent = json2yaml.stringify({
 		"version": "3.3",
@@ -260,8 +292,8 @@ async function generateStack(data) {
 				"container_name": data.stackName + '_app',
 				"image": "nodeasoftware/application:latest",
 				"environment": {
-					"GIT_URL": gitlabUrl,
-					"APP_NAME": repoName,
+					"GIT_URL": data.git_url,
+					"APP_NAME": data.repoName,
 					"BRANCH": data.branch,
 					"NODEA_ENV": 'cloud',
 					"APP_DB_IP": chosenNetwork.databaseIP,
@@ -332,7 +364,7 @@ async function generateStack(data) {
 	});
 
 	console.log("CALL => Stack generation");
-	const callResults = await request(portainerCloudConfig.url + "/stacks?type=2&method=string&endpointId=1", {
+	return await request(portainerCloudConfig.url + "/stacks?type=2&method=string&endpointId=1", {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'multipart/form-data',
@@ -343,14 +375,14 @@ async function generateStack(data) {
 			"StackFileContent": composeContent
 		})
 	});
-
-	// Return generated stack
-	return callResults;
 }
 
 const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/);
 async function portainerDeploy(data){
 	const appNameWithoutPrefix = data.application.name.substring(2);
+	const repoName = globalConf.host + '-' + appNameWithoutPrefix;
+	data.repoName = repoName.replace(/[.]/g, '-');
+
 	// Preparing all needed values
 	data.stackName = globalConf.sub_domain + "-" + appNameWithoutPrefix;
 	// Portainer do not like camelCase and - , _ cf https://github.com/portainer/portainer/issues/2020
@@ -374,16 +406,19 @@ async function portainerDeploy(data){
 	// Authenticate in portainer API
 	token = await authenticate();
 
+	if(!data.code_platform.user)
+		data.code_platform.user = await gitlab.getUser(data.currentUser);
+
 	// Trying to get if exist the current stack in cloud portainer
-	let currentStack = await getStack(data.stackName);
-	if(!currentStack){
+	data.currentStack = await getStack(data.stackName);
+	if(!data.currentStack){
 		// Generate new cloud stack
 		console.log("NO STACK FOUND => GENERATING IT...");
-		currentStack = await generateStack(data);
+		await generateStack(data);
 	} else {
 		// Updating a stack
 		console.log("STACK ALREADY EXIST => UPDATING IT...")
-		currentStack = await updateStack(currentStack);
+		await updateStack(data);
 	}
 
 	console.log("DEPLOY DONE");
@@ -397,14 +432,14 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	if (globalConf.env != 'studio') {
-		const port = math.add(9000, data.appID);
-		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-		return {
-			message: "botresponse.applicationavailable",
-			messageParams: [url, url]
-		};
-	}
+	// if (globalConf.env != 'studio') {
+	// 	const port = math.add(9000, data.appID);
+	// 	const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+	// 	return {
+	// 		message: "botresponse.applicationavailable",
+	// 		messageParams: [url, url]
+	// 	};
+	// }
 
 	const appName = data.application.name;
 	const workspacePath = __dirname + '/../workspace/' + appName;
