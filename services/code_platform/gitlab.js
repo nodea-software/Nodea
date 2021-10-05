@@ -280,6 +280,22 @@ exports.getProjectTags = async(projectID) => {
 	});
 }
 
+exports.getProjectBranch = async(projectID) => {
+
+	if (!gitlabConf.enabled)
+		return;
+
+	console.log("GITLAB => getProjectBranch");
+
+	return await request(gitlabURL + "/projects/" + projectID + "/repository/branches", {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'Private-Token': token
+		}
+	});
+}
+
 exports.getProjectByName = async(projectName) => {
 
 	console.log("GITLAB => getProjectByName => " + projectName);
