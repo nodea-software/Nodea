@@ -117,7 +117,12 @@ function writePicture(filePath, buffer, encoding = 'utf8') {
 
 function read(filePath, options = {}) {
 	return new Promise((resolve, reject) => {
-		const securedPath = securePath(globalConf.localstorage, filePath);
+		let securedPath;
+		try {
+			securedPath = securePath(globalConf.localstorage, filePath);
+		} catch(err) {
+			return reject(err);
+		}
 		fs.readFile(securedPath, options, (err, data) => {
 			if (err)
 				return reject(err);

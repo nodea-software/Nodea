@@ -103,7 +103,7 @@ const mandatoryInstructions = [
 	"add field Program file with type file",
 	"entity Program has many Page",
 	"select entity Page",
-	"add field Titre",
+	"add field Title",
 	"add field URL with type url",
 	"add field Script with type regular text",
 	"add field Delay with type number",

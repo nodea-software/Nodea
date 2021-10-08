@@ -7,35 +7,55 @@ const models = require('@app/models');
 const helpers = require('@core/helpers');
 const middlewares = helpers.middlewares;
 
-const upload = require('multer');
-const multer = upload();
 const duplicate = require('@core/utils/duplicate_entity');
-const moment = require('moment');
 const fs = require('fs-extra');
 
 class Program extends Entity {
 	constructor() {
-		const additionalRoutes = ['generate_and_replace', 'generate', 'duplicate'];
+		const additionalRoutes = ['generate_and_replace', 'generate_pages', 'generate_zip', 'duplicate'];
 		super('e_program', attributes, options, helpers, additionalRoutes);
+	}
+
+	generate_pages() {
+		this.router.get('/generate_pages', middlewares.actionAccess("program", "create"), middlewares.actionAccess("page", "create"), this.asyncRoute(async data => {
+			const {req, res} = data;
+			const idProgram = req.query.id;
+
+			const program = await models.E_program.findOne({where: {id: idProgram}})
+			if (!program) {
+				req.session.toastr = [{level: 'error', message: "error.404"}];
+				return res.error(_ => res.redirect("/program/show?id="+idProgram+"#r_page"));
+			}
+			if (!program.f_program_file) {
+				req.session.toastr = [{level: 'error', message: "automation.no_zip_for_pages"}];
+				return res.error(_ => res.redirect("/program/show?id="+idProgram+"#r_page"));
+			}
+
+			const zipPath = helpers.file.fullPath(program.f_program_file);
+			await helpers.program.generatePages(program.id, zipPath, req.user)
+			req.session.toastr = [{level: 'success', message: 'Pages générées'}];
+			res.success(_ => res.redirect(`/program/show?id=${program.id}#r_page`));
+		}));
 	}
 
 	generate_and_replace() {
 		this.router.get('/generate_and_replace', middlewares.actionAccess('program', 'create'), this.asyncRoute(async (data) => {
 			const idProgram = data.req.query.id;
-			const zipFilePath = await helpers.program.generateZip(idProgram);
 
 			const program = await models.E_program.findOne({where: {id: idProgram}});
 			if (!program)
 				throw new Error("Couldn't find Program");
 
-			let dateFolder;
+			const zipFilePath = await helpers.program.generateZip(idProgram);
+			let programFile;
 			if (program.f_program_file && program.f_program_file.length)
-				dateFolder = program.f_program_file.substring(0, 8);
+				programFile = program.f_program_file;
 			else {
-				dateFolder = moment().format('YYYYMMDD');
-				await program.update({f_program_file: `${dateFolder}-${moment().format('hhmmss')}_Program_file.zip`}, {transaction: data.transaction});
+				const [filePath, fileName] = helpers.file.createPathAndName('e_program', 'program_file.zip');
+				programFile = `${filePath}/${fileName}`;
+				await program.update({f_program_file: programFile}, {transaction: data.transaction});
 			}
-			fs.copySync(zipFilePath, `${__appPath}/../upload/e_program/${dateFolder}/${program.f_program_file}`);
+			fs.copySync(zipFilePath, helpers.file.fullPath(programFile));
 			fs.unlink(zipFilePath);
 
 			data.req.session.toastr = [{level: 'success', message: "automation.zip_created_replaced"}]
@@ -44,7 +64,7 @@ class Program extends Entity {
 		}));
 	}
 
-	generate() {
+	generate_zip() {
 		this.router.get('/generate', middlewares.actionAccess('program', 'create'), this.asyncRoute(async (data) => {
 			const idProgram = data.req.query.id;
 

@@ -101,7 +101,9 @@
         "sequence_menu_env_variable": "Variable d'environnement (flux de données)",
         "sequence_menu_session_variable": "Variable de session",
         "zip_created_replaced": "Le zip a été généré et le fichier programme remplacé",
-        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme."
+        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme.",
+        "no_zip_for_pages": "Pas de fichier programme",
+        "pages_generated": "Pages générées"
     },
 	"navbar": {
 		"about": "A propos",
@@ -207,6 +209,7 @@
 		"delete_confirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement ?",
 		"loading": "Chargement...",
         "generate_replace": "Générer et remplacer",
+        "generate_pages": "Générer les pages à partir du zip",
         "duplicate": "Dupliquer"
 	},
 	"operation": {

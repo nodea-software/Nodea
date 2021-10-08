@@ -39,6 +39,10 @@
 		"e_translation": {
 			"as_r_translations": "Traductions"
 		},
+		"e_program": {
+            "generate_pages_btns": "Actions on pages",
+            "generate_zip_btns": "Actions on program file"
+		},
         "e_page": {
             "label_entity": "Page",
             "id_entity": "ID",
