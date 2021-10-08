@@ -613,6 +613,7 @@ class CoreEntity extends Route {
 			 * @param {object} data.res - Response - See expressjs definition
 			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
 			 * @param {object} data.createObject - Parsed form values used to create row in database
+			 * @param {object} data.createdRow - Created instance in database
 			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
 			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 			 */
@@ -773,10 +774,14 @@ class CoreEntity extends Route {
 					}
 					// Replaced or removed file
 					if (file.previousPath) {
-						if (file.isPicture)
-							await this.helpers.file.removePicture(file.previousPath);
-						else
-							await this.helpers.file.remove(file.previousPath);
+						try {
+							if (file.isPicture)
+								await this.helpers.file.removePicture(file.previousPath);
+							else
+								await this.helpers.file.remove(file.previousPath);
+						} catch(err) {
+							console.error(err);
+						}
 					}
 				}
 			}
@@ -973,6 +978,7 @@ class CoreEntity extends Route {
 	 */
 	set_status() {
 		this.router.get('/set_status/:entity_id/:status/:id_new_status', ...this.middlewares.set_status, this.asyncRoute(async(data) => {
+			data.transaction = await models.sequelize.transaction();
 			data.redirect = data.req.headers.referer;
 			data.idEntity = data.req.params.entity_id;
 			data.statusName = data.req.params.status.substring(2); // TODO: no need for s_ prefix from client
@@ -1048,12 +1054,13 @@ class CoreEntity extends Route {
 			 * @param {string} data.statusName - Status's name
 			 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
 			 * @param {object} data.entity - Entity on which status is to be set, with its current status included
+			 * @param {object} data.customValues - Add custom values to media data object that will be used in media generation
 			 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
 			 */
 			if (await this.getHook('set_status', 'beforeActionsExecution', data) === false)
 				return;
 
-			await this.helpers.status.executeActions(this.E_entity, data.idEntity, data.actions, data.transaction);
+			await this.helpers.status.executeActions(this.E_entity, data.idEntity, data.actions, data.transaction, data.customValues);
 
 			/**
 		     * Called before setting target status using `helpers.status.setStatus()`

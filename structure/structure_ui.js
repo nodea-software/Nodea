@@ -441,7 +441,7 @@ exports.createWidgetPiechart = async (data) => {
 			throw err;
 		}
 	}
-console.log(data.field);
+
 	// Add widget to module's layout
 	const layoutFile = workspacePath + '/views/modules/' + data.np_module.name + '.dust';
 	const $ = await domHelper.read(layoutFile);

@@ -68,6 +68,7 @@ class CoreAccessSettings extends Route {
 						"administration.menu." + values.modules[i].entities[j].name
 					];
 
+					values.modules[i].entities[j].tradKeyEntity = values.modules[i].entities[j].name;
 					for (let k = 0; k < possibleTradKeys.length; k++) {
 						if (language(data.req.session.lang_user).__(possibleTradKeys[k]) != possibleTradKeys[k]){
 							values.modules[i].entities[j].tradKeyEntity = possibleTradKeys[k];
@@ -115,6 +116,7 @@ class CoreAccessSettings extends Route {
 						"administration.menu." + values.modules[i].entities[j].name
 					];
 
+					values.modules[i].entities[j].tradKeyEntity = values.modules[i].entities[j].name;
 					for (let k = 0; k < possibleTradKeys.length; k++) {
 						if (language(data.req.session.lang_user).__(possibleTradKeys[k]) != possibleTradKeys[k]){
 							values.modules[i].entities[j].tradKeyEntity = possibleTradKeys[k];
