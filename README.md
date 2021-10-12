@@ -1,5 +1,5 @@
 <p align="center">
-	<img width="300" height="125" src="https://www.nodea-software.com/img/logo-nodea.png">
+	<img width="300" height="125" src="https://www.nodea-software.com/img/logo/logo_nodea_color.png">
 </p>
 
 # NODEA
