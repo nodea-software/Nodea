@@ -310,7 +310,7 @@ async function generateStack(data) {
 					}
 				},
 				"volumes": [
-					"app:/app"
+					"app:/app/" + data.repoName
 				],
 				"labels": [
 					"traefik.enable=true",
