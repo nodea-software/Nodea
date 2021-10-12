@@ -101,7 +101,9 @@
         "sequence_menu_env_variable": "Environment variables (data flow)",
         "sequence_menu_session_variable": "Session variables",
         "zip_created_replaced": "Zip file created and program file replaced",
-        "duplication_success": "Duplication success. The new program is displayed"
+        "duplication_success": "Duplication success. The new program is displayed",
+        "no_zip_for_pages": "No program file",
+        "pages_generated": "Pages generated"
     },
 	"navbar": {
 		"about": "About",
@@ -207,6 +209,7 @@
 		"delete_confirm": "Are you sure you want to delete this record?",
 		"loading": "Loading...",
         "generate_replace": "Generate and replace",
+        "generate_pages": "Generate pages from zip",
         "duplicate": "Duplicate"
 	},
 	"operation": {

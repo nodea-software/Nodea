@@ -17,8 +17,8 @@ class E_task extends CoreModel {
 	}
 
 	addRobotHook() {
-		this.hooks.beforeCreate.push({
-			name: 'attachToRobot',
+		this.hooks.attachToRobot = {
+			type: 'beforeCreate',
 			func: async (model) => {
 				const result = await models().sequelize.query("\
 					SELECT\
@@ -49,7 +49,7 @@ class E_task extends CoreModel {
 					model.fk_id_robot_robot = result.robot;
 				return model;
 			}
-		})
+		};
 	}
 }
 
