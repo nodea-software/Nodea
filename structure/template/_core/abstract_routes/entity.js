@@ -980,6 +980,8 @@ class CoreEntity extends Route {
 		this.router.get('/set_status/:entity_id/:status/:id_new_status', ...this.middlewares.set_status, this.asyncRoute(async(data) => {
 			data.transaction = await models.sequelize.transaction();
 			data.redirect = data.req.headers.referer;
+			if(!data.redirect || typeof data.redirect === 'undefined')
+				data.redirect = `/${this.entity}/show?id=${data.req.params.entity_id}`;
 			data.idEntity = data.req.params.entity_id;
 			data.statusName = data.req.params.status.substring(2); // TODO: no need for s_ prefix from client
 			data.idNewStatus = data.req.params.id_new_status;
