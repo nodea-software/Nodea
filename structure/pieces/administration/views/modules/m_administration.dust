@@ -286,6 +286,12 @@
 <script type="text/javascript">
     $(function() {
         initWidgets();
+
+        /* Clean card that are empty due to access rights */
+        $('.card').each(function() {
+            if($(this).find('.card-body').find('a').length == 0)
+                $(this).parent().remove();
+        });
     });
 </script>
 {/custom_js}

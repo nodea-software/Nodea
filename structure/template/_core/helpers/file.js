@@ -77,7 +77,7 @@ function writePicture(filePath, buffer, encoding = 'utf8') {
 			const promises = [];
 
 			// Default image resize if needed
-			if(appConf.resizePicture.enabled) {
+			if(appConf.resizePicture && appConf.resizePicture.enabled) {
 				promises.push(new Promise((resolve, reject) => {
 					const pictureWidth = appConf.resizePicture.width;
 					const pictureHeight = appConf.resizePicture.height;

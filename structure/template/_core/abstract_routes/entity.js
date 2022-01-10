@@ -831,6 +831,7 @@ class CoreEntity extends Route {
 			 * @param {object} data.res - Response - See expressjs definition
 			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
 			 * @param {object} data.updateObject - Parsed form values used to update row in database
+			 * @param {string} data.redirect - String URL for ending redirection
 			 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
 			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 			 */

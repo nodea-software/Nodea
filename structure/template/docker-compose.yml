@@ -4,8 +4,6 @@ services:
   application:
     container_name: nodea_standalone_app
     image: nodeasoftware/application:latest
-    links:
-      - "database:database"
     networks:
       - nodea_network
     volumes:
@@ -29,9 +27,9 @@ services:
       MYSQL_USER: ""
       MYSQL_PASSWORD: ""
       PG_DATA: "/var/lib/postgresql/data/pgdata"
-      POSTGRES_DB: "",
-      POSTGRES_USER: "",
-      POSTGRES_PASSWORD: "",
+      POSTGRES_DB: ""
+      POSTGRES_USER: ""
+      POSTGRES_PASSWORD: ""
       POSTGRES_ROOT_PASSWORD: ""
 
 networks:

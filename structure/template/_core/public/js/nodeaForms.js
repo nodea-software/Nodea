@@ -729,7 +729,7 @@ var NodeaForms = (_ => {
 						}
 						// Size of file
 						const file = files[0];
-						if (file.size > 5000000) { // 5mb
+						if (file.size > 10000000) { // 10mb
 							toastr.error("File too big. 10MB maximum");
 							input[0].value = null;
 							return;

@@ -292,6 +292,7 @@ async function generateStack(data) {
 			"application": {
 				"container_name": data.stackName + '_app',
 				"image": "nodeasoftware/application:latest",
+				"depends_on": 'database',
 				"environment": {
 					"GIT_URL": data.git_url,
 					"APP_NAME": data.repoName,

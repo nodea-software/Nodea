@@ -1,0 +1,6 @@
+.git
+.dockerignore
+README.md
+workspace
+upload
+node_modules

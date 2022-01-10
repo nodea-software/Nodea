@@ -1,12 +1,11 @@
-FROM node:fermium
+FROM node:fermium-bullseye-slim
 LABEL maintainer.name="Nodea" maintainer.email="contact@nodea-software.com"
 
 # Clean node_modules && workspace for image creation
-RUN rm -rf node_modules/
-RUN rm -rf workspace/
+RUN rm -rf node_modules/ && rm -rf workspace/
 
 # Update package and install needed module
-RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano && apt-get -y install mysql-client
+RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano
 
 # Main folder
 RUN mkdir /nodea

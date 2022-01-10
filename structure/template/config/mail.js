@@ -24,7 +24,7 @@ const mailConf = {
 				pass: ''
 			}
 		},
-		from: 'Nodea App <no-reply@odea-software.com>',
+		from: 'Nodea App <no-reply@nodea-software.com>',
 		host: 'host'
 	},
 	production: {
