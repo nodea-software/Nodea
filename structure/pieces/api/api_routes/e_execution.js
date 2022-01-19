@@ -73,12 +73,24 @@ class ApiExecution extends ApiEntity {
 
 	get middlewares() {
 		return {
-			find:[],
-			findOne:[],
-			findAssociation:[],
-			create:[],
-			update:[],
-			destroy:[]
+			find:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			findOne:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			findAssociation:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			create:[
+				middlewares.apiActionAccess(this.entity, "create")
+			],
+			update:[
+				middlewares.apiActionAccess(this.entity, "update")
+			],
+			destroy:[
+				middlewares.apiActionAccess(this.entity, "delete")
+			]
 		}
 	}
 }

@@ -28,6 +28,7 @@ class ApiEntity extends ApiRoute {
 
 		this.defaultMiddlewares.push(
 			middlewares.apiAuthentication,
+			middlewares.apiEntityAccess(e_entity),
 			matomoTracker
 		);
 	}
