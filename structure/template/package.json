@@ -1,6 +1,6 @@
 {
-	"name": "newmipsWorkspace",
-	"description": "A newmips generated workspace",
+	"name": "nodea_application",
+	"description": "A Nodea Software generated application.",
 	"repository": "https://github.com/newmips/newmips",
 	"README": "https://github.com/newmips/newmips/blob/master/README.md",
 	"license": "GPL-3.0",
@@ -29,7 +29,8 @@
 		"fill-pdf": "1.1.0",
 		"fs-extra": "^9.0.1",
 		"hat": "0.0.3",
-		"html-pdf": "^2.2.0",
+		"helmet": "^5.0.2",
+		"html-pdf": "^3.0.1",
 		"jimp": "^0.16.1",
 		"jsonschema": "^1.2.4",
 		"jszip": "^2",

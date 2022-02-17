@@ -285,10 +285,10 @@ models.sequelize.sync({
 	if (globalConf.protocol == 'https') {
 		const server = https.createServer(globalConf.ssl, app);
 		server.listen(globalConf.port);
-		console.log("Started https on " + globalConf.port);
+		console.log("✅ Started https on " + globalConf.port);
 	} else {
 		app.listen(globalConf.port);
-		console.log("Started on " + globalConf.port);
+		console.log("✅ Started on " + globalConf.port);
 	}
 }).catch(err => {
 	console.log("ERROR - SYNC");

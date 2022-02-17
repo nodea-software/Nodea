@@ -24,6 +24,22 @@ const socketSession = require('express-socket.io-session');
 const express = require('express');
 const app = express();
 
+const helmet = require('helmet'); // https://helmetjs.github.io/
+app.use(helmet({
+	contentSecurityPolicy: {
+		useDefaults: false,
+		directives: {
+			"default-src": [
+				"'self'",
+				"'unsafe-eval'",
+				"'unsafe-inline'",
+				'data:',
+				'blob:',
+			]
+		}
+	}
+}));
+
 const globalConf = require('@config/global');
 const access = require('@core/helpers/access');
 const language = require('@core/helpers/language');
@@ -146,7 +162,7 @@ require('@core/server/database').then(_ => {
 		}
 	}
 
-	console.log("Started " + globalConf.protocol + " on " + globalConf.port + " !");
+	console.log("✅ Started " + globalConf.protocol + " on " + globalConf.port + " !");
 }).catch(err => {
 	console.error(err);
 })

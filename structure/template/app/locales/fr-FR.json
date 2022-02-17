@@ -301,7 +301,7 @@
             "images_ressources": {
                 "label": "Ressources image",
                 "description": "<p>Ces variables commencent par un <b> img_ </b> et sont accessibles dans toutes les entités.</p>\n<p>Elles permettent d'inclure les ressources images que vous avez crée dans l'administration. Utilisez le champ <b> code </b> de votre Ressource image dans votre template pour qu'il soit remplacé par le buffer de l'image en base64.</p>\n",
-                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
+                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"<b>{img_logo}</b>\"</p>"
             }
 		},
 		"status": {

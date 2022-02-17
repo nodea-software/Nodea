@@ -28,7 +28,7 @@ class ApiEntity extends ApiRoute {
 
 		this.defaultMiddlewares.push(
 			middlewares.apiAuthentication,
-			middlewares.apiEntityAccess(e_entity),
+			middlewares.apiEntityAccess(this.entity),
 			matomoTracker
 		);
 	}
@@ -195,7 +195,7 @@ class ApiEntity extends ApiRoute {
 				for (const option of this.options) {
 					if (option.target == 'e_status' && option.as == prop) {
 						delete data.updateObject[option.foreignKey]
-						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as, data.req.body[prop]));
+						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as.substring(2), data.req.body[prop]));
 						break;
 					}
 				}

@@ -123,6 +123,9 @@ exports.apiAuthentication = function (req, res, next) {
 			return res.status(403).json('Bearer Token expired');
 
 		req.apiCredentials = credentialsObj;
+		req.user = {
+			f_login: credentialsObj.f_client_name
+		};
 		next();
 	});
 }

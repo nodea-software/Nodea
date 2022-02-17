@@ -10,7 +10,8 @@ const config = {
 		host: '127.0.0.1',
 		port: process.env.PORT || 1337,
 		localstorage: __dirname + "/../upload/",
-		authStrategy: process.env.AUTH || 'local'
+		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh'
 	},
 	test: {
 		env: 'test',
@@ -19,6 +20,7 @@ const config = {
 		port: process.env.PORT || 1337,
 		localstorage: "/var/data/localstorage/",
 		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh',
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -32,6 +34,7 @@ const config = {
 		port: process.env.PORT || 1337,
 		localstorage: "/var/data/localstorage/",
 		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh',
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -46,6 +49,7 @@ const config = {
 		syncfolder: __dirname + '/../sync/',
 		port: process.env.PORT || 1337,
 		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh',
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -60,6 +64,7 @@ const config = {
 		syncfolder: __dirname + '/../sync/',
 		port: process.env.PORT || 1337,
 		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh',
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -74,6 +79,7 @@ const config = {
 		syncfolder: __dirname + '/../sync/',
 		port: process.env.PORT || 1338,
 		authStrategy: process.env.AUTH || 'local',
+		smsProvider: process.env.SMS || 'ovh',
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",

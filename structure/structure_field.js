@@ -307,7 +307,7 @@ exports.setRequiredAttribute = async (data) => {
 	if(data.structureType == "relatedToMultipleCheckbox"){
 		$("*[data-field='" + data.options.value + "']").find('.relatedtomany-checkbox').data('required', set);
 	} else {
-		$("*[data-field='" + data.options.value + "']").find('input').prop('required', set);
+		$("*[data-field='" + data.options.value + "']").find('input').not("[type='hidden']").prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('textarea').prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('select').prop('required', set);
 	}

@@ -301,7 +301,7 @@
             "images_ressources": {
                 "label": "Image ressources",
                 "description": "<p>These variables start with <b> img_ </b> and are available from any entity.</p>\n<p>They allow inclusion of Image ressources previously created in the administration module. Use Image ressource's <b> code </b> field in your template so it can be replaced by the image's base64 buffer</p>",
-                "example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
+                "example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"<b>{img_logo}</b>\"</p>"
             }
 		},
 		"status": {
