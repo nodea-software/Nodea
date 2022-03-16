@@ -1,5 +1,12 @@
 {#entityData}
-	{>"{e_subentity}/show_fields" /}
+	{! fields !}
+	{! TODO: show_fields file include tabs and in this situation we want only fields !}
+	{! Maybe tabs should be in show.dust and not in show_fields.dust !}
+	{! Actual workaround is to clean in JS the HTML content we want here !}
+	<div id='toReplaceWithFields'>
+		{>"{e_subentity}/show_fields" /}
+	</div>
+	<script>$('#toReplaceWithFields').replaceWith($('#toReplaceWithFields').find('#fields'));</script>
 	<button type="button" class="btn btn-default cancel" style="margin-right:10px;">{#__ key="button.cancel"/}</button>
 {/entityData}
 

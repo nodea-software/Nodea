@@ -523,7 +523,7 @@ var NodeaTable = (function() {
 	    		render: ({value}) => value,
 	    		search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
 	        		const element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-	        		element.keyup(function() {
+	        		element.on('keyup', function() {
 			            const searchValue = element.val();
 			            triggerSearch(searchValue);
 	        		});
@@ -638,11 +638,14 @@ var NodeaTable = (function() {
 		if (!tableID)
 			throw new Error("No tableID provided");
 
+		if(params.debug)
+			console.log('tableID', tableID);
+
 	    let table,
 	    	context = params.context || document,
 	    	columns = [],
 	    	columnDefs = [],
-	    	defaultOrder = {idx: -1, direction: 'DESC'},
+	    	defaultOrder = params.defaultOrder ? params.defaultOrder : {idx: -1, direction: 'desc'},
 	    	entity = tableID.split("#table_")[1];
 
 	    // Adds a delay before filter execution. Saves it on execution
@@ -733,12 +736,19 @@ var NodeaTable = (function() {
 
 	            // COLUMN FILTER
 	            if (searchTh.length && columnDef.search) {
-	            	var savedFilter = defaults.getFilterVal(tableID, searchTh.data('field'));
-	            	var title = searchTh.text();
-	            	const searchElement = columnDef.search({
-	            		column, savedFilter, searchTh, title, additionalData,
-	            		triggerSearch: (value, type) =>  executeFilter(idx, value, type)
-	            	});
+					let savedFilter = defaults.getFilterVal(tableID, searchTh.data('field'));
+					let title = searchTh.text();
+	            	let searchElement = null;
+					if(params.filters && params.filters[column.type])
+						searchElement = params.filters[column.type]({
+							column, savedFilter, searchTh, title, additionalData,
+							triggerSearch: (value, type) =>  executeFilter(idx, value, type)
+						});
+					else
+						searchElement = columnDef.search({
+							column, savedFilter, searchTh, title, additionalData,
+							triggerSearch: (value, type) =>  executeFilter(idx, value, type)
+						});
 	            	searchTh.html('').append(searchElement);
 	            }
             }
@@ -751,6 +761,9 @@ var NodeaTable = (function() {
                 defaultOrder.idx = column.index;
                 defaultOrder.direction = column.element.data('default-order') || 'DESC';
             }
+
+			if(params.debug)
+				console.log(column);
 
         	columns.push(column);
             columnDefs.push(columnDef);
@@ -775,7 +788,7 @@ var NodeaTable = (function() {
 		        },
     	        stateSaveCallback: (...params) => defaults.stateSaveCallback(tableID, ...params),
 		        stateLoadCallback: (...params) => defaults.stateLoadCallback(tableID, ...params),
-				order: [ defaultOrder.idx, defaultOrder.direction ],
+				order: [ defaultOrder.idx, defaultOrder.direction.toLowerCase() ], // toLowerCase direction seems to fix CSS arrow on table
 		        // Static defaults
 				...defaults.dataTableOptions,
 				// Override defaults with params
@@ -785,6 +798,8 @@ var NodeaTable = (function() {
 				columns,
 				columnDefs
 			};
+			if(params.debug)
+				console.log('tableOptions', tableOptions);
 			table = $(tableID, context).DataTable(tableOptions);
 			$(tableID, context).show();
 

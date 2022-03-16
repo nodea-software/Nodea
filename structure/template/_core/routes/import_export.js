@@ -101,6 +101,7 @@ class CoreImportExport extends Route {
 			let cmdArgs = [
 				"--default-character-set=utf8",
 				"--add-drop-table",
+				"--complete-insert",
 				"-u",
 				dbConfig.user,
 				"-p" + dbConfig.password,

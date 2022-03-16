@@ -192,7 +192,8 @@
 
 			NodeaForms();
 
-			$('select[name=entityStatus]').change(function() {
+			$('select[name=entityStatus]').val(null).trigger('change');
+			$('select[name=entityStatus]').on('change', function() {
 				var entityStatus = $(this).find('option:selected').val().split('.');
 				if (entityStatus.length != 2)
 					return;

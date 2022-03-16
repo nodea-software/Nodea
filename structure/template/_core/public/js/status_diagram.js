@@ -113,30 +113,30 @@ function findPosition(element, childPos) {
 }
 
 function findConnectionPoints(parent, child) {
-	var offset = parent.offsetWidth;
-	var parentPos = findPosition(parent),
-		childPos = findPosition(child);
-	parentPos.cx = parentPos.x + offset / 2;
-	parentPos.cy = parentPos.y + offset / 2;
-	childPos.cx = childPos.x + offset / 2;
-	childPos.cy = childPos.y + offset / 2;
-	var parentPoint = {
-			x: 0,
-			y: 0
-		},
-		childPoint = {
-			x: 0,
-			y: 0
-		},
+
+	var parent_width = parent.offsetWidth;
+	var parent_height = parent.offsetHeight;
+	var child_width = child.offsetWidth;
+	var child_height = child.offsetHeight;
+
+	var parentPos = findPosition(parent), childPos = findPosition(child);
+
+	parentPos.cx = parentPos.x + parent_width / 2;
+	parentPos.cy = parentPos.y + parent_width / 2;
+	childPos.cx = childPos.x + parent_width / 2;
+	childPos.cy = childPos.y + parent_width / 2;
+
+	var parentPoint = {x: 0,y: 0},
+		childPoint = {x: 0,y: 0},
 		direction, side;
 	// Child below
 	if (parentPos.cy < childPos.cy) {
 		direction = 'down';
 		side = 'center';
-		parentPoint.y = parentPos.y + offset;
-		parentPoint.x = parentPos.x + offset / 2;
+		parentPoint.y = parentPos.y + parent_height;
+		parentPoint.x = parentPos.x + parent_width / 2;
 		childPoint.y = childPos.y - arrowSize;
-		childPoint.x = childPos.x + offset / 2;
+		childPoint.x = childPos.x + (child_width / 2);
 	}
 	// Child above
 	else if (parentPos.cy >= childPos.cy) {
@@ -144,10 +144,10 @@ function findConnectionPoints(parent, child) {
 		// Child on left
 		if (parentPos.cx >= childPos.cx) {
 			side = 'left';
-			parentPoint.y = parentPos.y + offset / 2;
+			parentPoint.y = parentPos.y + parent_height / 2;
 			parentPoint.x = parentPos.x;
-			childPoint.y = childPos.y + offset / 2
-			childPoint.x = childPos.x + offset + arrowSize;
+			childPoint.y = childPos.y + child_height / 2
+			childPoint.x = childPos.x + child_width + arrowSize;
 		}
 		// Child on right
 		else if (parentPos.cx < childPos.cx) {
@@ -158,6 +158,7 @@ function findConnectionPoints(parent, child) {
 			childPoint.x = childPos.x - arrowSize;
 		}
 	}
+
 	return {
 		parent: parentPoint,
 		child: childPoint,
