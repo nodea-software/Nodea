@@ -252,7 +252,9 @@
 		"activate_translation": "Activer la traduction automatique (connexion internet + clé API Google valide requises)",
 		"english": "Anglais",
 		"french": "Français",
-		"info_delete_compte": "Si vous souhaitez supprimer votre compte merci de nous contacter:"
+		"info_delete_compte": "Si vous souhaitez supprimer votre compte merci de nous contacter:",
+		"reset_tuto": "Réinitialiser le tutoriel Nodea",
+		"reset_tuto_ok": "Le tutoriel a bien été réinitialisé !"
 	},
 	"preview": {
 		"title": "Prévisualisation",
@@ -592,6 +594,6 @@
 		}
 	},
 	"alpha": {
-		"text": "Ceci est une version alpha, si vous souhaitez nous rapporter un bug ou encore une suggestion vous pouvez nous contacter à cette adresse:<br><br><b>support@nodea-software.com</b><br><br>Merci !"
+		"text": "Nous sommes encore en phase de développement, si vous souhaitez nous rapporter un bug ou encore une suggestion vous pouvez créer un ticket sur notre <a href=\"https://github.com/nodea-software/nodea/issues\" target=_blank>Github officiel</a> ou nous contacter à cette adresse:<br><br><b>support@nodea-software.com</b><br><br>Merci pour votre participation!"
 	}
 }

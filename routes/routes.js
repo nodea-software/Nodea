@@ -133,9 +133,7 @@ router.post('/first_connection', block_access.loginAccess, function(req, res) {
 			if (err)
 				throw err;
 
-			req.session.showtuto = true;
 			req.session.isgenerator = true; // Needed to differentiate from generated app session
-
 			res.redirect('/default/home');
 		});
 	}).catch(err => {

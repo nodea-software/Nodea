@@ -130,7 +130,7 @@
 					</ul>
 					<ul class="order-1 order-md-3 navbar-nav ml-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="#" data-toggle="modal" data-target="#bugFix">
+							<a class="nav-link" data-toggle="modal" data-target="#bugFix" style="cursor: pointer;">
 								<i class="fas fa-bug"></i>
 							</a>
 						</li>
@@ -142,7 +142,6 @@
 							</a>
 						</li>
 					</ul>
-
 				</div>
 			</nav>
 
@@ -168,7 +167,7 @@
 					</div>
 
 					<!-- Default to the left -->
-					<strong>Copyright &copy; 2020-2021 <a href="https://www.nodea-software.com">Nodea Software</a>.</strong> All rights reserved.
+					<strong>Copyright &copy; 2021-2022 <a href="https://www.nodea-software.com">Nodea Software</a>.</strong> All rights reserved.
 				</footer>
 			{/no_footer}
 		</div>
@@ -203,12 +202,8 @@
 		<!-- Powertip -->
 		<script src="/js/plugins/powertip/jquery.powertip.min.js" type="text/javascript"></script>
 		<script>
-			var showtuto = '{showtuto}';
-			if(!showtuto || showtuto == '')
-				showtuto = 'true';
-			showtuto = showtuto == 'true';
-			var stopTutoTrad = '{#__ key="powertip.stop"/}';
-			var nextTutoTrad = '{#__ key="powertip.next"/}';
+			const stopTutoTrad = '{#__ key="powertip.stop"/}';
+			const nextTutoTrad = '{#__ key="powertip.next"/}';
 		</script>
 		<script src="/js/Nodea/powertip.js" type="text/javascript"></script>
 

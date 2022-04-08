@@ -230,9 +230,6 @@ app.use((req, res, next) => {
 		}
 		locals.dark_theme = req.session.dark_theme ? req.session.dark_theme : false;
 		locals.support_chat_enabled = globalConf.support_chat_enabled;
-		if(typeof req.session.showtuto === 'undefined')
-			req.session.showtuto = true;
-		locals.showtuto = req.session.showtuto ? 'true' : 'false';
 		render.call(res, view, locals, cb);
 	};
 	next();
