@@ -599,7 +599,25 @@ class CoreEntity extends Route {
 			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
 
 			await this.helpers.address.setAddressIfComponentExists(data.createdRow, this.options, data.req.body, data.transaction);
-			const statusToastrs = await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, {transaction: data.transaction, user: data.req.user}) || [];
+
+			// Default options for setInitialStatus()
+			data.setInitialStatusOptions = {transaction: data.transaction, user: data.req.user, noActions: false};
+			/**
+			 * Called before redirection to data.redirect
+			 * @function CoreEntity#create#beforeInitalStatus
+			 * @memberof CoreEntity#create
+			 * @param {object} data
+			 * @param {object} data.req - Request - See expressjs definition
+			 * @param {object} data.res - Response - See expressjs definition
+			 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
+			 * @param {object} data.createObject - Parsed form values used to create row in database
+			 * @param {object} data.setInitialStatusOptions - Options for the setInitialStatus method, you can disable default action by setting noActions to true
+			 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
+			 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+			 */
+			if (await this.getHook('create', 'beforeInitalStatus', data) === false)
+				return;
+			const statusToastrs = await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, data.setInitialStatusOptions) || [];
 
 			if (statusToastrs.length)
 				data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];

@@ -27,6 +27,7 @@ class ApiMODEL_NAME extends ApiEntity {
 				// beforeCreate: async _ => {},
 				// beforeAssociations: async _ => {},
 				// afterAssociations: async _ => {},
+				// beforeInitalStatus: async(data) => {}
 			},
 			update:{
 				// beforeUpdate: async _ => {},

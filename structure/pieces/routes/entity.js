@@ -44,6 +44,7 @@ class MODEL_NAME extends Entity {
 			create: {
 				// start: async (data) => {},
 				// beforeCreateQuery: async(data) => {},
+				// beforeInitalStatus: async(data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			update_form: {

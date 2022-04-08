@@ -169,7 +169,11 @@ class ApiEntity extends ApiRoute {
 			if (await this.getHook('create', 'afterAssociations', data) === false)
 				return;
 
-			await status_helper.setInitialStatus(data.answer[this.entity], this.E_entity, this.attributes, {transaction: data.transaction, user: data.req.user});
+			// Default options for setInitialStatus()
+			data.setInitialStatusOptions = {transaction: data.transaction, user: data.req.user, noActions: false};
+			if (await this.getHook('create', 'beforeInitalStatus', data) === false)
+				return;
+			await status_helper.setInitialStatus(data.answer[this.entity], this.E_entity, this.attributes, data.setInitialStatusOptions);
 
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));

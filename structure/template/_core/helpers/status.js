@@ -139,7 +139,7 @@ module.exports = {
 					user: optionnals.user
 				});
 
-				if (!created) {
+				if (!created && !optionnals.noActions) {
 					const actions = await self.getActions(status.id);
 					await self.executeActions(modelName, entity.id, actions, optionnals.transaction)
 				}
