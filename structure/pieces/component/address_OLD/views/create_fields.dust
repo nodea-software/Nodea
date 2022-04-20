@@ -1,0 +1,79 @@
+<label>{#__ key="entity.e_address_E_ENTITY.label_entity"/}</label>&nbsp;
+<a href="#" class="info_address_map">
+	<i class="fa fa-info-circle"></i>
+</a>
+<br><br>
+<section id='section_e_address_E_ENTITY_fields' class='col-12 section_address_fields'>
+	<div data-field='address_search_input' class='col-12 div_address_search_input'>
+		<div class='form-group'>
+			<div class='input-group'>
+				<div class='input-group-prepend'>
+					<span class='input-group-text'>
+						<i class='fa fa-map-marker' aria-hidden='true'></i>
+					</span>
+				</div>
+				<div class='input-group-prepend'>
+					<button type='button' class='input-group-text clear-address-search'>
+						<i class='fa fa-times' style='color: red;'></i>
+					</button>
+				</div>
+				<input class='input form-control address_search_input' id='address_search_input'  type='text' name='f_address_label' placeholder='{#__ key="entity.e_address_E_ENTITY.search"/}' >
+			</div>
+		</div>
+		<hr>
+	</div>
+	<div data-field='f_address_housenumber' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_housenumber' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_housenumber"/}</label>
+			<input class='input form-control address_field f_address_housenumber '   field='housenumber'    type='string' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_housenumber"/}' name='f_address_housenumber' id='f_address_housenumber'>
+		</div>
+	</div>
+	<div data-field='f_address_street' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_street' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_street"/}</label>
+			<input class='input form-control address_field f_address_street '   field='street'    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_street"/}' name='f_address_street' id='f_address_street'>
+		</div>
+	</div>
+	<div data-field='f_address_complement1' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_complement1' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_complement1"/}</label>
+			<input class='input form-control address_field f_address_complement1 '   field='complement1'    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_complement1"/}' name='f_address_complement1' id='f_address_complement1'>
+		</div>
+	</div>
+	<div data-field='f_address_postcode' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_postcode' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_postcode"/}</label>
+			<input class='input form-control address_field f_address_postcode '  maxlength="5" field='postcode' pattern="[0-9]{5}"   type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_postcode"/}' name='f_address_postcode' id='f_address_postcode'>
+		</div>
+	</div>
+	<div data-field='f_address_city' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_city' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_city"/}</label>
+			<input class='input form-control address_field f_address_city '   field='city'    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_city"/}' name='f_address_city' id='f_address_city'>
+		</div>
+	</div>
+	<div data-field='f_address_country' class='col-12' style='display:block'>
+		<div class='form-group'>
+			<label for='f_address_country' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_country"/}</label>
+			<input class='input form-control address_field f_address_country '   field='country'  value=FRANCE  type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_country"/}' name='f_address_country' id='f_address_country'>
+		</div>
+	</div>
+	<div data-field='f_address_lat' class='col-12' style='display:none'>
+		<div class='form-group'>
+			<label for='f_address_lat' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_lat"/}</label>
+			<input class='input form-control address_field f_address_lat '   field=''    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_lat"/}' name='f_address_lat' id='f_address_lat'>
+		</div>
+	</div>
+	<div data-field='f_address_lon' class='col-12' style='display:none'>
+		<div class='form-group'>
+			<label for='f_address_lon' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_lon"/}</label>
+			<input class='input form-control address_field f_address_lon '   field=''    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_lon"/}' name='f_address_lon' id='f_address_lon'>
+		</div>
+	</div>
+	<div data-field='f_address_label' class='col-12' style='display:none'>
+		<div class='form-group'>
+			<label for='f_address_label' class=''>{#__ key="entity.e_address_E_ENTITY.f_address_label"/}</label>
+			<input class='input form-control address_field f_address_label '   field='label'    type='text' placeholder='{#__ key="entity.e_address_E_ENTITY.f_address_label"/}' name='f_address_label' id='f_address_label'>
+		</div>
+	</div>
+</section>

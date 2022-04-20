@@ -718,16 +718,17 @@ exports.setupChat = async (data) => {
 	return true;
 };
 
-exports.addNewComponentAddress = async (data) => {
+exports.addNewComponentAddress_OLD = async (data) => {
 
 	const workspacePath = __workspacePath + '/' + data.application.name;
-	const address_path = __piecesPath + '/component/address';
+	const pieces_path = __piecesPath + '/component/address';
+	const entity_path = workspacePath + '/app/views/' + data.entity.name;
 
 	// Models
-	const modelAttributes = JSON.parse(fs.readFileSync(address_path + '/models/attributes/e_address.json', 'utf8')); // eslint-disable-line
+	const modelAttributes = JSON.parse(fs.readFileSync(pieces_path + '/models/attributes/e_address.json', 'utf8')); // eslint-disable-line
 
 	// eslint-disable-next-line global-require
-	const addressConf = require(address_path + '/config');
+	const addressConf = require(pieces_path + '/config');
 
 	// Generate views data
 	const fields = component_helper.address.generateFields(addressConf, data.options.showValue, data.options.value);
@@ -738,40 +739,40 @@ exports.addNewComponentAddress = async (data) => {
 
 	// Save new model component attributes file
 	fs.writeFileSync(workspacePath + '/app/models/attributes/' + data.options.value + '.json', JSON.stringify(modelAttributes, null, 4), 'utf8');
-	fs.copySync(address_path + '/models/options/e_address.json', workspacePath + '/app/models/options/' + data.options.value + '.json');
+	fs.copySync(pieces_path + '/models/options/e_address.json', workspacePath + '/app/models/options/' + data.options.value + '.json');
 
-	const createFieldsFile = workspacePath + '/app/views/' + data.entity.name + '/create_fields.dust';
-	const updateFieldsFile = workspacePath + '/app/views/' + data.entity.name + '/update_fields.dust';
-	const showFieldsFile = workspacePath + '/app/views/' + data.entity.name + '/show_fields.dust';
-
-	let showHtml = fs.readFileSync(address_path + '/views/show.dust', 'utf8');
+	let showHtml = fs.readFileSync(pieces_path + '/views/show.dust', 'utf8');
 	showHtml = showHtml.replace(/COMPONENT_NAME/g, data.options.value);
 
-	const appendTo = '#fields';
 	const mapsHtml = '<div id="' + data.options.value + '" class="address_map ' + data.options.value + '" mapsid="' + data.options.value + '" style="height: 100%;"></div>';
 	fs.mkdirpSync(workspacePath + '/app/views/' + data.options.value);
 	fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/maps.dust', mapsHtml);
-	fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/create_fields.dust', fields.createHtml);
-	fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/update_fields.dust', fields.updateHtml);
-	fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/fields.dust', fields.showFieldsHtml);
-	fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/show.dust', showHtml);
+	// fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/create_fields.dust', fields.createHtml);
+	// fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/update_fields.dust', fields.updateHtml);
+	// fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/fields.dust', fields.showFieldsHtml);
+	// fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/show.dust', showHtml);
 	// fs.writeFileSync(workspacePath + '/app/views/' + data.options.value + '/list_fields.dust', fields.headers);
 
-	const $createFieldsFile = await domHelper.read(createFieldsFile);
-	const $updateFieldsFile = await domHelper.read(updateFieldsFile);
-	const $showFieldsFile = await domHelper.read(showFieldsFile);
+	fs.copySync(pieces_path + '/views', workspacePath + '/app/views/' + data.options.value);
 
-	$createFieldsFile(appendTo).append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/create_fields"/}</div>');
-	$updateFieldsFile(appendTo).append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/update_fields"/}</div>');
-	$showFieldsFile(appendTo).append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/show"/}</div>');
+	// Update entity file to add address component
+	const createFieldsFile = entity_path + '/create_fields.dust';
+	const updateFieldsFile = entity_path + '/update_fields.dust';
+	const showFieldsFile = entity_path + '/show_fields.dust';
+
+	const $createFieldsFile = domHelper.read(createFieldsFile);
+	const $updateFieldsFile = domHelper.read(updateFieldsFile);
+	const $showFieldsFile = domHelper.read(showFieldsFile);
+
+	$createFieldsFile('#fields').append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/create_fields"/}</div>');
+	$updateFieldsFile('#fields').append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/update_fields"/}</div>');
+	$showFieldsFile('#fields').append('<div data-field="' + data.options.value + '" class="address_component ' + data.options.value + ' col-12">{>"' + data.options.value + '/show"/}</div>');
 
 	domHelper.write(createFieldsFile, $createFieldsFile);
 	domHelper.write(updateFieldsFile, $updateFieldsFile);
 	domHelper.write(showFieldsFile, $showFieldsFile);
 
-	const parentBaseFile = workspacePath + '/app/views/' + data.entity.name;
-
-	fieldHelper.updateListFile(parentBaseFile, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body);
+	fieldHelper.updateListFile(entity_path, 'list_fields', fields.singleAddressTableDFields.header, fields.singleAddressTableDFields.body);
 
 	// Update locales
 	const langFR = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/fr-FR.json', 'utf8'));
@@ -835,8 +836,8 @@ exports.addNewComponentAddress = async (data) => {
 
 		// Add component address files
 		fs.mkdirpSync(workspacePath + '/app/views/e_address_settings');
-		fs.copySync(address_path + '/views/config.dust', workspacePath + '/app/views/e_address_settings/config.dust');
-		fs.copySync(address_path + '/views/config_fields.dust', workspacePath + '/app/views/e_address_settings/config_fields.dust');
+		fs.copySync(pieces_path + '/views/config.dust', workspacePath + '/app/views/e_address_settings/config.dust');
+		fs.copySync(pieces_path + '/views/config_fields.dust', workspacePath + '/app/views/e_address_settings/config_fields.dust');
 
 		addAccessManagment(data.application.name, "address_settings", 'administration');
 
@@ -907,6 +908,69 @@ exports.addNewComponentAddress = async (data) => {
 	// Update or create address settings
 	fs.writeFileSync(workspacePath + '/config/address_settings.json', JSON.stringify(address_settings_config, null, 4));
 	return true;
+};
+
+exports.newAddress = async (data) => {
+	const workspacePath = __workspacePath + '/' + data.application.name;
+	const pieces_path = __piecesPath + '/component/address';
+	const entity_path = workspacePath + '/app/views/' + data.entity.name;
+	const address_path = workspacePath + '/app/views/' + data.options.value;
+
+	// Update options to add address flag
+	const relations = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', 'utf8'));
+	for (const relation of relations) {
+		if(relation.as == data.options.as){
+			delete relation.structureType;
+			relation.component = 'address';
+			// Replace alias for default address name, r_address instead of r_address_entity
+			if(data.is_default_name) {
+				relation.as = 'r_address';
+				data.options.as = 'r_address';
+			}
+		}
+	}
+	fs.writeFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', JSON.stringify(relations, null, 4), 'utf8')
+
+	const search_input = domHelper.read(`${pieces_path}/views/input_label.dust`);
+	for(const file of ['create_fields', 'update_fields']) {
+		const $address = domHelper.read(`${address_path}/${file}.dust`);
+		let content = search_input.html();
+		content = content.replace(/E_ENTITY/g, data.options.value);
+		// Optimize bootstrap class display
+		$address('div[data-field="f_number"]').removeClass('col-12').addClass('col-xs-12 col-sm-2');
+		$address('[data-field]').filter('[data-field="f_street_1"],[data-field="f_street_2"]').removeClass('col-12').addClass('col-xs-12 col-sm-5');
+		$address('[data-field]').filter('[data-field="f_postal_code"],[data-field="f_city"],[data-field="f_country"]').removeClass('col-12').addClass('col-xs-12 col-sm-4');
+		// Hide Lat and Lon field
+		$address('div[data-field="f_lat"]').hide();
+		$address('div[data-field="f_lon"]').hide();
+		// Update name to add alias, needed to differenciate multiple component address on same form
+		$address('input').each(function() {
+			$address(this).attr('name', data.options.as + '.' + $address(this).attr('name'));
+		});
+		// Add dynamic search input in component address forms
+		$address('#fields').prepend(content);
+		domHelper.write(`${address_path}/${file}.dust`, $address);
+
+		// Add component to entity create and update form
+		const $entity = domHelper.read(`${entity_path}/${file}.dust`);
+		if(file == 'create_fields')
+			$entity('#fields').append(`
+			<div class="address_component_form" data-as="${data.options.as}">
+				{>"${data.options.value}/${file}"/}
+			</div>`);
+		else if(file == 'update_fields')
+			$entity('#fields').append(`
+			<div class="address_component_form" data-as="${data.options.as}">
+				{#${data.options.as}}
+					{>"${data.options.value}/${file}"/}
+				{/${data.options.as}}
+			</div>`);
+		domHelper.write(`${entity_path}/${file}.dust`, $entity);
+	}
+
+	// Update show_field
+
+	// Disable create / update / delete / show 
 };
 
 exports.deleteComponentAddress = async (data) => {

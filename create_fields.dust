@@ -1,0 +1,119 @@
+<div id="fields" class="row">
+	<div data-field="address_search_input" class="col-12 div_address_search_input">
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text">
+						<i class="fa fa-map-marker" aria-hidden="true"></i>
+					</span>
+				</div>
+				<div class="input-group-prepend">
+					<button type="button" class="input-group-text clear-address-search">
+						<i class="fa fa-times" style="color: red;"></i>
+					</button>
+				</div>
+				<input class="input form-control address_search_input" id="address_search_input" placeholder='{#__ key="global_component.address.search"/}' type="text" name="f_address_label">
+		</div>
+	</div>
+	<hr>
+</div>
+	<div data-field="f_label" class="col-12">
+		<div class="form-group">
+			<label for="f_label">
+				{#__ key="entity.e_address_uesh.f_label"/}&nbsp;
+					{@inline_help field="f_label"}
+						<i data-field="f_label" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_label" /}' name="f_label" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_number" class="col-12">
+			<div class="form-group">
+				<label for="f_number">
+					{#__ key="entity.e_address_uesh.f_number"/}&nbsp;
+					{@inline_help field="f_number"}
+						<i data-field="f_number" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_number" /}' name="f_number" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_street_1" class="col-12">
+			<div class="form-group">
+				<label for="f_street_1">
+					{#__ key="entity.e_address_uesh.f_street_1"/}&nbsp;
+					{@inline_help field="f_street_1"}
+						<i data-field="f_street_1" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_street_1" /}' name="f_street_1" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_street_2" class="col-12">
+			<div class="form-group">
+				<label for="f_street_2">
+					{#__ key="entity.e_address_uesh.f_street_2"/}&nbsp;
+					{@inline_help field="f_street_2"}
+						<i data-field="f_street_2" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_street_2" /}' name="f_street_2" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_postal_code" class="col-12">
+			<div class="form-group">
+				<label for="f_postal_code">
+					{#__ key="entity.e_address_uesh.f_postal_code"/}&nbsp;
+					{@inline_help field="f_postal_code"}
+						<i data-field="f_postal_code" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_postal_code" /}' name="f_postal_code" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_city" class="col-12">
+			<div class="form-group">
+				<label for="f_city">
+					{#__ key="entity.e_address_uesh.f_city"/}&nbsp;
+					{@inline_help field="f_city"}
+						<i data-field="f_city" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_city" /}' name="f_city" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_country" class="col-12">
+			<div class="form-group">
+				<label for="f_country">
+					{#__ key="entity.e_address_uesh.f_country"/}&nbsp;
+					{@inline_help field="f_country"}
+						<i data-field="f_country" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_country" /}' name="f_country" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_lat" class="col-12">
+			<div class="form-group">
+				<label for="f_lat">
+					{#__ key="entity.e_address_uesh.f_lat"/}&nbsp;
+					{@inline_help field="f_lat"}
+						<i data-field="f_lat" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_lat" /}' name="f_lat" value="" type="text" maxlength="255">
+			</div>
+		</div>
+		<div data-field="f_lon" class="col-12">
+			<div class="form-group">
+				<label for="f_lon">
+					{#__ key="entity.e_address_uesh.f_lon"/}&nbsp;
+					{@inline_help field="f_lon"}
+						<i data-field="f_lon" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+					{/inline_help}
+				</label>
+<input class="form-control" placeholder='{#__ key="entity.e_address_uesh.f_lon" /}' name="f_lon" value="" type="text" maxlength="255">
+			</div>
+		</div>
+</div>

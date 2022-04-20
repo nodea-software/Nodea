@@ -598,7 +598,7 @@ class CoreEntity extends Route {
 			// Add associations
 			await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {transaction: data.transaction})));
 
-			await this.helpers.address.setAddressIfComponentExists(data.createdRow, this.options, data.req.body, data.transaction);
+			await this.helpers.address.createAddress(data.req, data.createdRow, this.options, data.transaction);
 
 			// Default options for setInitialStatus()
 			data.setInitialStatusOptions = {transaction: data.transaction, user: data.req.user, noActions: false};
@@ -804,7 +804,7 @@ class CoreEntity extends Route {
 				}
 			}
 
-			this.helpers.address.updateAddressIfComponentExists(data.updateRow, this.options, data.req.body, data.transaction);
+			await this.helpers.address.updateAddress(data.req, data.updateRow, this.options, data.transaction);
 
 			data.updateObject.version = data.updateRow.version;
 			if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)

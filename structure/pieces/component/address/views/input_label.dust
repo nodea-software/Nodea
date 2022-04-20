@@ -1,0 +1,17 @@
+<div data-field='address_search_input' class='col-12 div_address_search_input'>
+	<div class='form-group'>
+		<label for="f_label">
+			<i class="fa fa-map-marked-alt">&nbsp;</i>{#__ key="entity.E_ENTITY.label_entity"/}&nbsp;
+			<i data-content='global_component.address.inline_help' class="inline-help fa fa-info-circle"></i>
+		</label>
+		<div class='input-group'>
+			<div class='input-group-prepend'>
+				<span class='input-group-text'>
+					<i class='fa fa-map-marker-alt' aria-hidden='true'></i>
+				</span>
+			</div>
+			<input class='input form-control address_search_input' id='address_search_input' placeholder='__key=global_component.address.search' type='text'>
+		</div>
+	</div>
+	<hr>
+</div>

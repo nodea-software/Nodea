@@ -1,0 +1,106 @@
+{>"layout_m_administration"/}
+
+{<custom_css_2}
+	<link href='/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' rel='stylesheet' type='text/css'>
+	<link href='/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' rel='stylesheet' type='text/css'>
+	<link href='/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' rel='stylesheet' type='text/css'>
+{/custom_css_2}
+
+{<header}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0">
+                    {#__ key="module.administration"/}&nbsp;
+                    <small>
+                        {#__ key="module.module"/}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="/module/home">
+                            <i class="fa fa-home"></i>&nbsp;&nbsp;
+                            {#__ key="module.home"/}
+                        </a>
+                    </li>
+                    <!-- SUB MODULE - DO NOT REMOVE -->
+                    <li class="breadcrumb-item active">
+                        {#__ key="module.administration"/}
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{/header}
+
+{<content}
+	<div class="row">
+		<div class="col-12">
+			<form action="/address_settings/save" method="POST">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="operation.show"/}&nbsp;
+							{#__ key="component.address_settings.label_component" /}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						{>"e_address_settings/config_fields"/}
+					</div>
+					<div class="card-footer">
+						<button class="btn btn-primary">
+							<i class="fas fa-save">&nbsp;&nbsp;</i>
+							{#__ key="button.save"/}
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+
+	<script type="text/javascript">
+		NodeaForms();
+	</script>
+
+	<!-- jQuery UI -->
+	<script src="/AdminLTE/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+
+	<!-- DATATABLES & PLUGINS - OLD Version-->
+	<script src="/js/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+
+	<!-- DATATABLE & PLUGINS - New version  -->
+	<!-- TODO: Upgrade with updated version of /AdminLTE/plugins/datatables -->
+	{! <script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script> !}
+
+	<script src="/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+	<script src="/AdminLTE/plugins/jszip/jszip.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+	<!-- Nodea Table initialization  -->
+	<script>
+		/* Datatable throw error instead of alert */
+		$.fn.dataTable.ext.errMode = 'throw';
+
+		$(function() {
+			$("table:not(.no-init)").each(function() {
+				NodeaTable("#"+$(this).attr('id'));
+			});
+		});
+	</script>
+{/custom_js}

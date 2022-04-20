@@ -160,19 +160,29 @@ var Nodea = (enables = {}) => {
 
         // Inline Help
         if (enables.inlineHelp !== false) {
-            var currentHelp, modalOpen = false;
-            $(document).delegate(".inline-help", 'click', function () {
+            let currentHelp, modalOpen = false;
+
+            $(document).on('click', '.inline-help', function () {
                 currentHelp = this;
-                var entity;
-                if ($(this).parents('.tab-pane').length && $(this).parents('.tab-pane').attr('id') != 'home')
-                    entity = $(this).parents('.tab-pane').attr('id').substring(2);
-                else {
-                    var parts = window.location.href.split('/');
-                    entity = parts[parts.length - 2];
+                let url = "/inline_help/help/" + $(this).data('entity') + "/" + $(this).data('field'),
+                method = 'GET',
+                data = null;
+
+                // If data-content exist then we are looking for associated translate key instead of standard inline-help
+                if($(this).data('content')) {
+                    url = '/app/translate';
+                    method = 'POST';
+                    data = {
+                        lang: lang_user,
+                        key: $(this).data('content'),
+                        params: []
+                    };
                 }
-                var field = $(this).data('field');
+
                 $.ajax({
-                    url: "/inline_help/help/" + entity + "/" + field,
+                    url,
+                    method,
+                    data,
                     success: function (content) {
                         $("#prevHelp, #nextHelp").hide();
                         var totalHelp = $(".inline-help").length - 1;
@@ -187,31 +197,34 @@ var Nodea = (enables = {}) => {
                     }
                 });
             });
+
             // Prev/next Help en ligne buttons
-            $("#nextHelp, #prevHelp").click(function () {
+            $("#nextHelp, #prevHelp").on('click', function () {
                 var count = $("#fields .inline-help").length - 1;
                 var current = $("#fields .inline-help").index(currentHelp);
                 if ($(this).attr('id') == 'nextHelp' && count > current)
-                    $("#fields .inline-help").eq(current + 1).click();
+                    $("#fields .inline-help").eq(current + 1).trigger('click');
                 else if ($(this).attr('id') == 'prevHelp' && current > 0)
-                    $("#fields .inline-help").eq(current - 1).click();
+                    $("#fields .inline-help").eq(current - 1).trigger('click');
             });
+
             // Handle tab and shift+tab modal navigation
             $("#inlineHelp").on('show.bs.modal', function () {
                 modalOpen = true;
             });
+
             $("#inlineHelp").on('hide.bs.modal', function () {
                 modalOpen = false;
             });
-            $(document).keypress(function (e) {
+
+            $(document).on('keypress', function (e) {
                 if (modalOpen == false)
                     return;
-                var code = e.keyCode || e.which;
                 // Tabulation
-                if (e.shiftKey && code == '9')
-                    $("#prevHelp").click();
-                else if (code == '9')
-                    $("#nextHelp").click();
+                if (e.shiftKey && e.key == '9')
+                    $("#prevHelp").trigger('click');
+                else if (e.key == '9')
+                    $("#nextHelp").trigger('click');
             });
         }
 

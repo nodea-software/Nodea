@@ -755,11 +755,14 @@ exports.deleteAgendaWithName = result => {
  * @returns {function name and user instruction}
  */
 exports.createNewComponentAddress = result => {
+	// Default name is Address
+	const value = result[1] ? result[1] : 'Address';
 	const options = {
-		componentName: "Address",
+		value,
+		processValue: true,
 		instruction: result[0]
 	};
-	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, "Address");
+	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, value);
 };
 
 /**
@@ -769,7 +772,6 @@ exports.createNewComponentAddress = result => {
  */
 exports.createNewComponentAddressWithName = result => {
 	const options = {
-		componentName: result[1],
 		value: result[1],
 		processValue: true,
 		instruction: result[0]
@@ -2156,9 +2158,7 @@ const bot_instructions = {
 		"ajouter un composant adresse",
 		"créer un composant adresse",
 		"ajouter composant adresse",
-		"créer composant adresse"
-	],
-	"createNewComponentAddressWithName": [
+		"créer composant adresse",
 		"add component address with name (.*)",
 		"add component address called (.*)",
 		"create component address with name (.*)",

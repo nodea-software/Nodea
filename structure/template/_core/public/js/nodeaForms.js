@@ -1,5 +1,22 @@
 let maskMoneyPrecision = 2;
 let ctpQrCode = 0;
+let jQueryUILoad = false;
+const loadedScript = [];
+
+function loadScript(scriptUrl) {
+	return new Promise((res, rej) => {
+		if(loadedScript.includes(scriptUrl)){
+			console.warn('Script already loaded:', scriptUrl);
+			return;
+		}
+		$.getScript(scriptUrl).done(function (script, textStatus) {
+			loadedScript.push(scriptUrl);
+			res();
+		}).fail(function (jqxhr, settings, exception) {
+			rej(exception);
+		});
+	});
+}
 
 function firstElementFocus(tab, idx) {
     if(!idx)
@@ -8,6 +25,81 @@ function firstElementFocus(tab, idx) {
     if ((element && (element.prop('disabled') == true || element.prop('readonly') == true))
     && ($(".form-group", tab).length > 0 && idx <= $(".form-group", tab).length))
         firstElementFocus(idx+1);
+}
+
+function ajax_select(select, placeholder) {
+    if (!placeholder)
+        placeholder = SELECT_DEFAULT_TEXT;
+
+    var searchField = select.data('using') && select.data('using').split(',') || 'id';
+
+    // Use custom url on select or build default url
+    var url = select.data('href') ? select.data('href') : select.data('url') ? select.data('url') : '/' + select.data('source') + '/search';
+    select.select2({
+        placeholder: placeholder,
+        allowClear: true,
+        ajax: {
+            url: url,
+            dataType: 'json',
+            method: 'POST',
+            delay: 250,
+            contentType: "application/json",
+            data: function (params) {
+				let cleanData = $(this).data();
+				// Clean useless select2 instanciation key to prevent circular recursion of the object
+				// This data is not needed for server side anyway
+				delete cleanData.select2;
+                return JSON.stringify({
+                    search: params.term,
+                    page: params.page || 1,
+                    searchField: searchField,
+					attrData: cleanData
+                });
+            },
+            processResults: function (answer, params) {
+                var dataResults = answer.rows;
+                if (!dataResults)
+                    return {results: []};
+                var results = [];
+                if (select.attr("multiple") != "multiple" && !params.page)
+                    results.push({id: "nps_clear_select", text: placeholder});
+                for (var i = 0; i < dataResults.length; i++) {
+                    var text = [];
+                    for (var field in dataResults[i]) {
+                        if (searchField.indexOf(field) != -1) {
+                            if (dataResults[i][field] != null)
+                                text.push(dataResults[i][field]);
+                        }
+                    }
+                    text = text.join(' - ');
+                    if (text == "" || text == null)
+                        text = dataResults[i].id;
+
+                    results.push({id: dataResults[i].id, text: text});
+                }
+
+                return {
+                    results: results,
+                    pagination: {more: answer.more}
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0,
+        escapeMarkup: function (markup) {
+            return markup;
+        },
+        templateResult: function (data) {
+            return data.text;
+        }
+    });
+
+    // Clear select if default option is chosen, do not work natively with select2
+    if (select.attr("multiple") != "multiple")
+        select.on('change', function () {
+            if ($(this).val() == 'nps_clear_select')
+                $(this).val(null).trigger('change');
+        });
 }
 
 const addressMapsInstance = [];
@@ -98,79 +190,43 @@ function initMap(mapElement, options) {
     return map;
 }
 
-function ajax_select(select, placeholder) {
-    if (!placeholder)
-        placeholder = SELECT_DEFAULT_TEXT;
-
-    var searchField = select.data('using') && select.data('using').split(',') || 'id';
-
-    // Use custom url on select or build default url
-    var url = select.data('href') ? select.data('href') : select.data('url') ? select.data('url') : '/' + select.data('source') + '/search';
-    select.select2({
-        placeholder: placeholder,
-        allowClear: true,
-        ajax: {
-            url: url,
-            dataType: 'json',
-            method: 'POST',
-            delay: 250,
-            contentType: "application/json",
-            data: function (params) {
-				let cleanData = $(this).data();
-				// Clean useless select2 instanciation key to prevent circular recursion of the object
-				// This data is not needed for server side anyway
-				delete cleanData.select2;
-                return JSON.stringify({
-                    search: params.term,
-                    page: params.page || 1,
-                    searchField: searchField,
-					attrData: cleanData
-                });
-            },
-            processResults: function (answer, params) {
-                var dataResults = answer.rows;
-                if (!dataResults)
-                    return {results: []};
-                var results = [];
-                if (select.attr("multiple") != "multiple" && !params.page)
-                    results.push({id: "nps_clear_select", text: placeholder});
-                for (var i = 0; i < dataResults.length; i++) {
-                    var text = [];
-                    for (var field in dataResults[i]) {
-                        if (searchField.indexOf(field) != -1) {
-                            if (dataResults[i][field] != null)
-                                text.push(dataResults[i][field]);
-                        }
-                    }
-                    text = text.join(' - ');
-                    if (text == "" || text == null)
-                        text = dataResults[i].id;
-
-                    results.push({id: dataResults[i].id, text: text});
-                }
-
-                return {
-                    results: results,
-                    pagination: {more: answer.more}
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 0,
-        escapeMarkup: function (markup) {
-            return markup;
-        },
-        templateResult: function (data) {
-            return data.text;
-        }
-    });
-
-    // Clear select if default option is chosen, do not work natively with select2
-    if (select.attr("multiple") != "multiple")
-        select.on('change', function () {
-            if ($(this).val() == 'nps_clear_select')
-                $(this).val(null).trigger('change');
-        });
+function initAddressSearchInput(input) {
+	input.autocomplete({
+		minLength: 1,
+		source: function (req, res) {
+			$.ajax({
+				url: 'https://api-adresse.data.gouv.fr/search/',
+				type: 'GET',
+				data: {
+					limit: 10,
+					q: input.val()
+				},
+				dataType: 'json',
+				success: data => res(data.features.map(x => {
+					x.properties.coordinates = x.geometry.coordinates;
+					return {
+						label: x.properties.label,
+						value: x.properties
+					}
+				}))
+			});
+		},
+		select: function (e, ui) {
+			const address = ui.item.value;
+			input.val('');
+			const parent = input.parents('.address_component_form');
+			const as = parent.data('as');
+			$(parent).find(`input[name="${as}.f_label"]`).val(address.label);
+			$(parent).find(`input[name="${as}.f_number"]`).val(address.housenumber);
+			$(parent).find(`input[name="${as}.f_street_1"]`).val(address.street);
+			$(parent).find(`input[name="${as}.f_postal_code"]`).val(address.postcode);
+			$(parent).find(`input[name="${as}.f_city"]`).val(address.city);
+			$(parent).find(`input[name="${as}.f_country"]`).val('FRANCE');
+			$(parent).find(`input[name="${as}.f_lon"]`).val(address.coordinates[0]);
+			$(parent).find(`input[name="${as}.f_lat"]`).val(address.coordinates[1]);
+			return false;
+		}
+	});
 }
 
 var NodeaForms = (_ => {
@@ -758,104 +814,116 @@ var NodeaForms = (_ => {
 						return false
 				}
 			},
-			address: {
-				selector: ".address_component",
+			// address: {
+			// 	selector: ".address_component",
+			// 	initializer: (element) => {
+			// 	    const addressConf = {
+			// 	        url: "https://api-adresse.data.gouv.fr/search/",
+			// 	        query_parm: 'q',
+			// 	        type: 'get', // HTTP request type
+			// 	        addresses: 'features', // objet which contain list of address, if equal '.' whe take response as list,
+			// 	        address_fields: 'properties', // objet name which contain attributes or '.' ,
+			// 	        autocomplete_field: 'label', // field of properties, we use this field to select proposition. We can use ',' as separator to display in autocomplete more than one field value,
+			// 	        enable: true // If  enable, do query and get data, else data should be to set manually by user
+			// 	    };
+			// 	    const fieldsToShow = addressConf.autocomplete_field.split(',');
+			// 	    let searchResult;
+
+			// 	    // Uppercase address field inputs
+			// 	    element.find(".address_field").keyup(function() {
+			// 	    	$(this).val($(this).val().toUpperCase());
+			// 	    });
+			// 	    element.find(".clear-address-search").click(function() {
+			// 	    	console.log($(".address_component input[name!=address_id]"));
+			// 	    	element.find("input[name!=address_id]").val("");
+			// 	    	return false;
+			// 	    });
+
+			// 	    function initSearchInput(searchInput) {
+			// 	    	searchInput.autocomplete({
+			// 	    		minLength: 1,
+			// 	    		source: function (req, res) {
+			// 	                const val = searchInput.val();
+			// 	                const data = {limit: 10, [addressConf.query_parm]: val};
+			// 	                $.ajax({
+			// 	                    url: addressConf.url,
+			// 	                    type: addressConf.type,
+			// 	                    data: data,
+			// 	                    dataType: 'json',
+			// 	                    success: function (data) {
+			// 	                        searchResult = addressConf.addresses !== '.' ? data[addressConf.addresses] : data;
+			// 	                        res($.map(searchResult, function (_address) {
+			// 	                            const objet = addressConf.address_fields !== '.' ? _address[addressConf.address_fields] : _address;
+			// 	                            const toReturn = fieldsToShow.map(field => objet[field]).join(' ');
+			// 	                            return toReturn;
+			// 	                        }));
+			// 	                    }
+			// 	                });
+			// 	            },
+			// 	            select: function (e, ui) {
+			// 	                searchResult.forEach(function (_) {
+			// 	                    const _address = addressConf.address_fields !== '.' ? _[addressConf.address_fields] : _;
+			// 	                    const toReturn = fieldsToShow.map(field => _address[field]).join(' ');
+			// 	                    if (ui.item.value == toReturn) {
+			// 	                        for (var key in _address) {
+			// 	                            if (key != 'label' && _address[key] != '') //to prevent default value replacement
+			// 	                                element.find('input[field=' + key + ']').val((_address[key] + '').toUpperCase());
+			// 	                        }
+			// 	                        /** Set Lat and Long value **/
+			// 	                        element.find('input[name=f_address_lat]').val(_.geometry.coordinates[1]);
+			// 	                        element.find('input[name=f_address_lon]').val(_.geometry.coordinates[0]);
+			// 	                        if ((!_address.street || typeof _address.street === "undefined") && _address.name)
+			// 	                            element.find("#f_address_street").val(_address.name);
+			// 	                    }
+			// 	                });
+			// 	            }
+			// 	    	});
+			// 	    }
+			// 	    // Autocomplete address search input
+			// 	    element.find(".address_search_input").each(function() {
+			// 	    	const searchInput = $(this);
+			// 	    	if (!searchInput.autocomplete) {
+			// 				$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
+			// 	    		$.getScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js', function() {
+			// 	    			initSearchInput(searchInput);
+			// 	    		});
+			// 	    		return;
+			// 	    	}
+			// 	    	initSearchInput(searchInput);
+			// 	    });
+			// 	    // Address info modal
+			// 	    element.find(".info_address_map").click(function(e) {
+			// 	    	e.preventDefault();
+			// 	    	$.ajax({
+			// 	    		url: '/address_settings/info_address_maps_ajax',
+			// 	    		success: data => doModal("Information", data.message),
+	        //     			error: console.error
+			// 	    	});
+			// 	    	return false;
+			// 	    });
+
+			// 	    // Map initialization
+			// 	    if (element.find('.f_address_enableMaps').length && element.find('.f_address_enableMaps:eq(0)').val() === "true") {
+			// 	    	initMap(element.find('.address_map'), {
+			// 	    		lat: element.find('.f_address_lat').val(),
+			// 	    		lon: element.find('.f_address_lon').val(),
+			// 	    		navigation: element.find('.f_address_navigation').val() === "true",
+			// 	    		zoomBar: element.find('.f_address_zoomBar').val() === "true",
+			// 	    		mousePosition: element.find('.f_address_mousePosition').val() === "true"
+			// 	    	});
+			// 	    }
+			// 	}
+			// },
+			address_search_input: {
+				selector: ".address_search_input",
 				initializer: (element) => {
-				    const addressConf = {
-				        url: "https://api-adresse.data.gouv.fr/search/",
-				        query_parm: 'q',
-				        type: 'get', // HTTP request type
-				        addresses: 'features', // objet which contain list of address, if equal '.' whe take response as list,
-				        address_fields: 'properties', // objet name which contain attributes or '.' ,
-				        autocomplete_field: 'label', // field of properties, we use this field to select proposition. We can use ',' as separator to display in autocomplete more than one field value,
-				        enable: true // If  enable, do query and get data, else data should be to set manually by user
-				    };
-				    const fieldsToShow = addressConf.autocomplete_field.split(',');
-				    let searchResult;
-
-				    // Uppercase address field inputs
-				    element.find(".address_field").keyup(function() {
-				    	$(this).val($(this).val().toUpperCase());
-				    });
-				    element.find(".clear-address-search").click(function() {
-				    	console.log($(".address_component input[name!=address_id]"));
-				    	element.find("input[name!=address_id]").val("");
-				    	return false;
-				    });
-
-				    function initSearchInput(searchInput) {
-				    	searchInput.autocomplete({
-				    		minLength: 1,
-				    		source: function (req, res) {
-				                const val = searchInput.val();
-				                const data = {limit: 10, [addressConf.query_parm]: val};
-				                $.ajax({
-				                    url: addressConf.url,
-				                    type: addressConf.type,
-				                    data: data,
-				                    dataType: 'json',
-				                    success: function (data) {
-				                        searchResult = addressConf.addresses !== '.' ? data[addressConf.addresses] : data;
-				                        res($.map(searchResult, function (_address) {
-				                            const objet = addressConf.address_fields !== '.' ? _address[addressConf.address_fields] : _address;
-				                            const toReturn = fieldsToShow.map(field => objet[field]).join(' ');
-				                            return toReturn;
-				                        }));
-				                    }
-				                });
-				            },
-				            select: function (e, ui) {
-				                searchResult.forEach(function (_) {
-				                    const _address = addressConf.address_fields !== '.' ? _[addressConf.address_fields] : _;
-				                    const toReturn = fieldsToShow.map(field => _address[field]).join(' ');
-				                    if (ui.item.value == toReturn) {
-				                        for (var key in _address) {
-				                            if (key != 'label' && _address[key] != '') //to prevent default value replacement
-				                                element.find('input[field=' + key + ']').val((_address[key] + '').toUpperCase());
-				                        }
-				                        /** Set Lat and Long value **/
-				                        element.find('input[name=f_address_lat]').val(_.geometry.coordinates[1]);
-				                        element.find('input[name=f_address_lon]').val(_.geometry.coordinates[0]);
-				                        if ((!_address.street || typeof _address.street === "undefined") && _address.name)
-				                            element.find("#f_address_street").val(_address.name);
-				                    }
-				                });
-				            }
-				    	});
-				    }
-				    // Autocomplete address search input
-				    element.find(".address_search_input").each(function() {
-				    	const searchInput = $(this);
-				    	if (!searchInput.autocomplete) {
-							$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
-				    		$.getScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js', function() {
-				    			initSearchInput(searchInput);
-				    		});
-				    		return;
-				    	}
-				    	initSearchInput(searchInput);
-				    });
-				    // Address info modal
-				    element.find(".info_address_map").click(function(e) {
-				    	e.preventDefault();
-				    	$.ajax({
-				    		url: '/address_settings/info_address_maps_ajax',
-				    		success: data => doModal("Information", data.message),
-	            			error: console.error
-				    	});
-				    	return false;
-				    });
-
-				    // Map initialization
-				    if (element.find('.f_address_enableMaps').length && element.find('.f_address_enableMaps:eq(0)').val() === "true") {
-				    	initMap(element.find('.address_map'), {
-				    		lat: element.find('.f_address_lat').val(),
-				    		lon: element.find('.f_address_lon').val(),
-				    		navigation: element.find('.f_address_navigation').val() === "true",
-				    		zoomBar: element.find('.f_address_zoomBar').val() === "true",
-				    		mousePosition: element.find('.f_address_mousePosition').val() === "true"
-				    	});
-				    }
+					if(!jQueryUILoad) {
+						$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
+						jQueryUILoad = loadScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js').catch(err => {
+							console.error(err);
+						})
+					}
+					jQueryUILoad.then(_ => initAddressSearchInput(element));
 				}
 			},
 			status: {

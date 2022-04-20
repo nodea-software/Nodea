@@ -1796,7 +1796,7 @@ exports.createComponentChat = async (data) => { // eslint-disable-line
 }
 
 // Create new component address
-exports.createNewComponentAddress = async (data) => {
+exports.createNewComponentAddress_OLD = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
@@ -1835,6 +1835,58 @@ exports.createNewComponentAddress = async (data) => {
 	structure_entity.setupAssociation(associationOption);
 
 	await structure_component.addNewComponentAddress(data);
+	data.entity.addComponent(data.options.value, 'Address', 'address');
+
+	return {
+		message: 'database.component.create.success',
+		messageParams: [data.options.showValue]
+	};
+}
+
+exports.createNewComponentAddress = async (data) => {
+
+	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
+
+	data.is_default_name = data.options.value == 'e_address';
+
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ?
+		'Address ' + data.entity.displayName :
+		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = 'r_' + data.options.urlValue;
+
+	if(data.entity.getComponent(data.options.value, 'address'))
+		throw new Error("structure.component.error.alreadyExistOnEntity");
+
+	const instructions = [
+		`entity ${data.entity.displayName} has one ${instruction_value}`,
+		`select entity ${instruction_value}`,
+		"add field Label",
+		"add field Number",
+		"add field Street 1",
+		"add field Street 2",
+		"add field Postal Code",
+		"add field City",
+		"add field Country",
+		"add field Lat",
+		"add field Lon"
+	];
+
+	// Start doing necessary instruction for component creation
+	await this.recursiveInstructionExecute(data, instructions, 0);
+
+	await structure_component.newAddress(data);
 	data.entity.addComponent(data.options.value, 'Address', 'address');
 
 	return {

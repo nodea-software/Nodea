@@ -306,6 +306,24 @@
 		},
 		"status": {
 			"diagram": "Diagramme"
+		},
+		"address": {
+			"search": "Recherchez et selectionnez votre adresse",
+			"label_component": "Configuration adresse",
+			"position": "Position de la carte",
+			"top": "Au dessus",
+			"right": "A droite",
+			"bottom": "En dessous",
+			"left": "A gauche",
+			"distance": "Afficher la distance",
+			"settings": "Configurer",
+			"enableMaps": "Activer la carte",
+			"entity": "Entité",
+			"zoomBar": "Afficher panneau de zoom",
+			"navigation": "Activer la navigation",
+			"mousePosition": "Afficher les coordonnées de la souris",
+			"addressNotValid": "Adresse non valide",
+			"inline_help": "Pour avoir une carte valide, veuillez utiliser le champ ci-dessous pour saisir l'adresse"
 		}
 	},
 	"component": {},

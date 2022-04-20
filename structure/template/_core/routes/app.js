@@ -3,6 +3,7 @@ const access = require('@core/helpers/access');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio.js');
 const models = require('@app/models');
+const language = require('@core/helpers/language');
 
 const Route = require('@core/abstract_routes/route');
 
@@ -19,6 +20,7 @@ class CoreApp extends Route {
 			'change_language',
 			'get_file',
 			'download',
+			'translate',
 			...additionalRoutes
 		];
 		super(registeredRoutes)
@@ -263,6 +265,12 @@ class CoreApp extends Route {
 				if (err)
 					console.error(err);
 			}));
+		}));
+	}
+
+	translate() {
+		this.router.post('/translate', ...this.middlewares.translate, this.asyncRoute(async (data) => {
+			data.res.success(_ => data.res.send(language(data.req.body.lang).__(data.req.body.key, data.req.body.params)));
 		}));
 	}
 }

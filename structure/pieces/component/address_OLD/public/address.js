@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     var address_search_config = $('#address_search_config').val();
     if (!!address_search_config) {
         try {

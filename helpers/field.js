@@ -4,7 +4,7 @@ const dataHelper = require("../utils/data_helper");
 module.exports = {
 	getFieldHtml: ({type, givenType, field, entity, values, defaultValue}, readOnly, file) => {
 
-		const placeholder = `{#__ key="entity.${entity}.${field}" /}`;
+		const placeholder = `__key=entity.${entity}.${field}`;
 
 		// Setting value only for update / show page
 		let value = "", value2 = "";
@@ -61,9 +61,9 @@ module.exports = {
 		<div data-field='${field}' class='col-12'>\n\
 			<div class='form-group'>\n\
 				<label for='${field}'>\n\
-					<!--{#__ key="entity.${entity}.${field}"/}-->&nbsp;\n\
+					<!--{#__ key="entity.${entity}.${field}"/}-->\n\
 					<!--{@inline_help field="${field}"}-->\n\
-						<i data-field="${field}" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>\n\
+						<i data-entity="${entity}" data-field="${field}" class="inline-help fa fa-info-circle"></i>\n\
 					<!--{/inline_help}-->\n\
 				</label>\n`;
 
@@ -405,7 +405,7 @@ module.exports = {
 					str += "	<input type='hidden' name='"+ field + "_modified' value='false' />\n";
 				} else if (file == 'show') {
 					str += "	<div class='input-group'>\n";
-					str += "		<a href='/app/download?entity=" + entity + "&field=" + value2 + "&id={id}'><img src=data:image/;base64,{" + value2 + ".buffer}  class='img-fluid' data-type='picture' alt=" + value + " name=" + field + "  " + readOnly + " height='400' width='400' /></a>\n";
+					str += "		<a href='/app/download?entity=" + entity + "&field=" + value2 + "&id={id}'><img src=\"data:image/;base64,{" + value2 + ".buffer}\" class='img-fluid' data-type='picture' alt=\"" + value + "\" name=" + field + "  " + readOnly + " height='400' width='400' /></a>\n";
 					str += "	</div>\n";
 				}
 				break;
@@ -440,19 +440,14 @@ module.exports = {
 	updateFile: (fileBase, file, string) => {
 		const fileToWrite = fileBase + '/' + file + '.dust';
 		const $ = domHelper.read(fileToWrite);
-
-		// TODO: Make a function that gives a jsDom ready string (comment dust, format placeholders)
-		// Use it everywhere code is directly appended to dom, and remove manualy added comments
-		// string = commentDust(string);
-		string = string.replace(/placeholder=["'](.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="$1\'$2\'$3"');
-
-		$("#fields").append(string);
+		const $string = domHelper.read(false, false, string);
+		$("#fields").append($string.html());
 		domHelper.write(fileToWrite, $);
 		return;
 	},
 	updateListFile: (fileBase, file, thString) => {
 		const fileToWrite = fileBase + '/' + file + '.dust';
-		const $ = domHelper.read(fileToWrite)
+		const $ = domHelper.read(fileToWrite);
 
 		// Add to header thead and filter thead
 		$(".fields").each(function () {

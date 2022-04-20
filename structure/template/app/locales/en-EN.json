@@ -306,6 +306,24 @@
 		},
 		"status": {
 			"diagram": "Diagram"
+		},
+		"address": {
+			"search": "Find and select your address",
+			"label_component": "Addresses settings",
+			"position": "Map position",
+			"top": "Top",
+			"right": "Right",
+			"bottom": "Bottom",
+			"left": "Left",
+			"distance": "Display distance",
+			"settings": "Settings",
+			"enableMaps": "Enable Map",
+			"entity": "Entity",
+			"zoomBar": "Display zoom bar",
+			"navigation": "Enable navigation",
+			"mousePosition": "Display mouse coordinate",
+			"addressNotValid": "Not valid address",
+			"inline_help": "To have a valid map, please use the field below to enter the address"
 		}
 	},
 	"component": {},

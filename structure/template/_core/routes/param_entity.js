@@ -146,7 +146,7 @@ class CoreParamEntity extends CoreEntity {
 				}
 			}
 
-			this.helpers.address.updateAddressIfComponentExists(data.updateRow, this.options, data.req.body);
+			this.helpers.address.updateAddress(data.req, data.updateRow, this.options, data.transaction);
 
 			data.updateObject.version = data.updateRow.version;
 			if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
