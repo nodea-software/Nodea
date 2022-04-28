@@ -131,12 +131,6 @@ exports.loadFromHtml = html => new Promise((resolve, reject) => {
 	}
 })
 
-exports.replace = (filename, element, $insert) => {
-	const $ = read(filename);
-	$(element).replaceWith($insert(element));
-	write(filename, $);
-}
-
 exports.insertHtml = (filename, element, html) => {
 	const $ = read(filename);
 	$(element).html(html);
@@ -154,15 +148,11 @@ exports.writeMainLayout = (fileName, $) => {
 	newFileData = newFileData.replace(/&quot;/g, "\"");
 	newFileData = newFileData.replace('<script class="jsdom" src="http://code.jquery.com/jquery.js"></script>', '');
 
-	// Fix beautify
-	// newFileData = newFileData.replace(/{#__/g, '{__');
 	// Indent generated html
 	newFileData = beautify(newFileData, {
 		indent_size: 4,
-		indent_char: " ",
-		indent_with_tabs: false
+		indent_with_tabs: true
 	});
-	// newFileData = newFileData.replace(/{__/g, '{#__');
 
 	// Uncomment dust tags
 	// newFileData = newFileData.replace(/<!--({[<>@^:#/].+?})-->/g, '$1');

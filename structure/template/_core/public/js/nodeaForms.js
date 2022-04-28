@@ -1,6 +1,7 @@
 let maskMoneyPrecision = 2;
 let ctpQrCode = 0;
 let jQueryUILoad = false;
+let openLayerLoad = false;
 const loadedScript = [];
 
 function loadScript(scriptUrl) {
@@ -104,14 +105,7 @@ function ajax_select(select, placeholder) {
 
 const addressMapsInstance = [];
 function initMap(mapElement, options) {
-	// Dynamically load OpenLayer script to avoid unnecessarily loading it on pages without addresses or without maps enabled
-	if (!this.isOpenLayerLoaded) {
-		$.getScript('/js/plugins/ol/ol.js', _ => {
-			this.isOpenLayerLoaded = true;
-			initMap(mapElement, options)
-		});
-		return;
-	}
+
 	let {
 		lat,
 		lon,
@@ -123,71 +117,77 @@ function initMap(mapElement, options) {
 	if (!lat || !lon)
 		return console.error("Missing latitude or longitude to init map");
 
-    mapElement.empty();
-    const mapControls = [];
-    lon = parseFloat(lon);
-    lat = parseFloat(lat);
+	mapElement.empty();
+	const mapControls = [];
+	lon = parseFloat(lon);
+	lat = parseFloat(lat);
 
-    const markerSource = new ol.source.Vector();
-    var markerStyle = new ol.style.Style({
-        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-            anchor: [0.5, 46],
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            opacity: 0.75,
-            src: '/img/address_map_marker.png'
-        }))
-    });
-    var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-            'EPSG:3857')),
-        name: '',
-        population: 4000,
-        rainfall: 500
-    });
+	const markerSource = new ol.source.Vector();
 
-    markerSource.addFeature(iconFeature);
-    if (zoomBar === true) {
-        var zoomSlider = new ol.control.ZoomSlider();
-        mapControls.push(zoomSlider)
-    }
-    if (mousePosition === true) {
-        var mousePositionControl = new ol.control.MousePosition({
-            coordinateFormat: ol.coordinate.createStringXY(4),
-            projection: 'EPSG:4326',
-            // comment the following two lines to have the mouse position
-            // be placed within the map.
-            className: 'custom-mouse-position',
-            // target: document.getElementById('mouse-position'),
-            undefinedHTML: '&nbsp;'
-        });
-        mapControls.push(mousePositionControl);
-    }
-    const control = ol.control.defaults();
-    const mapConfig = {
-        controls: control.extend(mapControls),
-        target: mapElement.attr('id'),
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            }),
-            new ol.layer.Vector({
-                source: markerSource,
-                style: markerStyle,
-            })
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([lon, lat]),
-            zoom: 17
-        })
-    };
-    if (navigation === false) {
-        mapConfig.interactions = [];
-        mapConfig.controls = [];
-    }
-    var map = new ol.Map(mapConfig);
-    addressMapsInstance.push(map);
-    return map;
+	const markerStyle = new ol.style.Style({
+		image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+			anchor: [0.5, 46],
+			anchorXUnits: 'fraction',
+			anchorYUnits: 'pixels',
+			opacity: 0.75,
+			src: '/img/address_map_marker.png'
+		}))
+	});
+
+	const iconFeature = new ol.Feature({
+	    geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
+	    name: '',
+	    population: 4000,
+	    rainfall: 500
+	});
+
+	markerSource.addFeature(iconFeature);
+
+	if (zoomBar === true) {
+		var zoomSlider = new ol.control.ZoomSlider();
+		mapControls.push(zoomSlider)
+	}
+
+	if (mousePosition === true) {
+		var mousePositionControl = new ol.control.MousePosition({
+			coordinateFormat: ol.coordinate.createStringXY(4),
+			projection: 'EPSG:4326',
+			// comment the following two lines to have the mouse position
+			// be placed within the map.
+			className: 'custom-mouse-position',
+			undefinedHTML: '&nbsp;'
+		});
+		mapControls.push(mousePositionControl);
+	}
+
+	const control = ol.control.defaults();
+
+	const mapConfig = {
+		controls: control.extend(mapControls),
+		target: mapElement[0],
+		layers: [
+			new ol.layer.Tile({
+				source: new ol.source.OSM()
+			}),
+			new ol.layer.Vector({
+				source: markerSource,
+				style: markerStyle,
+			})
+		],
+		view: new ol.View({
+			center: ol.proj.fromLonLat([lon, lat]),
+			zoom: 17
+		})
+	};
+
+	if (navigation === false) {
+		mapConfig.interactions = [];
+		mapConfig.controls = [];
+	}
+
+	const map = new ol.Map(mapConfig);
+	addressMapsInstance.push(map);
+	return map;
 }
 
 function initAddressSearchInput(input) {
@@ -214,7 +214,7 @@ function initAddressSearchInput(input) {
 		select: function (e, ui) {
 			const address = ui.item.value;
 			input.val('');
-			const parent = input.parents('.address_component_form');
+			const parent = input.parents('.address_component');
 			const as = parent.data('as');
 			$(parent).find(`input[name="${as}.f_label"]`).val(address.label);
 			$(parent).find(`input[name="${as}.f_number"]`).val(address.housenumber);
@@ -229,7 +229,20 @@ function initAddressSearchInput(input) {
 	});
 }
 
-var NodeaForms = (_ => {
+function rebuildAddressLabel(element) {
+	const address_as = $(element).data('as');
+	const f_number = $(element).find(`input[name="${address_as}.f_number"]`).val();
+	const f_street_1 = $(element).find(`input[name="${address_as}.f_street_1"]`).val();
+	const f_street_2 = $(element).find(`input[name="${address_as}.f_street_2"]`).val();
+	const f_postal_code = $(element).find(`input[name="${address_as}.f_postal_code"]`).val();
+	const f_city = $(element).find(`input[name="${address_as}.f_city"]`).val();
+
+	let f_label = `${f_number} ${f_street_1} ${f_street_2} ${f_postal_code} ${f_city}`;
+	f_label = f_label.replace(/  +/g, ' ');
+	$(element).find(`input[name="${address_as}.f_label"]`).val(f_label)
+}
+
+let NodeaForms = (_ => {
 	const defaults = {
 		handleSubmit,
 		handleSuccess,
@@ -477,7 +490,8 @@ var NodeaForms = (_ => {
 					let pickerOpts, mask;
 					if (lang_user == 'fr-FR') {
 						pickerOpts = {
-							format: "DD/MM/YYYY"
+							format: "DD/MM/YYYY",
+							useCurrent: false // Disable filling date on opening picker
 						};
 						mask = {
 							inputFormat: "dd/mm/yyyy",
@@ -486,7 +500,8 @@ var NodeaForms = (_ => {
 						};
 					} else {
 						pickerOpts = {
-							format: "YYYY-MM-DD"
+							format: "YYYY-MM-DD",
+							useCurrent: false
 						};
 						mask = {
 							inputFormat: "yyyy-mm-dd",
@@ -814,116 +829,37 @@ var NodeaForms = (_ => {
 						return false
 				}
 			},
-			// address: {
-			// 	selector: ".address_component",
-			// 	initializer: (element) => {
-			// 	    const addressConf = {
-			// 	        url: "https://api-adresse.data.gouv.fr/search/",
-			// 	        query_parm: 'q',
-			// 	        type: 'get', // HTTP request type
-			// 	        addresses: 'features', // objet which contain list of address, if equal '.' whe take response as list,
-			// 	        address_fields: 'properties', // objet name which contain attributes or '.' ,
-			// 	        autocomplete_field: 'label', // field of properties, we use this field to select proposition. We can use ',' as separator to display in autocomplete more than one field value,
-			// 	        enable: true // If  enable, do query and get data, else data should be to set manually by user
-			// 	    };
-			// 	    const fieldsToShow = addressConf.autocomplete_field.split(',');
-			// 	    let searchResult;
-
-			// 	    // Uppercase address field inputs
-			// 	    element.find(".address_field").keyup(function() {
-			// 	    	$(this).val($(this).val().toUpperCase());
-			// 	    });
-			// 	    element.find(".clear-address-search").click(function() {
-			// 	    	console.log($(".address_component input[name!=address_id]"));
-			// 	    	element.find("input[name!=address_id]").val("");
-			// 	    	return false;
-			// 	    });
-
-			// 	    function initSearchInput(searchInput) {
-			// 	    	searchInput.autocomplete({
-			// 	    		minLength: 1,
-			// 	    		source: function (req, res) {
-			// 	                const val = searchInput.val();
-			// 	                const data = {limit: 10, [addressConf.query_parm]: val};
-			// 	                $.ajax({
-			// 	                    url: addressConf.url,
-			// 	                    type: addressConf.type,
-			// 	                    data: data,
-			// 	                    dataType: 'json',
-			// 	                    success: function (data) {
-			// 	                        searchResult = addressConf.addresses !== '.' ? data[addressConf.addresses] : data;
-			// 	                        res($.map(searchResult, function (_address) {
-			// 	                            const objet = addressConf.address_fields !== '.' ? _address[addressConf.address_fields] : _address;
-			// 	                            const toReturn = fieldsToShow.map(field => objet[field]).join(' ');
-			// 	                            return toReturn;
-			// 	                        }));
-			// 	                    }
-			// 	                });
-			// 	            },
-			// 	            select: function (e, ui) {
-			// 	                searchResult.forEach(function (_) {
-			// 	                    const _address = addressConf.address_fields !== '.' ? _[addressConf.address_fields] : _;
-			// 	                    const toReturn = fieldsToShow.map(field => _address[field]).join(' ');
-			// 	                    if (ui.item.value == toReturn) {
-			// 	                        for (var key in _address) {
-			// 	                            if (key != 'label' && _address[key] != '') //to prevent default value replacement
-			// 	                                element.find('input[field=' + key + ']').val((_address[key] + '').toUpperCase());
-			// 	                        }
-			// 	                        /** Set Lat and Long value **/
-			// 	                        element.find('input[name=f_address_lat]').val(_.geometry.coordinates[1]);
-			// 	                        element.find('input[name=f_address_lon]').val(_.geometry.coordinates[0]);
-			// 	                        if ((!_address.street || typeof _address.street === "undefined") && _address.name)
-			// 	                            element.find("#f_address_street").val(_address.name);
-			// 	                    }
-			// 	                });
-			// 	            }
-			// 	    	});
-			// 	    }
-			// 	    // Autocomplete address search input
-			// 	    element.find(".address_search_input").each(function() {
-			// 	    	const searchInput = $(this);
-			// 	    	if (!searchInput.autocomplete) {
-			// 				$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
-			// 	    		$.getScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js', function() {
-			// 	    			initSearchInput(searchInput);
-			// 	    		});
-			// 	    		return;
-			// 	    	}
-			// 	    	initSearchInput(searchInput);
-			// 	    });
-			// 	    // Address info modal
-			// 	    element.find(".info_address_map").click(function(e) {
-			// 	    	e.preventDefault();
-			// 	    	$.ajax({
-			// 	    		url: '/address_settings/info_address_maps_ajax',
-			// 	    		success: data => doModal("Information", data.message),
-	        //     			error: console.error
-			// 	    	});
-			// 	    	return false;
-			// 	    });
-
-			// 	    // Map initialization
-			// 	    if (element.find('.f_address_enableMaps').length && element.find('.f_address_enableMaps:eq(0)').val() === "true") {
-			// 	    	initMap(element.find('.address_map'), {
-			// 	    		lat: element.find('.f_address_lat').val(),
-			// 	    		lon: element.find('.f_address_lon').val(),
-			// 	    		navigation: element.find('.f_address_navigation').val() === "true",
-			// 	    		zoomBar: element.find('.f_address_zoomBar').val() === "true",
-			// 	    		mousePosition: element.find('.f_address_mousePosition').val() === "true"
-			// 	    	});
-			// 	    }
-			// 	}
-			// },
-			address_search_input: {
-				selector: ".address_search_input",
+			address_form: {
+				selector: ".address_component",
 				initializer: (element) => {
+
+					// Init search input autocompletion
 					if(!jQueryUILoad) {
 						$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
 						jQueryUILoad = loadScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js').catch(err => {
 							console.error(err);
 						})
 					}
-					jQueryUILoad.then(_ => initAddressSearchInput(element));
+					jQueryUILoad.then(_ => initAddressSearchInput(element.find('.address_search_input')));
+
+					element.find('input').each(function() {
+						$(this).on('keyup', function() {
+							rebuildAddressLabel(element);
+						})
+					});
+
+					// Map initialization
+					if(element.find('.address_component_map').length != 0) {
+						if(!openLayerLoad) {
+							openLayerLoad = loadScript('/js/plugins/ol/ol.js').catch(err => {
+								console.error(err);
+							})
+						}
+						openLayerLoad.then(_ => initMap(element.find('.address_component_map'), {
+							lat: element.find('input[name="f_lat"]').val(),
+							lon: element.find('input[name="f_lon"]').val()
+						}));
+					}
 				}
 			},
 			status: {

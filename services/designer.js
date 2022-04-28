@@ -1886,7 +1886,7 @@ exports.createNewComponentAddress = async (data) => {
 	// Start doing necessary instruction for component creation
 	await this.recursiveInstructionExecute(data, instructions, 0);
 
-	await structure_component.newAddress(data);
+	structure_component.newAddress(data);
 	data.entity.addComponent(data.options.value, 'Address', 'address');
 
 	return {

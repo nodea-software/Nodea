@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const dataHelper = require('../utils/data_helper');
 

@@ -14,7 +14,7 @@
 		<div id='toReplaceWithFields'>
 			{>"{e_subentity}/show_fields" ajaxDisplay="true" /}
 		</div>
-		<script>$('#toReplaceWithFields').replaceWith($('#toReplaceWithFields').find('#fields'));</script>
+		<script>$('#toReplaceWithFields').replaceWith($('#toReplaceWithFields').find('#fields').first());</script>
 		{! update btn !}
 		<a style="margin-right:8px;float:left;" data-href="/{subentity}/update_form?id={id}&{associationHref}&ajax=true" href="#" class="ajax btn btn-warning">
 			<i class="fas fa-edit">&nbsp;&nbsp;</i>

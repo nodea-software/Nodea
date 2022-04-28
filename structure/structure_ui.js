@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const iconList = require('../config/font_awesome_list.json');
 
 exports.setColumnVisibility = async (data) => {

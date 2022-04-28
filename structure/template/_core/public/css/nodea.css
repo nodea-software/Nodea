@@ -152,9 +152,13 @@ label.required:after {
 	margin-left: 5px;
 }
 
-.address_component_form {
+.address_component {
 	padding: 15px;
 	border: 1px solid lightgray;
 	border-radius: 10px;
 	margin-bottom: 15px;
+}
+
+.address_component_map {
+	height: 300px;
 }

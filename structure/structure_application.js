@@ -1,6 +1,6 @@
 const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const path = require("path");
 const mysql = require('promise-mysql');

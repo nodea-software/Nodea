@@ -1,4 +1,4 @@
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const dataHelper = require("../utils/data_helper");
 
 module.exports = {
@@ -420,7 +420,7 @@ module.exports = {
 
 		return str;
 	},
-	getFieldInHeaderListHtml: (fieldName, entityName, type) => {
+	getFieldInHeaderListHtml: (fieldName, entityName, type = 'string') => {
 		const entity = entityName.toLowerCase();
 		const field = fieldName.toLowerCase();
 		const result = {

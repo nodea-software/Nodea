@@ -1,4 +1,4 @@
-var NodeaTable = (function() {
+let NodeaTable = (function() {
 
 	// =========================
 	// DataTableBuilder "HOW TO"
@@ -18,7 +18,7 @@ var NodeaTable = (function() {
 	// - La table PEUX avoir un deuxieme tag `thead` ayant la class .filters
 	//   - Les `th` compris dans cet element seront transforme en input de filtre
 	//
-	var STR_LANGUAGE;
+	let STR_LANGUAGE;
 	if (lang_user == "fr-FR") {
 	    STR_LANGUAGE = {
 	        "processing": "Traitement en cours...",
@@ -108,20 +108,6 @@ var NodeaTable = (function() {
 	        return '-';
 	}
 
-	function mergedColumnTypes(customColumns) {
-		if (!customColumns)
-			return defaults.columns;
-		const typeList = Object.entries({...defaults.columns, ...customColumns}).map(([key]) => key);
-		const mergedTypes = {};
-		for (const type in typeList)
-			mergedTypes[type] = {
-				...defaults.columns.default,
-				...customColumns.default,
-				...customColumns[type]
-			}
-		return mergedTypes;
-	}
-
 	// Generate the column selector on datatable button click
 	//   - append an absolute div to the datalist button
 	//   - display a list of the columns available on page load with a checkbox to hide/show each
@@ -181,7 +167,11 @@ var NodeaTable = (function() {
 	    return columnsSelectorDiv;
 	}
 
-	var defaults = {
+	// Associate custom data to dalalist ajax call
+	let tableData = {};
+
+	// NodeaTable Defaults
+	let defaults = {
 		stateSaveCallback: (tableID, settings, data) => {
 	        var sizes = [], allZero = true;
 	        for (var i = 0; i < settings.aoColumns.length; i++) {
@@ -224,6 +214,9 @@ var NodeaTable = (function() {
 		    	console.warn("Couldn't parse saved filter "+field);
 		    }
 		    return val;
+		},
+		updateTableData: (idTable, value) => {
+			tableData[idTable] = value;
 		},
 	    columns: {
 	    	date: {
@@ -666,6 +659,7 @@ var NodeaTable = (function() {
 	    } catch(err){
 	    	console.warn("Couldn't get localstorage hidden columns");
 	    }
+
     	// Build each column
 	    $(tableID + " .main th", context).each(function(idx) {
             let column = {
@@ -714,6 +708,7 @@ var NodeaTable = (function() {
 
 	        	// COLUMN RENDER
                 const originalRender = columnDef.render;
+
             	columnDef.render = (data, type, row, meta) => {
             		let value = "", fieldPath = columns[meta.col].data;
 	                // Associated field. Go down object to find the right value
@@ -778,9 +773,12 @@ var NodeaTable = (function() {
 			var tableOptions = {
 				// Variable defaults
 				ajax: {
-		            "url": $(tableID, context).data('url'),
-		            "type": "POST",
+		            url: $(tableID, context).data('url'),
+		            type: "POST",
 		            data: function(e) {
+						// Assign possible custom data to object send in datalist ajax call
+						if(tableData[tableID])
+    						Object.assign(e, tableData[tableID] || null);
 		                // Used for global search
 		                e.columnsTypes = columns.map(col => col.type || 'string');
 		                return e;
