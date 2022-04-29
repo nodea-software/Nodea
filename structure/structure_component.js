@@ -64,27 +64,6 @@ function addAccessManagment(appName, urlComponent, urlModule) {
 	fs.writeFileSync(accessLockPath, JSON.stringify(accessObject, null, 4), "utf8");
 }
 
-function deleteAccessManagment(appName, urlComponent, urlModule) {
-	// Write new data entity to access.json file, within module's context
-	const accessPath = __workspacePath + '/' + appName+ '/config/access.json';
-	const accessLockPath = __workspacePath + '/' + appName+ '/config/access.lock.json';
-	const accessObject = JSON.parse(fs.readFileSync(accessPath, 'utf8'));
-	if (accessObject[urlModule] && accessObject[urlModule].entities) {
-		const entities = accessObject[urlModule].entities;
-		let dataIndexToRemove = -1;
-		for (let i = 0; i < entities.length; i++) {
-			if (entities[i].name === urlComponent) {
-				dataIndexToRemove = i;
-				break;
-			}
-		}
-		if (dataIndexToRemove !== -1)
-			entities.splice(dataIndexToRemove, 1);
-		fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
-		fs.writeFileSync(accessLockPath, JSON.stringify(accessObject, null, 4), "utf8");
-	}
-}
-
 exports.newFileStorage = (data) => {
 	const appPath = __workspacePath + '/' + data.application.name + '/app';
 
@@ -794,7 +773,7 @@ exports.newAddress = (data) => {
 	// Adding address & map in show
 	const $show = domHelper.read(`${entity_path}/show_fields.dust`);
 	$show('#fields').append(`
-	<div class="col-12 address_component">
+	<div class="col-12 address_component" data-as="${data.options.as}">
 		<div class="row">
 			<div class="col-xs-12 col-sm-6">
 				<label for="f_label">
@@ -828,76 +807,29 @@ exports.newAddress = (data) => {
 	js_writer.writeInHook(`${workspacePath}/app/routes/${data.options.value}.js`, 'create_form', 'start', js_to_write);
 	js_writer.writeInHook(`${workspacePath}/app/routes/${data.options.value}.js`, 'update', 'start', js_to_write);
 	js_writer.writeInHook(`${workspacePath}/app/routes/${data.options.value}.js`, 'update_form', 'start', js_to_write);
+
+	// Remove default has_one tab folder in entity views
+	fs.rmdirSync(`${entity_path}/${data.options.generated_as}`, {
+		recursive: true,
+		force: true
+	});
 };
 
-exports.deleteComponentAddress = async (data) => {
+exports.removeAddress = (data) => {
+	// eslint-disable-next-line no-undef
+	const entity_path = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 
-	const workspacePath = __workspacePath + '/' + data.application.name;
-
-	fs.remove(workspacePath + '/app/views/' + data.options.value);
-	fs.remove(workspacePath + '/app/models/' + data.options.value + '.js');
-	fs.remove(workspacePath + '/app/models/attributes/' + data.options.value + '.json');
-	fs.remove(workspacePath + '/app/models/options/' + data.options.value + '.json');
-
-	// Remove association
-	const relations = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', 'utf8'));
-	for (let i = 0; i < relations.length; i++) {
-		const relation = relations[i];
-		if (relation.as == 'r_address') {
-			relations.splice(i, 1);
-			break;
-		}
-	}
-	// Update relation file
-	fs.writeFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', JSON.stringify(relations, null, 4), 'utf8');
-
-	const toDoFile = ['create_fields', 'update_fields', 'show_fields'];
-	for (let i = 0; i < toDoFile.length; i++) {
-		const $ = await domHelper.read(workspacePath + '/app/views/' + data.entity.name + '/' + toDoFile[i] + '.dust'); // eslint-disable-line
-		$('.' + data.options.value).remove();
-		domHelper.write(workspacePath + '/app/views/' + data.entity.name + '/' + toDoFile[i] + '.dust', $); // eslint-disable-line
+	// Cleaning create / update / show forms
+	for(const file of ['create_fields', 'update_fields', 'show_fields']) {
+		const $entity = domHelper.read(`${entity_path}/${file}.dust`);
+		$entity(`.address_component[data-as=${data.options.as}]`).remove();
+		domHelper.write(`${entity_path}/${file}.dust`, $entity);
 	}
 
-	// Remove Field In Parent List Field
-	const $ = await domHelper.read(workspacePath + '/app/views/' + data.entity.name + '/list_fields.dust');
-	$("th[data-field='" + data.entity.name + "']").remove();
-	$("td[data-field='" + data.entity.name + "']").remove();
-	domHelper.write(workspacePath + '/app/views/' + data.entity.name + '/list_fields.dust', $)
-
-	// Update locales
-	const langFR = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/fr-FR.json', 'utf8'));
-	const langEN = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/en-EN.json', 'utf8'));
-	delete langFR.entity[data.options.value];
-	delete langEN.entity[data.options.value];
-
-	// Update address settings file
-	const addressSettingsObj = JSON.parse(fs.readFileSync(workspacePath + '/config/address_settings.json'));
-
-	for (const item in addressSettingsObj.entities)
-		if (item === data.entity.name)
-			delete addressSettingsObj.entities[item];
-
-	if (Object.keys(addressSettingsObj.entities).length === 0) {
-		fs.remove(workspacePath + '/app/views/e_address_settings');
-		fs.remove(workspacePath + '/app/routes/e_address_settings.js');
-		fs.remove(workspacePath + '/config/address_settings.json');
-		delete langFR.component.address_settings;
-		delete langEN.component.address_settings;
-		deleteAccessManagment(data.application.name, "address_settings", "administration");
-
-		// Read file and get jQuery instance
-		const $ = await domHelper.read(workspacePath + '/app/views/layout_m_administration.dust');
-		$('#e_address_settings_menu_item').remove();
-		// Write back to file
-		domHelper.write(workspacePath + '/app/views/layout_m_administration.dust', $);
-
-	} else {
-		fs.writeFileSync(workspacePath + '/config/address_settings.json', JSON.stringify(addressSettingsObj, null, 4), 'utf8');
-	}
-
-	fs.writeFileSync(workspacePath + '/app/locales/fr-FR.json', JSON.stringify(langFR, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/app/locales/en-EN.json', JSON.stringify(langEN, null, 4), 'utf8');
-	return true;
+	// Cleaning list
+	const $entity_list = domHelper.read(`${entity_path}/list_fields.dust`);
+	$entity_list(`th[data-field=${data.options.as}]`).remove();
+	domHelper.write(`${entity_path}/list_fields.dust`, $entity_list);
 };
 
 exports.createComponentDocumentTemplate = async (data) => {

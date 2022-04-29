@@ -754,7 +754,7 @@ exports.deleteAgendaWithName = result => {
  * @param {type} result of bot analyzer (this.parse)
  * @returns {function name and user instruction}
  */
-exports.createNewComponentAddress = result => {
+exports.addComponentAddress = result => {
 	// Default name is Address
 	const value = result[1] ? result[1] : 'Address';
 	const options = {
@@ -762,31 +762,21 @@ exports.createNewComponentAddress = result => {
 		processValue: true,
 		instruction: result[0]
 	};
-	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, value);
-};
-
-/**
- * Component Address
- * @param {type} result of bot analyzer (this.parse)
- * @returns {function name and user instruction}
- */
-exports.createNewComponentAddressWithName = result => {
-	const options = {
-		value: result[1],
-		processValue: true,
-		instruction: result[0]
-	};
-	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, result[1]);
+	return bot_helper.checkAndCreateAttr("addComponentAddress", options, value);
 };
 
 /**
  * Delete component address
  */
-exports.deleteComponentAddress = result => {
-	return {
-		function: "deleteComponentAddress",
-		options: result
+exports.removeComponentAddress = result => {
+	// Default name is Address
+	const value = result[1] ? result[1] : 'Address';
+	const options = {
+		value,
+		processValue: true,
+		instruction: result[0]
 	};
+	return bot_helper.checkAndCreateAttr("removeComponentAddress", options, value);
 };
 
 /**
@@ -2152,7 +2142,7 @@ const bot_instructions = {
 		"créer composant compte-rendu d'activités",
 		"ajouter composant compte-rendu d'activités"
 	],
-	"createNewComponentAddress": [
+	"addComponentAddress": [
 		"add component address",
 		"create component address",
 		"ajouter un composant adresse",
@@ -2168,10 +2158,17 @@ const bot_instructions = {
 		"ajouter composant adresse nommé (.*)",
 		"ajouter composant adresse appelé (.*)"
 	],
-	"deleteComponentAddress": [
+	"removeComponentAddress": [
 		"delete component address",
+		"remove component address",
 		"supprimer composant adresse",
-		"supprimer le composant adresse"
+		"supprimer le composant adresse",
+		"delete component address called (.*)",
+		"remove component address called (.*)",
+		"delete component address with name (.*)",
+		"remove component address with name (.*)",
+		"supprimer composant adresse appelé (.*)",
+		"supprimer le composant adresse nommé (.*)"
 	],
 	"createComponentChat": [
 		"add component chat",

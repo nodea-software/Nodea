@@ -1795,55 +1795,7 @@ exports.createComponentChat = async (data) => { // eslint-disable-line
 	// }
 }
 
-// Create new component address
-exports.createNewComponentAddress_OLD = async (data) => {
-
-	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
-
-	if(data.options.componentName) {
-		// TODO - 2.10
-		// data.options.as = 'r_address_' + data.options.value;
-		// data.options.urlValue = 'address_' + data.entity_name + '_' + data.options.value;
-		// data.options.value = 'e_address_' + data.entity_name + '_' + data.options.value;
-
-		data.options.as = 'r_address';
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = data.options.componentName;
-		data.options.urlValue = 'address_' + data.entity_name;
-	} else {
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = 'Address ' + data.entity.displayName;
-		data.options.urlValue = 'address_' + data.entity_name;
-		data.options.as = 'r_address';
-	}
-
-	if(data.entity.getComponent(data.options.value, 'address'))
-		throw new Error("structure.component.error.alreadyExistOnEntity");
-
-	const associationOption = {
-		application: data.application,
-		source: data.entity.name,
-		target: data.options.value,
-		foreignKey: 'fk_id_address',
-		as: data.options.as,
-		type: "relatedTo",
-		relation: "belongsTo",
-		targetType: "component",
-		toSync: true
-	};
-
-	structure_entity.setupAssociation(associationOption);
-
-	await structure_component.addNewComponentAddress(data);
-	data.entity.addComponent(data.options.value, 'Address', 'address');
-
-	return {
-		message: 'database.component.create.success',
-		messageParams: [data.options.showValue]
-	};
-}
-
-exports.createNewComponentAddress = async (data) => {
+exports.addComponentAddress = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
@@ -1887,7 +1839,7 @@ exports.createNewComponentAddress = async (data) => {
 	await this.recursiveInstructionExecute(data, instructions, 0);
 
 	structure_component.newAddress(data);
-	data.entity.addComponent(data.options.value, 'Address', 'address');
+	data.entity.addComponent(data.options.value, instruction_value, 'address');
 
 	return {
 		message: 'database.component.create.success',
@@ -1895,7 +1847,63 @@ exports.createNewComponentAddress = async (data) => {
 	};
 }
 
-exports.deleteComponentAddress = async (data) => {
+exports.removeComponentAddress = async (data) => {
+	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
+
+	data.is_default_name = data.options.value == 'e_address';
+
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ?
+		'Address ' + data.entity.displayName :
+		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = data.is_default_name ? 'r_address' : 'r_' + data.options.urlValue;
+
+	if(!data.entity.getComponent(data.options.value, 'address')){
+		const err = new Error("database.component.notFound.notFoundOnEntity");
+		err.messageParams = [data.options.showValue, data.entity.displayName];
+		throw err;
+	}
+
+	const instructions = [
+		`delete entity ${instruction_value}`
+	];
+
+	try {
+		// Start doing necessary instruction for component creation
+		await this.recursiveInstructionExecute(data, instructions, 0);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		structure_component.removeAddress(data);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		data.entity.deleteComponent(data.options.value, 'address');
+	} catch(err) {
+		console.error(err);
+	}
+
+	return {
+		message: 'database.component.delete.success'
+	}
+}
+
+exports.removeComponentAddress_OLD = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
