@@ -8,7 +8,8 @@
 	"scripts": {
 		"lint": "reset;eslint ./;",
 		"jsdoc_core": "./node_modules/.bin/jsdoc ./_core --recurse -c ./jsdoc.conf.json -d docs_core -t ./node_modules/foodoc/template",
-		"jsdoc_app": "./node_modules/.bin/jsdoc ./app --recurse -c ./jsdoc.conf.json -d docs_app -t ./node_modules/foodoc/template"
+		"jsdoc_app": "./node_modules/.bin/jsdoc ./app --recurse -c ./jsdoc.conf.json -d docs_app -t ./node_modules/foodoc/template",
+		"bundle": "node ./_core/tools/bundler_cmd"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.1",
@@ -37,6 +38,7 @@
 		"mariadb": "^2.5.3",
 		"matomo-tracker": "^2.2.1",
 		"mime-types": "^2.1.17",
+		"minify": "^7.2.2",
 		"module-alias": "^2.2.2",
 		"moment": "^2.22.1",
 		"moment-timezone": "^0.5.31",

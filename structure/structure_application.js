@@ -2,11 +2,10 @@ const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
 const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
-const path = require("path");
 const mysql = require('promise-mysql');
 const {Client} = require('pg');
 
-// Gitlab
+// Code Platform
 const globalConf = require('../config/global.js');
 const code_platform = require('../services/code_platform');
 
@@ -15,67 +14,10 @@ const studio_manager = require('../services/studio_manager');
 const models = require('../models/');
 const exec = require('child_process').exec;
 
-function installAppModules(data) {
-	return new Promise((resolve, reject) => {
-
-		// Mandatory workspace folder
-		if (!fs.existsSync(__workspacePath))
-			fs.mkdirSync(__workspacePath);
-
-		if (fs.existsSync(__dirname + '/../workspace/node_modules')) {
-			console.log("Everything's ok about global workspaces node modules.");
-
-			if (typeof data !== "undefined") {
-				/* When we are in the "npm install" instruction from preview */
-				let command = "npm install";
-				console.log(data.specificModule)
-				if (data.specificModule)
-					command += " " + data.specificModule;
-
-				console.log("Executing " + command + " in application: " + data.application.name + "...");
-
-				exec(command, {
-					cwd: __dirname + '/../workspace/' + data.application.name + '/'
-				}, err => {
-					if (err)
-						return reject(err);
-					console.log('Application ' + data.application.name + ' node modules successfully installed !');
-					resolve();
-				});
-			} else {
-				resolve();
-			}
-		} else {
-			// We need to reinstall node modules properly
-			console.log("Workspaces node modules initialization...");
-			fs.copySync(path.join(__dirname, 'template', 'package.json'), path.join(__dirname, '..', 'workspace', 'package.json'))
-
-			exec('npm install', {
-				cwd: __dirname + '/../workspace/'
-			}, err => {
-				if (err){
-					console.error(err)
-					return reject(err);
-				}
-				console.log('Workspaces node modules successfuly initialized.');
-				resolve();
-			});
-		}
-	});
-}
-exports.installAppModules = installAppModules;
-
-// Application
 exports.setupApplication = async (data) => {
 
 	const appName = data.options.value;
 	const appDisplayName = data.options.showValue;
-
-	try {
-		await installAppModules();
-	} catch(err) {
-		throw new Error("An error occurred while initializing the node modules.");
-	}
 
 	// *** Copy template folder to new workspace ***
 	fs.copySync(__dirname + '/template/', __dirname + '/../workspace/' + appName);
@@ -546,3 +488,29 @@ exports.deleteApplication = async(data) => {
 
 	return;
 }
+
+// Handle specific node_modules installation in workspace folder
+exports.installAppModules = (data) => new Promise((resolve, reject) => {
+
+	// Mandatory workspace folder
+	if (!fs.existsSync(global.__workspacePath))
+		fs.mkdirSync(global.__workspacePath);
+
+	if (!data || typeof data === "undefined")
+		return resolve();
+
+	/* When we are in the "npm install" instruction from preview */
+	let command = "npm install";
+	if (data.specificModule)
+		command += " " + data.specificModule;
+
+	console.log("EXECUTING " + command + " IN " + data.application.name + "...");
+
+	exec(command, {
+		cwd: __dirname + '/../workspace/' + data.application.name + '/'
+	}, err => {
+		if (err)
+			return reject(err);
+		resolve();
+	});
+});

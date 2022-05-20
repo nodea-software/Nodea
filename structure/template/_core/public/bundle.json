@@ -1,0 +1,75 @@
+{
+	"nodea_main_css": {
+		"type": "css",
+		"files": [
+			"@app/public/AdminLTE/plugins/fontawesome-free/css/all.min.css",
+			"@app/public/AdminLTE/plugins/toastr/toastr.min.css",
+			"@app/public/AdminLTE/plugins/select2/css/select2.min.css",
+			"@app/public/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css",
+			"@app/public/AdminLTE/plugins/summernote/summernote-bs4.min.css",
+			"@app/public/js/plugins/icheck/css/flat/blue.css",
+			"@app/public/js/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css",
+			"@app/public/AdminLTE/dist/css/adminlte.min.css",
+			"@core/public/css/nodea.css",
+			"@app/public/theme/nodea/css/style.css"
+		]
+	},
+	"nodea_main_js": {
+		"type": "js",
+		"files": [
+			"@app/public/AdminLTE/plugins/jquery/jquery.min.js",
+			"@app/public/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js",
+			"@app/public/AdminLTE/dist/js/adminlte.min.js",
+			"@app/public/AdminLTE/plugins/moment/moment.min.js",
+			"@app/public/AdminLTE/plugins/moment/locale/fr.js",
+			"@app/public/AdminLTE/plugins/toastr/toastr.min.js",
+			"@app/public/AdminLTE/plugins/select2/js/select2.min.js",
+			"@app/public/AdminLTE/plugins/summernote/summernote.min.js",
+			"@app/public/AdminLTE/plugins/inputmask/jquery.inputmask.min.js",
+			"@app/public/js/plugins/icheck/icheck.min.js",
+			"@app/public/js/plugins/maskmoney/maskmoney.js",
+			"@app/public/js/plugins/jsbarcode/jsbarcode.all.min.js",
+			"@app/public/js/plugins/qrcode/qrcode.min.js",
+			"@app/public/js/plugins/uuid/uuid.min.js",
+			"@app/public/js/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js",
+			"@core/public/js/nodeaForms.js",
+			"@core/public/js/html_encode_decode.js",
+			"@core/public/js/nodea.js",
+			"@core/public/js/nodeaTable.js"
+		]
+	},
+	"nodea_module_js": {
+		"type": "js",
+		"files": [
+			"@app/public/AdminLTE/plugins/datatables/jquery.dataTables.min.js",
+			"@app/public/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js",
+			"@app/public/AdminLTE/plugins/chart.js/Chart.bundle.min.js",
+			"@app/public/js/plugins/palettes/palettes.js",
+			"@core/public/js/widgets.js"
+		]
+	},
+	"nodea_datatable_css": {
+		"type": "css",
+		"files": [
+			"@app/public/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css",
+			"@app/public/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css",
+			"@app/public/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css"
+		]
+	},
+	"nodea_datatable_js": {
+		"type": "js",
+		"files": [
+			"@app/public/AdminLTE/plugins/jquery-ui/jquery-ui.min.js",
+			"@app/public/js/plugins/datatables/jquery.dataTables.min.js",
+			"@app/public/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js",
+			"@app/public/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js",
+			"@app/public/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js",
+			"@app/public/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js",
+			"@app/public/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js",
+			"@app/public/AdminLTE/plugins/jszip/jszip.min.js",
+			"@app/public/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js",
+			"@app/public/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js",
+			"@app/public/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"
+		]
+	}
+}

@@ -2,6 +2,8 @@ node_modules
 upload
 workspace
 structure/template/node_modules
+structure/template/_core/public/bundle
+structure/template/app/public/bundle
 *.log
 .npm
 .eslintcache

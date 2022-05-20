@@ -447,6 +447,10 @@ router.post('/delete', block_access.hasAccessApplication, (req, res) => {
 // Simple application creation
 router.post('/initiate', block_access.isLoggedIn, (req, res) => {
 
+	// Performance indicator
+	const perf_indicator = 'app_init_' + Date.now();
+	console.time(perf_indicator);
+
 	// Increase default timeout to 2min for app generation
 	req.setTimeout(60000 * 2);
 
@@ -482,8 +486,10 @@ router.post('/initiate', block_access.isLoggedIn, (req, res) => {
 		metadata.getApplication(req.session.app_name).save();
 		await structure_application.initializeApplication(metadata.getApplication(req.session.app_name));
 
-		res.redirect('/application/preview/' + req.session.app_name);
+		// Perf indicator
+		console.timeEnd(perf_indicator);
 
+		res.redirect('/application/preview/' + req.session.app_name);
 	})().catch(err => {
 		console.error(err);
 

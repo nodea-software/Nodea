@@ -36,6 +36,8 @@ app.use(helmet(helmet_conf));
 // Set up public files access (js/css...)
 app.use(express.static(__appPath + '/public'));
 app.use('/core', express.static(__corePath + '/public'));
+// Public files bundler
+const bundler = require('@core/tools/bundler');
 
 // Server logs manager
 app.use(require('@core/server/logs'));
@@ -118,7 +120,7 @@ app.use((req, res) => {
 
 // Launch ======================================================================
 
-require('@core/server/database').then(_ => {
+require('@core/server/database').then(async _ => {
 
 	let server, io = false;
 
@@ -138,6 +140,9 @@ require('@core/server/database').then(_ => {
 
 	// Handle and prepare access.json file for various situation
 	access.accessFileManagment();
+
+	// Generate missing public ressources bundle
+	await bundler.bundleAll(true);
 
 	// Start server on port
 	server.listen(globalConf.port);

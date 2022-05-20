@@ -43,6 +43,7 @@
 		"jszip": "^3.6.0",
 		"mariadb": "^2.5.3",
 		"math": "0.0.3",
+		"minify": "^7.2.2",
 		"module-alias": "^2.2.2",
 		"moment": "^2.22.1",
 		"morgan": "^1.9.0",

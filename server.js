@@ -34,6 +34,7 @@ const ansiToHtml = new AnsiToHTML();
 const moment = require('moment');
 
 const models = require('./models/');
+const setupHelper = require('./helpers/setup');
 
 // Passport for configuration
 require('./utils/authStrategies');
@@ -178,7 +179,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Locals ======================================================================
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
 	// If not a person (healthcheck service or other spamming services)
 	if(typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0){return res.sendStatus(200);}
 
@@ -248,36 +249,11 @@ app.use((req, res) => {
 models.sequelize.sync({
 	logging: false,
 	hooks: false
-}).then(_ => {
-	models.User.findAll().then(users => {
-		if (!users || users.length == 0) {
-			models.Role.create({
-				id: 1,
-				name: 'admin',
-				version: 1
-			}).then(_ => {
-				models.Role.create({
-					id: 2,
-					name: 'user',
-					version: 1
-				}).then(_ => {
-					models.User.create({
-						id: 1,
-						enabled: 0,
-						email: globalConf.env == 'studio' ? globalConf.sub_domain + '-admin@nodea-software.com' : 'admin@local.fr',
-						firstname: "Admin",
-						lastname: "Nodea",
-						login: "admin",
-						password: null,
-						phone: null,
-						version: 1
-					}).then(user => {
-						user.setRole(1);
-					})
-				})
-			})
-		}
-	});
+}).then(async _ => {
+
+	await setupHelper.setupAdmin();
+	await setupHelper.setupWorkspaceNodeModules();
+	await setupHelper.setupTemplateBundle(true);
 
 	if (globalConf.protocol == 'https') {
 		const server = https.createServer(globalConf.ssl, app);
@@ -288,7 +264,7 @@ models.sequelize.sync({
 		console.log("✅ Started on " + globalConf.port);
 	}
 }).catch(err => {
-	console.log("ERROR - SYNC");
+	console.log("❌ ERROR - SYNC");
 	console.error(err);
 });
 
