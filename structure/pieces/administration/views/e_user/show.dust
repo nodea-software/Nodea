@@ -130,7 +130,7 @@
 {/content}
 
 {<custom_js}
-    <script src="/bundle/nodea_datatable_js.bundle.js" type="text/javascript"></script>
+    <script src="/core/bundle/nodea_datatable_js.bundle.js" type="text/javascript"></script>
 
     <!-- DATATABLE & PLUGINS - New version  -->
     <!-- TODO: Upgrade with updated version of /AdminLTE/plugins/datatables -->

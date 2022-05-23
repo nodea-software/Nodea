@@ -267,7 +267,7 @@ let NodeaTable = (function() {
 	                return element;
 		    	}
 	    	},
-	    	datetime: {
+			datetime: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            if (value != null && value != "" && value.toLowerCase() != "invalid date") {
 		                var tmpDate = moment.utc(value);
@@ -285,7 +285,26 @@ let NodeaTable = (function() {
 		        search: (data) => {
 		    		return defaults.columns.date.search(data);
 		    	}
-	    	},
+			},
+			datetimeTZ: {
+	    		render: ({value, row, column, entity, additionalData}) => {
+		            if (value != null && value != "" && value.toLowerCase() != "invalid date") {
+		                var tmpDate = moment(value);
+		                if (!tmpDate.isValid())
+		                    value = '-';
+		                else {
+		                    var format = lang_user == 'fr-FR' ? "DD/MM/YYYY HH:mm" : "YYYY-MM-DD HH:mm";
+		                    value = tmpDate.format(format || "YYYY-MM-DD");
+		                }
+		            }
+		            else
+		                value = "-";
+		            return value;
+		        },
+		        search: (data) => {
+		    		return defaults.columns.date.search(data);
+		    	}
+			},
 	    	time: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            if(value && value.length == 8)

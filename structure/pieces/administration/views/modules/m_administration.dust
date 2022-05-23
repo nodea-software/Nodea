@@ -278,7 +278,7 @@
 {/content}
 
 {<custom_js}
-    <script src="/bundle/nodea_module_js.bundle.js" type="text/javascript"></script>
+    <script src="/core/bundle/nodea_module_js.bundle.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             initWidgets();

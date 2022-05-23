@@ -22,7 +22,7 @@ async function bundleCSS(files) {
 			let relativePath = files[i].split('/public/')[1];
 			relativePath = relativePath.split('/').slice(0, -1).join('/');
 			// Rework CSS url(../) inside file to fixe relative path to ressources
-			file_obj[key].styles = file_obj[key].styles.replace(/url\((([.*/]*)(.*?))\)/g, `url(/${relativePath}/$2$3)`);
+			file_obj[key].styles = file_obj[key].styles.replace(/url\((?!["]?data:)(([.*/]*)(.*?))\)/g, `url(/${relativePath}/$2$3)`);
 		} catch(err) {
 			console.log('❌ BUNDLE ERROR, SKIPPING:', files[i]);
 		}
