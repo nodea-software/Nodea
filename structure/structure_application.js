@@ -29,25 +29,23 @@ exports.setupApplication = async (data) => {
 	applicationJSON.appname = appName;
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, 4), 'utf8');
 
-	// Create database instance for application
+	// Prepare app db user STRONG password
 	const db_pwd = `NP_${data.dbAppID}_${appName}`;
+
 	let conn, db_requests = [];
+	// Create database instance for application
 	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'127.0.0.1' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
 			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'%';"
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';"
 		];
 
-		if(dbConf.dialect == 'mysql') {
-			db_requests.push("ALTER USER 'np_" + appName + "'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
-			db_requests.push("ALTER USER 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
-		}
+		if(dbConf.dialect == 'mysql')
+			db_requests.push("ALTER USER 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
 
 		db_requests.push("FLUSH PRIVILEGES;");
 
