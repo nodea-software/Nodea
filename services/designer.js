@@ -172,6 +172,8 @@ exports.createNewApplication = async (data) => {
 		displayName: data.options.showValue
 	});
 
+	data.dbAppID = dbApp.id;
+
 	// Metadata
 	const newApp = new Application(data.options.value, data.options.showValue);
 	data.application = newApp;

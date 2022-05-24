@@ -30,13 +30,14 @@ exports.setupApplication = async (data) => {
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, 4), 'utf8');
 
 	// Create database instance for application
+	const db_pwd = `NP_${data.dbAppID}_${appName}`;
 	let conn, db_requests = [];
 	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'127.0.0.1' IDENTIFIED BY 'np_" + appName + "';",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY 'np_" + appName + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'127.0.0.1' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'127.0.0.1';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'127.0.0.1';",
@@ -44,8 +45,8 @@ exports.setupApplication = async (data) => {
 		];
 
 		if(dbConf.dialect == 'mysql') {
-			db_requests.push("ALTER USER 'np_" + appName + "'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
-			db_requests.push("ALTER USER 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
+			db_requests.push("ALTER USER 'np_" + appName + "'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
+			db_requests.push("ALTER USER 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
 		}
 
 		db_requests.push("FLUSH PRIVILEGES;");
@@ -59,7 +60,7 @@ exports.setupApplication = async (data) => {
 	} else if(dbConf.dialect == 'postgres') {
 		db_requests = [
 			"CREATE DATABASE \"np_" + appName + "\" ENCODING 'UTF8';",
-			"CREATE USER \"np_" + appName + "\" WITH PASSWORD 'np_" + appName + "';",
+			"CREATE USER \"np_" + appName + "\" WITH PASSWORD '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO \"np_" + appName + "\";",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO " + dbConf.user + ";"
 		];
@@ -89,6 +90,7 @@ exports.setupApplication = async (data) => {
 
 	// Update workspace database config file to point on the new separate DB
 	let appDatabaseConfig = fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/nodea_pwd/g, db_pwd, 'utf8');
 	appDatabaseConfig = appDatabaseConfig.replace(/nodea/g, 'np_' + appName, 'utf8');
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', appDatabaseConfig);
 
