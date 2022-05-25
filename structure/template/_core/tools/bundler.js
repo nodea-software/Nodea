@@ -16,13 +16,21 @@ async function bundleCSS(files) {
 	for (let i = 0; i < files.length; i++){
 		try {
 			const key = files[i].split('/').pop();
+			const path_to_file = files[i].split('/').slice(0, -1).join('/');
 			file_obj[key] = {
 				styles: fs.readFileSync(files[i], 'utf8')
 			}
 			let relativePath = files[i].split('/public/')[1];
 			relativePath = relativePath.split('/').slice(0, -1).join('/');
+
+			// Replace @import url with the target file content
+			file_obj[key].styles = file_obj[key].styles.replace(/(?<!\/{2} *)@import *url\((?!["']?data:)["']?([./]*)(.*?)["']?\)[;]?/gm, (...$) => {
+				const filepath = `${path_to_file}/${$[1]}${$[2]}`;
+				return fs.readFileSync(filepath, 'utf8');
+			});
+
 			// Rework CSS url(../) inside file to fixe relative path to ressources
-			file_obj[key].styles = file_obj[key].styles.replace(/url\((?!["]?data:)(([.*/]*)(.*?))\)/g, `url(/${relativePath}/$2$3)`);
+			file_obj[key].styles = file_obj[key].styles.replace(/(?<!\/{2} *)(?<!@import )url\((?!["']?http[s]?:)(?!["']?data:)["']?([./]*)(.*?)["']?\)/gm, `url(/${relativePath}/$1$2)`);
 		} catch(err) {
 			console.log('❌ BUNDLE ERROR, SKIPPING:', files[i]);
 		}

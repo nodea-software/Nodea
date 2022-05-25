@@ -73,11 +73,14 @@ exports.setupApplication = async (data) => {
 	}
 
 	for (let i = 0; i < db_requests.length; i++) {
+		const request = db_requests[i];
 		try {
-			await conn.query(db_requests[i]); // eslint-disable-line
+			await conn.query(request); // eslint-disable-line
 		} catch(err) {
+			if(request.startsWith('GRANT ALL PRIVILEGES'))
+				console.warn('Unable to GRANT PRIVILEGES, may cause issues later. REQUEST:', request);
 			// Postgres error about db user that already exist, indeed postgres do not handle the 'IF NOT EXISTS' syntax...
-			if(dbConf.dialect != 'postgres' || err.code != '42710'){
+			else if(dbConf.dialect != 'postgres' || err.code != '42710'){
 				console.error(err);
 				throw new Error("An error occurred while initializing the workspace database.");
 			}
