@@ -11,8 +11,8 @@ const {
 };
 
 async function bundleCSS(files) {
-
 	const file_obj = {};
+	let dust_content = '';
 	for (let i = 0; i < files.length; i++){
 		try {
 			const key = files[i].split('/').pop();
@@ -31,29 +31,36 @@ async function bundleCSS(files) {
 
 			// Rework CSS url(../) inside file to fixe relative path to ressources
 			file_obj[key].styles = file_obj[key].styles.replace(/(?<!\/{2} *)(?<!@import )url\((?!["']?http[s]?:)(?!["']?data:)["']?([./]*)(.*?)["']?\)/gm, `url(/${relativePath}/$1$2)`);
+			const filepath = files[i].includes(corePath) ? `/core/${files[i].split('/public/')[1]}` : `/${files[i].split('/public/')[1]}`;
+			dust_content += `<link href="${filepath}" rel="stylesheet">\n`;
 		} catch(err) {
 			console.log('❌ BUNDLE ERROR, SKIPPING:', files[i]);
 		}
 	}
-	return minify.css(file_obj, {
-		css: {
-			rebase: false
-			// rebaseTo: appPath + '/public/bundle'
-		}
-	});
+	return {
+		minify: await minify.css(file_obj, {
+			css: {rebase: false}
+		}),
+		dust: dust_content
+	};
 }
 
 async function bundleJS(files) {
 	const file_obj = {};
+	let dust_content = '';
 	for (let i = 0; i < files.length; i++){
 		try {
 			file_obj[files[i].split('/').pop()] = fs.readFileSync(files[i], 'utf8');
+			const filepath = files[i].includes(corePath) ? `/core/${files[i].split('/public/')[1]}` : `/${files[i].split('/public/')[1]}`;
+			dust_content += `<script src="${filepath}" type="text/javascript"></script>\n`;
 		} catch(err) {
 			console.log('❌ BUNDLE ERROR, SKIPPING:', files[i]);
 		}
 	}
-
-	return minify.js(file_obj);
+	return {
+		minify: await minify.js(file_obj),
+		dust: dust_content
+	};
 }
 
 exports.bundleAll = async function (only_missing = false, specific_bundle = null) {
@@ -64,6 +71,9 @@ exports.bundleAll = async function (only_missing = false, specific_bundle = null
 		if (!fs.existsSync(path + '/public/bundle'))
 			fs.mkdirSync(path + '/public/bundle');
 
+		if (!fs.existsSync(path + '/views/bundle'))
+			fs.mkdirSync(path + '/views/bundle');
+
 		for (const bundle_name in bundle_conf) {
 
 			if(bundle_name.startsWith('DEMO_YOUR_BUNDLE'))
@@ -71,6 +81,7 @@ exports.bundleAll = async function (only_missing = false, specific_bundle = null
 
 			const bundle = bundle_conf[bundle_name];
 			const bundle_path = `${path}/public/bundle/${bundle_name}.bundle.${bundle.type}`;
+			const dust_path = `${path}/views/bundle/${bundle_name}.dust`;
 
 			// If only missing bundle and bundle exist, then skip
 			if (only_missing && !specific_bundle && fs.existsSync(bundle_path))
@@ -95,7 +106,8 @@ exports.bundleAll = async function (only_missing = false, specific_bundle = null
 						console.error('MISSING BUNDLE TYPE FOR BUNDLE:', bundle_name);
 						break;
 				}
-				fs.writeFileSync(bundle_path, bundle_content, 'utf8');
+				fs.writeFileSync(bundle_path, bundle_content.minify, 'utf8');
+				fs.writeFileSync(dust_path, bundle_content.dust, 'utf8');
 			})(bundle_name));
 		}
 	}
