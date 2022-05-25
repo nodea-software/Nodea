@@ -222,9 +222,9 @@ exports.setupEntity = async (data) => {
 	// CREATE ROUTE FILE
 	let routeTemplate = '';
 	if(data.options.isParamEntity) {
-		routeTemplate = fs.readFileSync(__piecesPath + '/routes/param_entity.js', 'utf8');
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/param_entity.js', 'utf8');
 	} else {
-		routeTemplate = fs.readFileSync(__piecesPath + '/routes/entity.js', 'utf8');
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/entity.js', 'utf8');
 	}
 	routeTemplate = routeTemplate.replace(/ENTITY_NAME/g, entity_name);
 	routeTemplate = routeTemplate.replace(/ENTITY_URL_NAME/g, entity_url);
@@ -232,7 +232,7 @@ exports.setupEntity = async (data) => {
 	fs.writeFileSync(workspacePath + '/app/routes/' + entity_name + '.js', routeTemplate);
 
 	// CREATE API FILE
-	let apiTemplate = fs.readFileSync(__piecesPath + '/api/api_entity.js', 'utf8');
+	let apiTemplate = fs.readFileSync(global.__piecesPath + '/api/api_entity.js', 'utf8');
 	apiTemplate = apiTemplate.replace(/ENTITY_NAME/g, entity_name);
 	apiTemplate = apiTemplate.replace(/MODEL_NAME/g, entity_model);
 	fs.writeFileSync(workspacePath + '/app/api/' + entity_name + '.js', apiTemplate);
@@ -250,12 +250,12 @@ exports.setupEntity = async (data) => {
 				<!--{#entityAccess entity="${entity_url}"}-->
 					<li class='nav-item' data-menu="${entity_url}">
 						<!--{#actionAccess entity="${entity_url}" action="update"}-->
-						<a href='${entity_url}/update_form?id=1'>
+						<a href='/${entity_url}/update_form?id=1' class="nav-link">
 							<i class="nav-icon fa fa-cog"></i>
 							<p>
 								<!--{#__ key="entity.${entity_name}.label_entity" /}-->
+								<i class="right fas fa-angle-right"></i>
 							</p>
-							<i class="right fas fa-angle-right"></i>
 						</a>
 						<!--{/actionAccess}-->
 					</li>

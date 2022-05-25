@@ -3,7 +3,9 @@ upload
 workspace
 structure/template/node_modules
 structure/template/_core/public/bundle
+structure/template/_core/views/bundle
 structure/template/app/public/bundle
+structure/template/app/views/bundle
 *.log
 .npm
 .eslintcache

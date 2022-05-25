@@ -294,7 +294,7 @@ var Nodea = (enables = {}) => {
                 } else {
                     // If precise URL not found, then open only the concerned menu if found
                     var splitURL = window.location.pathname.split('/');
-                    if($(this).attr('href').includes('/' + splitURL[1] + '/'))
+                    if($(this).attr('href').includes('/' + splitURL[1] + '/') && $(this).find('.right.fa-angle-right').length == 0)
                         $(this).parents('li').addClass("menu-open");
                 }
             });
