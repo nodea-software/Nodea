@@ -19,9 +19,4 @@ router.get('/', block_access.isLoggedIn, (req, res) => {
 	});
 });
 
-router.get('/skiptuto', block_access.isLoggedIn, (req, res) => {
-	req.session.showtuto = false;
-	res.status(200).send(true);
-});
-
 module.exports = router;

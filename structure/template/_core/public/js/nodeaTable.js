@@ -1,4 +1,4 @@
-var NodeaTable = (function() {
+let NodeaTable = (function() {
 
 	// =========================
 	// DataTableBuilder "HOW TO"
@@ -18,7 +18,7 @@ var NodeaTable = (function() {
 	// - La table PEUX avoir un deuxieme tag `thead` ayant la class .filters
 	//   - Les `th` compris dans cet element seront transforme en input de filtre
 	//
-	var STR_LANGUAGE;
+	let STR_LANGUAGE;
 	if (lang_user == "fr-FR") {
 	    STR_LANGUAGE = {
 	        "processing": "Traitement en cours...",
@@ -108,20 +108,6 @@ var NodeaTable = (function() {
 	        return '-';
 	}
 
-	function mergedColumnTypes(customColumns) {
-		if (!customColumns)
-			return defaults.columns;
-		const typeList = Object.entries({...defaults.columns, ...customColumns}).map(([key]) => key);
-		const mergedTypes = {};
-		for (const type in typeList)
-			mergedTypes[type] = {
-				...defaults.columns.default,
-				...customColumns.default,
-				...customColumns[type]
-			}
-		return mergedTypes;
-	}
-
 	// Generate the column selector on datatable button click
 	//   - append an absolute div to the datalist button
 	//   - display a list of the columns available on page load with a checkbox to hide/show each
@@ -181,7 +167,11 @@ var NodeaTable = (function() {
 	    return columnsSelectorDiv;
 	}
 
-	var defaults = {
+	// Associate custom data to dalalist ajax call
+	let tableData = {};
+
+	// NodeaTable Defaults
+	let defaults = {
 		stateSaveCallback: (tableID, settings, data) => {
 	        var sizes = [], allZero = true;
 	        for (var i = 0; i < settings.aoColumns.length; i++) {
@@ -224,6 +214,9 @@ var NodeaTable = (function() {
 		    	console.warn("Couldn't parse saved filter "+field);
 		    }
 		    return val;
+		},
+		updateTableData: (idTable, value) => {
+			tableData[idTable] = value;
 		},
 	    columns: {
 	    	date: {
@@ -274,7 +267,7 @@ var NodeaTable = (function() {
 	                return element;
 		    	}
 	    	},
-	    	datetime: {
+			datetime: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            if (value != null && value != "" && value.toLowerCase() != "invalid date") {
 		                var tmpDate = moment.utc(value);
@@ -292,7 +285,26 @@ var NodeaTable = (function() {
 		        search: (data) => {
 		    		return defaults.columns.date.search(data);
 		    	}
-	    	},
+			},
+			datetimeTZ: {
+	    		render: ({value, row, column, entity, additionalData}) => {
+		            if (value != null && value != "" && value.toLowerCase() != "invalid date") {
+		                var tmpDate = moment(value);
+		                if (!tmpDate.isValid())
+		                    value = '-';
+		                else {
+		                    var format = lang_user == 'fr-FR' ? "DD/MM/YYYY HH:mm" : "YYYY-MM-DD HH:mm";
+		                    value = tmpDate.format(format || "YYYY-MM-DD");
+		                }
+		            }
+		            else
+		                value = "-";
+		            return value;
+		        },
+		        search: (data) => {
+		    		return defaults.columns.date.search(data);
+		    	}
+			},
 	    	time: {
 	    		render: ({value, row, column, entity, additionalData}) => {
 		            if(value && value.length == 8)
@@ -523,7 +535,7 @@ var NodeaTable = (function() {
 	    		render: ({value}) => value,
 	    		search: ({column, title, savedFilter, searchTh, triggerSearch, additionalData}) => {
 	        		const element = $(`<input type="text" class="form-control input" value="${savedFilter}" placeholder="${title}" />`);
-	        		element.keyup(function() {
+	        		element.on('keyup', function() {
 			            const searchValue = element.val();
 			            triggerSearch(searchValue);
 	        		});
@@ -638,11 +650,14 @@ var NodeaTable = (function() {
 		if (!tableID)
 			throw new Error("No tableID provided");
 
+		if(params.debug)
+			console.log('tableID', tableID);
+
 	    let table,
 	    	context = params.context || document,
 	    	columns = [],
 	    	columnDefs = [],
-	    	defaultOrder = {idx: -1, direction: 'DESC'},
+	    	defaultOrder = params.defaultOrder ? params.defaultOrder : {idx: -1, direction: 'desc'},
 	    	entity = tableID.split("#table_")[1];
 
 	    // Adds a delay before filter execution. Saves it on execution
@@ -663,6 +678,7 @@ var NodeaTable = (function() {
 	    } catch(err){
 	    	console.warn("Couldn't get localstorage hidden columns");
 	    }
+
     	// Build each column
 	    $(tableID + " .main th", context).each(function(idx) {
             let column = {
@@ -711,6 +727,7 @@ var NodeaTable = (function() {
 
 	        	// COLUMN RENDER
                 const originalRender = columnDef.render;
+
             	columnDef.render = (data, type, row, meta) => {
             		let value = "", fieldPath = columns[meta.col].data;
 	                // Associated field. Go down object to find the right value
@@ -733,12 +750,19 @@ var NodeaTable = (function() {
 
 	            // COLUMN FILTER
 	            if (searchTh.length && columnDef.search) {
-	            	var savedFilter = defaults.getFilterVal(tableID, searchTh.data('field'));
-	            	var title = searchTh.text();
-	            	const searchElement = columnDef.search({
-	            		column, savedFilter, searchTh, title, additionalData,
-	            		triggerSearch: (value, type) =>  executeFilter(idx, value, type)
-	            	});
+					let savedFilter = defaults.getFilterVal(tableID, searchTh.data('field'));
+					let title = searchTh.text();
+	            	let searchElement = null;
+					if(params.filters && params.filters[column.type])
+						searchElement = params.filters[column.type]({
+							column, savedFilter, searchTh, title, additionalData,
+							triggerSearch: (value, type) =>  executeFilter(idx, value, type)
+						});
+					else
+						searchElement = columnDef.search({
+							column, savedFilter, searchTh, title, additionalData,
+							triggerSearch: (value, type) =>  executeFilter(idx, value, type)
+						});
 	            	searchTh.html('').append(searchElement);
 	            }
             }
@@ -751,6 +775,9 @@ var NodeaTable = (function() {
                 defaultOrder.idx = column.index;
                 defaultOrder.direction = column.element.data('default-order') || 'DESC';
             }
+
+			if(params.debug)
+				console.log(column);
 
         	columns.push(column);
             columnDefs.push(columnDef);
@@ -765,9 +792,12 @@ var NodeaTable = (function() {
 			var tableOptions = {
 				// Variable defaults
 				ajax: {
-		            "url": $(tableID, context).data('url'),
-		            "type": "POST",
+		            url: $(tableID, context).data('url'),
+		            type: "POST",
 		            data: function(e) {
+						// Assign possible custom data to object send in datalist ajax call
+						if(tableData[tableID])
+    						Object.assign(e, tableData[tableID] || null);
 		                // Used for global search
 		                e.columnsTypes = columns.map(col => col.type || 'string');
 		                return e;
@@ -775,7 +805,7 @@ var NodeaTable = (function() {
 		        },
     	        stateSaveCallback: (...params) => defaults.stateSaveCallback(tableID, ...params),
 		        stateLoadCallback: (...params) => defaults.stateLoadCallback(tableID, ...params),
-				order: [ defaultOrder.idx, defaultOrder.direction ],
+				order: [ defaultOrder.idx, defaultOrder.direction.toLowerCase() ], // toLowerCase direction seems to fix CSS arrow on table
 		        // Static defaults
 				...defaults.dataTableOptions,
 				// Override defaults with params
@@ -785,6 +815,8 @@ var NodeaTable = (function() {
 				columns,
 				columnDefs
 			};
+			if(params.debug)
+				console.log('tableOptions', tableOptions);
 			table = $(tableID, context).DataTable(tableOptions);
 			$(tableID, context).show();
 
@@ -801,12 +833,24 @@ var NodeaTable = (function() {
 				if (table.data().length == 0)
 					return;
 
+				// In case of hidden col, then no <td> is generated in the table
+				// Then the problem is that the <th> index does not correspond with the <td> index
+				// _DT_CellIndex.column seems to reveal the real <td index depending on the number of <th>
+				// Then use it instead of <td> index if possible
 				var columnIndex = $(this).parents('tr').find('td').index($(this));
+				if($(this)[0] && $(this)[0]._DT_CellIndex && $(this)[0]._DT_CellIndex.column)
+					columnIndex = $(this)[0]._DT_CellIndex.column;
+
 				var column = columns[columnIndex],
 					columnDef = columnDefs[columnIndex];
 
 				if (columnDef.binding === false)
 					return true;
+
+				if(!columnDef.binding) {
+					console.error('Missing binding function on column definition. Please check if given index match with columnDefs array index. Potential source of the issue: hidden column.');
+					return true
+				}
 
 				columnDef.binding({
 					column,
@@ -818,7 +862,7 @@ var NodeaTable = (function() {
 				});
 			});
 
-			$(tableID + ' tbody', context).mousedown(function (e) {
+			$(tableID + ' tbody', context).on('mousedown', function (e) {
 				if (!e.ctrlKey) {
 					e.preventDefault();
 					down = true;
@@ -826,15 +870,25 @@ var NodeaTable = (function() {
 					left = $(".dataTables_wrapper", context).scrollLeft();
 				}
 			});
-			$(tableID + ' tbody', context).mousemove(function (e) {
+			$(tableID + ' tbody', context).on('mousemove', function (e) {
 				if (down) {
 					additionalData.scrolling = true;
 					var newX = e.pageX;
 					$(".dataTables_wrapper", context).scrollLeft(left - newX + x);
 				}
 			});
-			$(tableID + ' tbody', context).mouseup(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
-			$(tableID + ' tbody', context).mouseleave(function(e){down=false;setTimeout(function(){additionalData.scrolling = false;}, 500);});
+			$(tableID + ' tbody', context).on('mouseup', function (e) {
+				down = false;
+				setTimeout(function () {
+					additionalData.scrolling = false;
+				}, 500);
+			});
+			$(tableID + ' tbody', context).on('mouseleave', function (e) {
+				down = false;
+				setTimeout(function () {
+					additionalData.scrolling = false;
+				}, 500);
+			});
 
 		} catch(err) {
 			console.error("ERROR: NodeaTable "+tableID+" :");

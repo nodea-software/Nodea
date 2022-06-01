@@ -77,7 +77,7 @@ function writePicture(filePath, buffer, encoding = 'utf8') {
 			const promises = [];
 
 			// Default image resize if needed
-			if(appConf.resizePicture.enabled) {
+			if(appConf.resizePicture && appConf.resizePicture.enabled) {
 				promises.push(new Promise((resolve, reject) => {
 					const pictureWidth = appConf.resizePicture.width;
 					const pictureHeight = appConf.resizePicture.height;
@@ -117,7 +117,12 @@ function writePicture(filePath, buffer, encoding = 'utf8') {
 
 function read(filePath, options = {}) {
 	return new Promise((resolve, reject) => {
-		const securedPath = securePath(globalConf.localstorage, filePath);
+		let securedPath;
+		try {
+			securedPath = securePath(globalConf.localstorage, filePath);
+		} catch(err) {
+			return reject(err);
+		}
 		fs.readFile(securedPath, options, (err, data) => {
 			if (err)
 				return reject(err);

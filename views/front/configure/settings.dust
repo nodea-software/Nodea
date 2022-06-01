@@ -89,6 +89,16 @@
 											</a>
 										</div>
 									</div>
+									<div class="col-12">
+										<br>
+										<div class="form-group">
+											<label>{#__ key="settings.reset_tuto"/}</label>
+											<br>
+											<a id='reset_tuto' class='btn btn-default'>
+												{#__ key="button.execute"/}
+											</a>
+										</div>
+									</div>
 									{#isAdmin}
 										<div class="col-12">
 											<br>
@@ -116,84 +126,7 @@
 
 {<custom_js}
 	<script type="text/javascript">
-		var sureResetMsg = '{#__ key="settings.sure_reset"/}';
-		var loginUser = "{user.login}";
-		var mailUser = "{user.email}";
-		$(document).ready(function() {
-			$(document).on("click", ".chooseLanguage", function(){
-				var lang = $(this).data("lang");
-				var ajaxdata = {
-					lang: lang
-				};
-
-				$.ajax({
-					url : '/configure/settings/change_language',
-					type : 'POST',
-					data : JSON.stringify(ajaxdata),
-					dataType : 'json',
-					contentType: "application/json",
-					context: this,
-					success: function (data) {
-						if(data.success){
-							location.reload();
-						}
-					},
-					error: function (error) {
-						console.error(error);
-						toastr.error(error);
-					}
-				});
-			});
-
-			$(document).on("click", ".darkTheme", function(){
-				var choice = $(this).data("choice");
-				var ajaxdata = {
-					choice: choice
-				};
-
-				$.ajax({
-					url : '/configure/settings/change_theme',
-					type : 'POST',
-					data : JSON.stringify(ajaxdata),
-					dataType : 'json',
-					contentType: "application/json",
-					context: this,
-					success: function (data) {
-						if(data.success){
-							location.reload();
-						}
-					},
-					error: function (error) {
-						console.error(error);
-						toastr.error(error);
-					}
-				});
-			});
-
-			$(document).on("click", ".chooseTranslate", function(){
-				var activate = $(this).data("activate");
-				var ajaxdata = {
-					activate: activate
-				};
-
-				$.ajax({
-					url : '/configure/settings/activate_translation',
-					type : 'POST',
-					data : JSON.stringify(ajaxdata),
-					dataType : 'json',
-					contentType: "application/json",
-					context: this,
-					success: function (data) {
-						if(data.success){
-							location.reload();
-						}
-					},
-					error: function (error) {
-						console.error(error);
-						toastr.error(error);
-					}
-				});
-			});
-		});
+		const reset_tuto_ok = '{#__ key="settings.reset_tuto_ok"/}';
 	</script>
+	<script src="/js/Nodea/configure/settings.js" type="text/javascript"></script>
 {/custom_js}

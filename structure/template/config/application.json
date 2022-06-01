@@ -8,9 +8,9 @@
 	"timezone": "Europe/Paris",
 	"contact_field_for_sms": "f_phone",
 	"socket": {
-		"enabled": true,
+		"enabled": false,
 		"chat": false,
-		"notification": true
+		"notification": false
 	},
 	"document_template": {
 		"format_pairs": [{

@@ -3,3 +3,5 @@ node_modules/*
 upload/*
 config/access.json
 package-lock.json
+app/public/bundle/*
+_core/public/bundle/*

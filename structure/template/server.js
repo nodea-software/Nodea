@@ -28,9 +28,16 @@ const globalConf = require('@config/global');
 const access = require('@core/helpers/access');
 const language = require('@core/helpers/language');
 
+// Securing HTTP headers
+const helmet = require('helmet'); // https://helmetjs.github.io/
+const helmet_conf = require('@config/helmet');
+app.use(helmet(helmet_conf));
+
 // Set up public files access (js/css...)
 app.use(express.static(__appPath + '/public'));
 app.use('/core', express.static(__corePath + '/public'));
+// Public files bundler
+const bundler = require('@core/tools/bundler');
 
 // Server logs manager
 app.use(require('@core/server/logs'));
@@ -113,7 +120,7 @@ app.use((req, res) => {
 
 // Launch ======================================================================
 
-require('@core/server/database').then(_ => {
+require('@core/server/database').then(async _ => {
 
 	let server, io = false;
 
@@ -134,6 +141,9 @@ require('@core/server/database').then(_ => {
 	// Handle and prepare access.json file for various situation
 	access.accessFileManagment();
 
+	// Generate missing public ressources bundle
+	await bundler.bundleAll(true);
+
 	// Start server on port
 	server.listen(globalConf.port);
 
@@ -146,7 +156,7 @@ require('@core/server/database').then(_ => {
 		}
 	}
 
-	console.log("Started " + globalConf.protocol + " on " + globalConf.port + " !");
+	console.log("✅ Started " + globalConf.protocol + " on " + globalConf.port + " !");
 }).catch(err => {
 	console.error(err);
 })

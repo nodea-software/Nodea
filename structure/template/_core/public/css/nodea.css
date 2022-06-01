@@ -14,9 +14,11 @@
 	border-radius: 3px;
 	cursor: pointer;
 }
+
 .nodea-dropzone.dragover {
 	background-color: rgba(0, 0, 0, .3);
 }
+
 .dropzonefile {
 	padding: 10px 20px 10px 20px;
 	height: 50px;
@@ -143,4 +145,20 @@ label.required:after {
 
 .custom-control.custom-switch .custom-control-label{
 	cursor: pointer;
+}
+
+.inline-help {
+	color: #1085EE;
+	margin-left: 5px;
+}
+
+.address_component {
+	padding: 15px;
+	border: 1px solid lightgray;
+	border-radius: 10px;
+	margin-bottom: 15px;
+}
+
+.address_component_map {
+	height: 300px;
 }

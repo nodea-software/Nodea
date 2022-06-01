@@ -221,7 +221,9 @@
             "f_name": "Nom",
             "f_description": "Description",
             "f_program_file": "Fichier programme",
-            "r_page": "Étapes de navigation"
+            "r_page": "Étapes de navigation",
+            "generate_pages_btns": "Actions sur les pages",
+            "generate_zip_btns": "Actions sur le fichier programme"
         },
 		"e_history_e_task_s_state": {
             "label_entity": "Historique Etat tâche",

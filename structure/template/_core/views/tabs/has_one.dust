@@ -8,7 +8,13 @@
 {:else}
 	{#data}
 		{! fields !}
-		{>"{e_subentity}/show_fields" ajaxDisplay="true" /}
+		{! TODO: show_fields file include tabs and in this situation we want only fields !}
+		{! Maybe tabs should be in show.dust and not in show_fields.dust !}
+		{! Actual workaround is to clean in JS the HTML content we want here !}
+		<div id='toReplaceWithFields'>
+			{>"{e_subentity}/show_fields" ajaxDisplay="true" /}
+		</div>
+		<script>$('#toReplaceWithFields').replaceWith($('#toReplaceWithFields').find('#fields').first());</script>
 		{! update btn !}
 		<a style="margin-right:8px;float:left;" data-href="/{subentity}/update_form?id={id}&{associationHref}&ajax=true" href="#" class="ajax btn btn-warning">
 			<i class="fas fa-edit">&nbsp;&nbsp;</i>

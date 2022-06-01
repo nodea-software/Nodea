@@ -1,10 +1,10 @@
 <p align="center">
-	<img width="300" height="125" src="https://www.nodea-software.com/img/logo-nodea.png">
+	<img width="300" height="125" src="https://www.nodea-software.com/img/logo/logo_nodea_color.png">
 </p>
 
 # NODEA
 
-NODEA is a computer aided software that enable to generate NodeJS applications by giving instructions to a bot.<br>
+NODEA is a computer aided software that enable to generate Node.js applications by giving instructions to a bot.<br>
 Official website: https://nodea-software.com
 Official documentation: https://docs.nodea-software.com
 
@@ -12,7 +12,7 @@ Official documentation: https://docs.nodea-software.com
 
 ### Prerequisites
 
-NodeJS lts/fermium (v14)<br>
+Node.js LTS / Fermium (v14 or later)<br>
 MySQL (5.7 or higher) / MariaDB (v10 or higher) or PostgreSQL server installed and running.
 
 ### Instructions

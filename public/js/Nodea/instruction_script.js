@@ -32,7 +32,7 @@ function fetchStatus() {
                                     `<button type='button' class="btn btn-danger deleteAppForm fromScript" data-name='${data.data.application._displayName}' data-codename='${data.data.application._name}'>
                                         <i class="fa fa-trash fa-md"></i>&nbsp;&nbsp;
                                         <span>Supprimer l'application</span>
-                                    </button><br>`).show();
+                                    </button><br><br>`).show();
                             }
                         }
                         else

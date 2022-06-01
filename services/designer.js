@@ -172,6 +172,8 @@ exports.createNewApplication = async (data) => {
 		displayName: data.options.showValue
 	});
 
+	data.dbAppID = dbApp.id;
+
 	// Metadata
 	const newApp = new Application(data.options.value, data.options.showValue);
 	data.application = newApp;
@@ -1795,47 +1797,51 @@ exports.createComponentChat = async (data) => { // eslint-disable-line
 	// }
 }
 
-// Create new component address
-exports.createNewComponentAddress = async (data) => {
+exports.addComponentAddress = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
-	if(data.options.componentName) {
-		// TODO - 2.10
-		// data.options.as = 'r_address_' + data.options.value;
-		// data.options.urlValue = 'address_' + data.entity_name + '_' + data.options.value;
-		// data.options.value = 'e_address_' + data.entity_name + '_' + data.options.value;
+	data.is_default_name = data.options.value == 'e_address';
 
-		data.options.as = 'r_address';
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = data.options.componentName;
-		data.options.urlValue = 'address_' + data.entity_name;
-	} else {
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = 'Address ' + data.entity.displayName;
-		data.options.urlValue = 'address_' + data.entity_name;
-		data.options.as = 'r_address';
-	}
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ?
+		'Address ' + data.entity.displayName :
+		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = 'r_' + data.options.urlValue;
 
 	if(data.entity.getComponent(data.options.value, 'address'))
 		throw new Error("structure.component.error.alreadyExistOnEntity");
 
-	const associationOption = {
-		application: data.application,
-		source: data.entity.name,
-		target: data.options.value,
-		foreignKey: 'fk_id_address',
-		as: data.options.as,
-		type: "relatedTo",
-		relation: "belongsTo",
-		targetType: "component",
-		toSync: true
-	};
+	const instructions = [
+		`entity ${data.entity.displayName} has one ${instruction_value}`,
+		`select entity ${instruction_value}`,
+		"add field Label",
+		"add field Number",
+		"add field Street 1",
+		"add field Street 2",
+		"add field Postal Code",
+		"add field City",
+		"add field Country",
+		"add field Lat",
+		"add field Lon"
+	];
 
-	structure_entity.setupAssociation(associationOption);
+	// Start doing necessary instruction for component creation
+	await this.recursiveInstructionExecute(data, instructions, 0);
 
-	await structure_component.addNewComponentAddress(data);
-	data.entity.addComponent(data.options.value, 'Address', 'address');
+	structure_component.newAddress(data);
+	data.entity.addComponent(data.options.value, instruction_value, 'address');
 
 	return {
 		message: 'database.component.create.success',
@@ -1843,7 +1849,63 @@ exports.createNewComponentAddress = async (data) => {
 	};
 }
 
-exports.deleteComponentAddress = async (data) => {
+exports.removeComponentAddress = async (data) => {
+	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
+
+	data.is_default_name = data.options.value == 'e_address';
+
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ?
+		'Address ' + data.entity.displayName :
+		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = data.is_default_name ? 'r_address' : 'r_' + data.options.urlValue;
+
+	if(!data.entity.getComponent(data.options.value, 'address')){
+		const err = new Error("database.component.notFound.notFoundOnEntity");
+		err.messageParams = [data.options.showValue, data.entity.displayName];
+		throw err;
+	}
+
+	const instructions = [
+		`delete entity ${instruction_value}`
+	];
+
+	try {
+		// Start doing necessary instruction for component creation
+		await this.recursiveInstructionExecute(data, instructions, 0);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		structure_component.removeAddress(data);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		data.entity.deleteComponent(data.options.value, 'address');
+	} catch(err) {
+		console.error(err);
+	}
+
+	return {
+		message: 'database.component.delete.success'
+	}
+}
+
+exports.removeComponentAddress_OLD = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 

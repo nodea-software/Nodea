@@ -134,17 +134,6 @@ async function dustToPdf({templateData, filePath, req}){
 
 			const tmpFileName = __dirname + '/../' + new Date().getTime() + '' + Math.floor(Math.random() * Math.floor(100)) + '.pdf';
 
-			const headerStartIdx = html.indexOf('<!--HEADER-->');
-			const headerEndIdx = html.indexOf('<!--HEADER-->', headerStartIdx + '<!--HEADER-->'.length) + '<!--HEADER-->'.length;
-			const header = headerStartIdx >= 0 ? html.substring(headerStartIdx, headerEndIdx) : null;
-
-			const footerStartIdx = html.indexOf('<!--FOOTER-->');
-			const footerEndIdx = html.indexOf('<!--FOOTER-->', footerStartIdx + '<!--FOOTER-->'.length) + '<!--FOOTER-->'.length;
-			const footer = html.substring(footerStartIdx, footerEndIdx);
-
-			html = html.replace(header, '');
-			html = html.replace(footer, '');
-
 			html = html.replace(/\*\*page\*\*/g, '{{page}}');
 			html = html.replace(/\*\*pages\*\*/g, '{{pages}}');
 
@@ -158,9 +147,6 @@ async function dustToPdf({templateData, filePath, req}){
 					left: "15px"
 				}
 			}
-
-			if(!header)
-				optionsPDF.header = header;
 
 			pdf.create(html, optionsPDF).toFile(tmpFileName, err => {
 				if (err)

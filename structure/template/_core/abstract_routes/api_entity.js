@@ -28,6 +28,7 @@ class ApiEntity extends ApiRoute {
 
 		this.defaultMiddlewares.push(
 			middlewares.apiAuthentication,
+			middlewares.apiEntityAccess(this.entity),
 			matomoTracker
 		);
 	}
@@ -168,6 +169,12 @@ class ApiEntity extends ApiRoute {
 			if (await this.getHook('create', 'afterAssociations', data) === false)
 				return;
 
+			// Default options for setInitialStatus()
+			data.setInitialStatusOptions = {transaction: data.transaction, user: data.req.user, noActions: false};
+			if (await this.getHook('create', 'beforeInitalStatus', data) === false)
+				return;
+			await status_helper.setInitialStatus(data.answer[this.entity], this.E_entity, this.attributes, data.setInitialStatusOptions);
+
 			data.res.success(_ => data.res.status(200).json(data.answer));
 		}));
 	}
@@ -194,7 +201,7 @@ class ApiEntity extends ApiRoute {
 				for (const option of this.options) {
 					if (option.target == 'e_status' && option.as == prop) {
 						delete data.updateObject[option.foreignKey]
-						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as, data.req.body[prop]));
+						statusPromises.push(status_helper.setStatus(this.e_entity, data.id, option.as.substring(2), data.req.body[prop]));
 						break;
 					}
 				}

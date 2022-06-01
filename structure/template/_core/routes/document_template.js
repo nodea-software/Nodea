@@ -130,17 +130,19 @@ class CoreDocumentTemplate extends CoreEntity {
 			data.templateFields = await data.templateDataParser(data);
 
 			// Extract globals and images from `data.templateFields` so only data to include remains for getIncludeFromFields
-			const globalFields = [], staticImages = [];
+			const globalFields = [], staticImages = [], idxToRemove = [];
 			for (const [idx, field] of (data.templateFields || []).entries()) {
 				if (field.substring(0, 2) === 'g_') {
 					globalFields.push(field);
-					data.templateFields.splice(idx, 1);
-				}
-				else if (field.substring(0, 4) === 'img_') {
+					idxToRemove.push(idx);
+				} else if (field.substring(0, 4) === 'img_') {
 					staticImages.push(field);
-					data.templateFields.splice(idx, 1);
+					idxToRemove.push(idx);
 				}
 			}
+
+			// Remove global and static img fields
+			data.templateFields = data.templateFields.filter((x, idx) => !idxToRemove.includes(idx));
 
 			// Entity data
 			const include = this.helpers.model_builder.getIncludeFromFields(models, data.template.f_entity, data.templateFields);

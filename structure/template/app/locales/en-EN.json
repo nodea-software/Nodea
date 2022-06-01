@@ -101,7 +101,9 @@
         "sequence_menu_env_variable": "Environment variables (data flow)",
         "sequence_menu_session_variable": "Session variables",
         "zip_created_replaced": "Zip file created and program file replaced",
-        "duplication_success": "Duplication success. The new program is displayed"
+        "duplication_success": "Duplication success. The new program is displayed",
+        "no_zip_for_pages": "No program file",
+        "pages_generated": "Pages generated"
     },
 	"navbar": {
 		"about": "About",
@@ -207,6 +209,7 @@
 		"delete_confirm": "Are you sure you want to delete this record?",
 		"loading": "Loading...",
         "generate_replace": "Generate and replace",
+        "generate_pages": "Generate pages from zip",
         "duplicate": "Duplicate"
 	},
 	"operation": {
@@ -298,11 +301,29 @@
             "images_ressources": {
                 "label": "Image ressources",
                 "description": "<p>These variables start with <b> img_ </b> and are available from any entity.</p>\n<p>They allow inclusion of Image ressources previously created in the administration module. Use Image ressource's <b> code </b> field in your template so it can be replaced by the image's base64 buffer</p>",
-                "example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
+                "example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"<b>{img_logo}</b>\"</p>"
             }
 		},
 		"status": {
 			"diagram": "Diagram"
+		},
+		"address": {
+			"search": "Find and select your address",
+			"label_component": "Addresses settings",
+			"position": "Map position",
+			"top": "Top",
+			"right": "Right",
+			"bottom": "Bottom",
+			"left": "Left",
+			"distance": "Display distance",
+			"settings": "Settings",
+			"enableMaps": "Enable Map",
+			"entity": "Entity",
+			"zoomBar": "Display zoom bar",
+			"navigation": "Enable navigation",
+			"mousePosition": "Display mouse coordinate",
+			"addressNotValid": "Not valid address",
+			"inline_help": "To have a valid map, please use the field below to enter the address"
 		}
 	},
 	"component": {},

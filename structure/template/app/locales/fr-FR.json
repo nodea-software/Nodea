@@ -101,7 +101,9 @@
         "sequence_menu_env_variable": "Variable d'environnement (flux de données)",
         "sequence_menu_session_variable": "Variable de session",
         "zip_created_replaced": "Le zip a été généré et le fichier programme remplacé",
-        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme."
+        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme.",
+        "no_zip_for_pages": "Pas de fichier programme",
+        "pages_generated": "Pages générées"
     },
 	"navbar": {
 		"about": "A propos",
@@ -207,6 +209,7 @@
 		"delete_confirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement ?",
 		"loading": "Chargement...",
         "generate_replace": "Générer et remplacer",
+        "generate_pages": "Générer les pages à partir du zip",
         "duplicate": "Dupliquer"
 	},
 	"operation": {
@@ -298,11 +301,29 @@
             "images_ressources": {
                 "label": "Ressources image",
                 "description": "<p>Ces variables commencent par un <b> img_ </b> et sont accessibles dans toutes les entités.</p>\n<p>Elles permettent d'inclure les ressources images que vous avez crée dans l'administration. Utilisez le champ <b> code </b> de votre Ressource image dans votre template pour qu'il soit remplacé par le buffer de l'image en base64.</p>\n",
-                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
+                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"<b>{img_logo}</b>\"</p>"
             }
 		},
 		"status": {
 			"diagram": "Diagramme"
+		},
+		"address": {
+			"search": "Recherchez et selectionnez votre adresse",
+			"label_component": "Configuration adresse",
+			"position": "Position de la carte",
+			"top": "Au dessus",
+			"right": "A droite",
+			"bottom": "En dessous",
+			"left": "A gauche",
+			"distance": "Afficher la distance",
+			"settings": "Configurer",
+			"enableMaps": "Activer la carte",
+			"entity": "Entité",
+			"zoomBar": "Afficher panneau de zoom",
+			"navigation": "Activer la navigation",
+			"mousePosition": "Afficher les coordonnées de la souris",
+			"addressNotValid": "Adresse non valide",
+			"inline_help": "Pour avoir une carte valide, veuillez utiliser le champ ci-dessous pour saisir l'adresse"
 		}
 	},
 	"component": {},

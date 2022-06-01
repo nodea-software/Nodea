@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const dataHelper = require("../utils/data_helper");
 const fieldHelper = require("../helpers/field");
@@ -307,7 +307,7 @@ exports.setRequiredAttribute = async (data) => {
 	if(data.structureType == "relatedToMultipleCheckbox"){
 		$("*[data-field='" + data.options.value + "']").find('.relatedtomany-checkbox').data('required', set);
 	} else {
-		$("*[data-field='" + data.options.value + "']").find('input').prop('required', set);
+		$("*[data-field='" + data.options.value + "']").find('input').not("[type='hidden']").prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('textarea').prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('select').prop('required', set);
 	}
@@ -528,7 +528,7 @@ exports.setupRelatedToField = async (data) => {
 			<label for="${alias}">
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
 			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%"></select>
@@ -546,7 +546,7 @@ exports.setupRelatedToField = async (data) => {
 			<label for="${alias}">
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
 			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
@@ -576,7 +576,7 @@ exports.setupRelatedToField = async (data) => {
 			<label for='${alias}'>
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
 			<input class='form-control input' name='${alias}' value='${value}' placeholder="{#__ key='entity.${source}.${alias}' /}" type='text' readOnly />
@@ -637,7 +637,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 					<label for="f_${urlAs}">
 						<!--{#__ key="entity.${source}.${alias}" /}-->
 						<!--{@inline_help field="${alias}"}-->
-							<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+							<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 						<!--{/inline_help}-->
 					</label>
 					${wrapped}

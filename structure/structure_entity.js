@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const helpers = require('../utils/helpers');
 const translateHelper = require("../utils/translate");
 
@@ -186,7 +186,7 @@ exports.setupEntity = async (data) => {
 	const entity_model = entity_name.charAt(0).toUpperCase() + entity_name.toLowerCase().slice(1);
 
 	// CREATE MODEL FILE
-	let modelTemplate = fs.readFileSync(__piecesPath + '/models/model.js', 'utf8');
+	let modelTemplate = fs.readFileSync(global.__piecesPath + '/models/model.js', 'utf8');
 	modelTemplate = modelTemplate.replace(/MODEL_NAME_LOWER/g, entity_name);
 	modelTemplate = modelTemplate.replace(/MODEL_NAME/g, entity_model);
 	modelTemplate = modelTemplate.replace(/TABLE_NAME/g, entity_name);
@@ -220,18 +220,20 @@ exports.setupEntity = async (data) => {
 	fs.writeFileSync(workspacePath + '/app/models/options/' + entity_name + '.json', JSON.stringify([], null, 4));
 
 	// CREATE TEST FILE
-	let testTemplate = fs.readFileSync(__piecesPath + '/tests/entity.test.js', 'utf8');
+	let testTemplate = fs.readFileSync(global.__piecesPath + '/tests/entity.test.js', 'utf8');
 	testTemplate = testTemplate.replace(/MODEL_NAME/g, entity_model);
 	testTemplate = testTemplate.replace(/ENTITY_NAME/g, entity_name);
 	testTemplate = testTemplate.replace(/URL_NAME/g, entity_url);
-	fs.writeFileSync(workspacePath + '/tests/' + entity_name + '.test.js', testTemplate);
+	if (!fs.existsSync(workspacePath + '/app/tests/'))
+		fs.mkdirsSync(workspacePath + '/app/tests/');
+	fs.writeFileSync(workspacePath + '/app/tests/' + entity_name + '.test.js', testTemplate);
 
 	// CREATE ROUTE FILE
 	let routeTemplate = '';
 	if(data.options.isParamEntity) {
-		routeTemplate = fs.readFileSync(__piecesPath + '/routes/param_entity.js', 'utf8');
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/param_entity.js', 'utf8');
 	} else {
-		routeTemplate = fs.readFileSync(__piecesPath + '/routes/entity.js', 'utf8');
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/entity.js', 'utf8');
 	}
 	routeTemplate = routeTemplate.replace(/ENTITY_NAME/g, entity_name);
 	routeTemplate = routeTemplate.replace(/ENTITY_URL_NAME/g, entity_url);
@@ -239,7 +241,7 @@ exports.setupEntity = async (data) => {
 	fs.writeFileSync(workspacePath + '/app/routes/' + entity_name + '.js', routeTemplate);
 
 	// CREATE API FILE
-	let apiTemplate = fs.readFileSync(__piecesPath + '/api/api_entity.js', 'utf8');
+	let apiTemplate = fs.readFileSync(global.__piecesPath + '/api/api_entity.js', 'utf8');
 	apiTemplate = apiTemplate.replace(/ENTITY_NAME/g, entity_name);
 	apiTemplate = apiTemplate.replace(/MODEL_NAME/g, entity_model);
 	fs.writeFileSync(workspacePath + '/app/api/' + entity_name + '.js', apiTemplate);
@@ -257,12 +259,12 @@ exports.setupEntity = async (data) => {
 				<!--{#entityAccess entity="${entity_url}"}-->
 					<li class='nav-item' data-menu="${entity_url}">
 						<!--{#actionAccess entity="${entity_url}" action="update"}-->
-						<a href='${entity_url}/update_form?id=1'>
+						<a href='/${entity_url}/update_form?id=1' class="nav-link">
 							<i class="nav-icon fa fa-cog"></i>
 							<p>
 								<!--{#__ key="entity.${entity_name}.label_entity" /}-->
+								<i class="right fas fa-angle-right"></i>
 							</p>
-							<i class="right fas fa-angle-right"></i>
 						</a>
 						<!--{/actionAccess}-->
 					</li>
@@ -315,7 +317,7 @@ exports.setupEntity = async (data) => {
 	}
 
 	// Copy CRUD view folder and customize them according to data entity properties
-	fs.copySync(__piecesPath + '/views/entity', workspacePath + '/app/views/' + entity_name);
+	fs.copySync(global.__piecesPath + '/views/entity', workspacePath + '/app/views/' + entity_name);
 	const fileBase = workspacePath + '/app/views/' + entity_name;
 	let dustFiles = ["create", "create_fields", "show", "show_fields", "update", "update_fields", "list", "list_fields"];
 	if(data.options.isParamEntity)

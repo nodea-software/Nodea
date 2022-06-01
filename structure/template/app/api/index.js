@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const basename = path.basename(module.filename);
-const appConf = require('@config/application.json');
 
 const Route = require('@core/abstract_routes/route');
 const ApiEntity = require('@core/abstract_routes/api_entity');
@@ -10,9 +9,14 @@ const ApiRoot = require('@core/api/root');
 const instances = [];
 
 function isApiEnabled(req, res, next) {
+	delete require.cache[require.resolve('@config/application.json')];
+	// eslint-disable-next-line global-require
+	const appConf = require('@config/application.json');
 	if (appConf.api_enabled)
 		return next();
-	res.status(501).json({error: 'API not enabled'});
+	res.status(501).json({
+		error: 'API not enabled'
+	});
 }
 
 function routes (app) {

@@ -32,8 +32,12 @@ function commentDust(paramStr) {
 		}
 
 		// Register and count opening and closing chars
-		if (str[currentIndex] === '{')
-			openIdx.push(currentIndex);
+		if (str[currentIndex] === '{') {
+			// If already commented then skip
+			const before_string = str[currentIndex - 4] + str[currentIndex - 3] + str[currentIndex - 2] + str[currentIndex - 1];
+			if(before_string != '<!--')
+				openIdx.push(currentIndex);
+		}
 		else if (str[currentIndex] === '}' && openIdx.length > 0)
 			closeIdx.push(currentIndex);
 
@@ -57,18 +61,22 @@ function commentDust(paramStr) {
 	return commentedStr;
 }
 
-function read(fileName, isLayout = false) {
-	let fileData = fs.readFileSync(fileName, 'utf8');
+function read(filepath, isLayout = false, content = false) {
+	let fileData = content ? content : fs.readFileSync(filepath, 'utf8');
 
 	if(!fileData)
-		throw new Error("Unable to read the file: " + fileName.split("/workspace/").pop());
+		throw new Error("Unable to read the file: " + filepath.split("/workspace/").pop());
 
-	// Comment `dustjs` elements. We need to comment them to allow jsdom to parse the file correctly
-	fileData = commentDust(fileData);
 	// Force quote and double quote order in placeholders. jsDom autmaticaly change `placeholder=''`to `placeholder=""`
 	// Html parsing breaks if double quotes are used to give the translation key `key=""`
 	// Force double quote around, simple quote inside. Change it back when writing to document
-	fileData = fileData.replace(/placeholder=["'](.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="$1\'$2\'$3"');
+	// fileData = fileData.replace(/placeholder=["'](.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="$1\'$2\'$3"');
+
+	// Replace all placeholder='{#__key="..." /}' with placeholder="__key=..."
+	fileData = fileData.replace(/placeholder=["']{#__ (.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="__$1$2"');
+
+	// Comment `dustjs` elements. We need to comment them to allow jsdom to parse the file correctly
+	fileData = commentDust(fileData);
 
 	// Wrap data in <body> tag to provide upper level when writing
 	if(!isLayout)
@@ -76,42 +84,39 @@ function read(fileName, isLayout = false) {
 
 	const { window } = new JSDOM(fileData);
 	const $ = jquery(window);
+	$.html = () => $("body")[0].innerHTML;
 	return $;
 }
 exports.read = read;
 
-function write(fileName, $) {
-	let newFileData = $("body")[0].innerHTML;
+function write(filepath, $) {
+	let file_content = $("body")[0].innerHTML;
 
 	// Fix a bug caused by JSDOM that append &nbsp; at the beginning of the document
-	if (newFileData.substring(0, 6) == "&nbsp;")
-		newFileData = newFileData.substring(6);
+	if (file_content.substring(0, 6) == "&nbsp;")
+		file_content = file_content.substring(6);
 
 	// Replace escaped characters and script inclusion
-	newFileData = newFileData.replace(/&gt;/g, '>');
-	newFileData = newFileData.replace(/&lt;/g, '<');
-	newFileData = newFileData.replace(/&quot;/g, "\"");
-	newFileData = newFileData.replace('<script class="jsdom" src="http://code.jquery.com/jquery.js"></script>', '');
+	file_content = file_content.replace(/&gt;/g, '>');
+	file_content = file_content.replace(/&lt;/g, '<');
+	file_content = file_content.replace(/&quot;/g, "\"");
+	file_content = file_content.replace('<script class="jsdom" src="http://code.jquery.com/jquery.js"></script>', '');
 
-	// Fix beautify
-	newFileData = newFileData.replace(/{#__/g, '{__');
-	// Indent generated html
-	newFileData = beautify(newFileData, {
+	file_content = beautify(file_content, {
 		indent_size: 4,
-		indent_char: " ",
-		indent_with_tabs: false
+		indent_with_tabs: true
 	});
-	newFileData = newFileData.replace(/{__/g, '{#__');
 
 	// Uncomment dust tags
-	newFileData = newFileData.replace(/<!--{/g, "{")
-	newFileData = newFileData.replace(/}-->/g, "}")
+	file_content = file_content.replace(/<!--{/g, "{")
+	file_content = file_content.replace(/}-->/g, "}")
 
-	// Put back simple quote around, double quote inside for placeholders
-	newFileData = newFileData.replace(/placeholder="(.+?)["'](.+?)["'](.+?)"/g, 'placeholder=\'$1"$2"$3\'');
+	// Regenerate {#__ /} translation dust for placeholders
+	// Replace all placeholder="__key=..." with placeholder='{#__key="..." /}'
+	file_content = file_content.replace(/placeholder=["']__key=(.+?)["']/g, 'placeholder=\'{#__ key="$1" /}\'');
 
 	// Write back to file
-	fs.writeFileSync(fileName, newFileData, 'utf8');
+	fs.writeFileSync(filepath, file_content, 'utf8');
 	return;
 }
 exports.write = write;
@@ -125,12 +130,6 @@ exports.loadFromHtml = html => new Promise((resolve, reject) => {
 		reject(err);
 	}
 })
-
-exports.replace = async (filename, element, $insert) => {
-	const $ = read(filename);
-	$(element).replaceWith($insert(element));
-	write(filename, $);
-}
 
 exports.insertHtml = (filename, element, html) => {
 	const $ = read(filename);
@@ -149,15 +148,11 @@ exports.writeMainLayout = (fileName, $) => {
 	newFileData = newFileData.replace(/&quot;/g, "\"");
 	newFileData = newFileData.replace('<script class="jsdom" src="http://code.jquery.com/jquery.js"></script>', '');
 
-	// Fix beautify
-	// newFileData = newFileData.replace(/{#__/g, '{__');
 	// Indent generated html
 	newFileData = beautify(newFileData, {
 		indent_size: 4,
-		indent_char: " ",
-		indent_with_tabs: false
+		indent_with_tabs: true
 	});
-	// newFileData = newFileData.replace(/{__/g, '{#__');
 
 	// Uncomment dust tags
 	// newFileData = newFileData.replace(/<!--({[<>@^:#/].+?})-->/g, '$1');

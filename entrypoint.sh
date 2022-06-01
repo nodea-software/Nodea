@@ -3,7 +3,7 @@
 if [[ "$NODEA_ENV" == "studio" ]]; then
 
 	# Set Git user and email
-	git config --global user.name "$HOSTNAME"
+	git config --global user.name "$SUB_DOMAIN.$DOMAIN_STUDIO"
 	git config --global user.email "$SUB_DOMAIN@$DOMAIN_STUDIO"
 
 	# Write SSH Config file

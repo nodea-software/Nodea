@@ -24,19 +24,19 @@
 	<body>
 
 		<div class="row" id="pageHeader-first">
-			<div class="col-12-sm" style='text-align: center;'>
+			<div class="col-12" style='text-align: center;'>
 				Page Header Content 1
 			</div>
 		</div>
 		<div class="row" id="pageHeader-2">
-			<div class="col-12-sm" style='text-align: center;'>
+			<div class="col-12" style='text-align: center;'>
 				Page Header Content 2
 			</div>
 		</div>
 
 		{! Page 1 !}
 		<div class='row'>
-			<div class="col-12-sm">
+			<div class="col-6">
 				VARCHAR -> {f_name}<br>
 				NUMBER -> {f_number}<br>
 				BIG NUMBER -> {f_big_number}<br>
@@ -50,6 +50,8 @@
 				<input type='checkbox' value='f_boolean' {?f_boolean}checked{/f_boolean}>
 		 		<label for='f_boolean'>f_boolean</label>
 		 		<br>
+			</div>
+			<div class="col-6">
 				EMAIL -> {f_email}<br>
 				TEL -> {f_tel}<br>
 				FAX -> {f_fax}<br>
@@ -70,7 +72,7 @@
 
 		{! Page 2 !}
 		<div class='row new-page'>
-			<div class="col-12-sm">
+			<div class="col-6">
 				VARCHAR2 -> {f_name}<br>
 				NUMBER2 -> {f_number}<br>
 				BIG NUMBER2 -> {f_big_number}<br>
@@ -84,6 +86,8 @@
 				<input type='checkbox' value='f_boolean' {?f_boolean}checked{/f_boolean}>
 		 		<label for='f_boolean'>f_boolean</label>
 		 		<br>
+			</div>
+			<div class="col-6">
 				EMAIL2 -> {f_email}<br>
 				TEL2 -> {f_tel}<br>
 				FAX2 -> {f_fax}<br>

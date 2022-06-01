@@ -216,7 +216,10 @@ module.exports = {
 		// Split SQL request if too many inclusion
 		const includePromises = [], includes = forceOptions, includeMaxlength = 5;
 		for (let i = 0; i < options.length; i++)
-			if (options[i].structureType == 'relatedTo' || options[i].structureType == 'relatedToMultiple' || options[i].structureType == 'relatedToMultipleCheckbox') {
+			if (options[i].structureType == 'relatedTo' ||
+				options[i].structureType == 'relatedToMultiple' ||
+				options[i].structureType == 'relatedToMultipleCheckbox' ||
+				options[i].component == 'address') {
 				const opt = {
 					model: models[options[i].target.capitalizeFirstLetter()],
 					as: options[i].as

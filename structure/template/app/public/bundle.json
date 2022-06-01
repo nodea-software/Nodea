@@ -1,0 +1,9 @@
+{
+	"DEMO_YOUR_BUNDLE SEE https://docs.nodea-software.com/en/developer/client_side_js#bundle": {
+		"type": "css OR js",
+		"files": [
+			"@app/public/...",
+			"@core/public/..."
+		]
+	}
+}

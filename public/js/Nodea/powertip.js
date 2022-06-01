@@ -1,8 +1,9 @@
-$(document).ready(function() {
+$(function() {
 
-	var cleanUrl = window.location.host + window.location.pathname;
+	const origin_url = window.location.pathname;
+	let show_tuto = !localStorage.getItem('nodea-powertip-disable');
 
-	if(!showtuto)
+	if(!show_tuto)
 		return;
 
 	$.fn.powerTip.defaults.placement = 'ne';
@@ -12,12 +13,12 @@ $(document).ready(function() {
 	$.fn.powerTip.defaults.closeEvents = [];
 
 	$('.powertip').each(function() {
-		var content = $(this).attr('powertip-content');
-		var order = $(this).attr('powertip-order');
+		const content = $(this).attr('powertip-content');
+		const order = $(this).attr('powertip-order');
 		$(this).on({
-			powerTipPreRender: function(el) {
+			powerTipPreRender: el => {
 
-				// generate some dynamic content
+				// Generate some dynamic content
 				$(this).data('powertip' , '\
 					<div style="width: 15%;float: left;">\
 						<img src="/img/mascot/body.png" alt="Nodea img" class="powertip-nodea">\
@@ -37,7 +38,7 @@ $(document).ready(function() {
 
 	// Only show the tip that you didn't click 'understood'
 	for (var i = 1; i <= $('.powertip').length; i++) {
-		if(localStorage.getItem('nodea-powertip-' + cleanUrl + '-' + i))
+		if(localStorage.getItem('nodea-powertip-' + origin_url + '-' + i))
 			continue;
 		$('.powertip[powertip-order="'+ i +'"]').powerTip().powerTip('show');
 		break;
@@ -45,17 +46,13 @@ $(document).ready(function() {
 
 	$(document).on('click', '.powertip-gotit', function() {
 		$.powerTip.hide();
-		localStorage.setItem('nodea-powertip-' + cleanUrl + '-' + $(this).attr('data-order'), true);
-		var nextOrder = parseInt($(this).attr('data-order')) + 1;
+		localStorage.setItem('nodea-powertip-' + origin_url + '-' + $(this).attr('data-order'), true);
+		const nextOrder = parseInt($(this).attr('data-order')) + 1;
 		$('.powertip[powertip-order="'+ nextOrder +'"]').powerTip().powerTip('show');
 	});
 
 	$(document).on('click', '.powertip-stopit', function() {
+		localStorage.setItem('nodea-powertip-disable', true);
 		$.powerTip.hide();
-		showtuto = false;
-		$.ajax({
-			url: '/account/skiptuto',
-			method: 'GET'
-		})
 	});
 });

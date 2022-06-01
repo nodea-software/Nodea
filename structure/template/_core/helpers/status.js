@@ -58,7 +58,7 @@ module.exports = {
 		});
 		return status && status.r_actions || [];
 	},
-	executeActions: async (modelName, idEntity, actions, transaction) => {
+	executeActions: async (modelName, idEntity, actions, transaction, customValues = {}) => {
 		if (!actions || !actions.length)
 			return;
 		let usedFields = [];
@@ -72,6 +72,11 @@ module.exports = {
 			include,
 			transaction
 		});
+
+		// Add custom values to media data
+		for (const key in customValues)
+			if (Object.hasOwnProperty.call(customValues, key))
+				mediaData[key] = customValues[key];
 
 		const mediaExecutionPromises = [];
 		for (const action of actions)
@@ -134,7 +139,7 @@ module.exports = {
 					user: optionnals.user
 				});
 
-				if (!created) {
+				if (!created && !optionnals.noActions) {
 					const actions = await self.getActions(status.id);
 					await self.executeActions(modelName, entity.id, actions, optionnals.transaction)
 				}

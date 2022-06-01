@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const dataHelper = require('../utils/data_helper');
 
@@ -32,7 +32,7 @@ exports.setupModule = async (data) => {
 	let resultDust = dataDust.replace(/custom_module/g, name_module.toLowerCase());
 	if (name_module.toLowerCase() != "m_home") {
 		const moduleAriane = "\
-			<li class='active'>\
+			<li class='breadcrumb-item active'>\
 				{#__ key=\"module." + name_module.toLowerCase() + "\"/}\n\
 			</li>";
 		resultDust = resultDust.replace(/<!-- NEW MODULE -->/g, moduleAriane);

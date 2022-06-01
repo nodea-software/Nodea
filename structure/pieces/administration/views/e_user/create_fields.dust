@@ -4,7 +4,7 @@
             <label for="f_login" class="required">
                 {#__ key="entity.e_user.f_login"/}&nbsp;
                 {@inline_help field="f_login"}
-                <i data-field="f_login" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                <i data-entity="e_user" data-field="f_login" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
             <input class="form-control" placeholder='{#__ key="entity.e_user.f_login" /}' name="f_login" value="" type="text" maxlength="255" required="">
@@ -15,7 +15,7 @@
             <label for="f_email">
                 {#__ key="entity.e_user.f_email"/}&nbsp;
                 {@inline_help field="f_email"}
-                <i data-field="f_email" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                <i data-entity="e_user" data-field="f_email" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
             <div class="input-group">
@@ -33,7 +33,7 @@
             <label for="f_role" class="required">
                 {#__ key="entity.e_user.r_role" /}
                 {@inline_help field="r_role"}
-                <i data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                <i data-entity="e_user" data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
                 {/inline_help}
             </label>
             <select multiple="multiple" class="ajax form-control" name="r_role" data-source="role" data-using="f_label" width="100%" required="">
@@ -45,7 +45,7 @@
             <label for="f_group" class="required">
                 {#__ key="entity.e_user.r_group" /}
                 {@inline_help field="r_group"}
-                <i data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                <i data-entity="e_user" data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
                 {/inline_help}
             </label>
             <select multiple="multiple" class="ajax form-control" name="r_group" data-source="group" data-using="f_label" width="100%" required="">

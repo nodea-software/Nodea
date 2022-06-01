@@ -1,12 +1,11 @@
 const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
-const path = require("path");
 const mysql = require('promise-mysql');
 const {Client} = require('pg');
 
-// Gitlab
+// Code Platform
 const globalConf = require('../config/global.js');
 const code_platform = require('../services/code_platform');
 
@@ -15,67 +14,10 @@ const studio_manager = require('../services/studio_manager');
 const models = require('../models/');
 const exec = require('child_process').exec;
 
-function installAppModules(data) {
-	return new Promise((resolve, reject) => {
-
-		// Mandatory workspace folder
-		if (!fs.existsSync(__workspacePath))
-			fs.mkdirSync(__workspacePath);
-
-		if (fs.existsSync(__dirname + '/../workspace/node_modules')) {
-			console.log("Everything's ok about global workspaces node modules.");
-
-			if (typeof data !== "undefined") {
-				/* When we are in the "npm install" instruction from preview */
-				let command = "npm install";
-				console.log(data.specificModule)
-				if (data.specificModule)
-					command += " " + data.specificModule;
-
-				console.log("Executing " + command + " in application: " + data.application.name + "...");
-
-				exec(command, {
-					cwd: __dirname + '/../workspace/' + data.application.name + '/'
-				}, err => {
-					if (err)
-						return reject(err);
-					console.log('Application ' + data.application.name + ' node modules successfully installed !');
-					resolve();
-				});
-			} else {
-				resolve();
-			}
-		} else {
-			// We need to reinstall node modules properly
-			console.log("Workspaces node modules initialization...");
-			fs.copySync(path.join(__dirname, 'template', 'package.json'), path.join(__dirname, '..', 'workspace', 'package.json'))
-
-			exec('npm install', {
-				cwd: __dirname + '/../workspace/'
-			}, err => {
-				if (err){
-					console.error(err)
-					return reject(err);
-				}
-				console.log('Workspaces node modules successfuly initialized.');
-				resolve();
-			});
-		}
-	});
-}
-exports.installAppModules = installAppModules;
-
-// Application
 exports.setupApplication = async (data) => {
 
 	const appName = data.options.value;
 	const appDisplayName = data.options.showValue;
-
-	try {
-		await installAppModules();
-	} catch(err) {
-		throw new Error("An error occurred while initializing the node modules.");
-	}
 
 	// *** Copy template folder to new workspace ***
 	fs.copySync(__dirname + '/template/', __dirname + '/../workspace/' + appName);
@@ -87,24 +29,23 @@ exports.setupApplication = async (data) => {
 	applicationJSON.appname = appName;
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, 4), 'utf8');
 
-	// Create database instance for application
+	// Prepare app db user STRONG password
+	const db_pwd = `NP_${data.dbAppID}_${appName}`;
+
 	let conn, db_requests = [];
+	// Create database instance for application
 	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'127.0.0.1' IDENTIFIED BY 'np_" + appName + "';",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY 'np_" + appName + "';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'%';"
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';"
 		];
 
-		if(dbConf.dialect == 'mysql') {
-			db_requests.push("ALTER USER 'np_" + appName + "'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
-			db_requests.push("ALTER USER 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
-		}
+		if(dbConf.dialect == 'mysql')
+			db_requests.push("ALTER USER 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';");
 
 		db_requests.push("FLUSH PRIVILEGES;");
 
@@ -117,7 +58,7 @@ exports.setupApplication = async (data) => {
 	} else if(dbConf.dialect == 'postgres') {
 		db_requests = [
 			"CREATE DATABASE \"np_" + appName + "\" ENCODING 'UTF8';",
-			"CREATE USER \"np_" + appName + "\" WITH PASSWORD 'np_" + appName + "';",
+			"CREATE USER \"np_" + appName + "\" WITH PASSWORD '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO \"np_" + appName + "\";",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO " + dbConf.user + ";"
 		];
@@ -132,11 +73,14 @@ exports.setupApplication = async (data) => {
 	}
 
 	for (let i = 0; i < db_requests.length; i++) {
+		const request = db_requests[i];
 		try {
-			await conn.query(db_requests[i]); // eslint-disable-line
+			await conn.query(request); // eslint-disable-line
 		} catch(err) {
+			if(request.startsWith('GRANT ALL PRIVILEGES'))
+				console.warn('Unable to GRANT PRIVILEGES, may cause issues later. REQUEST:', request);
 			// Postgres error about db user that already exist, indeed postgres do not handle the 'IF NOT EXISTS' syntax...
-			if(dbConf.dialect != 'postgres' || err.code != '42710'){
+			else if(dbConf.dialect != 'postgres' || err.code != '42710'){
 				console.error(err);
 				throw new Error("An error occurred while initializing the workspace database.");
 			}
@@ -147,6 +91,7 @@ exports.setupApplication = async (data) => {
 
 	// Update workspace database config file to point on the new separate DB
 	let appDatabaseConfig = fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/nodea_pwd/g, db_pwd, 'utf8');
 	appDatabaseConfig = appDatabaseConfig.replace(/nodea/g, 'np_' + appName, 'utf8');
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', appDatabaseConfig);
 
@@ -464,6 +409,12 @@ exports.initializeApplication = async(application) => {
 	// Routes
 	fs.copySync(piecesPath + '/component/automatisation/routes/', workspacePath + '/app/routes/');
 
+	//
+	// TESTS
+	//
+	// Remove tests from mandatory app instructions, should be written manually
+	fs.rmdirSync(workspacePath + '/app/tests/', {recursive: true, force: true});
+
 	return await initializeWorkflow(application);
 }
 
@@ -546,3 +497,29 @@ exports.deleteApplication = async(data) => {
 
 	return;
 }
+
+// Handle specific node_modules installation in workspace folder
+exports.installAppModules = (data) => new Promise((resolve, reject) => {
+
+	// Mandatory workspace folder
+	if (!fs.existsSync(global.__workspacePath))
+		fs.mkdirSync(global.__workspacePath);
+
+	if (!data || typeof data === "undefined")
+		return resolve();
+
+	/* When we are in the "npm install" instruction from preview */
+	let command = "npm install";
+	if (data.specificModule)
+		command += " " + data.specificModule;
+
+	console.log("EXECUTING " + command + " IN " + data.application.name + "...");
+
+	exec(command, {
+		cwd: __dirname + '/../workspace/' + data.application.name + '/'
+	}, err => {
+		if (err)
+			return reject(err);
+		resolve();
+	});
+});

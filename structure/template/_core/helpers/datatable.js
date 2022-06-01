@@ -61,9 +61,17 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	const include = {
 		model: models[subentityModel],
 		as: subentityAlias,
-		order: order,
 		include: model_builder.getIncludeFromFields(models, subentityName, toInclude) // Get sequelize include object
 	}
+
+	// Rework order for include, only handle order format like: [['id', 'desc']]
+	if(order && typeof order[0][0] == 'string' && typeof order[0][1] == 'string')
+		order = [[{model: models[subentityModel], as: subentityAlias}, ...order[0]]];
+	else {
+		// TODO: Handle order for relation field in subdatalist, format like: [ [ Literal { val: 'r_relation.id' }, 'desc' ] ]
+		order = null;
+	}
+
 	if (search[searchTerm].length > 0)
 		include.where = search;
 
@@ -74,10 +82,27 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 
 	include.required = false;
 
-	const entity = await models[modelName].findOne({
-		where: { id: parseInt(sourceId) },
-		include: include
-	});
+	let entity;
+	try {
+		entity = await models[modelName].findOne({
+			where: {
+				id: parseInt(sourceId)
+			},
+			include: include,
+			order: order
+		});
+	} catch(err) {
+		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);
+		// TODO: Order on include sometime do not work because Sequelize decide to do 2 request with the first one without include
+		// Try with order in include
+		include.order = [[order[0][1], order[0][2]]];
+		entity = await models[modelName].findOne({
+			where: {
+				id: parseInt(sourceId)
+			},
+			include: include
+		});
+	}
 
 	if (!entity['count' + subentityAlias.capitalizeFirstLetter()])
 		throw new Error('count' + subentityAlias.capitalizeFirstLetter() + 'is undefined');

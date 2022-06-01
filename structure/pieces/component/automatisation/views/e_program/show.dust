@@ -67,6 +67,36 @@
 							{>"e_program/show_fields"/}
 
 							<div class="actions">
+								{@ifTrue key=hideButton}
+									{#actionAccess entity="program" action="create"}
+									<label>{#__ key="entity.e_program.generate_zip_btns"/}</label>
+									<br>
+			                        <a href="/program/generate?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
+			                            <span>{#__ key="button.generate"/}</span>
+			                        </a>&nbsp;
+			                        <a href="/program/generate_and_replace?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
+			                            <span>
+			                                {#__ key="button.generate_replace"/}</span>
+			                        </a>&nbsp;
+			                        <a href="/program/duplicate?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-copy">&nbsp;&nbsp;</i>
+			                            <span>
+			                                {#__ key="button.duplicate"/}
+			                            </span>
+			                        </a>
+			                        <br>
+			                        {/actionAccess}
+					                <br><label>{#__ key="entity.e_program.generate_pages_btns"/}</label><br>
+					                {#actionAccess entity="page" action="create"}
+					                <a href="/program/generate_pages?id={e_program.id}" class="btn btn-info">
+					                    <i class="fas fa-copy">&nbsp;&nbsp;</i>
+					                    <span>{#__ key="button.generate_pages"/}</span>
+					                </a><br>
+					                <br>
+					                {/actionAccess}
+			                    {/ifTrue}
 		                        <a class="btn btn-default" href="javascript:history.back();">
 		                            <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;
 		                            {#__ key="button.return"/}
@@ -111,22 +141,6 @@
 										</a>&nbsp;
 									{/actionAccess}
 		                        {/ifTrue}
-		                        <a href="/program/generate?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.generate"/}</span>
-		                        </a>&nbsp;
-		                        <a href="/program/generate_and_replace?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.generate_replace"/}</span>
-		                        </a>&nbsp;
-		                        <a href="/program/duplicate?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-copy">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.duplicate"/}
-		                            </span>
-		                        </a>
 		                    </div>
 			            </div>
 						{/e_program}

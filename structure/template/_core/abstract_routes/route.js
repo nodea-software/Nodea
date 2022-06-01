@@ -43,7 +43,7 @@ class Route {
 
 			try {
 				const {method, path, middlewares, func} = routeConf;
-				this.router[method](path, ...middlewares, func);
+				this.router[method](path, ...middlewares, this.asyncRoute(func));
 			} catch(err) {
 				console.error(`Something whent wrong trying to register route ${route}`);
 				console.error(err);
@@ -98,5 +98,4 @@ class Route {
 		}
 	}
 }
-
 module.exports = Route;

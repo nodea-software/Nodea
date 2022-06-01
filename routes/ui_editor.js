@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const block_access = require('../utils/block_access');
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const language = require('../services/language');
 const gitHelper = require('../utils/git_helper');
 

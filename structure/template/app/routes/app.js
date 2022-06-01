@@ -30,6 +30,9 @@ class App extends CoreApp {
 			],
 			download: [
 				middlewares.isLoggedIn
+			],
+			translate: [
+				middlewares.isLoggedIn
 			]
 		}
 	}

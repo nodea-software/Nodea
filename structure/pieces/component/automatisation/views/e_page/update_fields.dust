@@ -10,15 +10,15 @@
             <input disabled="" readonly="" class="form-control input" placeholder='{#__ key="entity.e_page.f_order" /}' name="f_order" value="{f_order}" type="number" max="2147483648">
         </div>
     </div>
-    <div data-field="f_titre" class="col-12">
+    <div data-field="f_title" class="col-12">
         <div class="form-group">
-            <label for="f_titre" class="required">
-                {#__ key="entity.e_page.f_titre"/}&nbsp;
-                {@inline_help field="f_titre"}
-                <i data-field="f_titre" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+            <label for="f_title" class="required">
+                {#__ key="entity.e_page.f_title"/}&nbsp;
+                {@inline_help field="f_title"}
+                <i data-field="f_title" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_titre" /}' name="f_titre" value="{f_titre}" type="text" maxlength="255" required="">
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_title" /}' name="f_title" value="{f_title}" type="text" maxlength="255" required="">
         </div>
     </div>
     <div data-field="f_delay" class="col-xs-6">
