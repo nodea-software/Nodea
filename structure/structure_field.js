@@ -192,6 +192,8 @@ exports.setupField = async (data) => {
 
 	// Add default "validate" property to true, setting to false will disable sequelize's validation on the field
 	attributesObject[field_name].validate = true;
+	// We allow null by default for all attributes
+	attributesObject[field_name].allowNull = true;
 	fs.writeFileSync(attributesFileName, JSON.stringify(attributesObject, null, 4));
 	fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, 4));
 
@@ -288,7 +290,7 @@ exports.setRequiredAttribute = async (data) => {
 	else
 		throw new Error('structure.field.attributes.notUnderstand');
 
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
 
 	// Update create_fields.dust file
 	let $ = await domHelper.read(pathToViews + '/create_fields.dust');
@@ -336,25 +338,28 @@ exports.setRequiredAttribute = async (data) => {
 	const attributesObj = JSON.parse(fs.readFileSync(pathToAttributesJson, "utf8"));
 
 	if (attributesObj[data.options.value]) {
-		// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
-		// In script you can set required a field in user, role or group but it crash the user admin autogeneration
-		// because the required field is not given during the creation
-		if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
-			attributesObj[data.options.value].allowNull = set;
+
 		// Alter column to set default value in DB if models already exist
 		const jsonPath = __dirname + '/../workspace/' + data.application.name + '/app/models/toSync.json';
 		const toSync = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 		if (typeof toSync.queries === "undefined")
 			toSync.queries = [];
 
-		let defaultValue = null;
 		const tableName = data.entity_name;
 		let length = "";
 		if (data.sqlDataType == "varchar")
 			length = "(" + data.sqlDataTypeLength + ")";
 
+		let defaultValue = null;
 		// Set required
 		if (set) {
+
+			// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
+			// In script you can set required a field in user, role or group but it crash the user admin autogeneration
+			// because the required field is not given during the creation
+			if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
+				attributesObj[data.options.value].allowNull = false;
+
 			switch (attributesObj[data.options.value].type) {
 				case "TEXT":
 					defaultValue = "";
@@ -382,8 +387,7 @@ exports.setRequiredAttribute = async (data) => {
 					break;
 			}
 
-			if(defaultValue)
-				attributesObj[data.options.value].defaultValue = defaultValue;
+			attributesObj[data.options.value].defaultValue = defaultValue;
 
 			if (data.sqlDataType && (data.dialect == "mysql" || data.dialect == "mariadb")) {
 				// Update all NULL value before set not null

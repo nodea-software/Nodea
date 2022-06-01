@@ -2,20 +2,34 @@
 const { getMockReq } = require('@jest-mock/express');
 
 // Utils
-const generateValueByType = (type) => {
+function randomString(length) {
+	let text = "";
+	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	for (let i = 0; i < length; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+}
+
+function generateValueByType(type) {
 	switch (type) {
 		case 'string':
-			return 'TestString';
+		case 'text':
+		case 'regular text':
+			return randomString(100);
 		case 'number':
-			return 42;
+			return Math.floor(Math.random() * (9999 - -9999) + -9999);
 		case 'decimal':
-			return 42.42
+			return Math.random() * (9999 - -9999) + -9999;
 		case 'date':
 		case 'datetime':
 		case 'time':
 			return new Date();
+		case 'color':
+			return '#FFF';
 		default:
-			throw new Error("Unknown type "+type)
+			console.log('UNKNOWN TYPE: ' + type);
+			return randomString(100);
 	}
 }
 
@@ -84,10 +98,8 @@ exports.generateEntityBody = (e_entity) => {
 
 		if (['id', 'createdBy', 'updatedBy', 'version'].includes(attrName))
 			continue;
-		if (attr.allowNull === true || attr.defaultValue === null)
-			continue;
 
-		body[attrName] = generateValueByType(attr.nodeaType);
+		body[attrName] = generateValueByType(attr.nodeaType || attr.type);
 	}
 	return body;
 }

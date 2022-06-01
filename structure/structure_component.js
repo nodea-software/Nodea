@@ -340,9 +340,10 @@ exports.newStatus = async (data) => {
 	fs.renameSync(appPath + '/models/attributes/e_' + data.history_table_db_name + '.json', appPath + '/models/attributes/e_' + data.history_table + '.json');
 	fs.renameSync(appPath + '/models/options/e_' + data.history_table_db_name + '.json', appPath + '/models/options/e_' + data.history_table + '.json');
 	fs.renameSync(appPath + '/views/e_' + data.history_table_db_name, appPath + '/views/e_' + data.history_table);
-	// Delete useless route and api history controllers
+	// Delete useless route, api, test history controllers
 	fs.unlinkSync(appPath + '/routes/e_' + data.history_table_db_name + '.js');
 	fs.unlinkSync(appPath + '/api/e_' + data.history_table_db_name + '.js');
+	fs.unlinkSync(appPath + '/tests/e_' + data.history_table_db_name + '.test.js');
 
 	// Change model name of history table
 	let historyModel = fs.readFileSync(appPath + '/models/e_' + data.history_table + '.js', 'utf8');

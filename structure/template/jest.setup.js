@@ -5,12 +5,17 @@ moduleAlias.addAlias('@config', __dirname + '/config');
 moduleAlias.addAlias('@core', __dirname + '/_core');
 moduleAlias.addAlias('@app', __dirname + '/app');
 
-const models = require('@app/models');
 const fs = require('fs-extra');
+const models = require('@app/models');
 
 module.exports = async () => {
+
 	// Reset DB
-	await models.sequelize.sync({force: true});
+	try {
+		await models.sequelize.sync({force: true});
+	} catch(err) {
+		throw new Error('CANNOT CONNECT TO TEST DATABASE, PLEASE CHECK YOUR DATABASE AND config/database.js ON TEST ENV.');
+	}
 
 	const system = {
 		user: {

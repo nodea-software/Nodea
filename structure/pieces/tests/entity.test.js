@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-// console.error = _ => {};
-// console.warn = _ => {};
+console.error = _ => null;
+console.warn = _ => null;
 
 const { getMockedEnv, generateEntityBody } = require('@core/utils/mocking');
 const dayjs = require('dayjs');
@@ -138,11 +138,17 @@ describe("ENTITY MODEL_NAME", _ => {
 	});
 
 	test("[HAPPY] - GET - SHOW", async () => {
-		const row_id = 1;
+		let row = await models.MODEL_NAME.findOne();
+		if(!row)
+			row = await models.MODEL_NAME.create({
+				...generateEntityBody('ENTITY_NAME')
+			}, {
+				user: global.__jestUser
+			});
 		const {mockedReq, mockedRes, mockedRoute, mockedSuccess, mockedError} = getMockedEnv({
 			req: {
 				query: {
-					id: row_id
+					id: row.id
 				},
 				session: {passport: {user: global.__jestUser}},
 				user: global.__jestUser
@@ -151,7 +157,7 @@ describe("ENTITY MODEL_NAME", _ => {
 		});
 
 		await ENTITY_NAME.asyncRoute(mockedRoute)(mockedReq, mockedRes);
-		const row_exist = await models.MODEL_NAME.findByPk(row_id);
+		const row_exist = await models.MODEL_NAME.findByPk(row.id);
 
 		if(row_exist) {
 			// Called res.success once
@@ -208,16 +214,25 @@ describe("ENTITY MODEL_NAME", _ => {
 		// Called res.success once
 		expect(mockedSuccess).toHaveBeenCalledTimes(1);
 		// Redirected to /show
-		const last_redirect_url = mockedRes.redirect.mock.lastCall[0];
+		let last_redirect_url = '';
+		try {
+			last_redirect_url = mockedRes.redirect.mock.lastCall[0];
+		} catch(err) {
+			console.log(mockedRes.redirect);
+		}
 		expect(last_redirect_url).toMatch(/\/URL_NAME\/show\?id=\d+/);
 	});
 
 	test("[HAPPY] - GET - UPDATE", async () => {
-		const row_id = 1;
-		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
+		let row = await models.MODEL_NAME.findOne();
+		if(!row)
+			row = await models.MODEL_NAME.create({
+				...generateEntityBody('ENTITY_NAME')
+			});
+		const {mockedReq, mockedRes, mockedRoute, mockedSuccess, mockedError} = getMockedEnv({
 			req: {
 				query: {
-					id: row_id
+					id: row.id
 				},
 				session: {passport: {user: global.__jestUser}},
 				user: global.__jestUser
@@ -226,7 +241,7 @@ describe("ENTITY MODEL_NAME", _ => {
 		});
 
 		await ENTITY_NAME.asyncRoute(mockedRoute)(mockedReq, mockedRes);
-		const row_exist = await models.MODEL_NAME.findByPk(row_id);
+		const row_exist = await models.MODEL_NAME.findByPk(row.id);
 
 		if(row_exist) {
 			// Called res.success once
@@ -240,6 +255,8 @@ describe("ENTITY MODEL_NAME", _ => {
 			expect(mockedError).toHaveBeenCalledTimes(1);
 			// Render
 			expect(mockedRes.render).toBeDefined();
+			if(!mockedRes.render.mock)
+				console.log(mockedRes.render);
 			const last_render_url = mockedRes.render.mock.lastCall[0];
 			expect(last_render_url).toBe('common/404');
 		}
@@ -305,7 +322,9 @@ describe("ENTITY MODEL_NAME", _ => {
 	test("[HAPPY] - POST - DELETE", async () => {
 		let row = await models.MODEL_NAME.findOne();
 		if(!row)
-			row = await models.MODEL_NAME.create();
+			row = await models.MODEL_NAME.create({
+				...generateEntityBody('ENTITY_NAME')
+			});
 
 		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
 			req: {
