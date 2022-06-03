@@ -17,7 +17,7 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 	}
 
 	// If not a person (healthcheck service or other spamming services)
-	if(typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0)
+	if(!req.session || typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0)
 		return res.sendStatus(200);
 
 	if (!req.session.lang_user)

@@ -16,17 +16,39 @@ function generateValueByType(type) {
 		case 'string':
 		case 'text':
 		case 'regular text':
+		case 'password':
 			return randomString(100);
 		case 'number':
 			return Math.floor(Math.random() * (9999 - -9999) + -9999);
+		case 'big number':
+			return Math.floor(Math.random() * (9999999 - -9999999) + -9999999);
 		case 'decimal':
 			return Math.random() * (9999 - -9999) + -9999;
+		case 'currency':
+			return '17.99';
 		case 'date':
 		case 'datetime':
 		case 'time':
 			return new Date();
 		case 'color':
 			return '#FFF';
+		case 'boolean':
+			return true;
+		case 'email':
+			return 'test@test.com';
+		case 'phone':
+		case 'fax':
+			return '0666666666';
+		case 'qrcode':
+		case 'url':
+			return 'https://nodea-software.com'
+		case 'barcode':
+			return '12345678';
+		case 'file':
+		case 'picture':
+		case 'enum':
+		case 'VIRTUAL':
+			return randomString(100);
 		default:
 			console.log('UNKNOWN TYPE: ' + type);
 			return randomString(100);
@@ -99,7 +121,31 @@ exports.generateEntityBody = (e_entity) => {
 		if (['id', 'createdBy', 'updatedBy', 'version'].includes(attrName))
 			continue;
 
-		body[attrName] = generateValueByType(attr.nodeaType || attr.type);
+		if(attr.type.toLowerCase() == 'enum')
+			body[attrName] = attr.values[0];
+		else
+			body[attrName] = generateValueByType(attr.nodeaType || attr.type);
 	}
 	return body;
 }
+
+// f_localfile: [
+// {
+// 	fieldname: 'f_localfile',
+// 	originalname: 'steam-deck-frandroid-2021.png',
+// 	encoding: '7bit',
+// 	mimetype: 'image/png',
+// 	buffer: <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 02 44 00 00 02 44 08 03 00 00 00 c0 3e cb 68 00 00 03 00 50 4c 54 45 47 70 4c 19 19 19 55 55 55 ... 51386 more bytes>,
+// 	size: 51436
+// }
+// ],
+// f_image: [
+// {
+// 	fieldname: 'f_image',
+// 	originalname: 'Emmaus.jpg',
+// 	encoding: '7bit',
+// 	mimetype: 'image/jpeg',
+// 	buffer: <Buffer ff d8 ff e1 00 18 45 78 69 66 00 00 49 49 2a 00 08 00 00 00 00 00 00 00 00 00 00 00 ff ec 00 11 44 75 63 6b 79 00 01 00 04 00 00 00 64 00 00 ff e1 03 ... 155272 more bytes>,
+// 	size: 155322
+// }
+// ]

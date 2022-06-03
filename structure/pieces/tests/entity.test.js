@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-console.error = _ => null;
-console.warn = _ => null;
+// console.error = _ => null;
+// console.warn = _ => null;
 
 const { getMockedEnv, generateEntityBody } = require('@core/utils/mocking');
 const dayjs = require('dayjs');

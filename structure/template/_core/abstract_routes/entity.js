@@ -82,7 +82,10 @@ class CoreEntity extends Route {
 		for (const fieldName in this.attributes) {
 			const field = this.attributes[fieldName];
 			if (['file', 'picture'].includes(field.nodeaType))
-				this.fileFields.push({name: fieldName, maxCount: field.maxCount || 1});
+				this.fileFields.push({
+					name: fieldName,
+					maxCount: field.maxCount || 1
+				});
 		}
 
 		this.defaultMiddlewares.push(
@@ -104,35 +107,35 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/list',
 			middlewares: this.middlewares.list,
-			func: async(data) => {
+			func: async (data) => {
 				data.tableUrl = `/${this.entity}/datalist`;
 				data.renderFile = `${this.e_entity}/list`;
 
 				/**
-			     * Called at route start
-			     * @function CoreEntity#list#start
-			     * @memberof CoreEntity#list
-			     * @param {object} data
+				 * Called at route start
+				 * @function CoreEntity#list#start
+				 * @memberof CoreEntity#list
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			     * @param {string} data.tableUrl - Url for the ajax datalist
-			     * @param {string} data.renderFile - Dust file to render
-			     */
+				 * @param {string} data.tableUrl - Url for the ajax datalist
+				 * @param {string} data.renderFile - Dust file to render
+				 */
 				if (await this.getHook('list', 'start', data) === false)
 					return;
 
 				/**
-			     * Called before rendering
-			     * @function CoreEntity#list#beforeRender
-			     * @memberof CoreEntity#list
-			     * @param {object} data
+				 * Called before rendering
+				 * @function CoreEntity#list#beforeRender
+				 * @memberof CoreEntity#list
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
-			     * @param {string} data.tableUrl - Url for the ajax datalist
-			     * @param {string} data.renderFile - Dust file to render
-			     */
+				 * @param {string} data.tableUrl - Url for the ajax datalist
+				 * @param {string} data.renderFile - Dust file to render
+				 */
 				if (await this.getHook('list', 'beforeRender', data) === false)
 					return;
 
@@ -150,8 +153,7 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/datalist',
 			middlewares: this.middlewares.datalist,
-			func: async(data) => {
-
+			func: async (data) => {
 				data.speInclude = null;
 				data.speWhere = null;
 				data.tableInfo = data.req.body;
@@ -237,10 +239,13 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/subdatalist',
 			middlewares: this.middlewares.subdatalist,
-			func: async(data) => {
+			func: async (data) => {
 				data.speWhere = [];
 				data.speInclude = [];
-				data.tableInfo = {...data.req.body, ...data.req.query};
+				data.tableInfo = {
+					...data.req.body,
+					...data.req.query
+				};
 
 				/**
 				 * Called at route start
@@ -293,7 +298,7 @@ class CoreEntity extends Route {
 				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.req.query.subentityModel, this.attributes, this.options, data.rawData, data.req.session.lang_user);
 
 				/**
-													 * Called before json response
+				 * Called before json response
 				 * @function CoreEntity#subdatalist#beforeResponse
 				 * @memberof CoreEntity#subdatalist
 				 * @param {object} data
@@ -323,7 +328,7 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/show',
 			middlewares: this.middlewares.show,
-			func: async(data) => {
+			func: async (data) => {
 				data.idEntity = data.req.query.id;
 				data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 				data.renderFile = this.e_entity + '/show';
@@ -400,7 +405,9 @@ class CoreEntity extends Route {
 					data.renderFile = this.helpers.entity.getOverlayFile(data.req.query.associationSource, data.req.query.associationAlias, 'show');
 					data.subentity = this.entity;
 					data.e_subentity = this.e_entity;
-					data.entityData = data[this.e_entity].get({plain: true});
+					data.entityData = data[this.e_entity].get({
+						plain: true
+					});
 				}
 
 				/**
@@ -437,7 +444,7 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/create_form',
 			middlewares: this.middlewares.create_form,
-			func: async(data) => {
+			func: async (data) => {
 
 				data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 				data.renderFile = `${this.e_entity}/create`;
@@ -534,14 +541,14 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/create',
 			middlewares: this.middlewares.create,
-			func: async(data) => {
+			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
 
 				/**
-			     * Called at route start
-			     * @function CoreEntity#create#start
-			     * @memberof CoreEntity#create
-			     * @param {object} data
+				 * Called at route start
+				 * @function CoreEntity#create#start
+				 * @memberof CoreEntity#create
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
@@ -555,10 +562,10 @@ class CoreEntity extends Route {
 				data.files = createFiles;
 
 				/**
-			     * Called before entity creation in database
-			     * @function CoreEntity#create#beforeCreateQuery
-			     * @memberof CoreEntity#create
-			     * @param {object} data
+				 * Called before entity creation in database
+				 * @function CoreEntity#create#beforeCreateQuery
+				 * @memberof CoreEntity#create
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
@@ -585,7 +592,9 @@ class CoreEntity extends Route {
 					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
 
 					const association = await models[data.req.query.associationSource.capitalizeFirstLetter()].findOne({
-						where: { id: data.req.query.associationFlag }
+						where: {
+							id: data.req.query.associationFlag
+						}
 					});
 
 					if (!association)
@@ -593,7 +602,9 @@ class CoreEntity extends Route {
 
 					const modelName = data.req.query.associationAlias.capitalizeFirstLetter();
 					if (typeof association['add' + modelName] !== 'undefined') {
-						await association['add' + modelName](data.createdRow.id, {transaction: data.transaction});
+						await association['add' + modelName](data.createdRow.id, {
+							transaction: data.transaction
+						});
 
 						if (globalConfig.env == "tablet") {
 							// Write add association to synchro journal
@@ -616,10 +627,29 @@ class CoreEntity extends Route {
 					}
 				}
 
+				// Add default write to disk function to file if none set through hooks
+				// These functions will be executed on route success before transaction commit
+				for (const file of data.files)
+					if (!file.func && file.buffer)
+						file.func = async file => {
+							if (file.isPicture)
+								await this.helpers.file.writePicture(file.finalPath, file.buffer);
+							else
+								await this.helpers.file.write(file.finalPath, file.buffer);
+						}
+				// Add associations
+				await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {
+					transaction: data.transaction
+				})));
+
 				await this.helpers.address.createAddress(data.req, data.createdRow, this.options, data.transaction);
 
 				// Default options for setInitialStatus()
-				data.setInitialStatusOptions = {transaction: data.transaction, user: data.req.user, noActions: false};
+				data.setInitialStatusOptions = {
+					transaction: data.transaction,
+					user: data.req.user,
+					noActions: false
+				};
 				/**
 				 * Called before redirection to data.redirect
 				 * @function CoreEntity#create#beforeInitalStatus
@@ -656,7 +686,7 @@ class CoreEntity extends Route {
 				if (await this.getHook('create', 'beforeRedirect', data) === false)
 					return;
 
-				await data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect));
 			}
 		};
 	}
@@ -670,7 +700,7 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/update_form',
 			middlewares: this.middlewares.update_form,
-			func: async(data) => {
+			func: async (data) => {
 				data.idEntity = data.req.query.id;
 				data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 				data.renderFile = `${this.e_entity}/update`;
@@ -693,7 +723,10 @@ class CoreEntity extends Route {
 				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
 				if (!data[this.e_entity])
 					return data.res.error(_ => {
-						data.req.session.toastr = [{level: 'error', message: 'error.404.title'}];
+						data.req.session.toastr = [{
+							level: 'error',
+							message: 'error.404.title'
+						}];
 						data.res.render('common/404', {
 							message: 'Entity row not found'
 						});
@@ -709,7 +742,7 @@ class CoreEntity extends Route {
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
 				 * @param {number} data.idEntity - Id of entity to update
 				 * @param {object} data.enum_radio - Entity enum fields translations
-				 * @param {string} data.renderFile - Dust file to render	
+				 * @param {string} data.renderFile - Dust file to render
 				 * @param {object} data."e_entity" - Entity row to update
 				 */
 				if (await this.getHook('update_form', 'afterEntityQuery', data) === false)
@@ -728,7 +761,9 @@ class CoreEntity extends Route {
 						data.e_subentity = this.e_entity;
 						data.action = `/${this.entity}/update`;
 						data.method = 'post';
-						data.entityData = data[this.e_entity].get({plain: true});
+						data.entityData = data[this.e_entity].get({
+							plain: true
+						});
 					}
 					if (await this.getHook('update_form', 'ifFromAssociation', data) === false)
 						return;
@@ -774,15 +809,15 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/update',
 			middlewares: this.middlewares.update,
-			func: async(data) => {
+			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
 				data.idEntity = parseInt(data.req.body.id);
 
 				/**
-			     * Called at route start
-			     * @function CoreEntity#update#start
-			     * @memberof CoreEntity#update
-			     * @param {object} data
+				 * Called at route start
+				 * @function CoreEntity#update#start
+				 * @memberof CoreEntity#update
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
@@ -797,7 +832,9 @@ class CoreEntity extends Route {
 				data.files = data.req.files = updateFiles;
 
 				data.updateRow = await models[this.E_entity].findOne({
-					where: { id: data.idEntity },
+					where: {
+						id: data.idEntity
+					},
 					transaction: data.transaction
 				});
 
@@ -825,7 +862,7 @@ class CoreEntity extends Route {
 									await this.helpers.file.removePicture(file.previousPath);
 								else
 									await this.helpers.file.remove(file.previousPath);
-							} catch(err) {
+							} catch (err) {
 								console.error(err);
 							}
 						}
@@ -835,15 +872,15 @@ class CoreEntity extends Route {
 				await this.helpers.address.updateAddress(data.req, data.updateRow, this.options, data.transaction);
 
 				data.updateObject.version = data.updateRow.version;
-				if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
+				if (typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
 					data.updateObject.version = 0;
 				data.updateObject.version++;
 
 				/**
-			     * Called before entity update in database
-			     * @function CoreEntity#update#beforeUpdate
-			     * @memberof CoreEntity#update
-			     * @param {object} data
+				 * Called before entity update in database
+				 * @function CoreEntity#update#beforeUpdate
+				 * @memberof CoreEntity#update
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
@@ -854,10 +891,15 @@ class CoreEntity extends Route {
 				if (await this.getHook('update', 'beforeUpdate', data) === false)
 					return;
 
-				await data.updateRow.update(data.updateObject, {user: data.req.user, transaction: data.transaction});
+				await data.updateRow.update(data.updateObject, {
+					user: data.req.user,
+					transaction: data.transaction
+				});
 
 				// Add associations
-				await Promise.all(data.updateAssociations.map(asso => data.updateRow[asso.func](asso.value, {transaction: data.transaction})));
+				await Promise.all(data.updateAssociations.map(asso => data.updateRow[asso.func](asso.value, {
+					transaction: data.transaction
+				})));
 
 				data.redirect = '/' + this.entity + '/show?id=' + data.idEntity;
 				if (typeof data.req.query.associationFlag !== 'undefined')
@@ -898,8 +940,7 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/loadtab/:id/:alias',
 			middlewares: this.middlewares.loadtab,
-			func: async(data) => {
-
+			func: async (data) => {
 				data.alias = data.req.params.alias;
 				data.id = data.req.params.id;
 				data.isAllowed = false;
@@ -1035,10 +1076,10 @@ class CoreEntity extends Route {
 			method: 'get',
 			path: '/set_status/:entity_id/:status/:id_new_status',
 			middlewares: this.middlewares.set_status,
-			func: async(data) => {
+			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
 				data.redirect = data.req.headers.referer;
-				if(!data.redirect || typeof data.redirect === 'undefined')
+				if (!data.redirect || typeof data.redirect === 'undefined')
 					data.redirect = `/${this.entity}/show?id=${data.req.params.entity_id}`;
 				data.idEntity = data.req.params.entity_id;
 				data.statusName = data.req.params.status.substring(2); // TODO: no need for s_ prefix from client
@@ -1063,14 +1104,19 @@ class CoreEntity extends Route {
 					return;
 
 				data.entity = await models[this.E_entity].findOne({
-					where: {id: data.idEntity},
+					where: {
+						id: data.idEntity
+					},
 					include: {
 						model: models.E_status,
-						as: 'r_'+data.statusName
+						as: 'r_' + data.statusName
 					}
 				});
 				if (!data.entity) {
-					data.req.session.toastr = [{level: 'error', message: 'error.404.title'}];
+					data.req.session.toastr = [{
+						level: 'error',
+						message: 'error.404.title'
+					}];
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1092,9 +1138,12 @@ class CoreEntity extends Route {
 				if (await this.getHook('set_status', 'beforeAllowedCheck', data) === false)
 					return;
 
-				const currentStatusId = data.entity['fk_id_status_'+data.statusName];
+				const currentStatusId = data.entity['fk_id_status_' + data.statusName];
 				if (data.isAllowed === false && await this.helpers.status.isAllowed(currentStatusId, data.idNewStatus) === false) {
-					data.req.session.toastr = [{level: 'error', message: 'component.status.error.illegal_status'}];
+					data.req.session.toastr = [{
+						level: 'error',
+						message: 'component.status.error.illegal_status'
+					}];
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1180,7 +1229,7 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/search',
 			middlewares: this.middlewares.search,
-			func: async(data) => {
+			func: async (data) => {
 				data.search = '%' + (data.req.body.search || '') + '%';
 				data.searchField = data.req.body.searchField;
 				data.limit = SELECT_PAGE_SIZE;
@@ -1265,7 +1314,7 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/fieldset/:alias/add',
 			middlewares: this.middlewares.fieldset_add,
-			func: async(data) => {
+			func: async (data) => {
 				data.alias = data.req.params.alias;
 				data.idEntity = parseInt(data.req.body.idEntity);
 
@@ -1273,14 +1322,16 @@ class CoreEntity extends Route {
 					return;
 
 				const entity = await models[this.E_entity].findOne({
-					where: {id: data.idEntity},
+					where: {
+						id: data.idEntity
+					},
 					transaction: data.transaction
 				});
 				if (!entity)
 					return data.res.error(_ => data.res.status(404).end());
 
 				let toAdd;
-				if (typeof(toAdd = data.req.body.ids) === 'undefined') {
+				if (typeof (toAdd = data.req.body.ids) === 'undefined') {
 					data.req.session.toastr.push({
 						message: 'message.create.failure',
 						level: "error"
@@ -1288,7 +1339,9 @@ class CoreEntity extends Route {
 					return data.res.redirect('/' + this.entity + '/show?id=' + data.idEntity + "#" + data.alias);
 				}
 
-				await entity['add' + data.alias.capitalizeFirstLetter()](toAdd, {transaction: data.transaction});
+				await entity['add' + data.alias.capitalizeFirstLetter()](toAdd, {
+					transaction: data.transaction
+				});
 
 				if (await this.getHook('fieldset_add', 'beforeResponse', data) === false)
 					return;
@@ -1303,7 +1356,7 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/fieldset/:alias/remove',
 			middlewares: this.middlewares.fieldset_remove,
-			func: async(data) => {
+			func: async (data) => {
 				data.alias = data.req.params.alias;
 				data.idEntity = parseInt(data.req.body.idEntity);
 				data.id_to_remove = parseInt(data.req.body.idRemove);
@@ -1312,20 +1365,26 @@ class CoreEntity extends Route {
 					return;
 
 				const entity = await models[this.E_entity].findOne({
-					where: {id: data.idEntity},
+					where: {
+						id: data.idEntity
+					},
 					transaction: data.transaction
 				});
 				if (!entity)
 					return data.res.error(_ => data.res.status(404).end());
 
 				// Get all associations
-				await entity['remove' + data.alias.capitalizeFirstLetter()](data.id_to_remove, {transaction: data.transaction});
+				await entity['remove' + data.alias.capitalizeFirstLetter()](data.id_to_remove, {
+					transaction: data.transaction
+				});
 
-				if(globalConfig.env == "tablet"){
+				if (globalConfig.env == "tablet") {
 					let target = "";
 					for (let i = 0; i < this.options.length; i++)
-						if (this.options[i].as == data.alias)
-						{target = this.options[i].target; break;}
+						if (this.options[i].as == data.alias) {
+							target = this.options[i].target;
+							break;
+						}
 
 					this.helpers.entity.synchro.writeJournal({
 						verb: "associate",
@@ -1354,14 +1413,14 @@ class CoreEntity extends Route {
 			method: 'post',
 			path: '/delete',
 			middlewares: this.middlewares.destroy,
-			func: async(data) => {
+			func: async (data) => {
 				data.idEntity = parseInt(data.req.body.id);
 
 				/**
-			     * Called to delete an entity row in database
-			     * @function CoreEntity#destroy#start
-			     * @memberof CoreEntity#destroy
-			     * @param {object} data
+				 * Called to delete an entity row in database
+				 * @function CoreEntity#destroy#start
+				 * @memberof CoreEntity#destroy
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1371,10 +1430,10 @@ class CoreEntity extends Route {
 					return;
 
 				/**
-			     * Called before fetching row to delete
-			     * @function CoreEntity#destroy#beforeEntityQuery
-			     * @memberof CoreEntity#destroy
-			     * @param {object} data
+				 * Called before fetching row to delete
+				 * @function CoreEntity#destroy#beforeEntityQuery
+				 * @memberof CoreEntity#destroy
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1384,7 +1443,9 @@ class CoreEntity extends Route {
 					return;
 
 				data.deleteObject = await models[this.E_entity].findOne({
-					where: {id: data.idEntity}
+					where: {
+						id: data.idEntity
+					}
 				});
 
 				if (!data.deleteObject)
@@ -1393,10 +1454,10 @@ class CoreEntity extends Route {
 					}));
 
 				/**
-			     * Called before deleting row in database
-			     * @function CoreEntity#destroy#beforeEntityQuery
-			     * @memberof CoreEntity#destroy
-			     * @param {object} data
+				 * Called before deleting row in database
+				 * @function CoreEntity#destroy#beforeEntityQuery
+				 * @memberof CoreEntity#destroy
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1406,7 +1467,9 @@ class CoreEntity extends Route {
 				if (await this.getHook('destroy', 'beforeDestroy', data) === false)
 					return;
 
-				await data.deleteObject.destroy({transaction: data.transaction});
+				await data.deleteObject.destroy({
+					transaction: data.transaction
+				});
 
 				data.req.session.toastr = [{
 					message: 'message.delete.success',
@@ -1420,10 +1483,10 @@ class CoreEntity extends Route {
 				await this.helpers.entity.removeFiles(data.deleteObject, this.attributes);
 
 				/**
-			     * Called before redirecting to `data.redirect`
-			     * @function CoreEntity#destroy#beforeEntityQuery
-			     * @memberof CoreEntity#destroy
-			     * @param {object} data
+				 * Called before redirecting to `data.redirect`
+				 * @function CoreEntity#destroy#beforeEntityQuery
+				 * @memberof CoreEntity#destroy
+				 * @param {object} data
 				 * @param {object} data.req - Request - See expressjs definition
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
@@ -1434,7 +1497,7 @@ class CoreEntity extends Route {
 				if (await this.getHook('destroy', 'beforeRedirect', data) === false)
 					return;
 
-				await data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect));
 			}
 		}
 	}
