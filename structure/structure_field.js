@@ -65,12 +65,11 @@ exports.setupField = async (data) => {
 	else if (typeof toSyncObject[entity_name].attributes === "undefined")
 		toSyncObject[entity_name].attributes = {};
 
-	let typeForModel = "STRING";
+	let sql_type = "STRING", type_parameter = null;
 	switch (field_type) {
 		case "password":
 		case "color":
 		case "url":
-		case "decimal":
 		case "email":
 		case "phone":
 		case "fax":
@@ -78,47 +77,52 @@ exports.setupField = async (data) => {
 		case "picture":
 		case "qrcode":
 		case "barcode":
-			typeForModel = "STRING";
+			sql_type = "STRING";
 			break;
 		case "number":
-			typeForModel = "INTEGER";
+			sql_type = "INTEGER";
 			break;
 		case "big number":
-			typeForModel = "BIGINT";
+			sql_type = "BIGINT";
+			break;
+		case "decimal":
+			sql_type = "DECIMAL";
+			type_parameter = "14,4";
 			break;
 		case "currency":
-			typeForModel = "DOUBLE";
+			sql_type = "DECIMAL";
+			type_parameter = "10,2";
 			break;
 		case "date":
 		case "datetime":
-			typeForModel = "DATE";
+			sql_type = "DATE";
 			break;
 		case "time":
-			typeForModel = "TIME";
+			sql_type = "TIME";
 			break;
 		case "boolean":
-			typeForModel = "BOOLEAN";
+			sql_type = "BOOLEAN";
 			break;
 		case "radio":
 		case "enum":
-			typeForModel = "ENUM";
+			sql_type = "ENUM";
 			break;
 		case "text":
 		case "regular text":
-			typeForModel = "TEXT";
+			sql_type = "TEXT";
 			break;
 		default:
-			typeForModel = "STRING";
+			sql_type = "STRING";
 			break;
 	}
 
 	// Default value managment
 	if (typeof options.defaultValue !== "undefined" && options.defaultValue != null) {
-		if (typeForModel == "STRING" || typeForModel == "TEXT" || typeForModel == "ENUM")
+		if (sql_type == "STRING" || sql_type == "TEXT" || sql_type == "ENUM")
 			defaultValueForOption = options.defaultValue;
-		else if (typeForModel == "INTEGER" && !isNaN(options.defaultValue))
+		else if (sql_type == "INTEGER" && !isNaN(options.defaultValue))
 			defaultValueForOption = options.defaultValue;
-		else if (typeForModel == "BOOLEAN") {
+		else if (sql_type == "BOOLEAN") {
 			if (["true", "vrai", "1", "checked", "coché", "à coché"].indexOf(defaultValue.toLowerCase()) != -1)
 				defaultValueForOption = true;
 			else if (["false", "faux", "0", "unchecked", "non coché", "à non coché"].indexOf(defaultValue.toLowerCase()) != -1)
@@ -136,13 +140,13 @@ exports.setupField = async (data) => {
 			cleanEnumValues[i] = dataHelper.clearString(field_values[i]);
 
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
@@ -156,13 +160,13 @@ exports.setupField = async (data) => {
 			cleanRadioValues[i] = dataHelper.clearString(field_values[i]);
 
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
@@ -170,25 +174,28 @@ exports.setupField = async (data) => {
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type
 		}
 	} else {
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		}
 	}
+
+	if(type_parameter)
+		attributesObject[field_name].type_parameter = type_parameter;
 
 	// Add default "validate" property to true, setting to false will disable sequelize's validation on the field
 	attributesObject[field_name].validate = true;

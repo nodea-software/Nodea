@@ -354,7 +354,6 @@ exports.setupEntity = async (data) => {
 
 	// Write new data entity to access.json file, within module's context
 	const accessPath = workspacePath + '/config/access.json';
-	const accessLockPath = workspacePath + '/config/access.lock.json';
 	const accessObject = JSON.parse(fs.readFileSync(accessPath, 'utf8'));
 	accessObject[module_name.substring(2)].entities.push({
 		name: entity_url,
@@ -367,7 +366,21 @@ exports.setupEntity = async (data) => {
 		}
 	});
 	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
-	fs.writeFileSync(accessLockPath, JSON.stringify(accessObject, null, 4), "utf8");
+
+	// Separate access.lock.json handlingto avoid filling it with access.json content
+	const accessLockPath = workspacePath + '/config/access.lock.json';
+	const accessLockObject = JSON.parse(fs.readFileSync(accessLockPath, 'utf8'));
+	accessLockObject[module_name.substring(2)].entities.push({
+		name: entity_url,
+		groups: [],
+		actions: {
+			read: [],
+			create: [],
+			delete: [],
+			update: []
+		}
+	});
+	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, 4), "utf8");
 
 	// Add entity locals
 	await translateHelper.writeLocales(data.application.name, "entity", entity_name, entity_display_name, data.googleTranslate);
@@ -409,7 +422,12 @@ exports.deleteEntity = async (data) => {
 		if (access[data.np_module.name.substring(2)].entities[i].name == data.entity.name.substring(2))
 			access[data.np_module.name.substring(2)].entities.splice(i, 1);
 	fs.writeFileSync(baseFolder + '/config/access.json', JSON.stringify(access, null, 4));
-	fs.writeFileSync(baseFolder + '/config/access.lock.json', JSON.stringify(access, null, 4));
+
+	const accessLock = JSON.parse(fs.readFileSync(baseFolder + '/config/access.lock.json', 'utf8'));
+	for (let i = 0; i < accessLock[data.np_module.name.substring(2)].entities.length; i++)
+		if (accessLock[data.np_module.name.substring(2)].entities[i].name == data.entity.name.substring(2))
+			accessLock[data.np_module.name.substring(2)].entities.splice(i, 1);
+	fs.writeFileSync(baseFolder + '/config/access.lock.json', JSON.stringify(accessLock, null, 4));
 
 	// Remove entity entry from layout select
 	const filePath = baseFolder + '/app/views/layout_' + data.np_module.name + '.dust';

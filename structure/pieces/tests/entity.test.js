@@ -3,7 +3,7 @@
 // console.error = _ => null;
 // console.warn = _ => null;
 
-const { getMockedEnv, generateEntityBody } = require('@core/utils/mocking');
+const { getMockedEnv, generateEntityBody, generateEntityFiles } = require('@core/utils/mocking');
 const dayjs = require('dayjs');
 
 const models = require('@app/models');
@@ -199,14 +199,15 @@ describe("ENTITY MODEL_NAME", _ => {
 		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
 			req: {
 				body: generateEntityBody('ENTITY_NAME'),
+				files: generateEntityFiles('ENTITY_NAME'),
 				session: {passport: {user: global.__jestUser}},
 				user: global.__jestUser
 			},
 			func: ENTITY_NAME.create().func
 		});
 
-		const countBeforeCreate = await models.MODEL_NAME.count()
-		await ENTITY_NAME.asyncRoute(mockedRoute)(mockedReq, mockedRes)
+		const countBeforeCreate = await models.MODEL_NAME.count();
+		await ENTITY_NAME.asyncRoute(mockedRoute)(mockedReq, mockedRes);
 		const countAfterCreate = await models.MODEL_NAME.count();
 
 		// Created a row in DB
@@ -276,6 +277,7 @@ describe("ENTITY MODEL_NAME", _ => {
 					id: row.id,
 					...new_values
 				},
+				files: generateEntityFiles('ENTITY_NAME'),
 				session: {passport: {user: global.__jestUser}},
 				user: global.__jestUser
 			},

@@ -312,6 +312,7 @@ exports.initializeApplication = async(application) => {
 
 	// Manualy add custom menus to access file because it's not a real entity
 	const access = JSON.parse(fs.readFileSync(workspacePath + '/config/access.json', 'utf8'));
+	const accessLock = JSON.parse(fs.readFileSync(workspacePath + '/config/access.lock.json', 'utf8'));
 	const arrayKey = [
 		"access_settings",
 		"db_tool",
@@ -333,9 +334,19 @@ exports.initializeApplication = async(application) => {
 				delete: ["admin"]
 			}
 		});
+		accessLock.administration.entities.push({
+			name: key,
+			groups: [],
+			actions: {
+				read: [],
+				create: [],
+				update: [],
+				delete: []
+			}
+		});
 	}
 	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, 4), 'utf8');
 
 	// Set role-group/user structureType to hasManyPreset to be used by ajax
 	let opts = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_role.json', 'utf8'));

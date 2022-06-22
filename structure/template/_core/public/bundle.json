@@ -27,7 +27,6 @@
 			"@app/public/AdminLTE/plugins/summernote/summernote.min.js",
 			"@app/public/AdminLTE/plugins/inputmask/jquery.inputmask.min.js",
 			"@app/public/js/plugins/icheck/icheck.min.js",
-			"@app/public/js/plugins/maskmoney/maskmoney.js",
 			"@app/public/js/plugins/jsbarcode/jsbarcode.all.min.js",
 			"@app/public/js/plugins/qrcode/qrcode.min.js",
 			"@app/public/js/plugins/uuid/uuid.min.js",

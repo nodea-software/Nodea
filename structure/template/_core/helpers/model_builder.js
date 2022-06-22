@@ -206,9 +206,17 @@ exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 		object[attribute] = body[attribute];
 
 		if (body[attribute] != null && !!attributes[attribute].nodeaType) {
-			// We encryt all password attributes
-			if (attributes[attribute].nodeaType === "password")
-				object[attribute] = bcrypt.hashSync(body[attribute], 10); // 10 is saltRounds - See bcrypt doc
+			switch(attributes[attribute].nodeaType) {
+				case 'password':
+					// We encryt all password attributes
+					object[attribute] = bcrypt.hashSync(body[attribute], 10); // 10 is saltRounds - See bcrypt doc
+					break;
+				case 'decimal':
+				case 'currency':
+					object[attribute] = parseFloat(object[attribute]); // Parse value that was stringify by the body form
+					break;
+				// No default
+			}
 		}
 	}
 
@@ -257,24 +265,39 @@ exports.parseBody = (e_entity, attributes, options, body, multerFiles = []) => {
 }
 
 // Convert attribute.json file to correct sequelize model descriptor
-exports.buildSequelizeAttributes = (DataTypes, attributes, recursionLevel = 0) => {
+exports.buildSequelizeAttributes = (DataTypes, attributes) => {
 	const object = {};
 	let validator;
-	for (const prop in attributes) {
-		const attrDef = attributes[prop];
-		if (typeof attrDef === 'object' && attrDef != null) {
-			if (attrDef.type == 'ENUM')
-				object[prop] = DataTypes.ENUM(attrDef.values);
-			else
-				object[prop] = this.buildSequelizeAttributes(DataTypes, attrDef, recursionLevel+1);
+	for (const field in attributes) {
+		const attr_def = attributes[field];
+		if (!attr_def || typeof attr_def !== 'object'){
+			console.warn('INVALID MODEL ATTRIBUTES:', field);
+			continue;
 		}
-		else if (typeof attrDef === 'string' && prop != 'nodeaType')
-			object[prop] = DataTypes[attrDef];
-		else
-			object[prop] = attrDef;
+
+		object[field] = {};
+
+		for (const key in attr_def) {
+			// Skip key that are not needed by Sequelize attribute defintion
+			if(key == 'type_parameter')
+				continue;
+			if (Object.hasOwnProperty.call(attr_def, key)) {
+				const key_value = attr_def[key];
+				if(key == 'type')
+					if(key_value == 'ENUM')
+						object[field][key] = DataTypes.ENUM(attr_def.values);
+					else if(attr_def.type_parameter)
+						object[field][key] = DataTypes[key_value](attr_def.type_parameter.split(',')[0], attr_def.type_parameter.split(',')[1]);
+					else
+						object[field][key] = DataTypes[key_value];
+				else
+					object[field][key] = key_value;
+			}
+		}
+
 		// Validator
-		if (recursionLevel == 0 && attrDef.validate === true && (validator = validators(attrDef)))
-			object[prop].validate = validator;
+		if (attr_def.validate === true && (validator = validators(attr_def)))
+			object[field].validate = validator;
 	}
 
 	return object;

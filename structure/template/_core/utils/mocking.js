@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 const { getMockReq } = require('@jest-mock/express');
+const fs = require('fs');
 
 // Utils
 function randomString(length) {
@@ -44,11 +45,12 @@ function generateValueByType(type) {
 			return 'https://nodea-software.com'
 		case 'barcode':
 			return '12345678';
-		case 'file':
-		case 'picture':
 		case 'enum':
 		case 'VIRTUAL':
 			return randomString(100);
+		case 'file':
+		case 'picture':
+			return null;
 		default:
 			console.log('UNKNOWN TYPE: ' + type);
 			return randomString(100);
@@ -84,19 +86,21 @@ exports.getMockedEnv = (params) => {
 	const mockedSuccess = jest.fn();
 	const mockedError = jest.fn();
 
-	const mockedRoute = async data => {
+	const mockedRoute = async data => new Promise((resolve, reject) => {
 		const fnSuccess = data.res.success;
 		const fnError = data.res.error;
-		data.res.success = callback => {
+		data.res.success = async callback => {
 			mockedSuccess();
-			fnSuccess(callback);
+			await fnSuccess(callback);
+			resolve();
 		}
-		data.res.error = callback => {
+		data.res.error = async callback => {
 			mockedError();
-			fnError(callback);
+			await fnError(callback);
+			resolve();
 		}
-		await params.func(data);
-	}
+		params.func(data).catch(reject);
+	});
 
 	return {
 		mockedRes,
@@ -129,23 +133,38 @@ exports.generateEntityBody = (e_entity) => {
 	return body;
 }
 
-// f_localfile: [
-// {
-// 	fieldname: 'f_localfile',
-// 	originalname: 'steam-deck-frandroid-2021.png',
-// 	encoding: '7bit',
-// 	mimetype: 'image/png',
-// 	buffer: <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 02 44 00 00 02 44 08 03 00 00 00 c0 3e cb 68 00 00 03 00 50 4c 54 45 47 70 4c 19 19 19 55 55 55 ... 51386 more bytes>,
-// 	size: 51436
-// }
-// ],
-// f_image: [
-// {
-// 	fieldname: 'f_image',
-// 	originalname: 'Emmaus.jpg',
-// 	encoding: '7bit',
-// 	mimetype: 'image/jpeg',
-// 	buffer: <Buffer ff d8 ff e1 00 18 45 78 69 66 00 00 49 49 2a 00 08 00 00 00 00 00 00 00 00 00 00 00 ff ec 00 11 44 75 63 6b 79 00 01 00 04 00 00 00 64 00 00 ff e1 03 ... 155272 more bytes>,
-// 	size: 155322
-// }
-// ]
+/**
+ * Generate tests files
+ * @param e_entity {String} - Entity name that we will generate body for
+ */
+exports.generateEntityFiles = (e_entity) => {
+	// eslint-disable-next-line global-require
+	const attributes = require('@app/models/attributes/' + e_entity);
+	const files = {};
+	for (const attrName in attributes) {
+		const attr = attributes[attrName];
+
+		if (!attr.nodeaType || !['file', 'picture'].includes(attr.nodeaType.toLowerCase()))
+			continue;
+
+		if(attr.nodeaType.toLowerCase() == 'file')
+			files[attrName] = [{
+				fieldname: attrName,
+				originalname: 'test.pdf',
+				encoding: '7bit',
+				mimetype: 'application/pdf',
+				buffer: fs.readFileSync(__dirname + '/../public/tests/test.pdf'),
+				size: fs.statSync(__dirname + '/../public/tests/test.pdf').size
+			}];
+		else
+			files[attrName] = [{
+				fieldname: attrName,
+				originalname: 'test.png',
+				encoding: '7bit',
+				mimetype: 'image/png',
+				buffer: fs.readFileSync(__dirname + '/../public/tests/test.png'),
+				size: fs.statSync(__dirname + '/../public/tests/test.png').size
+			}];
+	}
+	return files;
+}

@@ -47,8 +47,7 @@ async function addTab(entity, file, newLi, newTabContent) {
 
 function addAccessManagment(appName, urlComponent, urlModule) {
 	// Write new data entity to access.json file, within module's context
-	const accessPath = __workspacePath + '/' + appName + '/config/access.json';
-	const accessLockPath = __workspacePath + '/' + appName + '/config/access.lock.json';
+	const accessPath = global.__workspacePath + '/' + appName + '/config/access.json';
 	const accessObject = JSON.parse(fs.readFileSync(accessPath, 'utf8'));
 	accessObject[urlModule.toLowerCase()].entities.push({
 		name: urlComponent,
@@ -61,7 +60,20 @@ function addAccessManagment(appName, urlComponent, urlModule) {
 		}
 	});
 	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
-	fs.writeFileSync(accessLockPath, JSON.stringify(accessObject, null, 4), "utf8");
+	// Access lock handling
+	const accessLockPath = global.__workspacePath + '/' + appName + '/config/access.lock.json';
+	const accessLockObject = JSON.parse(fs.readFileSync(accessLockPath, 'utf8'));
+	accessLockObject[urlModule.toLowerCase()].entities.push({
+		name: urlComponent,
+		groups: [],
+		actions: {
+			create: [],
+			update: [],
+			read: [],
+			delete: []
+		}
+	});
+	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, 4), "utf8");
 }
 
 exports.newFileStorage = (data) => {
@@ -370,7 +382,14 @@ exports.newStatus = async (data) => {
 				access[npsModule].entities[i].name = data.history_table;
 
 	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(access, null, 4), 'utf8');
+
+	// Access lock handling
+	const accessLock = JSON.parse(fs.readFileSync(workspacePath + '/config/access.lock.json', 'utf8'));
+	for (const npsModule in accessLock)
+		for (let i = 0; i < accessLock[npsModule].entities.length; i++)
+			if (accessLock[npsModule].entities[i].name == data.history_table_db_name)
+				accessLock[npsModule].entities[i].name = data.history_table;
+	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, 4), 'utf8');
 
 	// Change target of source entity to match history MODEL name (instead of TABLE name)
 	const optionsObj = JSON.parse(fs.readFileSync(appPath + '/models/options/' + source + '.json'));
