@@ -12,25 +12,38 @@ function randomString(length) {
 	return text;
 }
 
-function generateValueByType(type) {
-	switch (type) {
+function randomInt(min, max) {
+	return Math.random() * (max - min) + min
+}
+
+const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+function generateValueByType(type, type_param = null) {
+	switch (type.toLowerCase()) {
 		case 'string':
 		case 'text':
 		case 'regular text':
 		case 'password':
 			return randomString(100);
 		case 'number':
-			return Math.floor(Math.random() * (9999 - -9999) + -9999);
+			return Math.floor(randomInt(-9999, 9999));
 		case 'big number':
-			return Math.floor(Math.random() * (9999999 - -9999999) + -9999999);
+			return Math.floor(randomInt(-9999999, 9999999));
 		case 'decimal':
-			return Math.random() * (9999 - -9999) + -9999;
 		case 'currency':
-			return '17.99';
+			// eslint-disable-next-line no-case-declarations
+			let value = randomInt(-9999, 9999);
+			if(type_param)
+				value = parseFloat(value.toFixed(type_param.split(',')[1]));
+			return value;
 		case 'date':
 		case 'datetime':
+			// eslint-disable-next-line no-case-declarations
+			const date = new Date();
+			date.setMilliseconds(0)
+			return date;
 		case 'time':
-			return new Date();
+			return zeroPad(Math.floor(randomInt(0, 23)), 2) + ':' + zeroPad(Math.floor(randomInt(0, 59)), 2) + ':' + zeroPad(Math.floor(randomInt(0, 59)), 2);
 		case 'color':
 			return '#FFF';
 		case 'boolean':
@@ -46,11 +59,12 @@ function generateValueByType(type) {
 		case 'barcode':
 			return '12345678';
 		case 'enum':
-		case 'VIRTUAL':
 			return randomString(100);
 		case 'file':
 		case 'picture':
 			return null;
+		case 'virtual':
+			return undefined;
 		default:
 			console.log('UNKNOWN TYPE: ' + type);
 			return randomString(100);
@@ -79,6 +93,16 @@ exports.getMockedEnv = (params) => {
 	// Save res.send() and return res.redirect, render, ...
 	mockedRes.send = send => {
 		mockedRes.send = send;
+		return mockedRes;
+	};
+
+	mockedRes.json = json => {
+		mockedRes.json = json;
+		return mockedRes;
+	};
+
+	mockedRes.sendStatus = sendStatus => {
+		mockedRes.sendStatus = sendStatus;
 		return mockedRes;
 	};
 
@@ -122,13 +146,14 @@ exports.generateEntityBody = (e_entity) => {
 	for (const attrName in attributes) {
 		const attr = attributes[attrName];
 
-		if (['id', 'createdBy', 'updatedBy', 'version'].includes(attrName))
+		if (['id', 'version'].includes(attrName))
 			continue;
-
-		if(attr.type.toLowerCase() == 'enum')
+		else if (['createdBy', 'updatedBy'].includes(attrName))
+			body[attrName] = null;
+		else if(attr.type.toLowerCase() == 'enum')
 			body[attrName] = attr.values[0];
 		else
-			body[attrName] = generateValueByType(attr.nodeaType || attr.type);
+			body[attrName] = generateValueByType(attr.nodeaType || attr.type, attr.type_parameter);
 	}
 	return body;
 }

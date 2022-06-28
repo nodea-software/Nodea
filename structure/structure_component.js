@@ -833,6 +833,9 @@ exports.newAddress = (data) => {
 		recursive: true,
 		force: true
 	});
+
+	// Remove entity generated test file
+	fs.unlinkSync(`${workspacePath}/app/tests/${data.options.value}.test.js`);
 };
 
 exports.removeAddress = (data) => {
