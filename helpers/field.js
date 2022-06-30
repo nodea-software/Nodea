@@ -88,7 +88,7 @@ module.exports = {
 				str += "				<i class='fas fa-" + moneyIcon + "'></i>\n";
 				str += "			</span>\n";
 				str += "		</div>\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='currency' " + readOnly + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='currency' data-precision='10,2' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "qrcode":
@@ -149,7 +149,7 @@ module.exports = {
 				str += "<input class='form-control' data-custom-type='bigint' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' max='9223372036854775807' " + readOnly + "/>\n";
 				break;
 			case "decimal" :
-				str += "<input class='form-control' data-custom-type='decimal' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
+				str += "<input class='form-control' data-custom-type='decimal' data-precision='14,4' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
 				break;
 			case "date" :
 				str += "   <div class='input-group'>\n";

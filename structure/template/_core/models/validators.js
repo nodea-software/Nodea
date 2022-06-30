@@ -34,7 +34,7 @@ module.exports = (attribute) => {
 		types: ['tel'],
 		validator: {
 			isPhone: function(value) {
-				if (!/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/.test(value))
+				if (value && !/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/.test(value))
 					throw "error.validation.tel";
 			}
 		}
@@ -42,7 +42,7 @@ module.exports = (attribute) => {
 		types: ['color'],
 		validator: {
 			isColor: function(value) {
-				if (!/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(value))
+				if (value && !/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(value))
 					throw "error.validation.color";
 			}
 		}

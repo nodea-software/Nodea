@@ -12,7 +12,7 @@ global.auto_login = false;
 if (process.argv[2] == 'autologin')
 	global.auto_login = true;
 
-require('@core/utils/string_prototype')
+require('@core/utils/string_prototype');
 
 const https = require('https');
 const http = require('http');

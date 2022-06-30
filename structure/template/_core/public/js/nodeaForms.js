@@ -1,4 +1,3 @@
-let maskMoneyPrecision = 2;
 let ctpQrCode = 0;
 let jQueryUILoad = false;
 let openLayerLoad = false;
@@ -397,11 +396,39 @@ let NodeaForms = (_ => {
 			decimal: {
 				selector: "input[data-custom-type='decimal']",
 				initializer: (element) => {
-					const decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					let decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					if(element.data('precision')) {
+						let precision = element.data('precision').split(',')[0];
+						const round = element.data('precision').split(',')[1] ? element.data('precision').split(',')[1] : 0;
+						precision = parseInt(precision) - parseInt(round);
+						// Precision is total number of digit (including after comma)
+						// Round is number of digit after the comma
+						// So the precision before the comma is precision - round
+						decimalRegx = new RegExp("^-?[0-9]{1,"+precision+"}([\.\,][0-9]{0,"+round+"})?$");
+					}
 					element.on('keyup', function() {
 						while ($(this).val() != "" && $(this).val() != "-" && !decimalRegx.test($(this).val()))
 							$(this).val($(this).val().substring(0, $(this).val().length - 1));
 						$(this).val($(this).val().replace(',', '.'));
+					});
+				}
+			},
+			currency: {
+				selector: "input[data-type='currency']",
+				initializer: (element) => {
+					let decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					if(element.data('precision')) {
+						let precision = element.data('precision').split(',')[0];
+						const round = element.data('precision').split(',')[1] ? element.data('precision').split(',')[1] : 0;
+						precision = parseInt(precision) - parseInt(round);
+						// Precision is total number of digit (including after comma)
+						// Round is number of digit after the comma
+						// So the precision before the comma is precision - round
+						decimalRegx = new RegExp("^-?[0-9]{1,"+precision+"}([\.\,][0-9]{0,"+round+"})?$");
+					}
+					element.on('keyup', function() {
+						while ($(this).val() != "" && $(this).val() != "-" && !decimalRegx.test($(this).val()))
+							$(this).val($(this).val().substring(0, $(this).val().length - 1));
 					});
 				}
 			},
@@ -690,34 +717,6 @@ let NodeaForms = (_ => {
 						toastr.error(message);
 						return false;
 					}
-				}
-			},
-			currency: {
-				selector: "input[data-type='currency']",
-				initializer: (element) => {
-					var val = element.val();
-					//Fix display maskMoney bug with number and with zero
-					if (val || val != '') {
-						var partsOfVal = val.split('.');
-						if (partsOfVal[1] && (partsOfVal[1].length < maskMoneyPrecision)) {
-							for (var i = partsOfVal[1].length; i < maskMoneyPrecision; i++)
-								val += '0';
-						}
-					}
-					element.val(val);
-					element.maskMoney({
-						thousands: ' ',
-						decimal: '.',
-						allowZero: true,
-						suffix: '',
-						precision: maskMoneyPrecision
-					}).maskMoney('mask');
-				},
-				validator: (element, form) => {
-					//replace number of zero by maskMoneyPrecision value, default 2
-					return [_ => {
-						element.val(element.val().replace(/ /g, '').replace(',00', ''));
-					}]
 				}
 			},
 			url: {

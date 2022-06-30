@@ -15,17 +15,12 @@ const config = {
 	},
 	test: {
 		env: 'test',
-		protocol: 'https',
+		protocol: 'http',
 		host: '127.0.0.1',
 		port: process.env.PORT || 1337,
-		localstorage: "/var/data/localstorage/",
+		localstorage: __dirname + "/../upload_test/",
 		authStrategy: process.env.AUTH || 'local',
-		smsProvider: process.env.SMS || 'ovh',
-		ssl: {
-			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
-			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
-			passphrase: ''
-		}
+		smsProvider: process.env.SMS || 'ovh'
 	},
 	production: {
 		env: 'production',
