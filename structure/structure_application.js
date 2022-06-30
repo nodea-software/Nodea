@@ -95,6 +95,14 @@ exports.setupApplication = async (data) => {
 	appDatabaseConfig = appDatabaseConfig.replace(/nodea/g, 'np_' + appName, 'utf8');
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', appDatabaseConfig);
 
+	// Update .gitlab-ci.yml with new app DB info
+	let gitlab_ci_yml = fs.readFileSync(__dirname + '/../workspace/' + appName + '/.gitlab-ci.yml', 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__USER__/g, 'np_' + appName, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__PWD__/g, db_pwd, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__DATABASE__/g, 'test_np_' + appName, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__DIALECT__/g, dbConf.dialect, 'utf8');
+	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/.gitlab-ci.yml', gitlab_ci_yml);
+
 	// Create the application on distant repository ?
 	if (!code_platform.config.enabled)
 		return false;

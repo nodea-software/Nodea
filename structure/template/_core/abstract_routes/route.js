@@ -36,10 +36,10 @@ class Route {
 				continue;
 			}
 			const routeConf = this[route]();
-			if (!routeConf) {
-				console.warn(`WARN: Route ${route} is directly declaring itself to express router. It should return a configuration object.`);
+
+			// WARN: Route is directly declaring itself to express router. It should return a configuration object.
+			if (!routeConf)
 				continue;
-			}
 
 			try {
 				const {method, path, middlewares, func} = routeConf;

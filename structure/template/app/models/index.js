@@ -71,7 +71,8 @@ else
 		port: dbConfig.port,
 		dialect: dbConfig.dialect,
 		dialectOptions: {
-			multipleStatements: true
+			multipleStatements: true,
+			decimalNumbers: true // Avoid converting decimal to string when retrieving data from DB
 		},
 		define: {
 			timestamps: false

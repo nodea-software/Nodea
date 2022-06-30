@@ -42,6 +42,18 @@ router.post('/login', auth.isLoggedIn, function(req, res) {
 
 			if(!req.session.code_platform.user)
 				throw new Error('code_platform.error.user_not_found');
+
+			if(!req.session.code_platform.user.accessToken) {
+				console.warn("Missing code platform access token in session, generating it...");
+				req.session.code_platform.user.accessToken = await code_platform.generateAccessToken(req.session.code_platform.user, 'git_access_' + globalConf.host, ['read_repository', 'write_repository']);
+				await models.User.update({
+					repo_access_token: req.session.code_platform.user.accessToken
+				}, {
+					where: {
+						id: req.user.id
+					}
+				})
+			}
 		}
 	})().then(_ => {
 		if(req.body.redirect)

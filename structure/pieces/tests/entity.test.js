@@ -17,6 +17,8 @@ const TEST_ENTITY_ID = 1;
 
 describe("ENTITY MODEL_NAME", _ => {
 
+	jest.setTimeout(10000);
+
 	beforeAll(() => models.MODEL_NAME.findOrCreate({
 		where: {
 			id: TEST_ENTITY_ID
@@ -27,6 +29,8 @@ describe("ENTITY MODEL_NAME", _ => {
 		},
 		user: global.__jestUser
 	}));
+
+	afterAll(() => models.sequelize.close());
 
 	test("[HAPPY] - GET - LIST", async () => {
 		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({

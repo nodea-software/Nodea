@@ -6,7 +6,7 @@
 	"license": "GPL-3.0",
 	"main": "server.js",
 	"scripts": {
-		"test": "jest --detectOpenHandles",
+		"test": "jest --detectOpenHandles --passWithNoTests",
 		"lint": "reset;eslint ./;",
 		"jsdoc_core": "./node_modules/.bin/jsdoc ./_core --recurse -c ./jsdoc.conf.json -d docs_core -t ./node_modules/foodoc/template",
 		"jsdoc_app": "./node_modules/.bin/jsdoc ./app --recurse -c ./jsdoc.conf.json -d docs_app -t ./node_modules/foodoc/template",
