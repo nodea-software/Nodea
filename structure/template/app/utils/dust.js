@@ -9,6 +9,7 @@
 
 // Add your custom Dust Locals | Helper | Filters here =>
 module.exports = {
+	// eslint-disable-next-line no-unused-vars
 	locals: function(locals, req, language, access) {
 		// Use example: {#logCurrentUser param="myParam"}{/logCurrentUser}
 		locals.logCurrentUser = function(chunk, context, bodies, params) {
@@ -24,6 +25,7 @@ module.exports = {
 		}
 		return dust;
 	},
+	// eslint-disable-next-line no-unused-vars
 	filters: function(dust, lang) {
 		// Use example: {myDate|convertToDateFormat}
 		dust.filters.convertToDateFormat = function(value) {

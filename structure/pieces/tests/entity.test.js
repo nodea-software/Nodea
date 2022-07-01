@@ -107,7 +107,6 @@ describe("ENTITY MODEL_NAME", _ => {
 		// Entity source ID
 		const sourceId = TEST_ENTITY_ID;
 
-		// eslint-disable-next-line no-unreachable
 		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
 			req: {
 				body: {
@@ -338,7 +337,7 @@ describe("ENTITY MODEL_NAME", _ => {
 
 		const associationFlag = row.id;
 
-		const {mockedReq, mockedRes, mockedRoute, mockedSuccess, mockedError} = getMockedEnv({
+		const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
 			req: {
 				query: {
 					ajax: 'true',
@@ -404,7 +403,7 @@ describe("ENTITY MODEL_NAME", _ => {
 				user: global.__jestUser
 			});
 
-			const {mockedReq, mockedRes, mockedRoute, mockedSuccess, mockedError} = getMockedEnv({
+			const {mockedReq, mockedRes, mockedRoute, mockedSuccess} = getMockedEnv({
 				req: {
 					params: {
 						entity_id,

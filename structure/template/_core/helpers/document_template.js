@@ -115,8 +115,10 @@ async function docxToDocx({templateData, filePath}){
 	};
 }
 
+/* eslint-disable */
 function docxToPdf({templateData, filePath, req}){}
 function dustToDocx({templateData, filePath, req}){}
+/* eslint-enable */
 
 async function dustToPdf({templateData, filePath, req}){
 	templateData.staticImagePath = __appPath + '/public/img';

@@ -1,13 +1,6 @@
 const fs = require('fs-extra');
-const models = require('@app/models');
-const entity_helper = require('./entity');
-const model_builder = require('./model_builder');
 const language = require('./language');
 const address_fields = ['f_label', 'f_number', 'f_street_1', 'f_street_2', 'f_postal_code', 'f_city', 'f_country', 'f_lat', 'f_lon'];
-
-function buildObjFromBody() {
-
-}
 
 module.exports = {
 	createAddress: async function({body, user}, entityObject, relations, transaction) {

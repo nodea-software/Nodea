@@ -56,7 +56,7 @@ else
 		benchmark: true,
 		logging: function (query, execution_time, infos) {
 			try {
-				let table = infos.model ? infos.model.getTableName() : (infos.tableNames ? infos.tableNames.join('-') : null);
+				let table = infos.model ? infos.model.getTableName() : infos.tableNames ? infos.tableNames.join('-') : null;
 				if (!table && query.includes('FROM')) {
 					table = query.split('FROM')[1].trim();
 					table = table.split(' ')[0];

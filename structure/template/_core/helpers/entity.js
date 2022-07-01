@@ -117,13 +117,13 @@ module.exports = {
 		const lang = options.lang || 'fr-FR';
 
 		const defaultProcessors = {
-			enum: (entityName, entity, attribute, attributeDef) => {
+			enum: (entityName, entity, attribute) => {
 				entity[attribute] = {
 					value: entity[attribute],
 					translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
 				};
 			},
-			boolean: (entityName, entity, attribute, attributeDef) => {
+			boolean: (entityName, entity, attribute) => {
 				let boolTrad;
 				if (lang == 'fr-FR')
 					boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
@@ -134,7 +134,7 @@ module.exports = {
 					translation: boolTrad
 				}
 			},
-			file: (entityName, entity, attribute, attributeDef) => {
+			file: (entityName, entity, attribute) => {
 				entity[attribute] = file_helper.originalFilename(entity[attribute]);
 			},
 			picture: (...args) => {

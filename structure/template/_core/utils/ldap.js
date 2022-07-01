@@ -8,7 +8,7 @@ const models = require('../models/');
 let client;
 try {
 	// Login
-	if (globalConf.authStrategy && acceptedAuthStrategies.includes(globalConf.authStrategy.toLowerCase()) && (typeof client === 'undefined' || (client && !client.connected))) {
+	if (globalConf.authStrategy && acceptedAuthStrategies.includes(globalConf.authStrategy.toLowerCase()) && (typeof client === 'undefined' || client && !client.connected)) {
 		client = ldapjs.createClient({
 			url: ldapConfig.server.url
 		});
@@ -29,19 +29,20 @@ try {
 function search(base, opts) {
 	return new Promise((resolve, reject) => {
 		if (client.connected) {
-			let entries = [];
+			const entries = [];
 			client.search(base, opts, function(err, res) {
 				if (err)
 					return reject(err);
 				res.on('searchEntry', function(entry) {
-					let object = entry.object;
+					const object = entry.object;
 					if (object)
 						entries.push(object);
 				});
 				res.on('error', function(err) {
+					console.error(err)
 					resolve(entries);
 				});
-				res.on('end', function(result) {
+				res.on('end', function() {
 					return resolve(entries);
 				});
 			});
@@ -50,7 +51,7 @@ function search(base, opts) {
 				err: 'LDAP connexion not alive'
 			});
 	});
-};
+}
 
 exports.getGroups = function() {
 	return search(ldapConfig.group.searchBase, {
@@ -69,19 +70,19 @@ exports.getUserGroups = function(user) {
 };
 
 exports.getAppGroupsAndRoles = function(ldapUser) {
-	let ldapGroups = ldapUser._groups;
-	let ldapGroupsSettings = JSON.parse(fs.readFileSync(__dirname + '/../config/ldap/ldap_groups_settings.json'));
-	let accessAttribute = ldapConfig.accessAttribute || 'f_label';
+	const ldapGroups = ldapUser._groups;
+	const ldapGroupsSettings = JSON.parse(fs.readFileSync(__dirname + '/../config/ldap/ldap_groups_settings.json'));
+	const accessAttribute = ldapConfig.accessAttribute || 'f_label';
 	const groupNameAttribute = ldapConfig.group.objectNameAttribute || 'cn';
-	let result = {
+	const result = {
 		groups: [],
 		roles: [],
 		ldapGroupsAndThereDescriptions: []
 	};
 
 	for (const ldapGroup in ldapGroups) {
-		let currentGroup = ldapGroups[ldapGroup];
-		let settingGroup = ldapGroupsSettings.ldap_groups[currentGroup[groupNameAttribute]];
+		const currentGroup = ldapGroups[ldapGroup];
+		const settingGroup = ldapGroupsSettings.ldap_groups[currentGroup[groupNameAttribute]];
 
 		// Current group not in ldap_groups_settings.json
 		if (!settingGroup)
@@ -91,15 +92,15 @@ exports.getAppGroupsAndRoles = function(ldapUser) {
 		if (ldapGroupsSettings.give_access_to_all_groups !== 'true' && !settingGroup.access)
 			continue;
 
-		for (let groupEntry in settingGroup.app_groups) {
-			let currentAppGroup = settingGroup.app_groups[groupEntry];
+		for (const groupEntry in settingGroup.app_groups) {
+			const currentAppGroup = settingGroup.app_groups[groupEntry];
 			console.log(currentAppGroup)
 			if (!result.groups.includes(currentAppGroup[accessAttribute]))
 				result.groups.push(currentAppGroup[accessAttribute]);
 		}
 
-		for (let roleEntry in settingGroup.app_roles) {
-			let currentAppRole = settingGroup.app_roles[roleEntry];
+		for (const roleEntry in settingGroup.app_roles) {
+			const currentAppRole = settingGroup.app_roles[roleEntry];
 			console.log(currentAppRole)
 			if (!result.roles.includes(currentAppRole[accessAttribute]))
 				result.roles.push(currentAppRole[accessAttribute]);
@@ -116,9 +117,9 @@ exports.haveAccess = ldapUser => {
 	const ldapGroupsSettings = JSON.parse(fs.readFileSync(__dirname + '/../config/ldap/ldap_groups_settings.json'));
 	const groupNameAttribute = ldapConfig.group.objectNameAttribute || 'cn';
 
-	for (let ldapGroup in ldapUserGroups) {
-		let currendLdapGroup = ldapUserGroups[ldapGroup];
-		let groupEntry = ldapGroupsSettings.ldap_groups[currendLdapGroup[groupNameAttribute]];
+	for (const ldapGroup in ldapUserGroups) {
+		const currendLdapGroup = ldapUserGroups[ldapGroup];
+		const groupEntry = ldapGroupsSettings.ldap_groups[currendLdapGroup[groupNameAttribute]];
 
 		if (typeof groupEntry === 'undefined') {
 			console.warn('Missing group (' + currendLdapGroup[groupNameAttribute] + ') definition in ldap_groups_settings.json');
@@ -132,7 +133,7 @@ exports.haveAccess = ldapUser => {
 }
 
 exports.getLdapGroupsSettings = function() {
-	let ldapGroupsSettings = JSON.parse(fs.readFileSync(__dirname + '/../config/ldap/ldap_groups_settings.json'));
+	const ldapGroupsSettings = JSON.parse(fs.readFileSync(__dirname + '/../config/ldap/ldap_groups_settings.json'));
 	if (typeof ldapGroupsSettings.ldap_groups === 'undefined')
 		ldapGroupsSettings.ldap_groups = {};
 	return ldapGroupsSettings;
@@ -140,8 +141,8 @@ exports.getLdapGroupsSettings = function() {
 
 exports.setUserGroupsAndRoles = async(user, options) => {
 
-	let accessAttribute = ldapConfig.accessAttribute;
-	let where = {};
+	const accessAttribute = ldapConfig.accessAttribute;
+	const where = {};
 
 	// Groups
 	where[accessAttribute] = {

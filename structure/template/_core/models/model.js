@@ -20,11 +20,13 @@ class CoreModel {
 		modelBuilder.buildSequelizeAssociations(models, this.modelName, this.relations);
 	}
 
+	// eslint-disable-next-line no-unused-vars
 	setInstanceMethods(sequelizeModel) {
 		// Override to provide instance methods
 		// Ex: sequelizeModel.prototype.instanceMethod = function() {}
 	}
 
+	// eslint-disable-next-line no-unused-vars
 	setClassMethods(sequelizeModel) {
 		// Override to provide class methods
 		// Ex: sequelizeModel.classMethod = function() {}

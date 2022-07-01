@@ -338,6 +338,7 @@ class Synchronization extends Route {
 							}
 							// Send each file and delete it when done
 							if (fullPathFiles.length > 0) {
+								const that = this;
 								function sendFile(fileList, idx) { // eslint-disable-line
 									const current = fileList[idx];
 									const requestCall = request.post({
@@ -353,7 +354,7 @@ class Synchronization extends Route {
 										console.log("File ["+current.URI+"] uploaded");
 										if (!fileList[idx+1]) {
 											console.log("Synchronize: Upload done");
-											this.SYNCHRO_STATE.done = true;
+											that.E_synchro_credentialsSYNCHRO_STATE.done = true;
 										}
 										else
 											sendFile(fileList, idx+1);

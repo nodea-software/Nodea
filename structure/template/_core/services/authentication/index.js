@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const strategy = require('@config/global').authStrategy;
 let routine;
 switch (strategy) {
