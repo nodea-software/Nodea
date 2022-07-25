@@ -590,7 +590,7 @@ exports.setupRelatedToField = async (data) => {
 					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<input class='form-control input' name='${alias}' value='${value}' placeholder="{#__ key='entity.${source}.${alias}' /}" type='text' readOnly />
+			<input class='form-control input' name='${alias}' value='${value}' placeholder=__key=entity.${source}.${alias} type='text' readOnly />
 		</div>
 	</div>`;
 
@@ -637,7 +637,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		else if (DUST_FILTERS.includes(usingField[i].type))
 			usingOption.push('{' + usingField[i].value + '|' + usingField[i].type + '}');
 		else
-			usingOption.push('{' + usingField[i].value + '|h}');
+			usingOption.push('{' + usingField[i].value + '}');
 	}
 
 	// FIELD WRAPPER

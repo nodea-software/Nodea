@@ -212,7 +212,7 @@ module.exports = {
 			/* Clean the name of the value */
 			data.options.value = clearString(data.options.value);
 
-			if (data.function == 'createNewApplication' || data.function == 'deleteApplication') {
+			if (data.function == 'createNewApplication' || data.function == 'deleteApplication' || data.function == 'selectApplication') {
 				data.options.value = data.options.value.replace(/_/g, "-");
 				if (!validateString(data.options.value)){
 					let errorText = "Le nom d'application doit respecter les règles suivantes :\n\n";

@@ -243,8 +243,9 @@ async function initializeWorkflow(application) {
 	// Copy API routes
 	fs.copySync(statusPiecesPath + '/api/', workspacePath + '/app/api/');
 
-	// Remove notification views
+	// Remove notification views & route
 	fs.removeSync(workspacePath + '/app/views/e_notification');
+	fs.unlinkSync(workspacePath + '/app/routes/e_notification.js');
 
 	const mediaModels = [
 		'e_media.js',
@@ -432,7 +433,7 @@ exports.initializeApplication = async(application) => {
 	// TESTS
 	//
 	// Remove tests from mandatory app instructions, should be written manually
-	fs.rmdirSync(workspacePath + '/app/tests/', {recursive: true, force: true});
+	fs.rmdirSync(workspacePath + '/app/tests/jest/', {recursive: true, force: true});
 
 	return await initializeWorkflow(application);
 }

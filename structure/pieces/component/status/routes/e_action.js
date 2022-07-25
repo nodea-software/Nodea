@@ -37,10 +37,18 @@ class Action extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			create_form: {
-				// start: async (data) => {},
+				start: async (data) => {
+					// This is mandatory to be in assoction tab from a status to create an action
+					if (data.req.query.associationSource != 'e_status') {
+						data.req.session.toastr = [{
+							message: 'Please create an action from a status page.',
+							level: 'error'
+						}];
+						data.res.error(_ => data.res.redirect('/status/list'));
+						return false;
+					}
+				},
 				ifFromAssociation: async(data) => {
-					if (data.req.query.associationSource != 'e_status')
-						return;
 					const idStatus = data.req.query.associationFlag;
 					const status = await models.E_status.findOne({
 						where: {id: idStatus},

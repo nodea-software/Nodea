@@ -224,9 +224,11 @@ exports.setupEntity = async (data) => {
 	testTemplate = testTemplate.replace(/MODEL_NAME/g, entity_model);
 	testTemplate = testTemplate.replace(/ENTITY_NAME/g, entity_name);
 	testTemplate = testTemplate.replace(/URL_NAME/g, entity_url);
-	if (!fs.existsSync(workspacePath + '/app/tests/'))
-		fs.mkdirsSync(workspacePath + '/app/tests/');
-	fs.writeFileSync(workspacePath + '/app/tests/' + entity_name + '.test.js', testTemplate);
+	if (!fs.existsSync(workspacePath + '/app/tests/jest'))
+		fs.mkdirsSync(workspacePath + '/app/tests/jest', {
+			recursive: true
+		});
+	fs.writeFileSync(workspacePath + '/app/tests/jest/' + entity_name + '.test.js', testTemplate);
 
 	// CREATE ROUTE FILE
 	let routeTemplate = '';

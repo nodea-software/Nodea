@@ -28,11 +28,26 @@ node_modules:
     paths:
       - node_modules/
 
-test:
+eslint:
   image: node:fermium
   stage: test
   script:
     - npm run lint
+  dependencies:
+    - node_modules
+
+jest:
+  image: node:fermium
+  stage: test
+  script:
     - npm run test
+  dependencies:
+    - node_modules
+
+cypress:
+  image: node:fermium
+  stage: test
+  script:
+    - npm run cypress
   dependencies:
     - node_modules

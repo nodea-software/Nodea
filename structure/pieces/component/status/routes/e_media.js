@@ -150,9 +150,10 @@ class Media extends Entity {
 			search: {
 				// start: async (data) => {},
 				beforeQuery: async (data) => {
-					data.query.where = {
-						f_target_entity: data.req.body.attrData.statustarget
-					}
+					if(data.req.body.attrData && data.req.body.attrData.statustarget)
+						data.query.where = {
+							f_target_entity: data.req.body.attrData.statustarget
+						}
 				}
 				// beforeResponse: async (data) => {}
 			},

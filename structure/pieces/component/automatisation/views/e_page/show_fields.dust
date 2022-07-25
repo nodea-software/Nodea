@@ -32,7 +32,6 @@
             <input class="form-control input" placeholder='{#__ key="entity.e_page.f_delay" /}' name="f_delay" value="{f_delay}" type="number" max="2147483648" readonly="">
         </div>
     </div>
-
     <div data-field="f_startwith_url" class="col-12">
         <div class="form-group">
             <label for="f_startwith_url">

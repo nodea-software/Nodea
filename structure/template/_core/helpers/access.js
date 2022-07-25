@@ -93,21 +93,15 @@ function getAccess() {
 function isInBothArray(stringArray, objectArray) {
 	if (stringArray.length == 0)
 		return false;
-	let allowedCount = 0;
-	for (let j = 0; j < objectArray.length; j++) {
-		let isAllowed = true;
-		for (let i = 0; i < stringArray.length; i++) {
-			if (stringArray[i] == objectArray[j].f_label)
-				isAllowed = false;
-		}
-		if (isAllowed == true)
-			allowedCount++;
-	}
 
-	if (allowedCount > 0)
-		return false
-	return true;
+	for (let j = 0; j < objectArray.length; j++)
+		for (let i = 0; i < stringArray.length; i++)
+			if (stringArray[i] == objectArray[j].f_label)
+				return true;
+
+	return false;
 }
+
 // Check if user's group have access to module
 exports.moduleAccess = function (userGroups, moduleName) {
 	try {

@@ -5,7 +5,7 @@
 		<title>{#__ key="app.name"/}&nbsp;|&nbsp;{#__ key="module.home"/}</title>
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		{! Nodea Main Bundle !}
-		<link href="/core/bundle/nodea_main_css.bundle.css" rel="stylesheet">
+		<link href="/core/bundle/nodea_main_css.bundle.css?v={config.version}-{config.build}" rel="stylesheet">
 		{! Favicon !}
 		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
@@ -237,7 +237,7 @@
 
 		{! --- JS --- !}
 		{! Nodea Main Bundle !}
-		<script src="/core/bundle/nodea_main_js.bundle.js" type="text/javascript"></script>
+		<script src="/core/bundle/nodea_main_js.bundle.js?v={config.version}-{config.build}" type="text/javascript"></script>
 
 		{! SocketIO !}
 		{#config.socket.enabled}
@@ -248,12 +248,12 @@
 
 			{! Notification init !}
 			{#config.socket.notification}
-				<script src="/core/js/component/notification.js?v={config.version}" type="text/javascript"></script>
+				<script src="/core/js/component/notification.js?v={config.version}-{config.build}" type="text/javascript"></script>
 			{/config.socket.notification}
 
 			{! Component chat init !}
 			{#config.socket.chat}
-				<script src="/core/js/component/chat.js?v={config.version}" type="text/javascript"></script>
+				<script src="/core/js/component/chat.js?v={config.version}-{config.build}" type="text/javascript"></script>
 			{/config.socket.chat}
 		{/config.socket.enabled}
 

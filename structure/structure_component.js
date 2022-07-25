@@ -223,6 +223,7 @@ exports.newAgenda = async (data) => {
 	$(`li.nav-item[data-menu='${urlCategory}']`).remove();
 
 	const li = "\
+	<!--{#entityAccess entity=\""+urlComponent+"\"}-->\n\
 	<li class='nav-item' data-menu='" + valueComponent + "'>\n\
 		<a href='#' class='nav-link'>\n\
 			<i class='fas fa-calendar-alt nav-icon'></i>\n\
@@ -240,6 +241,7 @@ exports.newAgenda = async (data) => {
 					</p>\n\
 				</a>\n\
 			</li>\n\
+			<!--{#entityAccess entity=\""+urlEvent+"\"}-->\n\
 			<li class='nav-item'>\n\
 				<a href='#' class='nav-link'>\n\
 					<i class='fas fa-calendar-day nav-icon'></i>\n\
@@ -249,6 +251,7 @@ exports.newAgenda = async (data) => {
 					</p>\n\
 				</a>\n\
 				<ul class='nav nav-treeview'>\n\
+					{#actionAccess entity=\""+urlEvent+"\" action=\"create\"}-->\n\
 					<li class='nav-item'>\n\
 						<a href='/" + urlEvent + "/create_form' class='nav-link'>\n\
 							<i class='fa fa-plus nav-icon'></i>\n\
@@ -258,6 +261,8 @@ exports.newAgenda = async (data) => {
 							</p>\n\
 						</a>\n\
 					</li>\n\
+					<!--{/actionAccess}-->\n\
+					{#actionAccess entity=\""+urlEvent+"\" action=\"read\"}-->\n\
 					<li class='nav-item'>\n\
 						<a href='/" + urlEvent + "/list' class='nav-link'>\n\
 							<i class='fa fa-list nav-icon'></i>\n\
@@ -266,8 +271,11 @@ exports.newAgenda = async (data) => {
 							</p>\n\
 						</a>\n\
 					</li>\n\
+					<!--{/actionAccess}-->\n\
 				</ul>\n\
 			</li>\n\
+			<!--{/entityAccess}-->\n\
+			<!--{#entityAccess entity=\""+urlCategory+"\"}-->\n\
 			<li class='nav-item'>\n\
 				<a href='#' class='nav-link'>\n\
 					<i class='fa fa-bookmark nav-icon'></i>\n\
@@ -277,6 +285,7 @@ exports.newAgenda = async (data) => {
 					</p>\n\
 				</a>\n\
 				<ul class='nav nav-treeview'>\n\
+					<!--{#actionAccess entity=\""+urlCategory+"\" action=\"create\"}-->\n\
 					<li class='nav-item'>\n\
 						<a href='/" + urlCategory + "/create_form' class='nav-link'>\n\
 							<i class='fa fa-plus nav-icon'></i>\n\
@@ -285,6 +294,8 @@ exports.newAgenda = async (data) => {
 							</p>\n\
 						</a>\n\
 					</li>\n\
+					<!--{/actionAccess}-->\n\
+					<!--{#actionAccess entity=\""+urlCategory+"\" action=\"read\"}-->\n\
 					<li class='nav-item'>\n\
 						<a href='/" + urlCategory + "/list' class='nav-link'>\n\
 							<i class='fa fa-list nav-icon'></i>\n\
@@ -294,10 +305,13 @@ exports.newAgenda = async (data) => {
 							</p>\n\
 						</a>\n\
 					</li>\n\
+					<!--{/actionAccess}-->\n\
 				</ul>\n\
 			</li>\n\
+			<!--{/entityAccess}-->\n\
 		</ul>\n\
-	</li>\n";
+	</li>\n\
+	<!--{/entityAccess}-->\n";
 
 	// Add new html to document
 	$('.nav-sidebar').append(li);
@@ -355,7 +369,7 @@ exports.newStatus = async (data) => {
 	// Delete useless route, api, test history controllers
 	fs.unlinkSync(appPath + '/routes/e_' + data.history_table_db_name + '.js');
 	fs.unlinkSync(appPath + '/api/e_' + data.history_table_db_name + '.js');
-	fs.unlinkSync(appPath + '/tests/e_' + data.history_table_db_name + '.test.js');
+	fs.unlinkSync(appPath + '/tests/jest/e_' + data.history_table_db_name + '.test.js');
 
 	// Change model name of history table
 	let historyModel = fs.readFileSync(appPath + '/models/e_' + data.history_table + '.js', 'utf8');
@@ -835,7 +849,7 @@ exports.newAddress = (data) => {
 	});
 
 	// Remove entity generated test file
-	fs.unlinkSync(`${workspacePath}/app/tests/${data.options.value}.test.js`);
+	fs.unlinkSync(`${workspacePath}/app/tests/jest/${data.options.value}.test.js`);
 };
 
 exports.removeAddress = (data) => {

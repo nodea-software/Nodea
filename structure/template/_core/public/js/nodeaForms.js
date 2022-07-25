@@ -114,7 +114,7 @@ function initMap(mapElement, options) {
 	} = options;
 
 	if (!lat || !lon)
-		return console.error("Missing latitude or longitude to init map");
+		return console.warn("Missing latitude or longitude to init map");
 
 	mapElement.empty();
 	const mapControls = [];
@@ -260,8 +260,8 @@ let NodeaForms = (_ => {
 					if (val !== null && val.length)
 						return;
 					return [_ => {
-						const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
-						form.append(input);
+						// const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
+						// form.append(input);
 					}];
 				}
 			},
@@ -572,25 +572,16 @@ let NodeaForms = (_ => {
 							format: "DD/MM/YYYY HH:mm",
 							sideBySide: true
 						};
-						mask = {
-							inputFormat: "dd/mm/yyyy h2:mm",
-							alias: 'datetime',
-							placeholder: "jj/mm/aaaa hh:mm",
-						};
 					} else {
 						pickerOpts = {
 							format: "YYYY-MM-DD HH:mm",
 							sideBySide: true
 						};
-						mask = {
-							inputFormat: "yyyy-mm-dd h2:mm",
-							alias: 'datetime',
-							placeholder: "yyyy-mm-dd hh:mm",
-						};
 					}
+
 					// Init
 					element.datetimepicker(pickerOpts);
-					element.inputmask(mask);
+
 					// Default date
 					if (element.attr("data-today") == 1)
 						element.datetimepicker("defaultDate", moment());

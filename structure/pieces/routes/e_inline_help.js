@@ -114,7 +114,19 @@ class E_inline_help extends Entity {
 				}
 			},
 			create: {
-				// start: async (data) => {},
+				start: async (data) => {
+					if (!data.req.body.f_entity ||
+						!data.req.body.f_field ||
+						data.req.body.f_entity == '' ||
+						data.req.body.f_field == '') {
+						data.req.session.toastr = [{
+							message: 'Selecting an entity and a field is required',
+							level: 'error'
+						}];
+						data.res.error(_ => data.res.redirect('/inline_help/create_form'));
+						return false;
+					}
+				},
 				beforeCreateQuery: (data) => {
 					data.createObject.f_field = data.req.body.f_field.split('.')[1];
 				}
