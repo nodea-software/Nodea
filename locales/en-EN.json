@@ -309,6 +309,7 @@
 		"textthree": "simply go back.",
 		"404": "The link you followed may be broken, or the page may have been removed.",
 		"valueTooLong": "Sorry, but the given value (%s) is too long (<30).",
+		"fkValueTooLong": "Sorry, the value provided for the foreign key exceeds the maximum allowed length (<=60) after generation (%s). Please try to give more compact instructions, you can later change the translations for the display.",
 		"cannotFindInstruction": "Sorry, I do not understand what you're asking of me.",
 		"missingParametersInstruction": "The syntax or parameters of your instruction are wrong. Please see the documentation.",
 		"notForParamEntity": "You can't do this with a param entity."

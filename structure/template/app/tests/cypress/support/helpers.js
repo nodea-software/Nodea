@@ -14,70 +14,22 @@ function randomInt(min, max) {
 	return Math.random() * (max - min) + min
 }
 
-const zeroPad = (num, places) => String(num).padStart(places, '0');
-
-function generateValueByType(type, type_param = null) {
-	switch (type.toLowerCase()) {
-		case 'string':
-		case 'text':
-		case 'regular text':
-		case 'password':
-			return randomString(100);
-		case 'number':
-			return Math.floor(randomInt(-9999, 9999));
-		case 'big number':
-			return Math.floor(randomInt(-9999999, 9999999));
-		case 'decimal':
-		case 'currency':
-			// eslint-disable-next-line no-case-declarations
-			let value = randomInt(-9999, 9999);
-			if(type_param)
-				value = parseFloat(value.toFixed(type_param.split(',')[1]));
-			return value;
-		case 'date':
-			return dayjs().format('DD/MM/YYYY');
-		case 'datetime':
-			return dayjs().format('DD/MM/YYYY HH:mm:ss');
-		case 'time':
-			return ' ';
-		case 'color':
-			return '#FFF';
-		case 'boolean':
-			return true;
-		case 'email':
-			return 'test@test.com';
-		case 'phone':
-		case 'fax':
-			return '0666666666';
-		case 'qrcode':
-		case 'url':
-			return 'https://nodea-software.com'
-		case 'barcode':
-			return '12345678';
-		case 'enum':
-			return randomString(100);
-		case 'file':
-		case 'picture':
-			return null;
-		case 'virtual':
-			return undefined;
-		default:
-			console.log('UNKNOWN TYPE: ' + type);
-			return randomString(100);
-	}
-}
-
 exports.handleInput = function($el, input_type, app_type, type_param = null) {
 
+	if(input_type == 'hidden')
+		return;
+
 	// HTML input color and radio take over app_type for cypress test
-	if(input_type == 'color' || input_type == 'radio')
+	if(input_type == 'color' || input_type == 'radio' || input_type == 'select2')
 		app_type = input_type;
 
 	const element = cy.wrap($el);
+
 	switch(app_type) {
 		case 'string':
 		case 'password':
 		case 'regular text':
+			element.clear({force: true});
 			return element.type(randomString(20), {
 				force: true
 			});
@@ -89,15 +41,18 @@ exports.handleInput = function($el, input_type, app_type, type_param = null) {
 				force: true
 			})
 		case 'number':
+			element.clear({force: true});
 			return element.type(Math.floor(randomInt(-9999, 9999)), {
 				force: true
 			});
 		case 'big number':
+			element.clear({force: true});
 			return element.type(Math.floor(randomInt(-9999999, 9999999)), {
 				force: true
 			});
 		case 'decimal':
 		case 'currency':
+			element.clear({force: true});
 			let decimal = randomInt(-9999, 9999);
 			if(type_param)
 				decimal = parseFloat(decimal.toFixed(type_param.split(',')[1]));
@@ -105,9 +60,8 @@ exports.handleInput = function($el, input_type, app_type, type_param = null) {
 		case 'date':
 		case 'datetime':
 			return element.wait(500).click({
-				force: true,
-				timeout: 50000
-			}).next('.bootstrap-datetimepicker-widget').find('td[data-action="selectDay"]').first().click();
+				force: true
+			}).wait(200).next('.bootstrap-datetimepicker-widget').find('td[data-action="selectDay"]').first().click();
 		case 'time':
 			element.click({
 				force: true
@@ -118,14 +72,18 @@ exports.handleInput = function($el, input_type, app_type, type_param = null) {
 				force: true
 			}).should('be.checked');
 		case 'email':
+			element.clear({force: true});
 			return element.type('test@test.com');
 		case 'phone':
 		case 'fax':
+			element.clear({force: true});
 			return element.type('0666666666');
 		case 'qrcode':
 		case 'url':
+			element.clear({force: true});
 			return element.type('https://nodea-software.com')
 		case 'barcode':
+			element.clear({force: true});
 			return element.type('47581562');
 		case 'file':
 			return cy.get($el).attachFile('test.pdf');
@@ -142,20 +100,30 @@ exports.handleInput = function($el, input_type, app_type, type_param = null) {
 				multiple: true
 			});
 		case 'relatedTo':
+		case 'select2':
 			element.invoke('select2', 'open');
 			cy.document().its('body').find('li.select2-results__option:not(.loading-results)').should('have.length.gt', 0);
-			return cy.document().its('body').find('li.select2-results__option:not(.loading-results)').last().click();
+			return cy.document().its('body').find('li.select2-results__option:not(.loading-results)').last().click({
+				force: true
+			});
 		case 'relatedToMultiple':
+		case 'select2_multiple':
 			element.invoke('on', 'select2:closing', e => {
 				e.preventDefault();
 			});
 			element.invoke('select2', 'open');
 			cy.document().its('body').find('li.select2-results__option:not(.loading-results)').should('have.length.gt', 0);
-			return cy.document().its('body').find('ul.select2-results__options').find('li.select2-results__option[aria-selected="false"], li.select2-results__message').click({
-				multiple: true
-			});
+			return cy.document().its('body').find('ul.select2-results__options').then($results => {
+				let multiple = false;
+				if($results.find('li.select2-results__option[aria-selected="false"], li.select2-results__message').length > 1)
+					multiple = true;
+				$results.find('li.select2-results__option[aria-selected="false"], li.select2-results__message').click({
+					force: true,
+					multiple
+				});
+			})
 		case 'address_component':
 			element.find('#address_search_input').type('1 Rue Fernand Philippart');
-			return cy.document().its('body').find('ul.ui-autocomplete').find('li.ui-menu-item').first().click();
+			return cy.document().its('body').wait(500).find('ul.ui-autocomplete').find('li.ui-menu-item').first().click();
 	}
 }

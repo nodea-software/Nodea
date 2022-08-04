@@ -1,9 +1,9 @@
 <table id="table_e_page" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn">
     <thead class="main">
         <tr class="fields">
-            <th data-type="ordering">
+            <!-- <th data-type="ordering">
                 <i class="fa fa-arrow-down"></i>&nbsp;<i class="fa fa-arrow-up"></i>
-            </th>
+            </th> -->
             <th data-field="f_order" data-col="f_order" data-type="integer" data-default-order="ASC">
                 {#__ key="entity.e_page.f_order"/}
             </th>
@@ -50,8 +50,8 @@
     </thead>
     <thead class="filters">
         <tr class="fields">
-            <th data-type="ordering">
-            </th>
+            <!-- <th data-type="ordering">
+            </th> -->
             <th data-field="f_order" data-col="f_order" data-type="integer">
                 {#__ key="entity.e_page.f_order"/}
             </th>

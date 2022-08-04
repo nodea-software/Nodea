@@ -309,6 +309,7 @@
 		"textthree": "simplement revenir en arrière.",
 		"404": "Le lien que vous avez suivi peut être incorrect ou la page peut avoir été supprimée.",
 		"valueTooLong": "Désolé, la valeur renseignée dépasse la longueur maximum autorisée (<30) après génération (%s).",
+		"fkValueTooLong": "Désolé, la valeur renseignée pour la clé étrangère dépasse la longueur maximum autorisée (<=60) après génération (%s). Merci d'essayer de donner des instructions plus compacte, vous pourrez par la suite changer les traductions pour l'affichage.",
 		"cannotFindInstruction": "Désolé, je ne comprends pas ce que vous me demandez.",
 		"missingParametersInstruction": "La syntaxe ou les paramètres de votre instruction sont erronés. Merci de consultez la documentation.",
 		"notForParamEntity": "Vous ne pouvez pas faire ça avec une entité de paramètre."

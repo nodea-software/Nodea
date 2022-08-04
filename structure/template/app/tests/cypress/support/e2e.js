@@ -17,12 +17,15 @@ import 'cypress-file-upload';
 require('./commands');
 require('./helpers');
 
-
 let warn_spy, error_spy;
 Cypress.on('window:before:load', (win) => {
 	warn_spy = cy.spy(win.console, 'warn');
 	error_spy = cy.spy(win.console, 'error');
 });
+
+before(() => {
+	cy.on('window:confirm', _ => true);
+})
 
 // Throw an error if console.error is called
 afterEach(() => {

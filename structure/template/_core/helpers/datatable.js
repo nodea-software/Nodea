@@ -42,7 +42,19 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	queryObject.include = model_builder.getIncludeFromFields(models, entityName, toInclude);
 
 	// Execute query with filters and get total count
-	const result = await models[modelName].findAndCountAll(queryObject);
+	let result;
+	try {
+		result = await models[modelName].findAndCountAll(queryObject);
+	} catch(err) {
+		console.error('DATALIST ERROR, TRYING WITH SUBQUERY PARAM');
+		console.error(err.message);
+
+		queryObject.subQuery = true;
+		if(queryObject.order.length && queryObject.order.length > 0)
+			queryObject.order = [];
+		result = await models[modelName].findAndCountAll(queryObject);
+	}
+
 	const lightRows = result.rows.map(elem => elem.get({plain: true}));
 
 	return {
@@ -82,6 +94,9 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 
 	include.required = false;
 
+	// Magically fix a lot of problem, to remove if any problem on datalist filter, pagination, etc
+	include.separate = false;
+
 	let entity;
 	try {
 		entity = await models[modelName].findOne({
@@ -93,6 +108,10 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 		});
 	} catch(err) {
 		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);
+
+		// Desactivate it only if error talk about it
+		if(err.message && err.message.includes('separate'))
+			include.separate = false;
 		// TODO: Order on include sometime do not work because Sequelize decide to do 2 request with the first one without include
 		// Try with order in include
 		include.order = [[order[0][1], order[0][2]]];

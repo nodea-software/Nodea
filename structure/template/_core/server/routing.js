@@ -27,6 +27,8 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 		req.session.toastr = [];
 
 	res.locals.lang_user = req.session.lang_user;
+	// eslint-disable-next-line global-require
+	res.locals.locales = require('@app/locales/' + req.session.lang_user);
 	res.locals.config = globalConf;
 	res.locals.corePath = __corePath;
 	res.locals.appPath = __appPath;

@@ -43,11 +43,3 @@ jest:
     - npm run test
   dependencies:
     - node_modules
-
-cypress:
-  image: node:fermium
-  stage: test
-  script:
-    - npm run cypress
-  dependencies:
-    - node_modules

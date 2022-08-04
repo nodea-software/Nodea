@@ -106,14 +106,25 @@ module.exports = {
 			function: instructionsFunction,
 			options: options
 		};
+
 		if (!isNaN(valueToCheck))
 			throw new Error('error.oneLetter');
+
+		// Check foreign key length validation for database
+		if(options.foreignKey && options.foreignKey.length > 60) {
+			console.log(`Foreign key is too long => ${options.foreignKey}`);
+			const err = new Error('error.fkValueTooLong');
+			err.messageParams = [options.foreignKey];
+			throw err;
+		}
+
 		if (valueToCheck.length > 30) {
 			console.log("Value is too long => " + valueToCheck + "(" + valueToCheck.length + ")");
 			const err = new Error('error.valueTooLong');
 			err.messageParams = [valueToCheck];
 			throw err;
 		}
+
 		return data;
 	}
 }

@@ -1305,7 +1305,7 @@ exports.createNewHasManyPreset = async (data) => {
 // Create a field in create/show/update related to target entity
 exports.createNewFieldRelatedTo = async (data) => {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Get source entity
 	data.source_entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);

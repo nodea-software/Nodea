@@ -364,5 +364,41 @@
 		"goBackText": "Go back",
 		"home": "Home",
 		"valueTooLong": "The given value is too long (>30)."
+	},
+	"datatable": {
+		"processing": "Processing...",
+		"search": "Search&nbsp;:",
+		"lengthMenu": "Display _MENU_ records",
+		"info": "Displaying records _START_ to _END_ on _TOTAL_ records",
+		"infoEmpty": "No record to display",
+		"infoFiltered": "(filter on _MAX_ records total)",
+		"infoPostFix": "",
+		"loadingRecords": "Loading...",
+		"zeroRecords": "No record to display",
+		"emptyTable": "No data available in this array",
+		"reset_filter": "Reset all filters",
+		"scroll_right": "Scroll right",
+		"download_file": "Download the file",
+		"close": "Close",
+		"paginate": {
+			"first": "First",
+			"previous": "Previous",
+			"next": "Next",
+			"last": "Last"
+		},
+		"aria": {
+			"sortAscending": ": click to sort column by ascending order",
+			"sortDescending": ": click to sort column by descending order"
+		},
+		"choose_columns": "Choose Columns",
+		"apply": "Apply",
+		"display": "Display",
+		"boolean_filter": {
+			"null": "Not specified",
+			"checked": "Checked",
+			"unchecked": "Unchecked",
+			"all": "Both"
+		},
+        "min_one_column_display": "You must leave at least one column displayed."
 	}
 }

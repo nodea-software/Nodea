@@ -16,7 +16,7 @@ describe('LOGIN', () => {
 		cy.get('a:eq(1)').should('have.attr', 'href', '/first_connection');
 	})
 
-	it.skip('[UNHAPPY - EMPTY] - LOGIN', () => {
+	it('[UNHAPPY - EMPTY] - LOGIN', () => {
 		cy.visit('/login');
 		// Form should not be submitted in this case
 		cy.get('form').invoke('submit', (e) => {
@@ -36,7 +36,7 @@ describe('LOGIN', () => {
 		cy.reload();
 	})
 
-	it.skip('[UNHAPPY - WRONG CRENDENTIALS] - LOGIN', () => {
+	it('[UNHAPPY - WRONG CRENDENTIALS] - LOGIN', () => {
 		cy.visit('/login');
 		cy.get('input[name="login"]').type(randomString(10));
 		cy.get('input[name="password"]').type(randomString(10));
@@ -54,7 +54,7 @@ describe('LOGIN', () => {
 		})
 	})
 
-	it.skip('[UNHAPPY - EMPTY] - FIRST CONNECTION', () => {
+	it('[UNHAPPY - EMPTY] - FIRST CONNECTION', () => {
 		cy.visit('/first_connection');
 		// Form should not be submitted in this case
 		cy.get('form').invoke('submit', (e) => {
@@ -77,7 +77,7 @@ describe('LOGIN', () => {
 		cy.reload();
 	})
 
-	it.skip('[UNHAPPY - WRONG CRENDENTIALS] - FIRST CONNECTION', () => {
+	it('[UNHAPPY - WRONG CRENDENTIALS] - FIRST CONNECTION', () => {
 		cy.visit('/first_connection');
 		cy.get('input[name="login"]').type(randomString(10));
 		cy.get('input[name="password"]').type(randomString(10));
@@ -89,7 +89,7 @@ describe('LOGIN', () => {
 		cy.get('input[name="confirm_password"]').clear();
 	})
 
-	it.skip('[UNHAPPY - PASSWORD VALIDITY] - FIRST CONNECTION', () => {
+	it('[UNHAPPY - PASSWORD VALIDITY] - FIRST CONNECTION', () => {
 		cy.visit('/first_connection');
 		const user = current_user;
 		// NO MATCHING

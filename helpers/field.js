@@ -106,6 +106,7 @@ module.exports = {
 				break;
 			case "barcode":
 				inputType = 'number';
+				givenType = givenType == 'barcode' ? 'code128' : givenType;
 				if (givenType === "code39" || givenType === "code128")
 					inputType = 'text';
 				str += "	<div class='input-group'>\n";
