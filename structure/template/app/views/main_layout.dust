@@ -28,8 +28,7 @@
 		{! Get useful global variable !}
 		<script>
 			let lang_user = "{lang_user}";
-			const context = {@contextUpperDump/};
-			const locales = context[0].locales;
+			const locales = {@getFromContext key="locales" /};
 			const id_user = "{session.passport.user.id}";
 			const SELECT_DEFAULT_TEXT = locales.select.default;
 			const WAIT_UPLOAD_TEXT = locales.global_component.local_file_storage.wait_upload;

@@ -96,10 +96,8 @@ async function checkServer(iframe_url, initialTimestamp, timeoutServer) {
 		return await checkServer(iframe_url, initialTimestamp, timeoutServer);
 
 	// Unusual error, log it
-	if (response.status != 200) {
-		console.warn('Server not ready - Invalid Status Code Returned:', response.status);
+	if (response.status != 200)
 		return await checkServer(iframe_url, initialTimestamp, timeoutServer);
-	}
 
 	// Everything's ok
 	console.log("Server status is OK");

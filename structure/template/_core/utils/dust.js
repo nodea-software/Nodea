@@ -189,6 +189,12 @@ module.exports = {
 			chunk = chunk.write(JSON.stringify(results));
 		}
 
+		dust.helpers.getFromContext = function(chunk, context, bodies, params) {
+			if(!context || !context.stack || !context.stack.head || !context.stack.head[params.key])
+				return false;
+			chunk.write(JSON.stringify(context.stack.head[params.key]));
+		}
+
 		// Default inline help helper return false, helpers override on route call in @core/render.js
 		dust.helpers.inline_help = () => false;
 
