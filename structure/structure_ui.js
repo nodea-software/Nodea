@@ -3,7 +3,7 @@ const domHelper = require('../helpers/js_dom');
 const iconList = require('../config/font_awesome_list.json');
 
 exports.setColumnVisibility = async (data) => {
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 
 	const possibilityShow = ["show", "visible"];
 	const possibilityHide = ["hide", "hidden", "non visible", "caché"];
@@ -53,7 +53,7 @@ exports.setColumnVisibility = async (data) => {
 
 // eslint-disable-next-line require-await
 exports.setLogo = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app/';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app/';
 
 	// Check if logo exist
 	if (!fs.existsSync(workspacePath + '/public/img/logo/' + data.options.value))
@@ -71,10 +71,10 @@ exports.setLogo = async (data) => {
 		$("body link[rel='apple-touch-icon']").remove();
 		$("head link[rel='icon']").remove();
 		$("head link[rel='apple-touch-icon']").remove();
-		$(".app-logo").html("<a href='/'><img src='/img/logo/" + data.options.value + "' class='img-fluid' alt='App logo' ></a>");
+		$(".app-logo").html("<a href='/'><img src='/img/logo/" + data.options.value + "' class='img-fluid' alt='App logo'></a>");
 		$("head").append("<link rel=\"icon\" href='/img/logo/thumbnail/" + data.options.value + "'>");
 
-		domHelper.writeMainLayout(layoutPath, $);
+		domHelper.write(layoutPath, $, true);
 	}
 
 	return true;
@@ -83,7 +83,7 @@ exports.setLogo = async (data) => {
 // eslint-disable-next-line require-await
 exports.removeLogo = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	let message;
 	const layouts = ['login_layout', 'main_layout'];
 
@@ -117,7 +117,7 @@ exports.removeLogo = async (data) => {
 		else
 			message = "preview.logo.noLogo";
 
-		domHelper.writeMainLayout(layoutPath, $);
+		domHelper.write(layoutPath, $, true);
 	}
 
 	return message;
@@ -125,7 +125,7 @@ exports.removeLogo = async (data) => {
 
 exports.setLayout = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const askedLayout = data.options.value.toLowerCase().trim().replace(/ /g, "-");
 
@@ -163,7 +163,7 @@ exports.setLayout = async (data) => {
 
 exports.listLayout = (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const layoutsDir = fs.readdirSync(layoutPath).filter(file => file.indexOf('.') !== 0 && (file.slice(-4) === '.css' && file.slice(0, 1) !== '_'));
@@ -187,7 +187,7 @@ exports.listLayout = (data) => {
 
 exports.setTheme = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	let askedTheme = data.options.value.toLowerCase();
 	askedTheme = askedTheme.trim().replace(/ /g, "-");
@@ -248,7 +248,7 @@ exports.setTheme = async (data) => {
 				}
 			}
 
-			domHelper.writeMainLayout(layoutPath, $);
+			domHelper.write(layoutPath, $, true);
 			return;
 		})());
 	}
@@ -280,7 +280,7 @@ exports.listTheme = (data) => {
 }
 
 exports.setIcon = async(data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const layout_filename = 'layout_' + data.module_name + '.dust';
 	const entityWithouPrefix = data.entity_name.substring(2);
 

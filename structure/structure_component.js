@@ -727,7 +727,7 @@ exports.setupChat = async (data) => {
 
 	$layout("#chat-placeholder").html($chat("body")[0].innerHTML);
 
-	domHelper.writeMainLayout(workspacePath + '/app/views/main_layout.dust', $layout);
+	domHelper.write(workspacePath + '/app/views/main_layout.dust', $layout, true);
 
 	return true;
 };

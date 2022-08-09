@@ -89,8 +89,15 @@ function read(filepath, isLayout = false, content = false) {
 }
 exports.read = read;
 
-function write(filepath, $) {
-	let file_content = $("body")[0].innerHTML;
+function write(filepath, $, isLayout = false) {
+
+	let file_content;
+	if(isLayout) {
+		file_content = "<!DOCTYPE html>";
+		file_content += $("html")[0].outerHTML;
+	}
+	else
+		file_content = $("body")[0].innerHTML;
 
 	// Fix a bug caused by JSDOM that append &nbsp; at the beginning of the document
 	if (file_content.substring(0, 6) == "&nbsp;")
@@ -104,7 +111,13 @@ function write(filepath, $) {
 
 	file_content = beautify(file_content, {
 		indent_size: 4,
-		indent_with_tabs: true
+		indent_with_tabs: true,
+		indent_scripts: 'keep',
+		unformatted: ['script'],
+		indent_inner_html: true,
+		indent_head_inner_html: true,
+		preserve_newlines: false,
+		max_preserve_newlines: 3
 	});
 
 	// Uncomment dust tags
@@ -135,33 +148,4 @@ exports.insertHtml = (filename, element, html) => {
 	const $ = read(filename);
 	$(element).html(html);
 	write(filename, $);
-}
-
-exports.writeMainLayout = (fileName, $) => {
-
-	let newFileData = "<!DOCTYPE html>";
-	newFileData += $("html")[0].outerHTML;
-
-	// Replace escaped characters and script inclusion
-	newFileData = newFileData.replace(/&gt;/g, '>');
-	newFileData = newFileData.replace(/&lt;/g, '<');
-	newFileData = newFileData.replace(/&quot;/g, "\"");
-	newFileData = newFileData.replace('<script class="jsdom" src="http://code.jquery.com/jquery.js"></script>', '');
-
-	// Indent generated html
-	newFileData = beautify(newFileData, {
-		indent_size: 4,
-		indent_with_tabs: true
-	});
-
-	// Uncomment dust tags
-	// newFileData = newFileData.replace(/<!--({[<>@^:#/].+?})-->/g, '$1');
-	newFileData = newFileData.replace(/<!--{/g, "{")
-	newFileData = newFileData.replace(/}-->/g, "}")
-
-	// Put back simple quote around, double quote inside for placeholders
-	newFileData = newFileData.replace(/placeholder="(.+?)["'](.+?)["'](.+?)"/g, 'placeholder=\'$1"$2"$3\'');
-
-	// Write back to file
-	fs.writeFileSync(fileName, newFileData);
 }
