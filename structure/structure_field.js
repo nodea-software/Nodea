@@ -790,7 +790,11 @@ exports.deleteField = async (data) => {
 	for (let i = 0; i < deletedOptionsTarget.length; i++) {
 		autoGenerateFound = false;
 		targetJsonPath = workspacePath + '/app/models/options/' + deletedOptionsTarget[i].target + '.json';
-		targetOption = JSON.parse(fs.readFileSync(targetJsonPath));
+		// If same entity then use the already handle option object
+		if(deletedOptionsTarget[i].target == data.entity.name)
+			targetOption = dataToWrite;
+		else
+			targetOption = JSON.parse(fs.readFileSync(targetJsonPath));
 		for (let j = 0; j < targetOption.length; j++) {
 			if(targetOption[j].structureType == "auto_generate" && targetOption[j].foreignKey == deletedOptionsTarget[i].foreignKey){
 				targetOption.splice(j, 1);
