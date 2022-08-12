@@ -1,4 +1,5 @@
 const bot_helper = require('../helpers/bot');
+const metadata = require('../database/metadata')();
 
 // ******* BASIC ******* //
 exports.showSession = _ => {
@@ -2335,6 +2336,7 @@ const bot_instructions = {
 	],
 	"createWidget": [
 		"add widget (.*)",
+		"add a widget (.*)",
 		"create widget (.*)",
 		"ajouter widget (.*)",
 		"créer widget (.*)",
@@ -2444,9 +2446,20 @@ exports.parse = (instruction) => {
 }
 
 // ******* Completion *******
-exports.complete = function (instruction) {
+exports.complete = function (instruction, app_name = null) {
 
 	let answers = [];
+	const app_metadata = metadata.getApplication(app_name);
+	const modules = [];
+	const entities = [];
+
+	if(app_name)
+		for (let i = 0; i < app_metadata.modules.length; i++) {
+			modules.push(app_metadata.modules[i].displayName);
+			for (let j = 0; j < app_metadata.modules[i].entities.length; j++) {
+				entities.push(app_metadata.modules[i].entities[j].displayName);
+			}
+		}
 
 	// Check all bot_instructions key phrases
 	for (const action in bot_instructions) {
@@ -2497,36 +2510,67 @@ exports.complete = function (instruction) {
 				let found = false;
 				let firstLoop = true;
 
-				while (k < n && !found) {
-					// Return next keyword
-					if (template[k] != "(.*)")
-						answer = answer + template[k] + " ";
-					else {
-						if (template[k - 1] == "type")
-							answer = answer + "[type] ";
-						// Return [variable] to explain this is something dynamic
-						else if (template[k - 1] == 'widget')
-							answer = answer + '[widget] ';
-						else
-							answer = answer + "[variable] ";
-
-						// If first loop on variable, we need to display possible end of instruction
-						// Else, it means we have keyword at the beginning of suggestion, so we cut on variable step
-						if (!firstLoop)
-							found = true;
+				// If no more argument left to parse on instruction, introduce searching on custom string for entities & modules
+				if(k == n) {
+					const last_term = instr[instr.length - 2];
+					// eslint-disable-next-line default-case
+					switch(last_term) {
+						case 'entity':
+							answer = `[entity search=${instr[instr.length-1]}]`;
+							break;
+						case 'module':
+							answer = `[module search=${instr[instr.length-1]}]`;
+							break;
 					}
+				} else {
+					while (k < n && !found) {
+						// Return next keyword
+						if (template[k] != "(.*)") {
+							answer = answer + template[k] + " ";
+						} else {
+							if (template[k - 1] == 'type')
+								answer = answer + '[type] ';
+							// Return [variable] to explain this is something dynamic
+							else if (template[k - 1] == 'widget')
+								answer = answer + '[widget] ';
+							else if (template[k - 1] == 'entity')
+								answer = answer + '[entity] ';
+							else if (template[k - 1] == 'module')
+								answer = answer + '[module] ';
+							else {
+								answer = answer + '[variable] ';
+							}
 
-					firstLoop = false;
-					k++;
+							// If first loop on variable, we need to display possible end of instruction
+							// Else, it means we have keyword at the beginning of suggestion, so we cut on variable step
+							if (!firstLoop)
+								found = true;
+						}
+
+						firstLoop = false;
+						k++;
+					}
 				}
 
+				// Build array of string answers
 				// Add list of types to answer
 				if (answer.trim() == "[type]")
 					answers = [...answers, ...bot_helper.getNodeaTypes()];
 				else if (answer.trim() == '[widget]')
-					answers = [...answers, 'info', 'stat', 'statistique', 'piechart']
-				// Build array of string answers
-				else
+					answers = [...answers, 'info', 'stat', 'statistique', 'piechart'];
+				else if (answer.trim() == '[entity]')
+					answers = [...answers, ...entities];
+				else if(answer.match(/\[entity search=(.*)]/)){
+					const search = answer.match(/\[entity search=(.*)]/)[1];
+					answers = [...answers, ...entities.filter(x => x.toLowerCase().startsWith(search.toLowerCase()))];
+				}
+				else if (answer.trim() == '[module]')
+					answers = [...answers, ...modules];
+				else if(answer.match(/\[module search=(.*)]/)){
+					const search = answer.match(/\[module search=(.*)]/)[1];
+					answers = [...answers, ...modules.filter(x => x.toLowerCase().startsWith(search.toLowerCase()))];
+				}
+				else if(answer.trim() != '')
 					answers.push(answer.trim());
 			}
 		}
@@ -2542,7 +2586,6 @@ exports.complete = function (instruction) {
 	// Sort array of results
 	out.sort();
 
-	// out.reverse();
 	return out.filter(x => x != '');
 }
 

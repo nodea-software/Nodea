@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(function() {
 
 	function getTranslation(key, params) {
 		return new Promise(resolve => {
@@ -402,12 +402,12 @@ $(document).ready(function() {
 
 	$(document).on("click", "#restart-server", function(e) {
 		$("#instruction").val("restart server");
-		$("form#previewForm").submit();
+		$("form#previewForm").trigger('submit');
 	});
 
 	$(document).on("click", "#save-server", function(e) {
 		$("#instruction").val("save");
-		$("form#previewForm").submit();
+		$("form#previewForm").trigger('submit');
 	});
 
 	/////////
@@ -418,7 +418,8 @@ $(document).ready(function() {
 		delay: 200,
 		source: function(request, response) {
 			$.getJSON('/default/completion', {
-				"str": request.term
+				app_name: appName,
+				str: request.term
 			}, response);
 		},
 		search: function() {
@@ -437,7 +438,9 @@ $(document).ready(function() {
 				var completeVal = ui.item.value;
 				// If complete value have already typed string in it, dont concat with current value
 				if (completeVal.indexOf(this.value) == 0) {
-					this.value = completeVal.split("[variable]").join("").split('[type]').join("").trim();
+					this.value = completeVal;
+					for(const value of ['variable', 'type', 'widget', 'entity', 'module'])
+						this.value = this.value.split(`[${value}]`).join("").trim();
 				} else {
 					// Remove the last word of already typed instruction because it is also in the completed value
 					var parts = this.value.split(' ');
@@ -447,12 +450,14 @@ $(document).ready(function() {
 						compareNum = 0;
 						l = Math.min(completeVal.length, parts[parts.length - 1].length);
 						for (i = 0; i < l; i++) {
-							if (completeVal.charAt(i) == parts[parts.length - 1].charAt(i)) compareNum++;
+							if (completeVal.charAt(i).toLowerCase() == parts[parts.length - 1].charAt(i).toLowerCase()) compareNum++;
 						}
-						if (compareNum <= completeVal.length && completeVal.substring(0, compareNum) == parts[parts.length - 1])
+						if (compareNum <= completeVal.length && completeVal.substring(0, compareNum).toLowerCase() == parts[parts.length - 1].toLowerCase())
 							parts.pop();
 					}
-					this.value = parts.join(' ') + ' ' + completeVal.split("[variable]").join("").split('[type]').join("").trim();
+					this.value = parts.join(' ') + ' ' + completeVal;
+					for(const value of ['variable', 'type', 'widget', 'entity', 'module'])
+						this.value = this.value.split(`[${value}]`).join("").trim();
 				}
 
 				var TABKEY = 9;

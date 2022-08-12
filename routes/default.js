@@ -41,7 +41,7 @@ router.post('/update_logs', block_access.isLoggedIn, function(req, res) {
 
 router.get('/completion', block_access.isLoggedIn, function(req, res) {
 	try {
-		res.send(bot.complete(req.query.str));
+		res.send(bot.complete(req.query.str, req.query.app_name));
 	} catch (e) {
 		console.log(e);
 		res.send(false);
