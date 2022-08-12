@@ -180,7 +180,7 @@
 {<custom_js}
 	<script>
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotMatch"/}';
-		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
 		var globalConfEnv = '{config.env}';
 
 		$(document).ready(function() {

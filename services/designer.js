@@ -1905,31 +1905,6 @@ exports.removeComponentAddress = async (data) => {
 	}
 }
 
-exports.removeComponentAddress_OLD = async (data) => {
-
-	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
-
-	data.options.value = 'e_address_' + data.entity_name;
-	data.options.showValue = 'Address ' + data.entity.displayName;
-	data.options.urlValue = 'address_' + data.entity_name;
-
-	if(!data.entity.getComponent(data.options.value, 'address')){
-		const err = new Error("database.component.notFound.notFoundOnEntity");
-		err.messageParams = [data.options.showValue, data.entity.displayName];
-		throw err;
-	}
-
-	await structure_component.deleteComponentAddress(data);
-	data.fieldToDrop = 'fk_id_address';
-	database.dropFKField(data);
-
-	data.entity.deleteComponent(data.options.value, 'address');
-
-	return {
-		message: 'database.component.delete.success'
-	}
-}
-
 exports.createComponentDocumentTemplate = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);

@@ -32,6 +32,8 @@ function ajax_select(select, placeholder) {
         placeholder = SELECT_DEFAULT_TEXT;
 
     var searchField = select.data('using') && select.data('using').split(',') || 'id';
+	if(Array.isArray(searchField))
+		searchField = searchField.map(x => x.trim());
 
     // Use custom url on select or build default url
     var url = select.data('href') ? select.data('href') : select.data('url') ? select.data('url') : '/' + select.data('source') + '/search';

@@ -565,7 +565,7 @@
 			"5": "Vous trouverez ici un accès rapide à toutes vos applications !"
 		},
 		"preview": {
-			"1": "Bienvenue sur la page de prévisualisation de votre application ! Je vais vous expliquer les différents éléments actuellement qui se présentent devant vous.",
+			"1": "Bienvenue sur la page de prévisualisation de votre application ! Je vais vous expliquer les différents éléments qui se présentent actuellement devant vous.",
 			"2": "Dans cette zone se trouve votre application, elle est actuellement utilisable et vous pouvez déjà naviguer dedans pour l'essayer !",
 			"3": "Ici vous pouvez taper des instructions pour modifier votre application. Essayer 'Ajouter une entité Personne' par exemple !",
 			"4": "Une fois une instruction executée, je vous répondrai ici :) Je vous donnerai quelques astuces de temps en temps !",

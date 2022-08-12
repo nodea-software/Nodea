@@ -53,7 +53,7 @@
 {<custom_js}
 	<script type="text/javascript">
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotValid"/}';
-		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
 		var globalConfEnv = '{config.env}';
 
 		$(document).ready(function(){

@@ -15,6 +15,7 @@ $(function() {
 	$('.powertip').each(function() {
 		const content = $(this).attr('powertip-content');
 		const order = $(this).attr('powertip-order');
+		let save_border_css;
 		$(this).on({
 			powerTipPreRender: el => {
 
@@ -32,6 +33,14 @@ $(function() {
 						&nbsp;|&nbsp;\
 						<a href="#" class="powertip-gotit btn btn-info" data-order="' + order + '">' + nextTutoTrad + '&nbsp;&nbsp;<i class="fas fa-caret-right"></i></a>\
 					</div>');
+			},
+			powerTipOpen: el => {
+				save_border_css = $(this).css('border')
+				$(this).css('border', '2px solid #333');
+				$(this).addClass('animate__animated animate__pulse');
+			},
+			powerTipClose: el => {
+				$(this).css('border', save_border_css);
 			}
 		});
 	});

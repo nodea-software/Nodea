@@ -94,7 +94,7 @@ router.post('/first_connection', block_access.loginAccess, function(req, res) {
 	const email = req.body.email;
 
 	(async() => {
-		const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+		const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
 
 		// Develop env can setup weak password
 		if (globalConf.env != 'develop' && (req.body.password != req.body.confirm_password || !passwordRegex.test(req.body.password)))

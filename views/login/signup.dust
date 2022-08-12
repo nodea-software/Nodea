@@ -13,7 +13,7 @@
 
 	<form action="/signup" method="post">
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
+			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required style='text-transform: lowercase;'>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-user"></span>

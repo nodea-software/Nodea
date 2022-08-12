@@ -65,7 +65,6 @@ exports.setupWorkspaceNodeModules = _ => new Promise((resolve, reject) => {
 		}
 		resolve();
 	});
-
 });
 
 // Pre-bundle JS / CSS ressources to improve app generation rapidity

@@ -19,8 +19,17 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	}
 
 	if (speWhere)
-		for (const prop of Reflect.ownKeys(speWhere)) // Reflect.onwKeys fetch and concat ownProperty and ownSymbol
-			queryObject.where[prop] = speWhere[prop];
+		for (const prop of Reflect.ownKeys(speWhere)){
+			try {
+				if(Array.isArray(queryObject.where[prop]))
+					queryObject.where[prop] = queryObject.where[prop] ? [...queryObject.where[prop], ...speWhere[prop]] : speWhere[prop];
+				else
+					queryObject.where[prop] = queryObject.where[prop] ? {...queryObject.where[prop], ...speWhere[prop]} : speWhere[prop];
+			} catch(err) {
+				console.error(err);
+				queryObject.where[prop] = speWhere[prop];
+			}
+		}
 
 	// TODO: handle attributes
 	// queryObject.attributes = attributes;
