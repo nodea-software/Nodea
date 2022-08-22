@@ -430,8 +430,8 @@ router.post('/settings/reset_password', block_access.isLoggedIn, function(req, r
 		});
 	})().then(_ => {
 		req.session.toastr = [{
-			message: req.query.other == 1 ? "login.emailResetSentOther" : "emailResetSent",
-			level: "success"
+			message: req.query.other == 1 ? 'login.emailResetSentOther' : 'login.emailResetSent',
+			level: 'success'
 		}];
 
 		res.status(200).send(true);

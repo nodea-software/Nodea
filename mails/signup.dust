@@ -21,21 +21,20 @@
 				margin-top: 30px;
 			}
 			a.btn {
-				background-color: #FFF;
+				background-color: #c0c0c0;
 				color: #333 !important;
-				border: 3px solid #00a9ff;
 				border-radius: 8px;
 				cursor: pointer;
 				font-weight: bolder;
-				height: 150px;
+				height: 175px;
 				line-height: 50px;
 				padding: 10px 20px;
 				text-align: center;
 				text-decoration: none;
 			}
 			a.btn:hover {
-				background-color: #12bbff;
-				border: 3px solid #12bbff;
+				background-color: #00a9fb;
+				border: 1px solid #00a9fb;
 			}
 		</style>
 	</head>
@@ -47,18 +46,18 @@
 			<br>
 			<br>
 			Vous venez de vous inscrire sur un environnement Nodea: <b>{host}</b>
-			<br>
+			<br><br>
 			Vous devez à présent valider votre compte en procédant à la première connexion:
 			<br><br>
 			<a href="{first_connection_url}" class="btn">Première connexion</a><br><br>
-			<small><i>(Si le lien ne fonctionne pas: <b>{first_connection_url}</b>)</i></small>
+			<small><i>Si le lien ne fonctionne pas:<br><b>{first_connection_url}</b></i></small>
 			<br>
 			<br>
 			Merci !
 			<br>
 			<br>
             L’Équipe Nodea<br><br>
-            <a href='https://nodea-software.com'>Notre site web</a><br><br>
+            <a href='https://nodea-software.com'>Notre site web</a><br>
             <a href='mailto:contact@nodea-software.com'>Nous contacter</a>
 			<br>
 			<br>

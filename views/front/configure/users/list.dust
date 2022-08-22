@@ -84,7 +84,7 @@
 													<th>
 														{#__ key="users.applications"/}
 													</th>
-													<th colspan="3" class="text-center">
+													<th colspan="4" class="text-center">
 														{#__ key="listApplication.action"/}
 													</th>
 												</tr>
@@ -119,7 +119,7 @@
 														<td class="text-center">
 															{@ne key=id value=1}
 																<button class='btn btn-primary reset_password'>
-																	<i class="fas fa-sync fa-md"></i>&nbsp;&nbsp;
+																	<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
 																	<span>{#__ key="settings.reset_button"/}</span>
 																</button>
 															{/ne}

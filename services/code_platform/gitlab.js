@@ -167,6 +167,21 @@ exports.addUserToProject = async (user, project) => {
 
 	console.log("GITLAB => addUserToProject");
 
+	// Get project members
+	const project_members = await request(gitlabURL + "/projects/" + project.id + "/members", {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'Private-Token': token
+		}
+	});
+
+	// If user is already on the gitlab project
+	if(project_members.filter(x => x.id == user.id)) {
+		console.warn('GITLAB => User already on project');
+		return;
+	}
+
 	return await request(gitlabURL + "/projects/" + project.id + "/members", {
 		method: 'POST',
 		headers: {
