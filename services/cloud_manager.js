@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 const json2yaml = require('json2yaml');
 const fs = require('fs-extra');
-const math = require('math');
 const moment = require('moment');
 
 const globalConf = require('../config/global.js');
@@ -434,7 +433,7 @@ exports.deploy = async (data) => {
 
 	// If local/develop environnement, then just give the generated application url
 	if (globalConf.env != 'studio') {
-		const port = math.add(9000, data.appID);
+		const port = 9000 + parseInt(data.appID);
 		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
 		return {
 			message: "botresponse.applicationavailable",

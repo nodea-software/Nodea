@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const models = require('../models/');
 const multer = require('multer');
 const Jimp = require('jimp');
-const math = require('math');
 const unzip = require('unzip-stream');
 const JSZip = require('jszip');
 const moment = require('moment');
@@ -177,7 +176,7 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 
 	models.Application.findOne({where: {name: appName}}).then(db_app => {
 
-		const port = math.add(9000, db_app.id);
+		const port = 9000 + parseInt(db_app.id);
 
 		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
 			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
@@ -250,7 +249,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	(async () => {
 
 		const db_app = await models.Application.findOne({where: {name: appName}});
-		const port = math.add(9000, db_app.id);
+		const port = 9000 + parseInt(db_app.id);
 
 		const {protocol} = globalConf;
 		const {host} = globalConf;
