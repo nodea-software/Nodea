@@ -31,6 +31,6 @@ const config = {
 }
 
 const fullConfig = config[env];
-fullConfig.version = "3.0.2";
+fullConfig.version = "3.1";
 
 module.exports = fullConfig;

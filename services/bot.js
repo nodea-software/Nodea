@@ -2322,12 +2322,9 @@ const bot_instructions = {
 		"créer widget derniers enregistrements sur l'entité (.*) avec les colonnes (.*)"
 	],
 	"createWidgetOnEntity": [
-		"créer une (.*) sur l'entité (.*)",
 		"créer un widget (.*) sur l'entité (.*)",
-		"ajouter une (.*) sur l'entité (.*)",
 		"ajouter un widget (.*) sur l'entité (.*)",
 		"créer widget (.*) sur l'entité (.*)",
-		"ajouter (.*) sur l'entité (.*)",
 		"ajouter widget (.*) sur l'entité (.*)",
 		"add widget (.*) on entity (.*)",
 		"create widget (.*) on entity (.*)",
@@ -2516,6 +2513,7 @@ exports.complete = function (instruction, app_name = null) {
 					// eslint-disable-next-line default-case
 					switch(last_term) {
 						case 'entity':
+						case 'entité':
 							answer = `[entity search=${instr[instr.length-1]}]`;
 							break;
 						case 'module':
@@ -2533,9 +2531,9 @@ exports.complete = function (instruction, app_name = null) {
 							// Return [variable] to explain this is something dynamic
 							else if (template[k - 1] == 'widget')
 								answer = answer + '[widget] ';
-							else if (template[k - 1] == 'entity')
+							else if ((template[k - 1] == 'entity' || template[k - 1] == 'entité') && !['add', 'create', 'ajouter', 'créer'].some(x => template.includes(x)))
 								answer = answer + '[entity] ';
-							else if (template[k - 1] == 'module')
+							else if (template[k - 1] == 'module' && !['add', 'create', 'ajouter', 'créer'].some(x => template.includes(x)))
 								answer = answer + '[module] ';
 							else {
 								answer = answer + '[variable] ';

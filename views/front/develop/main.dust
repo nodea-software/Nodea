@@ -29,7 +29,6 @@
 		}
 
 		.dataTables_filter {
-			display: inline-block;
 			float: right;
 		}
 	</style>

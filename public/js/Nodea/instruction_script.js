@@ -1,5 +1,5 @@
 /*!
- * Nodea v3.0
+ * Nodea v3.1
  * Copyright 2016
  * Licensed under GPLV3.0 https://www.gnu.org/licenses/gpl.html
  */

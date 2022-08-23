@@ -41,7 +41,6 @@
 }
 
 .dataTables_filter {
-	display: inline-block;
 	float: right;
 }
 
@@ -161,4 +160,8 @@ label.required:after {
 
 .address_component_map {
 	height: 300px;
+}
+
+.badge {
+	color: #FFF;
 }
