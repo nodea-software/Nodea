@@ -6,7 +6,7 @@ const attributes = require('@app/models/attributes/e_api_credentials');
 const helpers = require('@core/helpers');
 const middlewares = helpers.middlewares;
 
-const randomString = require('randomstring');
+const utils = require('@core/utils');
 
 class E_api_credentials extends Entity {
 	constructor() {
@@ -46,8 +46,8 @@ class E_api_credentials extends Entity {
 			create: {
 				// start: async (data) => {},
 				beforeCreateQuery: (data) => {
-					data.createObject.f_client_key = randomString.generate(15);
-					data.createObject.f_client_secret = randomString.generate(15);
+					data.createObject.f_client_key = utils.randomString(15);
+					data.createObject.f_client_secret = utils.randomString(15);
 				},
 				// beforeRedirect: async(data) => {}
 			},

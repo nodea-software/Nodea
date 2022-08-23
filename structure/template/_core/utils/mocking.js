@@ -1,22 +1,7 @@
 /* eslint-disable no-undef */
 const { getMockReq } = require('@jest-mock/express');
 const fs = require('fs');
-
-// Utils
-function randomString(length) {
-	let text = "";
-	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	for (let i = 0; i < length; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
-}
-
-function randomInt(min, max) {
-	return Math.random() * (max - min) + min
-}
-
-const zeroPad = (num, places) => String(num).padStart(places, '0')
+const utils = require('@core/utils');
 
 function generateValueByType(type, type_param = null) {
 	switch (type.toLowerCase()) {
@@ -24,15 +9,15 @@ function generateValueByType(type, type_param = null) {
 		case 'text':
 		case 'regular text':
 		case 'password':
-			return randomString(100);
+			return utils.randomString(100);
 		case 'number':
-			return Math.floor(randomInt(-9999, 9999));
+			return Math.floor(utils.randomInt(-9999, 9999));
 		case 'big number':
-			return Math.floor(randomInt(-9999999, 9999999));
+			return Math.floor(utils.randomInt(-9999999, 9999999));
 		case 'decimal':
 		case 'currency':
 			// eslint-disable-next-line no-case-declarations
-			let value = randomInt(-9999, 9999);
+			let value = utils.randomInt(-9999, 9999);
 			if(type_param)
 				value = parseFloat(value.toFixed(type_param.split(',')[1]));
 			return value;
@@ -43,7 +28,7 @@ function generateValueByType(type, type_param = null) {
 			date.setMilliseconds(0)
 			return date;
 		case 'time':
-			return zeroPad(Math.floor(randomInt(0, 23)), 2) + ':' + zeroPad(Math.floor(randomInt(0, 59)), 2) + ':' + zeroPad(Math.floor(randomInt(0, 59)), 2);
+			return utils.zeroPad(Math.floor(utils.randomInt(0, 23)), 2) + ':' + utils.zeroPad(Math.floor(utils.randomInt(0, 59)), 2) + ':' + utils.zeroPad(Math.floor(utils.randomInt(0, 59)), 2);
 		case 'color':
 			return '#FFF';
 		case 'boolean':
@@ -59,7 +44,7 @@ function generateValueByType(type, type_param = null) {
 		case 'barcode':
 			return '12345678';
 		case 'enum':
-			return randomString(100);
+			return utils.randomString(100);
 		case 'file':
 		case 'picture':
 			return null;
@@ -67,7 +52,7 @@ function generateValueByType(type, type_param = null) {
 			return undefined;
 		default:
 			console.log('UNKNOWN TYPE: ' + type);
-			return randomString(100);
+			return utils.randomString(100);
 	}
 }
 

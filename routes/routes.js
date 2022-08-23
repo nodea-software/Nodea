@@ -66,8 +66,11 @@ router.post('/login', auth.isLoggedIn, function(req, res) {
 			message: err.message || "error.oops",
 			level: "error"
 		}];
-		req.logout();
-		res.redirect('/');
+		req.logout(err => {
+			if(err)
+				console.error(err);
+			res.redirect('/');
+		});
 	});
 });
 
@@ -445,12 +448,21 @@ router.post('/waiting', function(req, res) {
 
 // Logout
 router.get('/logout', function(req, res) {
-	req.logout();
-	req.session.toastr = [{
-		message: "login.logout_success",
-		level: "success"
-	}];
-	res.redirect('/login');
+	req.logout(err => {
+		if(err) {
+			req.session.toastr = [{
+				message: "error.500.title",
+				level: "error"
+			}];
+			return res.redirect('/');
+		}
+
+		req.session.toastr = [{
+			message: "login.logout_success",
+			level: "success"
+		}];
+		res.redirect('/login');
+	});
 });
 
 module.exports = router;

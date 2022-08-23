@@ -263,12 +263,21 @@ class CoreLogin extends Route {
 	logout() {
 		this.router.get('/logout', ...this.middlewares.logout, (req, res) => {
 			req.session.autologin = false;
-			req.logout();
-			req.session.toastr = [{
-				message: "login.logout_success",
-				level: "success"
-			}];
-			res.redirect('/login');
+			req.logout(err => {
+				if(err) {
+					req.session.toastr = [{
+						message: "error.500.title",
+						level: "error"
+					}];
+					return res.redirect('/');
+				}
+
+				req.session.toastr = [{
+					message: "login.logout_success",
+					level: "success"
+				}];
+				res.redirect('/login');
+			});
 		});
 	}
 }
