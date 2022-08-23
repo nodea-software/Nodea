@@ -50,25 +50,4 @@ $(function () {
 		}
 		toastr.success(reset_tuto_ok);
 	});
-
-	$(document).on("click", ".chooseTranslate", function () {
-		$.ajax({
-			url: '/configure/settings/activate_translation',
-			type: 'POST',
-			data: JSON.stringify({
-				activate: $(this).data("activate")
-			}),
-			dataType: 'json',
-			contentType: "application/json",
-			context: this,
-			success: function (data) {
-				if (data.success)
-					location.reload();
-			},
-			error: function (error) {
-				console.error(error);
-				toastr.error(error);
-			}
-		});
-	});
 });

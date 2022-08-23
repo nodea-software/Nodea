@@ -1,10 +1,6 @@
 const fs = require('fs');
 const helpers = require("./helpers");
 
-// Google translate
-const translateKey = require("../config/googleAPI").translate;
-const googleTranslate = require('google-translate')(translateKey);
-
 module.exports = {
 	writeTree: function(appName, object, language, replaceBoolean = true) {
 		const localesObj = JSON.parse(helpers.readFileSyncWithCatch(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json'));
@@ -171,34 +167,9 @@ module.exports = {
 					console.log("Concerned file => " + urlFile);
 				}
 				const workingLocales = file.slice(0, -5);
-				const workingLocales4Google = workingLocales.slice(0, -3);
-
-				// Google translate
-				if (workingLocales != appLang && (translateKey != "" && toTranslate)) {
-					((fileURL, data, lang) => {
-						googleTranslate.translate(value, appLang4Google, workingLocales4Google, (err, translations) => {
-							if (err)
-								console.error(err);
-							else
-								value = translations.translatedText;
-
-							data = addLocal(type, data, lang, value);
-							fs.writeFileSync(fileURL, JSON.stringify(data, null, 4));
-							resolve();
-						});
-					})(urlFile, dataLocales, workingLocales);
-				} else {
-					dataLocales = addLocal(type, dataLocales, workingLocales, value);
-					if(!dataLocales || typeof dataLocales === 'undefined') {
-						console.log("WAZA");
-						console.log(type);
-						console.log(dataLocales);
-						console.log(workingLocales);
-						console.log(value);
-					}
-					fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, 4));
-					resolve();
-				}
+				dataLocales = addLocal(type, dataLocales, workingLocales, value);
+				fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, 4));
+				resolve();
 			}));
 		}
 

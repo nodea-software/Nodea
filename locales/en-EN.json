@@ -249,7 +249,6 @@
 		"reset_button": "Reset",
 		"sure_reset": "Are you sure ? You will logout, your password will be reset and you\\'ll receive an email to set a new one.",
 		"sure_reset_other": "Are you sure ? This user's password will be reset and he will receive an email to configure a new one.",
-		"activate_translation": "Activate automatic translation (Internet connection and valid Google API Key is required)",
 		"english": "English",
 		"french": "French",
 		"info_delete_compte": "If you wish to delete your account, please contact us:",

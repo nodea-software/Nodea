@@ -249,7 +249,6 @@
 		"reset_button": "Réinitialiser",
 		"sure_reset": "Êtes-vous sur ? Vous allez être déconnecté, votre mot de passe sera réinitialisé et vous allez recevoir un email pour en configurer un nouveau.",
 		"sure_reset_other": "Êtes-vous sur ? Le mot de passe de cet utilisateur sera réinitialisé et il va recevoir un email pour en configurer un nouveau.",
-		"activate_translation": "Activer la traduction automatique (connexion internet + clé API Google valide requises)",
 		"english": "Anglais",
 		"french": "Français",
 		"info_delete_compte": "Si vous souhaitez supprimer votre compte merci de nous contacter:",

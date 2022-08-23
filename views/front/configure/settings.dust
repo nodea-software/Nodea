@@ -99,21 +99,6 @@
 											</a>
 										</div>
 									</div>
-									{#isAdmin}
-										<div class="col-12">
-											<br>
-											<div class="form-group">
-												<label>{#__ key="settings.activate_translation"/}</label>
-												<br>
-												<a class="chooseTranslate btn {@ifTrue key=toTranslate}btn-primary{:else}btn-default{/ifTrue}" data-activate="true">
-													{#__ key="button.yes"/}
-												</a>&nbsp;&nbsp;
-												<a class="chooseTranslate btn {@ifTrue key=toTranslate}btn-default{:else}btn-primary{/ifTrue}" data-activate="false">
-													{#__ key="button.no"/}
-												</a>
-											</div>
-										</div>
-									{/isAdmin}
 								</div>
 							</div>
 						</div>

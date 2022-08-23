@@ -383,18 +383,6 @@ router.post('/settings/change_theme', block_access.isLoggedIn, function(req, res
 	});
 });
 
-router.post('/settings/activate_translation', block_access.isLoggedIn, function(req, res) {
-	if (typeof req.body !== 'undefined' && typeof req.body.activate !== 'undefined') {
-		req.session.toTranslate = req.body.activate;
-		res.json({
-			success: true
-		});
-	} else
-		res.json({
-			success: false
-		});
-});
-
 // Reset password - Generate token, insert into DB, send email
 router.post('/settings/reset_password', block_access.isLoggedIn, function(req, res) {
 

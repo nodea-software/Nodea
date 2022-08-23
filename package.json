@@ -31,7 +31,6 @@
 		"express-session": "^1.15.6",
 		"formidable": "^1.2.1",
 		"fs-extra": "^9.0.1",
-		"google-translate": "^3.0.0",
 		"html": "^1.0.0",
 		"jest": "^27.2.0",
 		"jimp": "0.9.8",
