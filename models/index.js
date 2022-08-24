@@ -50,7 +50,8 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
 	port: dbConfig.port,
 	dialect: dbConfig.dialect,
 	dialectOptions: {
-		multipleStatements: true
+		multipleStatements: true,
+		allowPublicKeyRetrieval: true
 	},
 	define: {
 		timestamps: false
