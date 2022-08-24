@@ -37,8 +37,8 @@ exports.setupApplication = async (data) => {
 	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
 			"FLUSH PRIVILEGES;"
