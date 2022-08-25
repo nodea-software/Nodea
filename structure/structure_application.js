@@ -34,11 +34,26 @@ exports.setupApplication = async (data) => {
 
 	let conn, db_requests = [];
 	// Create database instance for application
-	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
+	if(dbConf.dialect == 'mysql') {
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
 			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
 			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
+			"FLUSH PRIVILEGES;"
+		];
+		conn = await mysql.createConnection({
+			host: dbConf.host,
+			user: dbConf.user,
+			password: dbConf.password,
+			port: dbConf.port
+		});
+	} else if(dbConf.dialect == 'mariadb') {
+		db_requests = [
+			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
 			"FLUSH PRIVILEGES;"

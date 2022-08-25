@@ -77,7 +77,7 @@ function addAccessManagment(appName, urlComponent, urlModule) {
 }
 
 exports.newFileStorage = (data) => {
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Add flag in option for loadtab
 	const optionFile = JSON.parse(fs.readFileSync(appPath + '/models/options/' + data.entity.name + '.json'));
@@ -847,6 +847,16 @@ exports.newAddress = (data) => {
 		recursive: true,
 		force: true
 	});
+
+	// Update address field translation
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_number'], "Numéro");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_street_1'], "Rue");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_street_2'], "Complément rue");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_postal_code'], "Code postal");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_city'], "Ville");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_country'], "Pays");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_lat'], "Latitude");
+	translateHelper.updateLocales(data.application.name, "fr-FR", ["entity", data.options.value, 'f_lon'], "Longitude");
 
 	// Remove entity generated test file
 	fs.unlinkSync(`${workspacePath}/app/tests/jest/${data.options.value}.test.js`);

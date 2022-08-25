@@ -44,15 +44,19 @@ const db = {
 	$col: Op.col
 };
 
+const dialectOptions = {
+	multipleStatements: true
+};
+
+if(dbConfig.dialect == 'mariadb')
+	dialectOptions.allowPublicKeyRetrieval = true;
+
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
 	host: dbConfig.host,
 	logging: false,
 	port: dbConfig.port,
 	dialect: dbConfig.dialect,
-	dialectOptions: {
-		multipleStatements: true,
-		allowPublicKeyRetrieval: true
-	},
+	dialectOptions,
 	define: {
 		timestamps: false
 	},

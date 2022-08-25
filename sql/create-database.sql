@@ -5,10 +5,8 @@ CREATE DATABASE nodea
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
-CREATE USER IF NOT EXISTS 'nodea'@'127.0.0.1' IDENTIFIED BY 'nodea';
-CREATE USER IF NOT EXISTS 'nodea'@'%' IDENTIFIED BY 'nodea';
+CREATE USER IF NOT EXISTS 'nodea'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'nodea';
+CREATE USER IF NOT EXISTS 'nodea'@'%' IDENTIFIED WITH mysql_native_password BY 'nodea';
 GRANT ALL PRIVILEGES ON *.* TO 'nodea'@'127.0.0.1' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'nodea'@'%' WITH GRANT OPTION;
-ALTER USER 'nodea'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'nodea';
-ALTER USER 'nodea'@'%' IDENTIFIED WITH mysql_native_password BY 'nodea';
 FLUSH PRIVILEGES;
