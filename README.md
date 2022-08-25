@@ -4,8 +4,8 @@
 
 # NODEA
 
-NODEA is a computer aided software that enable to generate Node.js applications by giving instructions to a bot.<br>
-Official website: https://nodea-software.com
+**Nodea** is a computer aided software that enable to generate **Node.js** applications by giving **instructions** to a bot.<br><br>
+Official website: https://nodea-software.com<br>
 Official documentation: https://docs.nodea-software.com
 
 ## Classic Installation
@@ -13,7 +13,7 @@ Official documentation: https://docs.nodea-software.com
 ### Prerequisites
 
 Node.js LTS / Fermium (v14 or later)<br>
-MySQL (5.7 or higher) / MariaDB (v10 or higher) or PostgreSQL server installed and running.
+MySQL (8 or higher) / MariaDB (v10.3 or higher) or PostgreSQL server installed and running.
 
 ### Instructions
 
