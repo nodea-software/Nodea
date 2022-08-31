@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{#__ key="app.name"/}</title>
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+	{! Animated CSS !}
+	<link href="/css/animate.min.css" rel="stylesheet" type="text/css">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.min.css">
+	<!-- Nodea style -->
+	<link rel="stylesheet" href="/css/Nodea/nodea.css">
+	{! Favicon !}
+	<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/img/favicons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/img/favicons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/img/favicons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/img/favicons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/img/favicons/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+	<style>
+		body {
+			color: #FFF;
+		}
+		.logo-center {
+			margin-top: 300px;
+			margin-bottom: 50px;
+		}
+		#pulse-newmips {
+			display: block;
+			position: relative;
+			margin: auto;
+			width: 100px;
+		}
+		.ldBar {
+			position: relative;
+			margin: auto;
+		}
+		.ldBar.label-center > .ldBar-label {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+			text-shadow: 0 0 3px #fff;
+		}
+		.ldBar-label:after {
+			content: "%";
+			display: inline;
+		}
+		.ldBar.no-percent .ldBar-label:after {
+			content: "";
+		}
+		.ldBar path.mainline {
+			stroke-width: 4;
+			stroke: #FFF;
+			stroke-linecap: round;
+		}
+		.ldBar path.baseline {
+			stroke-width: 14;
+			stroke: #f1f2f3;
+			stroke-linecap: round;
+			filter:url(#custom-shadow);
+		}
+	</style>
+</head>
+<body class="hold-transition login-page">
+	<div class="header-content">
+		<div class="header-center">
+			<div class="col-12 first-title text-center" style='margin-top: 250px;'>
+				<img class="animate__animated animate__pulse animate__infinite" id="pulse-newmips" alt="Nodea Logo" src="/img/logo/transparent_white.png"/>
+			</div>
+			<br>
+			<div class="col-12 first-title text-center">
+				<h1>{#__ key="demo.generating" /}</h1>
+			</div>
+			<br>
+			<div class="col-12 second-title text-center">
+				<h2>{#__ key="demo.please_wait" /}</h2>
+			</div>
+			<br>
+			<hr>
+			<br>
+			<div class="col-12 text-center">
+				<div class="ldBar" id='loading-bar' data-value="0" data-preset="circle">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form action="/application/initiate" method="POST" style="display: none;">
+		<input name="application" type="hidden" value="{app_name}" />
+	</form>
+
+	<!-- jQuery -->
+	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="/AdminLTE/dist/js/adminlte.min.js"></script>
+	<!-- Loading Bar -->
+	<script src="/js/plugins/loading-bar/loading-bar.js"></script>
+
+	<script type="text/javascript">
+		const app_name = '{app_name}';
+		$(function() {
+
+			$('form[action="/application/initiate').trigger('submit');
+			$('#loading-bar').css('width', '10%').css('height', '10%');
+
+			function getPourcent(){
+				$.ajax({
+					url : '/application/get_pourcent_generation',
+					type : 'GET',
+					dataType : 'json',
+					contentType: "application/json",
+					success: function (data) {
+						if(!isNaN(data.pourcent)){
+							const loading_bar = $('#loading-bar')[0].ldBar;
+							loading_bar.set(data.pourcent);
+							if(data.pourcent == 99) {
+								clearInterval(pourcentInterval);
+							}
+						}
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+			}
+
+			let pourcentInterval = setInterval(getPourcent, 1000);
+		});
+	</script>
+</html>
