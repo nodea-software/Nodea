@@ -5,6 +5,17 @@ const consoleStamp = require('console-stamp');
 
 const appConf = require('@config/application');
 
+// Add user ID token in morgan ----
+morgan.token('userid', (req) => {
+	let format;
+	if(req.user){
+		format = `- ID ${ req.user ? req.user.id : '' }`
+	}
+	return format;
+});
+
+const formatLog = ':method :url :status - :response-time ms :userid';
+
 // Log every request (not /) to the console
 const morganConf = {
 	skip: req => {
@@ -63,4 +74,4 @@ if (!global.auto_login) { // Mean not started from a generator
 	};
 });
 
-module.exports = morgan('dev', morganConf);
+module.exports = morgan(formatLog, morganConf);

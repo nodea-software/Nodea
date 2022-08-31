@@ -1,5 +1,6 @@
 const models = require('@app/models');
 const access = require('@core/helpers/access');
+const { writeConnectionLog } = require('@core/helpers/connectionLog');
 
 const upload = require('multer');
 const multer = upload();
@@ -206,4 +207,10 @@ exports.disableRoute = ({res}) => {
 	res.render('common/error', {
 		error: 404
 	})
+}
+
+// Middleware for writing log in file connection.log
+exports.connectionLogMiddleware = (next, msg) => {
+	writeConnectionLog(msg);
+	next();
 }

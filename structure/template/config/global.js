@@ -11,7 +11,8 @@ const config = {
 		port: process.env.PORT || 1337,
 		localstorage: __dirname + "/../upload/",
 		authStrategy: process.env.AUTH || 'local',
-		smsProvider: process.env.SMS || 'ovh'
+		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/"
 	},
 	test: {
 		env: 'test',
@@ -20,7 +21,8 @@ const config = {
 		port: process.env.PORT || 1337,
 		localstorage: __dirname + "/../upload_test/",
 		authStrategy: process.env.AUTH || 'local',
-		smsProvider: process.env.SMS || 'ovh'
+		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/"
 	},
 	production: {
 		env: 'production',
@@ -30,6 +32,7 @@ const config = {
 		localstorage: "/var/data/localstorage/",
 		authStrategy: process.env.AUTH || 'local',
 		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/",
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -45,6 +48,7 @@ const config = {
 		port: process.env.PORT || 1337,
 		authStrategy: process.env.AUTH || 'local',
 		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/",
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -60,6 +64,7 @@ const config = {
 		port: process.env.PORT || 1337,
 		authStrategy: process.env.AUTH || 'local',
 		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/",
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
@@ -75,6 +80,7 @@ const config = {
 		port: process.env.PORT || 1338,
 		authStrategy: process.env.AUTH || 'local',
 		smsProvider: process.env.SMS || 'ovh',
+		logConnexionFolder: __dirname + "/../logs/",
 		ssl: {
 			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
