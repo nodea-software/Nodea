@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const mattermost = require('../services/mattermost_api.js');
 const models = require('../models/');
 
-router.post('/init', block_access.isLoggedIn, async (req, res) => {
+router.post('/init', middlewares.isLoggedIn, async (req, res) => {
 	try {
 		const currentApp = await models.Application.findOne({
 			where: {
@@ -24,7 +24,7 @@ router.post('/init', block_access.isLoggedIn, async (req, res) => {
 	}
 });
 
-router.post('/send', block_access.isLoggedIn, async (req, res) => {
+router.post('/send', middlewares.isLoggedIn, async (req, res) => {
 	try {
 		const currentApp = await models.Application.findOne({
 			where: {
@@ -45,7 +45,7 @@ router.post('/send', block_access.isLoggedIn, async (req, res) => {
 	}
 });
 
-router.post('/watch', block_access.isLoggedIn, async (req, res) => {
+router.post('/watch', middlewares.isLoggedIn, async (req, res) => {
 	try {
 		const currentApp = await models.Application.findOne({
 			where: {

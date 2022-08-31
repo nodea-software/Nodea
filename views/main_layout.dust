@@ -125,6 +125,13 @@
 							</a>
 						</li>
 					</ul> !}
+					{?global_config.demo_mode}
+						<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
+							<span id="demo_signup_btn" class="badge badge-success animate__animated animate__pulse">
+								<i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}
+							</span>
+						</ul>
+					{/global_config.demo_mode}
 					<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
 						{#__ key="users.connected_as"/}&nbsp;<a href="/configure/account"><b>{user_login}</b></a>
 					</ul>
@@ -135,13 +142,15 @@
 							</a>
 						</li>
 					</ul>
-					<ul class="order-1 order-md-3 navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="/logout">
-								<i class="fas fa-sign-out-alt"></i>
-							</a>
-						</li>
-					</ul>
+					{^global_config.demo_mode}
+						<ul class="order-1 order-md-3 navbar-nav ml-auto">
+							<li class="nav-item">
+								<a class="nav-link" href="/logout">
+									<i class="fas fa-sign-out-alt"></i>
+								</a>
+							</li>
+						</ul>
+					{/global_config.demo_mode}
 				</div>
 			</nav>
 
@@ -160,9 +169,9 @@
 						{?version}
 							Nodea GPL V3 | {version}
 						{:else}
-							{?globalConf.version}
-								Nodea GPL V3 | {globalConf.version}
-							{/globalConf.version}
+							{?global_config.version}
+								Nodea GPL V3 | {global_config.version}
+							{/global_config.version}
 						{/version}
 					</div>
 
@@ -191,6 +200,60 @@
 			</div>
 		</div>
 
+		{?global_config.demo_mode}
+			<div class='modal fade' id='demo_welcome' tabindex='-1' role='dialog' aria-labelledby='demo_welcome' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="demo_welcome_title">{#__ key="demo.modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.modal.text1"/} <b>Nodea</b> !<br><br>
+							{#__ key="demo.modal.text2"/}
+							<br><br>
+							{#__ key="demo.modal.text3"/}
+							<br><br>
+							{#__ key="demo.modal.text4"/}
+							<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Documentation&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.modal.text5"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Discord&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">{#__ key="button.start"/} !</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='modal fade' id='expire_app_modal' tabindex='-1' role='dialog' aria-labelledby='expire_app_modal' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="expire_app_title">{#__ key="demo.expire_modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.expire_modal.text1"/}<br><br>
+							{#__ key="demo.expire_modal.text2"/}<br><br>
+							{#__ key="demo.expire_modal.text3"/}<br><br>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-success" data-dismiss="modal"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/global_config.demo_mode}
+
 		<!-- jQuery -->
 		<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
 		<!-- Bootstrap 4 -->
@@ -206,6 +269,27 @@
 			const nextTutoTrad = '{#__ key="powertip.next"/}';
 		</script>
 		<script src="/js/Nodea/powertip.js" type="text/javascript"></script>
+		{?global_config.demo_mode}
+			{?show_demo_popup}
+				<script>
+					$(function() {
+						$('#demo_welcome').modal();
+						$('#demo_welcome').find('.btn.btn-primary').on('click', function() {
+							startPowertips();
+							$.ajax('/account/disabled_demo_popup');
+						});
+					});
+				</script>
+			{:else}
+				<script>
+					$(function(){startPowertips();});
+				</script>
+			{/show_demo_popup}
+		{:else}
+			<script>
+				$(function(){startPowertips();});
+			</script>
+		{/global_config.demo_mode}
 
 		<script>
 			var toastrArray = [];

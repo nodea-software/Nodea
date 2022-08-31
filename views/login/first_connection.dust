@@ -61,7 +61,7 @@
 	<script type="text/javascript">
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotValid"/}';
 		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
-		var globalConfEnv = '{globalConf.env}';
+		var globalConfEnv = '{global_config.env}';
 	</script>
 	<script src="/js/Nodea/login/first_connection.js"></script>
 {/custom_js}

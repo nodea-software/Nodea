@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const domHelper = require('../helpers/js_dom');
 const language = require('../services/language');
 const gitHelper = require('../utils/git_helper');
@@ -11,7 +11,7 @@ function applyToAllEntity(currentHtml, notPage, entity, appName) {
 		if (pageFiles[i] == notPage)
 			continue;
 
-		const pageUri = __workspacePath + '/' + appName + '/app/views/' + entity + '/' + pageFiles[i];
+		const pageUri = global.__workspacePath + '/' + appName + '/app/views/' + entity + '/' + pageFiles[i];
 		const $ = domHelper.read(pageUri); // eslint-disable-line
 		const saveField = {};
 
@@ -50,7 +50,7 @@ function applyToAllEntity(currentHtml, notPage, entity, appName) {
 	}
 }
 
-router.get('/getPage/:entity/:page', block_access.hasAccessApplication, (req, res) => {
+router.get('/getPage/:entity/:page', middlewares.hasAccessApplication, (req, res) => {
 	let page = req.params.page;
 
 	if (!page || page != 'create' && page != 'update' && page != 'show')
@@ -99,7 +99,7 @@ router.get('/getPage/:entity/:page', block_access.hasAccessApplication, (req, re
 	res.status(200).send($("#fields")[0].outerHTML);
 });
 
-router.post('/setPage/:entity/:page', block_access.hasAccessApplication, (req, res) => {
+router.post('/setPage/:entity/:page', middlewares.hasAccessApplication, (req, res) => {
 	const generatorLanguage = language(req.session.lang_user);
 	(async () => {
 

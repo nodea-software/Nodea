@@ -58,7 +58,7 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
 	dialect: dbConfig.dialect,
 	dialectOptions,
 	define: {
-		timestamps: false
+		timestamps: true
 	},
 	charset: 'utf8',
 	collate: 'utf8_general_ci'

@@ -6,6 +6,7 @@ const Jimp = require('jimp');
 const unzip = require('unzip-stream');
 const JSZip = require('jszip');
 const moment = require('moment');
+const dayjs = require('dayjs');
 
 // Config
 const globalConf = require('../config/global.js');
@@ -14,12 +15,13 @@ const globalConf = require('../config/global.js');
 const process_manager = require('../services/process_manager.js');
 const {process_server_per_app} = process_manager;
 const session_manager = require('../services/session.js');
-const designer = require('../services/designer.js');
+
 const parser = require('../services/bot.js');
 const studio_manager = require('../services/studio_manager');
 
 // Utils
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
+const bot = require('../helpers/bot');
 const helpers = require('../utils/helpers');
 const dataHelper = require('../utils/data_helper');
 const gitHelper = require('../utils/git_helper');
@@ -93,59 +95,7 @@ function setChat(req, app_name, userID, user, content, params, isError){
 		});
 }
 
-async function execute(req, instruction, __, data = {}, saveMetadata = true) {
-	// Lower the first word for the basic parser json
-	instruction = dataHelper.prepareInstruction(instruction);
-
-	// Instruction to be executed
-	data = {
-		...data,
-		...parser.parse(instruction)
-	};
-
-	// Rework the data to get value for the code / url / show
-	data = dataHelper.reworkData(data);
-
-	if (typeof data.error !== 'undefined')
-		throw data.error;
-
-	data.app_name = req.session.app_name;
-	data.module_name = req.session.module_name;
-	data.entity_name = req.session.entity_name;
-	data.googleTranslate = req.session.toTranslate || false;
-	data.lang_user = req.session.lang_user;
-	data.currentUser = req.session.passport.user;
-	data.code_platform = req.session.code_platform;
-	data.isGeneration = true;
-
-	if(data.function != 'createNewApplication' && data.function != 'deleteApplication')
-		data.application = metadata.getApplication(data.app_name);
-
-	let info;
-	try {
-		info = await designer[data.function](data);
-	} catch (err) {
-		console.error('Error on function: ' + data.function + '(Instruction: ' + instruction + ')');
-		console.error(err);
-		throw __(err.message ? err.message : err, err.messageParams || []);
-	}
-
-	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])
-		req.session.nodea_chats[data.options.value] = {}
-
-	const newData = session_manager.setSession(data.function, req, info, data);
-
-	// Save metadata
-	if(data.application && data.function != 'deleteApplication' && saveMetadata)
-		data.application.save();
-
-	newData.message = info.message;
-	newData.messageParams = info.messageParams;
-	newData.restartServer = typeof info.restartServer === 'undefined';
-	return newData;
-}
-
-router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) => {
+router.get('/preview/:app_name', middlewares.hasAccessApplication, (req, res) => {
 
 	const appName = req.params.app_name;
 
@@ -181,7 +131,10 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
 			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 
-		data.session = session_manager.getSession(req)
+		data.session = session_manager.getSession(req);
+
+		if(globalConf.demo_mode)
+			data.session.app_expire = dayjs(db_app.createAt).diff(dayjs(), 'day') + 7;
 
 		const initialTimestamp = new Date().getTime();
 		let iframe_url = globalConf.protocol + '://';
@@ -235,7 +188,7 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 	});
 });
 
-router.post('/preview', block_access.hasAccessApplication, (req, res) => {
+router.post('/preview', middlewares.hasAccessApplication, (req, res) => {
 
 	const appName = req.session.app_name;
 	/* Lower the first word for the basic parser json */
@@ -247,6 +200,12 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	};
 
 	(async () => {
+
+		// Update nb_instruction count of the user
+		const user = await models.User.findByPk(currentUserID);
+		user.update({
+			nb_instruction: user.nb_instruction ? ++user.nb_instruction : 1
+		});
 
 		const db_app = await models.Application.findOne({where: {name: appName}});
 		const port = 9000 + parseInt(db_app.id);
@@ -271,7 +230,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
 
 		// Executing instruction
-		data = await execute(req, instruction, __, data);
+		data = await bot.execute(req, instruction, __, data);
 
 		let appBaseUrl = protocol + '://' + host + ":" + port;
 		if(globalConf.env == 'studio')
@@ -378,7 +337,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	});
 });
 
-router.post('/set_logo', block_access.hasAccessApplication, (req, res) => {
+router.post('/set_logo', middlewares.hasAccessApplication, (req, res) => {
 	multer().single('file')(req, res, err => {
 		if (err) {
 			console.error(err);
@@ -433,9 +392,9 @@ router.post('/set_logo', block_access.hasAccessApplication, (req, res) => {
 	});
 });
 
-router.post('/delete', block_access.hasAccessApplication, (req, res) => {
+router.post('/delete', middlewares.hasAccessApplication, (req, res) => {
 	const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
-	execute(req, "delete application " + req.body.app_name, __).then(_ => {
+	bot.execute(req, "delete application " + req.body.app_name, __).then(_ => {
 		res.status(200).send(true);
 	}).catch(err => {
 		console.error(err);
@@ -444,7 +403,7 @@ router.post('/delete', block_access.hasAccessApplication, (req, res) => {
 });
 
 // Simple application creation
-router.post('/initiate', block_access.isLoggedIn, (req, res) => {
+router.post('/initiate', middlewares.isLoggedIn, (req, res) => {
 
 	// Performance indicator
 	const perf_indicator = 'app_init_' + Date.now();
@@ -479,7 +438,7 @@ router.post('/initiate', block_access.isLoggedIn, (req, res) => {
 
 	(async () => {
 		for (let i = 0; i < instructions.length; i++) {
-			await execute(req, instructions[i], __, {}, false); // eslint-disable-line
+			await bot.execute(req, instructions[i], __, {}, false); // eslint-disable-line
 			pourcent_generation[req.session.passport.user.id] = i == 0 ? 1 : Math.floor(i * 100 / instructions.length);
 		}
 		metadata.getApplication(req.session.app_name).save();
@@ -493,7 +452,7 @@ router.post('/initiate', block_access.isLoggedIn, (req, res) => {
 		console.error(err);
 
 		// Delete application
-		execute(req, `delete application ${req.body.application}`, __, {}, false).finally(_ => {
+		bot.execute(req, `delete application ${req.body.application}`, __, {}, false).finally(_ => {
 			req.session.toastr = [{
 				message: err,
 				level: "error"
@@ -509,7 +468,7 @@ router.get('/get_pourcent_generation', (req, res) => {
 	});
 });
 
-router.post('/import', block_access.isLoggedIn, (req, res) => {
+router.post('/import', middlewares.disableInDemo, middlewares.isLoggedIn, (req, res) => {
 	multer().fields([{
 		name: 'zipfile',
 		maxCount: 1
@@ -526,7 +485,7 @@ router.post('/import', block_access.isLoggedIn, (req, res) => {
 			const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
 
 			// Generate standard app
-			const data = await execute(req, "add application " + req.body.appName, __);
+			const data = await bot.execute(req, "add application " + req.body.appName, __);
 			const workspacePath = __dirname + '/../workspace/' + data.options.value;
 			const oldMetadataObj = JSON.parse(fs.readFileSync(workspacePath + '/config/metadata.json', 'utf8'));
 
@@ -636,7 +595,7 @@ router.post('/import', block_access.isLoggedIn, (req, res) => {
 	});
 });
 
-router.get('/export/:app_name', block_access.hasAccessApplication, (req, res) => {
+router.get('/export/:app_name', middlewares.disableInDemo, middlewares.hasAccessApplication, (req, res) => {
 	// We know what directory we want
 	const workspacePath = __dirname + '/../workspace/' + req.params.app_name;
 
@@ -661,6 +620,31 @@ router.get('/export/:app_name', block_access.hasAccessApplication, (req, res) =>
 				console.error(err);
 			fs.unlinkSync(workspacePath + '.zip')
 		});
+	});
+});
+
+router.get('/generate_demo', middlewares.isLoggedIn, async (req, res) => {
+
+	// Check if user has already an application, if yes redirect to it
+	const application = await models.Application.findOne({
+		order: [['id', 'DESC']],
+		include: [{
+			model: models.User,
+			as: "users",
+			where: {
+				id: req.session.passport.user.id
+			},
+			required: true
+		}]
+	});
+
+	if(application)
+		return res.redirect('/application/preview/' + application.name);
+
+	// Generate his first application
+	let max_app_id = await models.Application.max('id');
+	res.render('front/waiting_demo', {
+		app_name: 'demo_' + req.session.passport.user.id + '_' + ++max_app_id
 	});
 });
 

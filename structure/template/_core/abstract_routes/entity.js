@@ -201,7 +201,7 @@ class CoreEntity extends Route {
 				 * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
 				 * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
-				 * @param {string} data.rawData - Result of the datatable query as raw data
+				 * @param {object} data.rawData - Result of the datatable query as raw data
 				 */
 				if (await this.getHook('datalist', 'afterDatatableQuery', data) === false)
 					return;
@@ -219,8 +219,8 @@ class CoreEntity extends Route {
 				 * @param {object} [data.speWhere] - Specific `where` case added to datatable's request
 				 * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
-				 * @param {string} data.rawData - Result of the datatable query as raw data
-				 * @param {string} data.preparedData - Post processed data of datatable query results. This is the data sent as response
+				 * @param {object} data.rawData - Result of the datatable query as raw data
+				 * @param {object} data.preparedData - Post processed data of datatable query results. This is the data sent as response
 				 */
 				if (await this.getHook('datalist', 'beforeResponse', data) === false)
 					return;

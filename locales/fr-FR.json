@@ -74,7 +74,8 @@
 		"clone": "Cloner",
 		"understand": "Compris !",
 		"export": "Exporter",
-		"confirm": "Êtes-vous sûr de vouloir continuer ?"
+		"confirm": "Êtes-vous sûr de vouloir continuer ?",
+		"start": "Commencer"
 	},
 	"home": {
 		"website": "Site web",
@@ -271,7 +272,9 @@
 		"session": {
 			"noApplication": "Aucune application sélectionnée",
 			"noModule": "Aucune module sélectionné",
-			"noEntity": "Aucune entité sélectionnée"
+			"noEntity": "Aucune entité sélectionnée",
+			"app_expire": "Expiration",
+			"day": "Jour(s)"
 		},
 		"logo": {
 			"title": "Ajouter un logo",
@@ -595,5 +598,26 @@
 	},
 	"alpha": {
 		"text": "Nous sommes encore en phase de développement, si vous souhaitez nous rapporter un bug ou encore une suggestion vous pouvez créer un ticket sur notre <a href=\"https://github.com/nodea-software/nodea/issues\" target=_blank>Github officiel</a> ou nous contacter à cette adresse:<br><br><b>support@nodea-software.com</b><br><br>Merci pour votre participation!"
+	},
+	"demo": {
+		"signup_head": "Obtenez votre environnement privé !",
+		"not_available": "Non disponible en mode demo",
+		"feature_not_available": "Cette fonctionnalité n'est pas disponible en mode demo, vous pouvez vous inscrire pour la débloquer !",
+		"generating": "Génération de votre application",
+		"please_wait": "Cela ne prendra pas longtemps, vraiment pas longtemps, en général pas plus que 30 secondes !",
+		"modal": {
+			"title": "Mode démo de Nodea",
+			"text1": "Bienvenue sur le générateur",
+			"text2": "Vous vous trouvez actuellement sur un environnement de démonstration vous permettant d'essayer simplement la <b>génération</b> d'application de gestion avec Nodea.",
+			"text3": "Je vous invite à suivre les popup tutoriel pour vous familiariser avec <b>l'interface</b> et la notion <b>d'instruction</b>.",
+			"text4": "Si vous avez des questions vous pouvez vous rendre sur notre <b>documentation</b>:",
+			"text5": "Ou encore rejoindre notre <b>Discord</b> où nous ferons notre possible pour vous répondre au plus vite:"
+		},
+		"expire_modal": {
+			"title": "Expiration de votre application",
+			"text1": "Dans le mode <b>démonstration</b> de Nodea vos applications ont un délai d'expiration de <b>7 jours</b>.",
+			"text2": "Passé ce délai votre session ainsi que vos applications seront <b>supprimés</b>.",
+			"text3": "Si vous souhaitez <b>conserver</b> vos applications nous vous invitons à vous <b>inscrire</b> afin d'accèder à <b>votre environnement Nodea</b> !"
+		}
 	}
 }

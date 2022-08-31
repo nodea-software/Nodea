@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
 const globalConf = require('../config/global.js');
 
-router.get('/', block_access.isLoggedIn, function(req, res) {
+router.get('/', middlewares.isLoggedIn, function(req, res) {
 	const data = {};
 	let version;
 

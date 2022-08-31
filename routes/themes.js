@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const fs = require("fs-extra");
 const helpers = require("../utils/helpers");
 // TODO 3.0 - Rework with other module
@@ -11,7 +11,7 @@ const moment = require("moment");
 const dataHelper = require('../utils/data_helper');
 const helper = require('../utils/helpers');
 
-router.get('/', block_access.isLoggedIn, function(req, res) {
+router.get('/', middlewares.isLoggedIn, function(req, res) {
 	const data = {};
 
 	const themePath = __dirname + '/../structure/template/public/themes';

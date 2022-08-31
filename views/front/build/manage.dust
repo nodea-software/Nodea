@@ -32,11 +32,29 @@
 								</a>
 							</td>
 							<td class="text-center">
-								<a class="btn btn-primary export-btn" href="/application/export/{name}">
+								{?global_config.demo_mode}
+									<a class="btn btn-primary" href="#" style="cursor: not-allowed;">
+								{:else}
+									<a class="btn btn-primary export-btn" href="/application/export/{name}">
+								{/global_config.demo_mode}
 									<i class="fa fa-download fa-md"></i>&nbsp;&nbsp;
 									<span>{#__ key="button.export"/}</span>
-								</a>
+								</a><br>
+								{?global_config.demo_mode}
+									<small><b>{#__ key="demo.not_available"/}</b></small>
+								{/global_config.demo_mode}
 							</td>
+							{?global_config.demo_mode}
+							<td class="text-center">
+								<button type="button" class="btn btn-warning" style="cursor: not-allowed;">
+									<i class="fab fa-gitlab"></i>&nbsp;&nbsp;
+									<span>{#__ key="button.clone"/}</span>
+								</button><br>
+								{?global_config.demo_mode}
+									<small><b>{#__ key="demo.not_available"/}</b></small>
+								{/global_config.demo_mode}
+							</td>
+							{/global_config.demo_mode}
 							{?code_platform_user}
 								{?dataValues.repo_url}
 									<td class="text-center">

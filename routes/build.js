@@ -4,11 +4,11 @@ const fs = require("fs-extra");
 
 const globalConf = require('../config/global.js');
 const code_platform = require('../services/code_platform');
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const metadata = require('../database/metadata')();
 const models = require('../models/');
 
-router.get('/', block_access.isLoggedIn, function(req, res) {
+router.get('/', middlewares.isLoggedIn, function(req, res) {
 	(async () => {
 		const data = {
 			code_platform_user: null

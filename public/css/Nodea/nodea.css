@@ -356,3 +356,13 @@ img.powertip-nodea {
 	margin-left: 10px;
 	margin-right: 10px;
 }
+
+#demo_signup_btn {
+	cursor: pointer;
+	font-size: 14px;
+	padding: 7px;
+}
+
+#demo_signup_btn:hover {
+	background-color: #49bf64;
+}

@@ -1,3 +1,4 @@
+let startPowertips = () => null;
 $(function() {
 
 	const origin_url = window.location.pathname;
@@ -36,7 +37,7 @@ $(function() {
 			},
 			powerTipOpen: el => {
 				save_border_css = $(this).css('border')
-				$(this).css('border', '2px solid #333');
+				$(this).css('border', '2px solid #eaeaea');
 				$(this).addClass('animate__animated animate__pulse');
 			},
 			powerTipClose: el => {
@@ -45,12 +46,14 @@ $(function() {
 		});
 	});
 
-	// Only show the tip that you didn't click 'understood'
-	for (var i = 1; i <= $('.powertip').length; i++) {
-		if(localStorage.getItem('nodea-powertip-' + origin_url + '-' + i))
-			continue;
-		$('.powertip[powertip-order="'+ i +'"]').powerTip().powerTip('show');
-		break;
+	startPowertips = function() {
+		for (var i = 1; i <= $('.powertip').length; i++) {
+			// Only show the tip that you didn't click 'understood'
+			if(localStorage.getItem('nodea-powertip-' + origin_url + '-' + i))
+				continue;
+			$('.powertip[powertip-order="'+ i +'"]').powerTip().powerTip('show');
+			break;
+		}
 	}
 
 	$(document).on('click', '.powertip-gotit', function() {
