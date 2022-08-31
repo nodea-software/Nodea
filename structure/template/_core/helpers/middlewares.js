@@ -210,7 +210,20 @@ exports.disableRoute = ({res}) => {
 }
 
 // Middleware for writing log in file connection.log
-exports.connectionLogMiddleware = (next, msg) => {
-	writeConnectionLog(msg);
+exports.connectionLogMiddleware = (req, res, next) => {
+	let currentURL = req.originalUrl.substring(1);
+	if (currentURL.includes('?')) {
+		// Remove params from URL
+		currentURL = currentURL.split('?')[0];
+	}
+
+	const msg = {
+		login: `LOGIN [ID: ${req.user ? req.user.id : ''}]`,
+		first_connection: `FIRST CONNECTION [LOGIN: ${req.body ? req.body.login : ''}]`,
+		reset_password: `RESET PASSWORD [ID: ${req.user ? req.user.id : ''}]`,
+		logout: `LOGOUT [ID: ${req.user ? req.user.id : ''}]`,
+	}
+
+	writeConnectionLog(msg[currentURL]);
 	next();
 }

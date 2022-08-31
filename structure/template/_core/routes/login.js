@@ -6,6 +6,7 @@ const models = require('@app/models')
 const crypto = require('crypto');
 const mailer = require('@core/services/mailer');
 const Route = require('@core/abstract_routes/route');
+const { writeConnectionLog } = require('@core/helpers/connectionLog');
 
 class CoreLogin extends Route {
 	constructor(additionalRoutes = []) {
@@ -143,6 +144,7 @@ class CoreLogin extends Route {
 					res.redirect('/module/home');
 				})
 			}).catch(err => {
+				writeConnectionLog(err);
 				console.error(err);
 				req.session.toastr = [{
 					message: err.message,
@@ -213,6 +215,7 @@ class CoreLogin extends Route {
 					}
 				}).catch(err => {console.error(err);})
 
+				writeConnectionLog(err);
 				console.error(err);
 				req.session.toastr = [{
 					message: err.message,
@@ -251,6 +254,7 @@ class CoreLogin extends Route {
 					res.redirect('/first_connection');
 				});
 			}).catch(err => {
+				writeConnectionLog(err);
 				req.session.toastr = [{
 					message: err.message,
 					level: 'error'

@@ -20,7 +20,7 @@ class Login extends CoreLogin {
 			loginPOST: [
 				auth.isLoggedIn,
 				// Trace login, remove this line if you disabled traceability
-				(req, res, next) => middlewares.connectionLogMiddleware(next, `LOGIN [ID: ${req.user ? req.user.id : ''}]`)
+				middlewares.connectionLogMiddleware
 			],
 			refresh_login_captcha: [],
 			first_connectionGET: [
@@ -29,7 +29,7 @@ class Login extends CoreLogin {
 			first_connectionPOST: [
 				middlewares.loginAccess,
 				// Trace first connection, remove this line if you disabled traceability
-				(req, res, next) => middlewares.connectionLogMiddleware(next, `FIRST CONNECTION [LOGIN: ${req.body ? req.body.login : ''}]`)
+				middlewares.connectionLogMiddleware
 			],
 			reset_passwordGET: [
 				middlewares.loginAccess
@@ -37,14 +37,14 @@ class Login extends CoreLogin {
 			reset_passwordPOST: [
 				middlewares.loginAccess,
 				// Trace reset password, remove this line if you disabled traceability
-				(req, res, next) => middlewares.connectionLogMiddleware(next, `RESET PASSWORD [ID: ${req.user ? req.user.id : ''}]`)
+				middlewares.connectionLogMiddleware
 			],
 			reset_password_token: [
 				middlewares.loginAccess
 			],
 			logout: [
 				// Trace logout, remove this line if you disabled traceability
-				(req, res, next) => middlewares.connectionLogMiddleware(next, `LOGOUT [ID: ${req.user ? req.user.id : ''}]`)
+				middlewares.connectionLogMiddleware
 			]
 		}
 	}
