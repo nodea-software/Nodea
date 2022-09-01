@@ -46,7 +46,10 @@
 		{+custom_css /}
 
 		{! Give the user_lang the client !}
-		<script type="text/javascript">var user_lang = '{user_lang}';</script>
+		<script type="text/javascript">
+			let user_lang = '{user_lang}';
+			let nodea_demo_mode = '{global_config.demo_mode}';
+		</script>
 	</head>
 	<body class="hold-transition layout-top-nav">
 		<div class="wrapper">
@@ -252,6 +255,33 @@
 					</div>
 				</div>
 			</div>
+			<div class='modal fade' id='demo_instructions_modal' tabindex='-1' role='dialog' aria-labelledby='demo_instructions_modal' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="demo_instructions_modal_title">{#__ key="demo.instructions_modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.instructions_modal.text1"/}&nbsp;<b><span id="nb_instructions_count_modal"></span></b>&nbsp;{#__ key="demo.instructions_modal.text2"/}&nbsp;&nbsp;<i class="far fa-thumbs-up"></i><br><br>
+							{#__ key="demo.instructions_modal.text3"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Documentation&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.instructions_modal.text4"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Discord&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.instructions_modal.text5"/}<br><br>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-success" data-dismiss="modal"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		{/global_config.demo_mode}
 
 		<!-- jQuery -->
@@ -304,7 +334,7 @@
 		{/toastr}
 		<script>
 			var CONFIRM_TEXT = '{#__ key="button.confirm"/}';
-			$(document).ready(function() {
+			$(function() {
 				try {
 					toastr.options = {
 						"closeButton": false,

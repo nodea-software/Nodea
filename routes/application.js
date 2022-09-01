@@ -203,8 +203,9 @@ router.post('/preview', middlewares.hasAccessApplication, (req, res) => {
 
 		// Update nb_instruction count of the user
 		const user = await models.User.findByPk(currentUserID);
+		data.nb_instruction = user.nb_instruction ? ++user.nb_instruction : 1
 		user.update({
-			nb_instruction: user.nb_instruction ? ++user.nb_instruction : 1
+			nb_instruction: data.nb_instruction
 		});
 
 		const db_app = await models.Application.findOne({where: {name: appName}});

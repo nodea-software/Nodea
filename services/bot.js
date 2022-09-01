@@ -2117,32 +2117,6 @@ const bot_instructions = {
 		"supprimer le composant ligne de temps nommée (.*)",
 		"supprimer la ligne de temps nommée (.*)"
 	],
-	"createNewComponentCra": [
-		"ajouter composant gestion de temps",
-		"ajouter un composant gestion de temps",
-		"create component cra",
-		"add component cra",
-		"create component activity report",
-		"add component activity report",
-		"create component time sheet",
-		"add component time sheet",
-		"create component timesheet",
-		"add component timesheet",
-		"créer un composant cra",
-		"ajouter un composant cra",
-		"créer composant cra",
-		"ajouter composant cra",
-		"créer le composant cra",
-		"ajouter le composant cra",
-		"créer un composant compte-rendu d'activité",
-		"ajouter un composant compte-rendu d'activité",
-		"créer composant compte-rendu d'activité",
-		"ajouter composant compte-rendu d'activité",
-		"créer un composant compte-rendu d'activités",
-		"ajouter un composant compte-rendu d'activités",
-		"créer composant compte-rendu d'activités",
-		"ajouter composant compte-rendu d'activités"
-	],
 	"addComponentAddress": [
 		"add component address",
 		"create component address",
@@ -2171,14 +2145,14 @@ const bot_instructions = {
 		"supprimer composant adresse appelé (.*)",
 		"supprimer le composant adresse nommé (.*)"
 	],
-	"createComponentChat": [
+	/*"createComponentChat": [
 		"add component chat",
 		"create component chat",
 		"ajouter le composant Discussion",
 		"ajouter composant Discussion",
 		"ajouter le composant discussion",
 		"ajouter composant discussion"
-	],
+	],*/
 	"setLogo": [
 		"add logo (.*)",
 		"add a logo (.*)",
@@ -2199,7 +2173,7 @@ const bot_instructions = {
 		"enlever le logo",
 		"enlever logo"
 	],
-	"setLayout": [
+	/*"setLayout": [
 		"set layout (.*)",
 		"appliquer le layout (.*)",
 		"appliquer la disposition (.*)",
@@ -2217,7 +2191,7 @@ const bot_instructions = {
 		"lister disposition",
 		"lister les dispositions",
 		"afficher les dispositions"
-	],
+	],*/
 	"setTheme": [
 		"set theme (.*)",
 		"appliquer le thème (.*)",

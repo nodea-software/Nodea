@@ -618,6 +618,14 @@
 			"text1": "Dans le mode <b>démonstration</b> de Nodea vos applications ont un délai d'expiration de <b>7 jours</b>.",
 			"text2": "Passé ce délai votre session ainsi que vos applications seront <b>supprimés</b>.",
 			"text3": "Si vous souhaitez <b>conserver</b> vos applications nous vous invitons à vous <b>inscrire</b> afin d'accèder à <b>votre environnement Nodea</b> !"
+		},
+		"instructions_modal": {
+			"title": "Félicitation !",
+			"text1": "Félicitation vous venez déjà d'executer",
+			"text2": "instructions avec Nodea !",
+			"text3": "Si vous souhaitez en apprendre plus sur les <b>instructions</b> vous pouvez toute les retrouver sur notre <b>documentation</b>:",
+			"text4": "Aussi si vous avez des question n'hesitez pas à <b>rejoindre</b> notre Discord:",
+			"text5": "Enfin si vous souhaite <b>privatiser</b>, <b>conserver</b> et accèder au <b>code</b> de vos applications générées je vous invite à générer aujourd'hui <b>votre environnement privé</b> !"
 		}
 	}
 }

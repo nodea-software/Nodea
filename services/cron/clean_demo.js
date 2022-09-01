@@ -17,8 +17,8 @@ module.exports = async () => {
 							user: {}
 						}
 					}
-				}, "delete application " + app_to_delete[i].displayName, __)
-				await app_to_delete[i].destroy()
+				}, "delete application " + app_to_delete[i].displayName, __);
+				await app_to_delete[i].destroy();
 			})());
 		}
 
