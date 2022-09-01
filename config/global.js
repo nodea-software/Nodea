@@ -13,7 +13,7 @@ const config = {
 		authStrategy: process.env.AUTH || 'local',
 		support_chat_enabled: process.env.SUPPORT_CHAT || false,
 		open_signup: process.env.OPEN_SIGNUP || false,
-		demo_mode: false
+		demo_mode: process.env.DEMO_MODE || false
 	},
 	studio: {
 		env: 'studio',
@@ -27,7 +27,7 @@ const config = {
 		authStrategy: process.env.AUTH || 'local',
 		support_chat_enabled: process.env.SUPPORT_CHAT || false,
 		open_signup: process.env.OPEN_SIGNUP || false,
-		demo_mode: false
+		demo_mode: process.env.DEMO_MODE || false
 	}
 }
 
