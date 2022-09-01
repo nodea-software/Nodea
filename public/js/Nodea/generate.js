@@ -6,11 +6,10 @@ $(function() {
 		if($(".applicationInput").val() == '')
 			return toastr.warning('Merci de renseigner un nom d\'application');
 
-		$(this).parents('form').submit();
-
+		$(this).parents('form').trigger('submit');
 		$(this).prop("disabled", true);
-		var pourcent = 0;
 
+		var pourcent = 0;
 		$("#app-progress-bar").css("display", "block");
 		$(this).css("display", "none");
 

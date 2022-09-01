@@ -3,19 +3,19 @@ const router = express.Router();
 const crypto = require('crypto');
 const extend = require('util')._extend;
 
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const models = require('../models/');
 const code_platform = require('../services/code_platform');
 const mailer = require('../utils/mailer');
 const metadata = require('../database/metadata')();
 const language = require('../services/language');
 
-router.get('/', block_access.isLoggedIn, function(req, res) {
+router.get('/', middlewares.isLoggedIn, function(req, res) {
 	res.render('front/configure/main');
 });
 
 /* Users */
-router.get('/users', block_access.isAdmin, (req, res) => {
+router.get('/users', middlewares.isAdmin, (req, res) => {
 	const data = {};
 	models.User.findAll({
 		// where: {
@@ -30,7 +30,7 @@ router.get('/users', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.get('/users/show/:id', block_access.isAdmin, (req, res) => {
+router.get('/users/show/:id', middlewares.isAdmin, (req, res) => {
 	const user_id = req.params.id;
 	models.User.findOne({
 		where: {
@@ -53,13 +53,13 @@ router.get('/users/show/:id', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.get('/users/create', block_access.isAdmin, (req, res) => {
+router.get('/users/create', middlewares.isAdmin, (req, res) => {
 	models.Role.findAll().then(roles => {
 		res.render('front/configure/users/create', {roles: roles})
 	})
 })
 
-router.post('/users/create', block_access.isAdmin, (req, res) => {
+router.post('/users/create', middlewares.isAdmin, (req, res) => {
 	(async() => {
 		if (req.body.login == '' || req.body.id_role == '' || req.body.email == '')
 			throw new Error('action.missing_values');
@@ -121,7 +121,7 @@ router.post('/users/create', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.get('/users/update/:id', block_access.isAdmin, (req, res) => {
+router.get('/users/update/:id', middlewares.isAdmin, (req, res) => {
 
 	if(req.params.id == 1){
 		req.session.toastr = [{
@@ -143,7 +143,7 @@ router.get('/users/update/:id', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.post('/users/update', block_access.isAdmin, (req, res) => {
+router.post('/users/update', middlewares.isAdmin, (req, res) => {
 	if(req.body.id == 1){
 		req.session.toastr = [{
 			message: "You can't modify the main administrator account",
@@ -177,7 +177,7 @@ router.post('/users/update', block_access.isAdmin, (req, res) => {
 	});
 })
 
-router.post('/users/delete', block_access.isAdmin, (req, res) => {
+router.post('/users/delete', middlewares.isAdmin, (req, res) => {
 	if(req.body.id == 1){
 		req.session.toastr = [{
 			message: 'users.not_delete_admin',
@@ -198,7 +198,7 @@ router.post('/users/delete', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.post('/users/assign', block_access.isAdmin, (req, res) => {
+router.post('/users/assign', middlewares.isAdmin, (req, res) => {
 	(async () => {
 		let appID = req.body.app;
 		const userID = req.body.id_user;
@@ -248,7 +248,7 @@ router.post('/users/assign', block_access.isAdmin, (req, res) => {
 	})
 })
 
-router.post('/users/remove_access', block_access.isAdmin, (req, res) => {
+router.post('/users/remove_access', middlewares.isAdmin, (req, res) => {
 
 	(async () => {
 		const appID = req.body.id_app;
@@ -305,7 +305,7 @@ router.post('/users/remove_access', block_access.isAdmin, (req, res) => {
 })
 
 /* Account */
-router.get('/account', block_access.isLoggedIn, (req, res) => {
+router.get('/account', middlewares.isLoggedIn, (req, res) => {
 	models.User.findOne({
 		where: {
 			id: req.session.passport.user.id
@@ -330,7 +330,7 @@ router.get('/account', block_access.isLoggedIn, (req, res) => {
 	});
 });
 
-router.post('/account/update', block_access.isLoggedIn, (req, res) => {
+router.post('/account/update', middlewares.isLoggedIn, (req, res) => {
 	models.User.update({
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
@@ -348,7 +348,7 @@ router.post('/account/update', block_access.isLoggedIn, (req, res) => {
 })
 
 /* Settings */
-router.get('/settings/', block_access.isLoggedIn, function(req, res) {
+router.get('/settings/', middlewares.isLoggedIn, function(req, res) {
 	const data = {};
 	// Récupération des toastr en session
 	data.toastr = req.session.toastr;
@@ -363,7 +363,7 @@ router.get('/settings/', block_access.isLoggedIn, function(req, res) {
 });
 
 // Fonction de changement du language
-router.post('/settings/change_language', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/change_language', middlewares.isLoggedIn, function(req, res) {
 	if (typeof req.body !== 'undefined' && typeof req.body.lang !== 'undefined') {
 		req.session.lang_user = req.body.lang;
 		res.locals = extend(res.locals, language(req.body.lang));
@@ -376,7 +376,7 @@ router.post('/settings/change_language', block_access.isLoggedIn, function(req, 
 		});
 });
 
-router.post('/settings/change_theme', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/change_theme', middlewares.isLoggedIn, function(req, res) {
 	req.session.dark_theme = req.body.choice;
 	res.json({
 		success: true
@@ -384,7 +384,7 @@ router.post('/settings/change_theme', block_access.isLoggedIn, function(req, res
 });
 
 // Reset password - Generate token, insert into DB, send email
-router.post('/settings/reset_password', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/reset_password', middlewares.isLoggedIn, function(req, res) {
 
 	(async () => {
 		// Check if user with login + email exist in DB

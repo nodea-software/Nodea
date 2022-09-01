@@ -1,7 +1,7 @@
 const passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
-const models = require('../models/');
+const models = require('../../models/');
 const moment = require('moment');
 
 // Default authentication strategy : passport.authenticate('local')
@@ -76,12 +76,7 @@ passport.deserializeUser(function(user_id, done) {
 	done(null, user_id);
 });
 
-exports.isLoggedIn = passport.authenticate('local', {
+exports.authenticate = passport.authenticate('local', {
 	failureRedirect: '/login',
-	failureFlash: true
-});
-
-exports.passwordChangeCheck = passport.authenticate('new-password-check', {
-	failureRedirect: '/profile/update_password_form',
 	failureFlash: true
 });

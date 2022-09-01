@@ -91,6 +91,10 @@
 						{:else}
 							{#__ key="entity.label"/} :<b class="sessionEntityInfo">&nbsp;{#__ key="preview.session.noEntity"/}</b>
 						{/entity.name}
+						{?app_expire}
+							<br>
+							{#__ key="preview.session.app_expire"/}&nbsp;:&nbsp;<b style="color: orange;cursor:pointer;" id="expire_app">&nbsp;{app_expire} {#__ key="preview.session.day"/}&nbsp;<i class="fas fa-question-circle"></i></b>
+						{/app_expire}
 					{/session}
 				</div>
 			</div>

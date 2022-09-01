@@ -74,7 +74,8 @@
 		"clone": "Clone",
 		"understand": "Get it !",
 		"export": "Export",
-		"confirm": "Are you sure you want to continue ?"
+		"confirm": "Are you sure you want to continue ?",
+		"start": "Start"
 	},
 	"home": {
 		"website": "Website",
@@ -271,7 +272,9 @@
 		"session": {
 			"noApplication": "No application selected",
 			"noModule": "No module selected",
-			"noEntity": "No entity selected"
+			"noEntity": "No entity selected",
+			"app_expire": "Expire",
+			"day": "Day(s)"
 		},
 		"logo": {
 			"title": "Add a logo",
@@ -595,5 +598,34 @@
 	},
 	"alpha": {
 		"text": "Be aware that this version is still in development, if you find a bug or have a suggestion you can participate to our <a href=\"https://github.com/nodea-software/nodea/issues\" target=_blank>official Github</a> or contact us on:<br><br><b>support@nodea-software.com</b><br><br>Thank you !"
+	},
+	"demo": {
+		"signup_head": "Get your own private environment !",
+		"not_available": "Not available in demo mode",
+		"feature_not_available": "This feature is not available in demo mode, you can signup to unlock it !",
+		"generating": "Generating your application",
+		"please_wait": "It won't take long, really not long, usually no more than 30 seconds!",
+		"modal": {
+			"title": "Nodea demo mode",
+			"text1": "Welcome on the generator",
+			"text2": "You are currently on a demo environment allowing you to simply try the management application <b>generation</b> with Nodea.",
+			"text3": "I invite you to follow the tutorial popups to familiarize yourself with <b>the interface</b> and the concept of <b>instructions</b>.",
+			"text4": "If you have any questions you can go to our <b>documentation</b>:",
+			"text5": "Or join our <b>Discord</b> where we will do our best to answer you as soon as possible:"
+		},
+		"expire_modal": {
+			"title": "Your app expired",
+			"text1": "In Nodea's <b>demonstration</b> mode your applications have an expiration time of <b>7 days</b>.",
+			"text2": "After this time your session and your applications will be <b>deleted</b>.",
+			"text3": "If you wish to <b>keep</b> your applications, we invite you to <b>register</b> in order to access <b>your Nodea environment</b>!"
+		},
+		"instructions_modal": {
+			"title": "Congratulations!",
+			"text1": "Congratulations you have already executed",
+			"text2": "instructions with Nodea!",
+			"text3": "If you want to learn more about the <b>instructions</b> you can find them all on our <b>documentation</b>:",
+			"text4": "Also if you have any questions feel free to <b>join</b> our Discord:",
+			"text5": "Finally, if you want to <b>privatize</b>, <b>keep</b> and access the <b>code</b> of your generated applications, I invite you to generate today < b>your private environment</b>!"
+		}
 	}
 }

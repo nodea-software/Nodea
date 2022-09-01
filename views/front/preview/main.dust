@@ -115,15 +115,13 @@
 		var savingButtonText = '{#__ key="button.save"/}';
 		var loadingButtonText = '{#__ key="button.loading"/}';
 
-		/*$(".navbar .menu").slimscroll({
-			height: "200px",
-			alwaysVisible: false,
-			size: "3px"
-		}).css("width", "100%");*/
-
 		$('#chat-box').slimScroll({
 			height: '525px',
 			start: 'bottom'
+		});
+
+		$('#expire_app').on('click', function() {
+			$('#expire_app_modal').modal();
 		});
 	</script>
 

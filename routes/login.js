@@ -2,28 +2,21 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const request = require('request');
 
 const globalConf = require('../config/global');
-
-const block_access = require('../utils/block_access');
-const auth = require('../utils/authStrategies');
+const middlewares = require('../helpers/middlewares');
+const local_authentication = require('../services/authentication/local');
 const mailer = require('../utils/mailer');
 const models = require('../models/');
-
 const code_platform = require('../services/code_platform');
 
-router.get('/', block_access.loginAccess, function(req, res) {
-	res.redirect('/login');
-});
-
-router.get('/login', block_access.loginAccess, function(req, res) {
+router.get('/login', middlewares.loginAccess, function(req, res) {
 	res.render('login/login', {
 		redirect: req.query.redirect
 	});
 });
 
-router.post('/login', auth.isLoggedIn, function(req, res) {
+router.post('/login', local_authentication.authenticate, function(req, res) {
 	(async () => {
 		if (req.body.remember_me)
 			req.session.cookie.maxAge = 168 * 3600000; // 1 week
@@ -74,7 +67,29 @@ router.post('/login', auth.isLoggedIn, function(req, res) {
 	});
 });
 
-router.get('/first_connection', block_access.loginAccess, function(req, res) {
+router.get('/logout', function(req, res) {
+
+	// if(globalConf.demo_mode)
+	// 	return res.redirect('/');
+
+	req.logout(err => {
+		if(err) {
+			req.session.toastr = [{
+				message: "error.500.title",
+				level: "error"
+			}];
+			return res.redirect('/');
+		}
+
+		req.session.toastr = [{
+			message: "login.logout_success",
+			level: "success"
+		}];
+		res.redirect('/login');
+	});
+});
+
+router.get('/first_connection', middlewares.loginAccess, function(req, res) {
 	const params = {
 		login: "",
 		email: ""
@@ -92,7 +107,7 @@ router.get('/first_connection', block_access.loginAccess, function(req, res) {
 	res.render('login/first_connection', params);
 });
 
-router.post('/first_connection', block_access.loginAccess, function(req, res) {
+router.post('/first_connection', middlewares.loginAccess, function(req, res) {
 	const login = req.body.login.toLowerCase();
 	const email = req.body.email;
 
@@ -161,12 +176,12 @@ router.post('/first_connection', block_access.loginAccess, function(req, res) {
 	});
 });
 
-router.get('/reset_password', block_access.loginAccess, function(req, res) {
+router.get('/reset_password', middlewares.loginAccess, function(req, res) {
 	res.render('login/reset_password');
 });
 
 // Reset password - Generate token, insert into DB, send email
-router.post('/reset_password', block_access.loginAccess, function(req, res) {
+router.post('/reset_password', middlewares.loginAccess, function(req, res) {
 	(async () => {
 		// Check if user with login + email exist in DB
 		const user = await models.User.findOne({
@@ -222,7 +237,7 @@ router.post('/reset_password', block_access.loginAccess, function(req, res) {
 	})
 })
 
-router.get('/reset_password_form/:token', block_access.loginAccess, function(req, res) {
+router.get('/reset_password_form/:token', middlewares.loginAccess, function(req, res) {
 	models.User.findOne({
 		where: {
 			token_password_reset: req.params.token
@@ -252,7 +267,7 @@ router.get('/reset_password_form/:token', block_access.loginAccess, function(req
 	});
 });
 
-router.post('/reset_password_form', block_access.loginAccess, function(req, res) {
+router.post('/reset_password_form', middlewares.loginAccess, function(req, res) {
 
 	const login = req.body.login.toLowerCase();
 	const email = req.body.email;
@@ -335,8 +350,7 @@ router.post('/reset_password_form', block_access.loginAccess, function(req, res)
 	})
 });
 
-// Signup
-router.get('/signup', block_access.loginAccess, function(req, res) {
+router.get('/signup', middlewares.loginAccess, function(req, res) {
 
 	if(!globalConf.open_signup) {
 		req.session.toastr = [{
@@ -349,7 +363,7 @@ router.get('/signup', block_access.loginAccess, function(req, res) {
 	res.render('login/signup');
 });
 
-router.post('/signup', block_access.loginAccess, function(req, res) {
+router.post('/signup', middlewares.loginAccess, function(req, res) {
 
 	if(!globalConf.open_signup) {
 		req.session.toastr = [{
@@ -418,50 +432,6 @@ router.post('/signup', block_access.loginAccess, function(req, res) {
 			level: "error"
 		}];
 		res.redirect('/signup');
-	});
-});
-
-// Waiting room for deploy instruction
-router.get('/waiting', function(req, res) {
-	res.render('front/waiting_room', {
-		redirect: req.query.redirect
-	});
-});
-
-router.post('/waiting', function(req, res) {
-	request.get({
-		url: req.body.redirect,
-		strictSSL: false,
-		rejectUnauthorized: false
-	}, (error, response) => {
-		if(error)
-			console.log(error)
-
-		// Stack is not ready
-		if (error || response && response.statusCode !== 200 && response.statusCode !== 302)
-			return res.sendStatus(503).end();
-
-		// Stack ready, container ready, lets go
-		return res.sendStatus(200);
-	});
-});
-
-// Logout
-router.get('/logout', function(req, res) {
-	req.logout(err => {
-		if(err) {
-			req.session.toastr = [{
-				message: "error.500.title",
-				level: "error"
-			}];
-			return res.redirect('/');
-		}
-
-		req.session.toastr = [{
-			message: "login.logout_success",
-			level: "success"
-		}];
-		res.redirect('/login');
 	});
 });
 

@@ -1,3 +1,8 @@
+const designer = require('../services/designer.js');
+const dataHelper = require('../utils/data_helper');
+const metadata = require('../database/metadata')();
+const session_manager = require('../services/session.js');
+const parser = require('../services/bot.js');
 const nodeaTypes = {
 	"string" : [],
 	"color": [
@@ -85,6 +90,58 @@ const nodeaTypes = {
 	]
 }
 
+async function execute(req, instruction, __, data = {}, saveMetadata = true) {
+	// Lower the first word for the basic parser json
+	instruction = dataHelper.prepareInstruction(instruction);
+
+	// Instruction to be executed
+	data = {
+		...data,
+		...parser.parse(instruction)
+	};
+
+	// Rework the data to get value for the code / url / show
+	data = dataHelper.reworkData(data);
+
+	if (typeof data.error !== 'undefined')
+		throw data.error;
+
+	data.app_name = req.session.app_name;
+	data.module_name = req.session.module_name;
+	data.entity_name = req.session.entity_name;
+	data.googleTranslate = req.session.toTranslate || false;
+	data.lang_user = req.session.lang_user;
+	data.currentUser = req.session.passport.user;
+	data.code_platform = req.session.code_platform;
+	data.isGeneration = true;
+
+	if(data.function != 'createNewApplication' && data.function != 'deleteApplication')
+		data.application = metadata.getApplication(data.app_name);
+
+	let info;
+	try {
+		info = await designer[data.function](data);
+	} catch (err) {
+		console.error('Error on function: ' + data.function + '(Instruction: ' + instruction + ')');
+		console.error(err);
+		throw __(err.message ? err.message : err, err.messageParams || []);
+	}
+
+	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])
+		req.session.nodea_chats[data.options.value] = {}
+
+	const newData = session_manager.setSession(data.function, req, info, data);
+
+	// Save metadata
+	if(data.application && data.function != 'deleteApplication' && saveMetadata)
+		data.application.save();
+
+	newData.message = info.message;
+	newData.messageParams = info.messageParams;
+	newData.restartServer = typeof info.restartServer === 'undefined';
+	return newData;
+}
+
 module.exports = {
 	getNodeaTypes: _ => {
 		const results = [];
@@ -126,5 +183,6 @@ module.exports = {
 		}
 
 		return data;
-	}
+	},
+	execute
 }

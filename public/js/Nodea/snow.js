@@ -7,7 +7,7 @@
 var snowMax = 50;
 
 // Snowflake Colours
-var snowColor = ["#c6c6c6", "#d6d6d6", "#EEE", "#fff"];
+var snowColor = ["#c9c9c9", "#d6d6d6", "#EEE", "#FFF", "#999"];
 
 // Snow Entity
 var snowEntity = "&#x2022;";
@@ -16,13 +16,13 @@ var snowEntity = "&#x2022;";
 var snowSpeed = 0.85;
 
 // Minimum Flake Size
-var snowMinSize = 8;
+var snowMinSize = 10;
 
 // Maximum Flake Size
-var snowMaxSize = 30;
+var snowMaxSize = 40;
 
 // Refresh Rate (in milliseconds)
-var snowRefresh = 50;
+var snowRefresh = 30;
 
 // Additional Styles
 var snowStyles = "cursor: default; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;";
@@ -47,7 +47,7 @@ function randomise(range) {
 
 function initSnow() {
 	var snowSize = snowMaxSize - snowMinSize;
-	marginBottom = document.body.scrollHeight - 150;
+	marginBottom = document.body.scrollHeight + 150;
 	marginRight = document.body.clientWidth - 150;
 
 	for (i = 0; i <= snowMax; i++) {

@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const helper = require('../utils/data_helper');
 const models = require('../models/');
 const code_platform = require('../services/code_platform');
 const metadata = require('../database/metadata')();
 
-router.get('/', block_access.hasAccessApplication, (req, res) => {
+router.get('/', middlewares.hasAccessApplication, (req, res) => {
 
 	if(req.query.app_name)
 		req.session.app_name = req.query.app_name;
@@ -84,7 +84,7 @@ router.get('/', block_access.hasAccessApplication, (req, res) => {
 	})
 });
 
-router.post('/new-issue', block_access.hasAccessApplication, (req, res) => {
+router.post('/new-issue', middlewares.hasAccessApplication, (req, res) => {
 	(async () => {
 		// Get gitlab user from nodea user
 		const assignToUsers = await models.User.findAll({
@@ -116,7 +116,7 @@ router.post('/new-issue', block_access.hasAccessApplication, (req, res) => {
 	})
 });
 
-router.post('/get-issues', block_access.hasAccessApplication, (req, res) => {
+router.post('/get-issues', middlewares.hasAccessApplication, (req, res) => {
 	(async () => {
 		const issues = await code_platform.getProjectIssues(req.body.projectID, req.body.mytasks == 'true' ? req.session.code_platform.user.id : null);
 		const data = [];
@@ -143,7 +143,7 @@ router.post('/get-issues', block_access.hasAccessApplication, (req, res) => {
 	})
 });
 
-router.post('/new-tag', block_access.hasAccessApplication, (req, res) => {
+router.post('/new-tag', middlewares.hasAccessApplication, (req, res) => {
 	(async () => {
 		req.body.title = helper.clearString(req.body.title).replace(/ /g, '_');
 

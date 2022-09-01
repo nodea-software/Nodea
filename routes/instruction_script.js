@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
 const dataHelper = require('../utils/data_helper');
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const designer = require('../services/designer.js');
 const session_manager = require('../services/session.js');
 const parser = require('../services/bot.js');
@@ -366,12 +366,12 @@ function executeFile(req, userID, __) {
 	});
 }
 
-router.get('/index', block_access.isLoggedIn, (req, res) => {
+router.get('/index', middlewares.isLoggedIn, (req, res) => {
 	res.render('front/instruction_script');
 });
 
 // Execute script file
-router.post('/execute', block_access.isLoggedIn, multer({
+router.post('/execute', middlewares.isLoggedIn, multer({
 	dest: './upload/'
 }).single('instructions'), (req, res) => {
 
@@ -423,7 +423,7 @@ router.post('/execute', block_access.isLoggedIn, multer({
 });
 
 /* Execute when it's not a file upload but a file written in textarea */
-router.post('/execute_alt', block_access.isLoggedIn, function(req, res) {
+router.post('/execute_alt', middlewares.isLoggedIn, function(req, res) {
 
 	const userID = req.session.passport.user.id;
 	const __ = require("../services/language")(req.session.lang_user).__; // eslint-disable-line

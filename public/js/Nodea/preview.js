@@ -248,6 +248,8 @@ $(function() {
 		}
 	});
 
+	// Nb instructions that will popup modal demo
+	const demo_popup_instruction_nb = [3, 9, 15, 20];
 	$(document).on("submit", "form#previewForm", async(e) => {
 		e.preventDefault();
 
@@ -296,6 +298,11 @@ $(function() {
 				instruction: $(this).find('input[name="instruction"]').val()
 			},
 			success: function(data) {
+
+				if(nodea_demo_mode && data.nb_instruction && demo_popup_instruction_nb.includes(data.nb_instruction)){
+					$("#demo_instructions_modal").find('#nb_instructions_count_modal').html(data.nb_instruction);
+					$("#demo_instructions_modal").modal();
+				}
 
 				$("#errorIframe").hide();
 				$('iframe#iframe').show();

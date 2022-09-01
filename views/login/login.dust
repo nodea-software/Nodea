@@ -53,7 +53,7 @@
 	<p class="mb-1">
 		<a href="/first_connection"><i class="fa fa-sign-in-alt">&nbsp;</i>{#__ key="login.first_connection.title"/}</a>
 	</p>
-	{@ifTrue key=globalConf.open_signup}
+	{@ifTrue key=global_config.open_signup}
 		<p class="mb-0">
 			<a href="/signup"><i class="fa fa-user-plus">&nbsp;</i>{#__ key="login.signup.title"/}</a>
 		</p>

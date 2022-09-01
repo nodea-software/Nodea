@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const fs = require('fs-extra');
 const helpers = require('../utils/helpers');
 const gitHelper = require('../utils/git_helper');
@@ -12,7 +12,7 @@ const fileExtRegex = /(?:\.([^.]+))?$/;
 const excludeFolder = ["node_modules", "sql", "services", "upload", ".git"];
 const excludeFile = [".git_keep", "database.js", "global.js", "icon_list.json", "webdav.js", "package-lock.json", "jsdoc.conf.json", ".eslintignore", ".eslintrc.json"];
 
-router.post('/load_file', block_access.hasAccessApplication, function(req, res) {
+router.post('/load_file', middlewares.hasAccessApplication, function(req, res) {
 	if (!req.body.path.includes("/../workspace/" + req.session.app_name))
 		return res.status(403).send("You won't have the death star plans ! You rebel scum !");
 
@@ -29,7 +29,7 @@ router.post('/load_file', block_access.hasAccessApplication, function(req, res) 
 	res.json(data);
 });
 
-router.post('/update_file', block_access.hasAccessApplication, function(req, res) {
+router.post('/update_file', middlewares.hasAccessApplication, function(req, res) {
 	if (!req.body.path.includes("/../workspace/" + req.session.app_name))
 		return res.status(403).send("You won't have the death star plans ! You rebel scum !");
 

@@ -35,7 +35,7 @@
 		</div>
 		<hr>
 		<div class="col-12">
-			<h1 class="headline"><b>500 - Internal error</b></h1>
+			<h1 class="headline"><b>{code} - Internal error</b></h1>
 			<div class="error-content">
 				{?msg}
 					<h3><i class="fa fa-warning text-yellow"></i>{msg}</h3>

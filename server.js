@@ -4,8 +4,9 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const CronJob = require('cron').CronJob;
 
-const globalConf = require('./config/global');
+const global_config = require('./config/global');
 const dbConfig = require('./config/database');
 
 global.__piecesPath = __dirname + '/structure/pieces';
@@ -35,9 +36,6 @@ const moment = require('moment');
 
 const models = require('./models/');
 const setupHelper = require('./helpers/setup');
-
-// Passport for configuration
-require('./utils/authStrategies');
 const dustHelpers = require('./utils/dust')
 
 const language = require('./services/language');
@@ -65,7 +63,7 @@ app.use(morgan('dev', {
 	},
 	stream: split().on('data', function(line) {
 		if (allLogStream.bytesWritten < 5000) {
-			if(globalConf.env != "develop"){
+			if(global_config.env != "develop"){
 				allLogStream.write(moment().tz('Europe/Paris').format("MM-DD HH:mm:ss") + ": " + ansiToHtml.toHtml(line) + "\n");
 				process.stdout.write(moment().tz('Europe/Paris').format("MM-DD HH:mm:ss") + " " + line + "\n");
 			} else {
@@ -160,11 +158,12 @@ if(dbConfig.dialect == "postgres"){
 		tableName: 'sessions'
 	});
 }
+
 app.use(session({
 	store: sessionStore,
 	cookie: {
 		sameSite: 'lax',
-		secure: globalConf.protocol == 'https',
+		secure: global_config.protocol == 'https',
 		maxAge: 60000 * 60 * 24 // 1 day
 	},
 	key: 'nodea_cookie',
@@ -200,10 +199,13 @@ app.use((req, res, next) => {
 	dustHelpers.locals(res.locals, req, language(lang))
 	res.locals.user_login = req.user ? req.user.login : false;
 	res.locals.user_lang = lang;
-	res.locals.globalConf = globalConf;
+	res.locals.show_demo_popup = req.session ? req.session.show_demo_popup : null;
+	res.locals.global_config = global_config;
 	// Snow and christmas ambiance
 	if(moment().format('MM') == '12')
 		res.locals.noel = true;
+	else if(moment().format('MM-DD') == '10-31')
+		res.locals.spooky = true;
 
 	// Filters
 	dustHelpers.filters(dust, lang);
@@ -230,7 +232,7 @@ app.use((req, res, next) => {
 			req.session.toastr = [];
 		}
 		locals.dark_theme = req.session.dark_theme ? req.session.dark_theme : false;
-		locals.support_chat_enabled = globalConf.support_chat_enabled;
+		locals.support_chat_enabled = global_config.support_chat_enabled;
 		render.call(res, view, locals, cb);
 	};
 	next();
@@ -255,13 +257,24 @@ models.sequelize.sync({
 	await setupHelper.setupWorkspaceNodeModules();
 	await setupHelper.setupTemplateBundle(true);
 
-	if (globalConf.protocol == 'https') {
-		const server = https.createServer(globalConf.ssl, app);
-		server.listen(globalConf.port);
-		console.log("✅ Started https on " + globalConf.port);
+	if (global_config.protocol == 'https') {
+		const server = https.createServer(global_config.ssl, app);
+		server.listen(global_config.port);
+		console.log("✅ Started https on " + global_config.port);
 	} else {
-		app.listen(globalConf.port);
-		console.log("✅ Started on " + globalConf.port);
+		app.listen(global_config.port);
+		console.log("✅ Started on " + global_config.port);
+	}
+
+	if(global_config.demo_mode) {
+		new CronJob('0 0 * * * *', function() {
+			try {
+				// eslint-disable-next-line global-require
+				require('./services/cron/clean_demo.js')();
+			} catch(err) {
+				console.error(err);
+			}
+		}, null, true, 'Europe/Paris');
 	}
 }).catch(err => {
 	console.log("❌ ERROR - SYNC");

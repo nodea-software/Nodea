@@ -10,7 +10,27 @@
 		<!-- Content Header -->
 		<div class="content-header">
 			<div class="container-fluid text-center">
-				<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+				{?noel}
+					{?global_config.demo_mode}
+						<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color_demo_noel.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+					{:else}
+						<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color_noel.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+					{/global_config.demo_mode}
+				{:else}
+					{?spooky}
+						{?global_config.demo_mode}
+							<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color_demo_spooky.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+						{:else}
+							<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color_spooky.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+						{/global_config.demo_mode}
+					{:else}
+						{?global_config.demo_mode}
+							<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+						{:else}
+							<img class="animate__animated animate__fadeIn animate__slow powertip" id="nodeaMainLogo" src="/img/logo/logo_nodea_color.png" alt="Nodea Logo" powertip-content='{#__ key="powertip.home.1" /}' powertip-order='1'/>
+						{/global_config.demo_mode}
+					{/spooky}
+				{/noel}
 			</div>
 		</div>
 
