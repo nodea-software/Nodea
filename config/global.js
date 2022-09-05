@@ -4,7 +4,7 @@ const config = {
 	develop: {
 		env: 'develop',
 		protocol: process.env.PROTOCOL || 'http',
-		host: process.env.HOST || '127.0.0.1',
+		host: process.env.HOSTNAME || '127.0.0.1',
 		port: process.env.PORT || 1337,
 		server_ip: process.env.SERVER_IP || '127.0.0.1',
 		dns: process.env.DOMAIN_STUDIO || 'nodea.studio',
@@ -18,7 +18,7 @@ const config = {
 	studio: {
 		env: 'studio',
 		protocol: process.env.PROTOCOL || 'https',
-		host: process.env.HOST || '127.0.0.1',
+		host: process.env.HOSTNAME || '127.0.0.1',
 		port: process.env.PORT || 1337,
 		server_ip: process.env.SERVER_IP || '127.0.0.1',
 		dns: process.env.DOMAIN_STUDIO || 'nodea.studio',
