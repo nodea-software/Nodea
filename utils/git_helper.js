@@ -67,7 +67,7 @@ function initRepoGitProcess(repoInfo, data, workspacePath) {
 		repoInfo.tokenUrl = repoInfo.tokenUrl.replace('$TOKEN$', data.code_platform.user.accessToken);
 		// Git process per origin and per nodea user
 		gitProcesses[repoInfo.origin][data.currentUser.id] = {
-			simpleGit: require('simple-git/promise')(workspacePath, { // eslint-disable-line
+			simpleGit: require('simple-git')(workspacePath, { // eslint-disable-line
 				config: [
 					`url.${repoInfo.tokenUrl}.insteadOf=${repoInfo.url}`,
 					`user.name=${data.code_platform.user.username}`,

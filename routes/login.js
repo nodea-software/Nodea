@@ -110,7 +110,8 @@ router.get('/first_connection', middlewares.loginAccess, function(req, res) {
 router.post('/first_connection', middlewares.loginAccess, function(req, res) {
 	const login = req.body.login.toLowerCase();
 	const email = req.body.email;
-
+	// Set default null
+	let code_platform_user = null;
 	(async() => {
 		const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
 
@@ -140,13 +141,8 @@ router.post('/first_connection', middlewares.loginAccess, function(req, res) {
 				throw new Error("login.first_connection.wrongToken");
 		}
 
-		// Set default null
-		req.session.code_platform = {
-			user: null
-		};
-
 		if(code_platform.config.enabled)
-			req.session.code_platform.user = await code_platform.initUser(user, req.body.confirm_password);
+			code_platform_user = await code_platform.initUser(user, req.body.confirm_password);
 
 		await user.update({
 			password: password,
@@ -162,6 +158,10 @@ router.post('/first_connection', middlewares.loginAccess, function(req, res) {
 		req.login(user, err => {
 			if (err)
 				throw err;
+
+			req.session.code_platform = {
+				user: code_platform_user
+			};
 
 			req.session.isgenerator = true; // Needed to differentiate from generated app session
 			res.redirect('/default/home');
