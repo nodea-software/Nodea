@@ -165,3 +165,10 @@ label.required:after {
 .badge {
 	color: #FFF;
 }
+
+.form-title {
+	border: 1px solid var(--theme-primary);
+	background-color: #f9fafc;
+	border-radius: 8px;
+	padding-top: 6px;
+}

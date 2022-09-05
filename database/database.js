@@ -105,7 +105,7 @@ exports.getDatabaseSQLType = async(params) => {
 
 exports.retrieveWorkspaceHasManyData = async (data, entity, foreignKey) => {
 	// eslint-disable-next-line global-require
-	const dbConf = require(__workspacePath + '/' + data.application.name + '/config/database');
+	const dbConf = require(global.__workspacePath + '/' + data.application.name + '/config/database');
 	let conn;
 	if(['mysql', 'mariadb'].includes(dbConf.dialect)) {
 		conn = await mysql.createConnection({

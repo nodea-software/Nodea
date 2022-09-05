@@ -1008,7 +1008,7 @@ async function belongsToMany(data, optionObj, setupFunction, exportsContext) {
 // Create a tab with an add button to create multiple new object associated to source entity
 exports.createNewHasMany = async (data) => {
 	const exportsContext = this;
-	const appPath = __workspacePath + '/' + data.application.name + '/app/';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app/';
 
 	const sourceEntity = data.application.findEntity(data.options.source, true);
 	data.np_module = sourceEntity.np_module;

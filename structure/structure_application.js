@@ -100,8 +100,8 @@ exports.setupApplication = async (data) => {
 
 	// Update workspace database config file to point on the new separate DB
 	let appDatabaseConfig = fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', 'utf8');
-	appDatabaseConfig = appDatabaseConfig.replace(/nodea_pwd/g, db_pwd, 'utf8');
-	appDatabaseConfig = appDatabaseConfig.replace(/nodea/g, 'np_' + appName, 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/node@_pwd/g, db_pwd, 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/node@/g, 'np_' + appName, 'utf8');
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', appDatabaseConfig);
 
 	// Update .gitlab-ci.yml with new app DB info

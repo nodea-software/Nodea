@@ -320,7 +320,7 @@ exports.setIcon = async(data) => {
 
 exports.addTitle = async (data) => {
 
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
 	const viewsToProcess = ["create_fields", "update_fields", "show_fields"];
 	const processPromises = [];
 
