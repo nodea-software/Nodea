@@ -55,6 +55,7 @@ exports.setupApplication = async (data) => {
 			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
 			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
 			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
 			"FLUSH PRIVILEGES;"
 		];
@@ -86,8 +87,11 @@ exports.setupApplication = async (data) => {
 		try {
 			await conn.query(request); // eslint-disable-line
 		} catch(err) {
-			if(request.startsWith('GRANT ALL PRIVILEGES'))
+			if(request.startsWith('GRANT ALL PRIVILEGES')){
 				console.warn('Unable to GRANT PRIVILEGES, may cause issues later. REQUEST:', request);
+				if(err.sqlMessage)
+					console.error(err.sqlMessage);
+			}
 			// Postgres error about db user that already exist, indeed postgres do not handle the 'IF NOT EXISTS' syntax...
 			else if(dbConf.dialect != 'postgres' || err.code != '42710'){
 				console.error(err);
