@@ -177,7 +177,7 @@ exports.addUserToProject = async (user, project) => {
 	});
 
 	// If user is already on the gitlab project
-	if(project_members.filter(x => x.id == user.id)) {
+	if(project_members.find(x => x.id == user.id)) {
 		console.warn('GITLAB => User already on project');
 		return;
 	}
