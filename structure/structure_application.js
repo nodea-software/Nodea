@@ -158,16 +158,16 @@ exports.setupApplication = async (data) => {
 
 async function finalizeApplication(application) {
 
-	const appPath = __workspacePath + '/' + application.name + '/app';
+	const appPath = global.__workspacePath + '/' + application.name + '/app';
 
 	// Reset toSync file
 	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify({}, null, 4), 'utf8');
 
 	// eslint-disable-next-line global-require
 	const moduleAlias = require('module-alias');
-	moduleAlias.addAlias('@config', __workspacePath + '/' + application.name + '/config');
-	moduleAlias.addAlias('@core', __workspacePath + '/' + application.name + '/_core');
-	moduleAlias.addAlias('@app', __workspacePath + '/' + application.name + '/app');
+	moduleAlias.addAlias('@config', global.__workspacePath + '/' + application.name + '/config');
+	moduleAlias.addAlias('@core', global.__workspacePath + '/' + application.name + '/_core');
+	moduleAlias.addAlias('@app', global.__workspacePath + '/' + application.name + '/app');
 
 	const workspaceSequelize = require(appPath + '/models/'); // eslint-disable-line
 
@@ -496,12 +496,13 @@ exports.deleteApplication = async(data) => {
 			});
 			await conn.query("DROP DATABASE IF EXISTS `np_" + app_name + "`;");
 			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'127.0.0.1';");
+			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'" + dbConf.host + "';");
 			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'%';");
 		} else if(dbConf.dialect == 'postgres') {
 			conn = new Client({
-				host: globalConf.env == 'studio' ? process.env.DATABASE_IP : dbConf.host,
-				user: globalConf.env == 'studio' ? dbConf.user : dbConf.user,
-				password: globalConf.env == 'studio' ? dbConf.password : dbConf.password,
+				host: dbConf.host,
+				user: dbConf.user,
+				password: dbConf.password,
 				database: dbConf.database,
 				port: dbConf.port
 			});
@@ -510,6 +511,7 @@ exports.deleteApplication = async(data) => {
 			await conn.query("SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();");
 			await conn.query("DROP DATABASE \"np_" + app_name + "\";");
 			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";");
+			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@" + dbConf.host + "\";");
 			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@%\";");
 		}
 		conn.end();
