@@ -15,7 +15,4 @@ fi
 chmod +x install_modules.sh
 ./install_modules.sh
 
-# https://github.com/marcbachmann/node-html-pdf/issues/437#issuecomment-467463285
-npm link phantomjs-prebuilt
-
 node server.js
