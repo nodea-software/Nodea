@@ -814,6 +814,21 @@ exports.createComponentChat = _ => {
 	}
 }
 
+/* TRACEABILITY */
+exports.enabledTracking = result => {
+	const options = {
+		value: 'traceability',
+		processValue: true,
+		source: `e_${result[1].toLowerCase()}`
+	};
+
+	const data = {
+		function: "enabledTracking",
+		options: options
+	};
+	return data;
+};
+
 // ******* INTERFACE ******* //
 exports.setLogo = result => {
 	const value = result[1];
@@ -2402,6 +2417,24 @@ const bot_instructions = {
 		"delete title (.*)",
 		"supprimer  titre (.*)",
 		"supprimer le titre (.*)"
+	],
+	"enabledTracking": [
+		"enable tracking on (.*)",
+		"disabled tracking on (.*)",
+		"activer la tracabilité sur (.*)",
+		"désactiver la tracabilité sur (.*)",
+		"show tracking on (.*)",
+		"hide tracking on (.*)",
+		"afficher la tracabilité sur (.*)",
+		"masquer la tracabilité sur (.*)"
+	],
+	"createNewTracking": [
+		"add component traceability",
+		"create component traceability",
+		"ajouter un composant tracabilite",
+		"créer un composant tracabilite",
+		"ajouter composant tracabilite",
+		"créer composant tracabilite",
 	]
 };
 

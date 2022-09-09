@@ -127,6 +127,7 @@ function addPrefix(string, instructionFunction) {
 		case 'addComponentAddress':
 		case 'removeComponentAddress':
 		case 'setIcon':
+		case 'enabledTracking':
 			return "e_" + string;
 		case 'createNewField':
 		case 'deleteField':

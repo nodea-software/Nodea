@@ -595,10 +595,11 @@ exports.setupRelatedToField = async (data) => {
 	</div>`;
 
 	file = fileBase + '/show_fields.dust';
-	const $ = await domHelper.read(file);
-	$("#fields").append(showField);
-
-	domHelper.write(file, $)
+	if(fs.existsSync(file)){
+		const $ = await domHelper.read(file);
+		$("#fields").append(showField);
+		domHelper.write(file, $)
+	}
 
 	/* ------------- Add new FIELD in list <thead> ------------- */
 	for (let i = 0; i < usingField.length; i++) {

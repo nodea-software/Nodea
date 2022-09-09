@@ -577,6 +577,7 @@ class CoreEntity extends Route {
 					return;
 
 				data.createdRow = await models[this.E_entity].create(data.createObject, {
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
 					transaction: data.transaction
 				});
@@ -892,6 +893,7 @@ class CoreEntity extends Route {
 					return;
 
 				await data.updateRow.update(data.updateObject, {
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
 					transaction: data.transaction
 				});
@@ -1468,6 +1470,7 @@ class CoreEntity extends Route {
 					return;
 
 				await data.deleteObject.destroy({
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					transaction: data.transaction
 				});
 

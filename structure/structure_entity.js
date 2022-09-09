@@ -327,6 +327,11 @@ exports.setupEntity = async (data) => {
 
 	for (let i = 0; i < dustFiles.length; i++) {
 		const fileToWrite = fileBase + '/' + dustFiles[i] + ".dust";
+
+		if(!fs.existsSync(fileToWrite)){
+			continue;
+		}
+
 		let dustContent = fs.readFileSync(fileToWrite, 'utf8');
 		dustContent = dustContent.replace(/custom_module/g, module_name);
 		dustContent = dustContent.replace(/custom_entity/g, entity_name);

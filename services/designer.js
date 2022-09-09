@@ -1950,6 +1950,50 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 	};
 };
 
+exports.enabledTracking = async (data) => {
+	data.module_name = 'm_administration';
+
+	const entityName = data.options.value;
+	// if (data.application.findEntity(entityName) !== false) {
+	// 	const err = new Error('database.entity.create.alreadyExist');
+	// 	err.messageParams = [data.options.showValue];
+	// 	throw err;
+	// }
+	data.trackingExist = data.application.findEntity(entityName);
+
+	data.np_module = data.application.getModule(data.module_name, true);
+	data.entity = data.np_module.addEntity(data.options.value, data.options.showValue, data.options.isParamEntity);
+	data.entitySource = data.np_module.addEntity(data.options.source, data.options.source.substring(2), false);
+
+	if(data.entitySource.getComponent(data.options.source, 'traceability'))
+		throw new Error("structure.component.error.alreadyExistOnEntity");
+
+	await structure_component.createNewTracking(data);
+	data.entitySource.addComponent(data.options.source, data.options.source.substring(2), 'traceability');
+
+	const instructions = [
+		`select entity ${data.options.showValue}`,
+		"add field Entity with type string",
+		"add field Relation Path with type string",
+		"add field ID Entity with type string",
+		"add field Before with type text",
+		"add field After with type text",
+		"add field Action with type string",
+		"add field User related to user"
+	];
+
+	// Start doing necessary instruction for component creation
+	if(!data.trackingExist){
+		await this.recursiveInstructionExecute(data, instructions, 0);
+	}
+
+	return {
+		message: 'database.component.create.success',
+		messageParams: [data.options.showValue]
+	};
+
+}
+
 /* --------------------------------------------------------------- */
 /* -------------------------- INTERFACE -------------------------- */
 /* --------------------------------------------------------------- */

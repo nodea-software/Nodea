@@ -922,3 +922,219 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 	domHelper.write(workspacePath + '/app/views/' + data.entity.name + '/show_fields.dust', $);
 	return true;
 }
+
+exports.createNewTracking = async (data) => {
+	// console.log('🚀 ~ file: structure_component.js ~ line 927 ~ data', data);
+	const module_name = data.np_module.name;
+	let addInSidebar = true;
+
+	const workspacePath = __dirname + '/../workspace/' + data.application.name;
+
+	// Simple entity generation
+	const entity_name = data.options.value;
+	const entity_display_name = data.options.showValue;
+	const entity_url = data.options.urlValue;
+
+	const entity_model = entity_name.charAt(0).toUpperCase() + entity_name.toLowerCase().slice(1);
+
+	// CREATE MODEL FILE
+	const pathModelApp = `${workspacePath}/app/models/${entity_name}.js`;
+	if(!fs.existsSync(pathModelApp)){
+		let modelTemplate = fs.readFileSync(global.__piecesPath + '/models/model.js', 'utf8');
+		modelTemplate = modelTemplate.replace(/MODEL_NAME_LOWER/g, entity_name);
+		modelTemplate = modelTemplate.replace(/MODEL_NAME/g, entity_model);
+		modelTemplate = modelTemplate.replace(/TABLE_NAME/g, entity_name);
+		fs.writeFileSync(pathModelApp, modelTemplate);
+	} else {
+		// Model exist then we don't append in side bar ----
+		addInSidebar = false;
+	}
+
+	// CREATE MODEL ATTRIBUTES FILE
+	const baseAttributes = {
+		"id": {
+			"type": "INTEGER",
+			"autoIncrement": true,
+			"primaryKey": true
+		},
+		"version": {
+			"type": "INTEGER",
+			"defaultValue": 1
+		},
+		"createdBy": {
+			"type": "STRING",
+			"defaultValue": null,
+			"validate": false
+		},
+		"updatedBy": {
+			"type": "STRING",
+			"defaultValue": null,
+			"validate": false
+		}
+	};
+	const attrModelPath = `${workspacePath}/app/models/attributes/${entity_name}.json`;
+	if(!fs.existsSync(attrModelPath)){
+		fs.writeFileSync(attrModelPath, JSON.stringify(baseAttributes, null, 4));
+	}
+
+	// CREATE MODEL OPTIONS (ASSOCIATIONS) FILE
+	const optionsModelPath = `${workspacePath}/app/models/options/${entity_name}.json`;
+	if(!fs.existsSync(optionsModelPath)){
+		fs.writeFileSync(optionsModelPath, JSON.stringify([], null, 4));
+	}
+
+	// CREATE ROUTE FILE
+	const routePath = `${workspacePath}/app/routes/${entity_name}.js`;
+	if(!fs.existsSync(routePath)){
+		const routeTemplate = fs.readFileSync(global.__piecesPath + '/component/tracking/routes/e_traceability.js', 'utf8');
+		// ? COPY IN /_core/routes OR /app/routes ??
+		fs.writeFileSync(routePath, routeTemplate);
+	}
+
+	// ? TRACKING MUST HAVE API ROUTE ??? ----
+	// CREATE API FILE
+	// let apiTemplate = fs.readFileSync(global.__piecesPath + '/api/api_entity.js', 'utf8');
+	// apiTemplate = apiTemplate.replace(/ENTITY_NAME/g, entity_name);
+	// apiTemplate = apiTemplate.replace(/MODEL_NAME/g, entity_model);
+	// fs.writeFileSync(workspacePath + '/app/api/' + entity_name + '.js', apiTemplate);
+
+	// Add entity entry in the application module sidebar
+	if(addInSidebar) {
+		const fileName = workspacePath + '/app/views/layout_' + module_name + '.dust';
+		// Read file and get jQuery instance
+		const $ = await domHelper.read(fileName);
+		let li = '';
+
+		li += `
+			<!--{#entityAccess entity="${entity_url}"}-->
+				<li class='nav-item' data-menu="${entity_url}">
+					<!--{#actionAccess entity="${entity_url}" action="update"}-->
+					<a href='/${entity_url}/list' class="nav-link">
+						<i class="nav-icon fa fa-cog"></i>
+						<p>
+							<!--{#__ key="entity.${entity_name}.label_entity" /}-->
+							<i class="right fas fa-angle-right"></i>
+						</p>
+					</a>
+					<!--{/actionAccess}-->
+				</li>
+			<!--{/entityAccess}-->
+		`;
+
+		// Add new html to document
+		$('.nav-sidebar').append(li);
+
+		// Write back to file
+		domHelper.write(fileName, $);
+	}
+
+	// Copy CRUD view folder and customize them according to data entity properties
+	const viewsPath = `${workspacePath}/app/views/${entity_name}`;
+	if(!fs.existsSync(viewsPath)){
+		fs.copySync(global.__piecesPath + '/component/tracking/views/', viewsPath);
+		const fileBase = workspacePath + '/app/views/' + entity_name;
+		const dustFiles = ["list", "list_fields", "modal"];
+
+		for (let i = 0; i < dustFiles.length; i++) {
+			// TODO file modal.dust ----
+			const fileToWrite = fileBase + '/' + dustFiles[i] + ".dust";
+			let dustContent = fs.readFileSync(fileToWrite, 'utf8');
+			dustContent = dustContent.replace(/custom_module/g, module_name);
+			dustContent = dustContent.replace(/custom_entity/g, entity_name);
+			dustContent = dustContent.replace(/custom_url_entity/g, entity_url);
+
+			if (module_name != "m_home") {
+				// Good indent for dust code
+				const htmlToAdd = "<li class='breadcrumb-item'>\n\
+						<a href='/module/" + module_name.substring(2) + "'>\n\
+							{#__ key=\"module." + module_name + "\"/}\n\
+						</a>\n\
+					</li>";
+
+				dustContent = dustContent.replace(/<!-- SUB MODULE - DO NOT REMOVE -->/g, htmlToAdd);
+			}
+			fs.writeFileSync(fileToWrite, dustContent, "utf8");
+		}
+	}
+
+	// Remove useless dust file if it's a param entity
+	// TODO - Generator is not ready to handle entity without all default views
+
+	// if(data.options.isParamEntity) {
+	// 	const dustToRemove = ["create.dust", "create_fields.dust", "show.dust", "show_fields.dust", "list.dust", "list_fields.dust"];
+	// 	for (let i = 0; i < dustToRemove.length; i++)
+	// 		fs.unlinkSync(workspacePath + '/app/views/' + entity_name + '/' + dustToRemove[i]);
+	// }
+
+	// Write new data entity to access.json file, within module's context
+	const accessPath = workspacePath + '/config/access.json';
+	const accessObject = JSON.parse(fs.readFileSync(accessPath, 'utf8'));
+	if(!accessObject[module_name.substring(2)].entities.find(e => e.name === entity_url)){
+		accessObject[module_name.substring(2)].entities.push({
+			name: entity_url,
+			groups: ["admin"],
+			actions: {
+				read: ["admin"],
+				create: ["admin"],
+				delete: ["admin"],
+				update: ["admin"]
+			}
+		});
+		fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
+	}
+
+	// Separate access.lock.json handlingto avoid filling it with access.json content
+	const accessLockPath = workspacePath + '/config/access.lock.json';
+	const accessLockObject = JSON.parse(fs.readFileSync(accessLockPath, 'utf8'));
+	if(!accessLockObject[module_name.substring(2)].entities.find(e => e.name === entity_url)){
+		accessLockObject[module_name.substring(2)].entities.push({
+			name: entity_url,
+			groups: [],
+			actions: {
+				read: [],
+				create: [],
+				delete: [],
+				update: []
+			}
+		});
+		fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, 4), "utf8");
+	}
+
+	// Add entity in file /config/tracking.json
+	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(Object.keys(trackingObj).find(e => e === entity_name)){
+		throw new Error(`Tracking already enabled on entity ${entity_name}`);
+	}
+
+	trackingObj[data.options.source] = {};
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), "utf8");
+
+	// Add entity locals
+	if(!data.trackingExist){
+		await translateHelper.writeLocales(data.application.name, "entity", entity_name, entity_display_name, data.googleTranslate);
+	}
+
+	// Add hasMany tab on entity
+	// data.options.target = 'e_traceability';
+	// data.options.urlSource = 'dossier';
+	// data.options.as = 'r_traceability';
+	// data.options.foreignKey = '';
+	// data.options.showAs = 'Traçabilité';
+
+	const fileSource = `${workspacePath}/app/views/${data.options.source}/show_fields.dust`;
+	// New entry for source relation view
+	const newLi = '\
+	<li class="nav-item">\n\
+		<a id="r_traceability-click" data-toggle="pill" href="#r_traceability" class="nav-link" role="tab" aria-controls="r_traceability" aria-selected="false">\n\
+			<!--{#__ key="entity.e_traceability.label_entity" /}-->\n\
+		</a>\n\
+	</li>';
+	let newTabContent = fs.readFileSync(__piecesPath + '/component/tracking/views/list_fields.dust', 'utf8');
+	newTabContent = '<div class="tab-pane fade show" id="r_traceability" role="tabpanel" aria-labelledby="r_traceability-tab">' + newTabContent + '</div>'
+	// newTabContent = newTabContent.replace(/ENTITY/g, data.entity.name);
+	await addTab(data.options.source, fileSource, newLi, newTabContent);
+
+	return;
+}

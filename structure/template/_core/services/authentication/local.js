@@ -3,7 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const models = require('@app/models');
 // Handle writing log in file connection.log
-const { writeConnectionLog } = require('@core/helpers/connectionLog');
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 // Default authentication strategy : passport.authenticate('local')
 passport.use(new LocalStrategy({
