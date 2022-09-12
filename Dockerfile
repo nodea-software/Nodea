@@ -5,7 +5,7 @@ LABEL maintainer.name="Nodea" maintainer.email="contact@nodea-software.com"
 RUN rm -rf node_modules/ && rm -rf workspace/
 
 # Update package and install needed module
-RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano
+RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano && apt-get -y install git && apt-get -y install python3
 
 # Main folder
 RUN mkdir /nodea

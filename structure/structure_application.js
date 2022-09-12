@@ -169,6 +169,7 @@ async function finalizeApplication(application) {
 	moduleAlias.addAlias('@core', global.__workspacePath + '/' + application.name + '/_core');
 	moduleAlias.addAlias('@app', global.__workspacePath + '/' + application.name + '/app');
 
+	delete require.cache[require.resolve(appPath + '/models/')];
 	const workspaceSequelize = require(appPath + '/models/'); // eslint-disable-line
 
 	await workspaceSequelize.sequelize.sync({
@@ -486,7 +487,7 @@ exports.deleteApplication = async(data) => {
 	}
 
 	try {
-		let conn;
+		let conn, db_requests = [];
 		if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 			conn = await mysql.createConnection({
 				host: dbConf.host,
@@ -494,10 +495,14 @@ exports.deleteApplication = async(data) => {
 				password: dbConf.password,
 				port: dbConf.port
 			});
-			await conn.query("DROP DATABASE IF EXISTS `np_" + app_name + "`;");
-			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'127.0.0.1';");
-			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'" + dbConf.host + "';");
-			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'%';");
+			db_requests = [
+				"DROP DATABASE IF EXISTS `np_" + app_name + "`;",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'127.0.0.1';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'localhost';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'" + dbConf.host + "';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'%';",
+				"FLUSH PRIVILEGES;"
+			];
 		} else if(dbConf.dialect == 'postgres') {
 			conn = new Client({
 				host: dbConf.host,
@@ -507,12 +512,24 @@ exports.deleteApplication = async(data) => {
 				port: dbConf.port
 			});
 			conn.connect();
-			await conn.query("REVOKE CONNECT ON DATABASE \"np_" + app_name + "\" FROM public;");
-			await conn.query("SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();");
-			await conn.query("DROP DATABASE \"np_" + app_name + "\";");
-			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";");
-			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@" + dbConf.host + "\";");
-			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@%\";");
+			db_requests = [
+				"REVOKE CONNECT ON DATABASE \"np_" + app_name + "\" FROM public;",
+				"SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();",
+				"DROP DATABASE \"np_" + app_name + "\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@" + dbConf.host + "\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@%\";"
+			];
+		}
+
+		for (let i = 0; i < db_requests.length; i++) {
+			const request = db_requests[i];
+			try {
+				await conn.query(request); // eslint-disable-line
+			} catch(err) {
+				console.log('ERROR ON SQL REQUEST: ', request);
+				console.error(err);
+			}
 		}
 		conn.end();
 	} catch (err) {

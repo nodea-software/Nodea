@@ -13,7 +13,8 @@ Official documentation: https://docs.nodea-software.com
 ### Prerequisites
 
 Node.js LTS / Fermium (v14 or later)<br>
-MySQL (8 or higher) / MariaDB (v10.3 or higher) or PostgreSQL server installed and running.
+Default: MariaDB (v10.3 or higher)
+Optional: MySQL (8 or higher) / PostgreSQL
 
 ### Instructions
 

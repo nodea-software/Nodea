@@ -11,8 +11,8 @@ if [[ "$NODEA_ENV" == "studio" ]]; then
 	eval "$(ssh-agent -s)"
 fi
 
-# Install generator and application node_modules
-chmod +x install_modules.sh
-./install_modules.sh
+# Install generator node_modules
+npm install
 
+# Generator server launch
 node server.js
