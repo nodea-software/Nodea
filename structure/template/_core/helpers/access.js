@@ -175,13 +175,33 @@ exports.accessFileManagment = function() {
 		throw new Error("Missing access.json and access.lock.json file.")
 
 	// Generate access.json file
-	if (!fs.existsSync(__configPath + '/access.json'))
+	if (!fs.existsSync(__configPath + '/access.json')) {
 		fs.copySync(__configPath + '/access.lock.json', __configPath + '/access.json');
 
+		// By default fill with admin access for all
+		const access = JSON.parse(fs.readFileSync(__configPath + '/access.json'));
+		for (const nodea_module in access) {
+			access[nodea_module].groups = ['admin'];
+			// Loop on entities to add missing ones
+			const accessEntities = access[nodea_module].entities;
+			for (let i = 0; i < accessEntities.length; i++) {
+				accessEntities[i].groups = ['admin'];
+				accessEntities[i].actions = {
+					read: ['admin'],
+					create: ['admin'],
+					update: ['admin'],
+					delete: ['admin']
+				}
+			}
+		}
+		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+	}
+
 	// Generate access.lock.json file
-	if (!fs.existsSync(__configPath + '/access.lock.json'))
+	if (!fs.existsSync(__configPath + '/access.lock.json')) {
+		// Generate access.json from access.lock.json
 		fs.copySync(__configPath + '/access.json', __configPath + '/access.lock.json');
-	else {
+	} else {
 		// access.lock.json exist, check if new keys to add in access.json
 		const access = JSON.parse(fs.readFileSync(__configPath + '/access.json'))
 		const accessLock = JSON.parse(fs.readFileSync(__configPath + '/access.lock.json'))
