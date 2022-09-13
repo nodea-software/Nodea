@@ -39,7 +39,7 @@ const excludeFile = [".git_keep", "database.js", "global.js", "icon_list.json", 
 const noGitFunctions = ['restart', 'gitPush', 'gitPull', 'installNodePackage'];
 
 // Exclude from UI Editor
-const excludeUIEditor = ['e_role', 'e_group', 'e_api_credentials', 'e_synchronization', 'e_synchro_credentials', 'e_translation', 'e_media', 'e_action', 'e_robot', 'e_task', 'e_documents_task', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_execution', 'e_process', 'e_program', 'e_page', 'e_notification', 'e_inline_help', 'e_user_guide', 'e_document_template', 'e_image_ressources'];
+const excludeUIEditor = ['e_role', 'e_group', 'e_api_credentials', 'e_translation', 'e_media', 'e_action', 'e_robot', 'e_task', 'e_documents_task', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_execution', 'e_process', 'e_program', 'e_page', 'e_notification', 'e_inline_help', 'e_user_guide', 'e_document_template', 'e_image_ressources'];
 
 const mandatoryInstructions = require('../structure/mandatory_instructions');
 

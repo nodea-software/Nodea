@@ -30,12 +30,6 @@ const smsConf = {
 		appKey: "",
 		appSecret: "",
 		consumerKey: ""
-	},
-	tablet: {
-		sender: "",
-		appKey: "",
-		appSecret: "",
-		consumerKey: ""
 	}
 }
 

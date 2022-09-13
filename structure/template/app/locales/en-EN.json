@@ -237,21 +237,6 @@
 		"relatedtomanycheckbox_required": "A field requires you to check at least one checkbox."
 	},
 	"entity": {},
-	"synchro": {
-		"title": "Synchronisation",
-		"configure": "Configure loading data",
-		"list": "List synchronisation",
-		"config": {
-			"title": "Configuration"
-		},
-		"process": {
-			"title": "Synchronisation",
-			"synchronize": "Synchronise",
-			"dumped": "Data dump generated",
-			"no_credentials": "No synchro credentials found",
-			"connection_failed": "Impossible to connect with API."
-		}
-	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Uploading... Please wait.",

@@ -431,16 +431,5 @@ module.exports = {
 							}
 			}
 		}
-	},
-	synchro: {
-		writeJournal: function (line) {
-			if (globalConfig.env != "tablet")
-				return;
-			const journal = JSON.parse(fs.readFileSync(__appPath + '/sync/journal.json', 'utf8'));
-			if (!Array.isArray(journal.transactions))
-				journal.transactions = [];
-			journal.transactions.push(line);
-			fs.writeFileSync(__appPath + '/sync/journal.json', JSON.stringify(journal, null, 4), 'utf8');
-		}
 	}
 };

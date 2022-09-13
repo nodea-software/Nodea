@@ -70,22 +70,6 @@ const config = {
 			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
 			passphrase: ''
 		}
-	},
-	tablet: {
-		env: 'tablet',
-		protocol: 'http',
-		host: '127.0.0.1',
-		localstorage: __dirname + "/../upload/",
-		syncfolder: __dirname + '/../sync/',
-		port: process.env.PORT || 1338,
-		authStrategy: process.env.AUTH || 'local',
-		smsProvider: process.env.SMS || 'ovh',
-		logConnexionFolder: __dirname + "/../logs/",
-		ssl: {
-			key: /*fs.readFileSync('./cacerts/private.key')*/ "fakeKey",
-			cert: /*fs.readFileSync('./cacerts/wildcard_newmips.crt')*/ "fakeCert",
-			passphrase: ''
-		}
 	}
 }
 

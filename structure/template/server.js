@@ -147,15 +147,6 @@ require('@core/server/database').then(async _ => {
 	// Start server on port
 	server.listen(globalConf.port);
 
-	if (globalConf.env == 'tablet') {
-		try {
-			const cordova = require('cordova-bridge'); // eslint-disable-line
-			cordova.channel.send('CORDOVA STARTED');
-		} catch(e) {
-			console.error("Couldn't require 'cordova-bridge'");
-		}
-	}
-
 	console.log("✅ Started " + globalConf.protocol + " on " + globalConf.port + " !");
 }).catch(err => {
 	console.error(err);

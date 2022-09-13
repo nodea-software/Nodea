@@ -27,24 +27,6 @@
 		"input_extentions": ["pdf", "dust", "html", "doc", "docx"],
 		"output_extentions": ["docx", "pdf", "html"]
 	},
-	"synchronization": {
-		"ignore_list": [
-			"e_action",
-			"e_api_credentials",
-			"e_group",
-			"e_role",
-			"e_media_function",
-			"e_media_mail",
-			"e_media_notification",
-			"e_notification",
-			"e_status",
-			"e_synchronization",
-			"e_synchro_credentials",
-			"e_translation",
-			"e_media_sms",
-			"e_user"
-		]
-	},
 	"resizePicture": {
 		"enabled": false,
 		"width": 400,

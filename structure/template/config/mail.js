@@ -65,19 +65,6 @@ const mailConf = {
 		},
 		from: 'Nodea App <no-reply@nodea-software.com>',
 		host: 'host'
-	},
-	tablet: {
-		transport: {
-			host: 'mail',
-			port: 465,
-			secure: true,
-			auth: {
-				user: '',
-				pass: ''
-			}
-		},
-		from: 'Nodea App <no-reply@nodea-software.com>',
-		host: 'host'
 	}
 }
 

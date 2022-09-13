@@ -605,18 +605,6 @@ class CoreEntity extends Route {
 						await association['add' + modelName](data.createdRow.id, {
 							transaction: data.transaction
 						});
-
-						if (globalConfig.env == "tablet") {
-							// Write add association to synchro journal
-							this.helpers.entity.synchro.writeJournal({
-								verb: "associate",
-								id: data.req.query.associationFlag,
-								target: this.e_entity,
-								entityName: data.req.query.associationSource,
-								func: 'add' + modelName,
-								ids: data.createdRow.id
-							});
-						}
 					} else {
 						const obj = {};
 						obj[data.req.query.associationForeignKey] = data.createdRow.id;
@@ -1377,24 +1365,6 @@ class CoreEntity extends Route {
 				await entity['remove' + data.alias.capitalizeFirstLetter()](data.id_to_remove, {
 					transaction: data.transaction
 				});
-
-				if (globalConfig.env == "tablet") {
-					let target = "";
-					for (let i = 0; i < this.options.length; i++)
-						if (this.options[i].as == data.alias) {
-							target = this.options[i].target;
-							break;
-						}
-
-					this.helpers.entity.synchro.writeJournal({
-						verb: "associate",
-						id: data.idEntity,
-						target: target,
-						entityName: this.e_entity,
-						func: 'remove' + data.alias.capitalizeFirstLetter(),
-						ids: data.id_to_remove
-					});
-				}
 
 				if (await this.getHook('fieldset_remove', 'beforeResponse', data) === false)
 					return;

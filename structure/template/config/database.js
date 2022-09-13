@@ -40,13 +40,6 @@ const databaseConf = {
 		password: process.env.APP_DB_PWD || 'node@_pwd',
 		database: process.env.APP_DB_NAME || 'node@',
 		dialect: process.env.APP_DB_DIALECT || 'mariadb' // mysql || mariadb || postgres
-	},
-	tablet: {
-		dialect: 'sqlite',
-		// iOS
-		// storage: process.env.CORDOVA_APP_DIR + '/../Library/LocalDatabase/node@.db'
-		// ANDROID :
-		storage: __dirname + '/node@.db'
 	}
 }
 

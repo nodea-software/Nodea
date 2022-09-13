@@ -392,18 +392,6 @@ exports.initializeApplication = async(application) => {
 	fs.copySync(piecesPath + '/administration/views/modules/m_administration.dust', workspacePath + '/app/views/modules/m_administration.dust');
 
 	//
-	// SYNCHRONIZATION
-	//
-	// Delete and copy synchronization files/pieces
-	const synchroViews = fs.readdirSync(workspacePath + '/app/views/e_synchronization');
-	for (let i = 0; i < synchroViews.length; i++)
-		fs.remove(workspacePath + '/app/views/e_synchronization/' + synchroViews[i], (err) => {
-			if (err) console.error(err);
-		});
-
-	fs.copySync(piecesPath + '/component/synchronization/routes/e_synchronization.js', workspacePath + '/app/routes/e_synchronization.js');
-
-	//
 	// API
 	//
 	// API credentials must not be available to API calls, delete the file
