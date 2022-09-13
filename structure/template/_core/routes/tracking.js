@@ -135,6 +135,20 @@ class Tracking extends Route {
 				if (await this.getHook('datalist', 'beforeDatatableQuery', data) === false)
 					return;
 
+				if(data.req.query.entity){
+					data.speWhere = {
+						...data.speWhere,
+						f_entity: data.req.query.entity
+					}
+				}
+
+				if(data.req.query.id){
+					data.speWhere = {
+						...data.speWhere,
+						f_id_entity: data.req.query.id
+					}
+				}
+
 				data.rawData = await this.helpers.datatable(this.E_entity, data.tableInfo, data.speInclude, data.speWhere);
 
 				/**

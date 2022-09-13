@@ -877,6 +877,9 @@ exports.createNewHasOne = async (data) => {
 	// Create the opposite hasMany association
 	structure_entity.setupAssociation(reversedOption);
 
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
+
 	// Generator tabulation in display
 	await structure_entity.setupHasOneTab(data);
 
@@ -1152,6 +1155,9 @@ exports.createNewHasMany = async (data) => {
 	structure_entity.setupAssociation(associationOption);
 	// Generate opposite belongsTo relation in options
 	structure_entity.setupAssociation(reversedOptions);
+
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
 
 	// Ajouter le field d'assocation dans create_fields/update_fields. Ajout d'un tab dans le show
 	await structure_entity.setupHasManyTab(data);
@@ -1954,11 +1960,6 @@ exports.enabledTracking = async (data) => {
 	data.module_name = 'm_administration';
 
 	const entityName = data.options.value;
-	// if (data.application.findEntity(entityName) !== false) {
-	// 	const err = new Error('database.entity.create.alreadyExist');
-	// 	err.messageParams = [data.options.showValue];
-	// 	throw err;
-	// }
 	data.trackingExist = data.application.findEntity(entityName);
 
 	data.np_module = data.application.getModule(data.module_name, true);
@@ -1979,7 +1980,7 @@ exports.enabledTracking = async (data) => {
 		"add field Before with type text",
 		"add field After with type text",
 		"add field Action with type string",
-		"add field User related to user"
+		"add field User related to user using login"
 	];
 
 	// Start doing necessary instruction for component creation

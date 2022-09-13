@@ -138,8 +138,8 @@ module.exports = {
 				}
 
 				const objTracabilite = {
-					f_entity: __(`entity.${options.entitySource}.label_entity`),
-					f_relationpath: relationPath,
+					f_entity: options.upperEntity ? options.upperEntity : options.entitySource,
+					f_relation_path: relationPath,
 					f_id_entity: values.id,
 					f_before: '',
 					f_after: changesNewValues,
@@ -248,8 +248,8 @@ module.exports = {
 				}
 
 				const objTracabilite = {
-					f_entity: __(`entity.${options.upperEntity ? options.upperEntity : options.entitySource}.label_entity`),
-					f_relationpath: relationPath,
+					f_entity: options.upperEntity ? options.upperEntity : options.entitySource,
+					f_relation_path: relationPath,
 					f_id_entity: values.id,
 					f_before: changesOldValues,
 					f_after: changesNewValues,
@@ -346,8 +346,8 @@ module.exports = {
 				}
 
 				const objTracabilite = {
-					f_entity: __(`entity.${options.entitySource}.label_entity`),
-					f_relationpath: relationPath,
+					f_entity: options.upperEntity ? options.upperEntity : options.entitySource,
+					f_relation_path: relationPath,
 					f_id_entity: oldValues.id,
 					f_before: changesOldValues,
 					f_after: '',

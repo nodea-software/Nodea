@@ -924,7 +924,6 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 }
 
 exports.createNewTracking = async (data) => {
-	// console.log('🚀 ~ file: structure_component.js ~ line 927 ~ data', data);
 	const module_name = data.np_module.name;
 	let addInSidebar = true;
 
@@ -1010,7 +1009,7 @@ exports.createNewTracking = async (data) => {
 				<li class='nav-item' data-menu="${entity_url}">
 					<!--{#actionAccess entity="${entity_url}" action="update"}-->
 					<a href='/${entity_url}/list' class="nav-link">
-						<i class="nav-icon fa fa-cog"></i>
+						<i class="nav-icon fas fa-clipboard"></i>
 						<p>
 							<!--{#__ key="entity.${entity_name}.label_entity" /}-->
 							<i class="right fas fa-angle-right"></i>
@@ -1109,20 +1108,24 @@ exports.createNewTracking = async (data) => {
 	}
 
 	trackingObj[data.options.source] = {};
-	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), "utf8");
+
+	// Add relation entity
+	const optionsEntitySourcePath = `${workspacePath}/app/models/options/${data.options.source}.json`;
+	const entitySourceOptions = fs.readFileSync(optionsEntitySourcePath, 'utf8');
+	JSON.parse(entitySourceOptions).map(o => {
+		if(['hasOne', 'hasMany'].includes(o.structureType)){
+			trackingObj[data.options.source][o.target] = {};
+		}
+		return true;
+	});
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
 
 	// Add entity locals
 	if(!data.trackingExist){
-		await translateHelper.writeLocales(data.application.name, "entity", entity_name, entity_display_name, data.googleTranslate);
+		await translateHelper.writeLocales(data.application.name, 'entity', entity_name, entity_display_name, data.googleTranslate);
 	}
 
 	// Add hasMany tab on entity
-	// data.options.target = 'e_traceability';
-	// data.options.urlSource = 'dossier';
-	// data.options.as = 'r_traceability';
-	// data.options.foreignKey = '';
-	// data.options.showAs = 'Traçabilité';
-
 	const fileSource = `${workspacePath}/app/views/${data.options.source}/show_fields.dust`;
 	// New entry for source relation view
 	const newLi = '\
@@ -1131,10 +1134,29 @@ exports.createNewTracking = async (data) => {
 			<!--{#__ key="entity.e_traceability.label_entity" /}-->\n\
 		</a>\n\
 	</li>';
-	let newTabContent = fs.readFileSync(__piecesPath + '/component/tracking/views/list_fields.dust', 'utf8');
-	newTabContent = '<div class="tab-pane fade show" id="r_traceability" role="tabpanel" aria-labelledby="r_traceability-tab">' + newTabContent + '</div>'
-	// newTabContent = newTabContent.replace(/ENTITY/g, data.entity.name);
+
+	const trackingListPath = `${__piecesPath}/component/tracking/views/list_fields.dust`;
+	let newTabContent = fs.readFileSync(trackingListPath, 'utf8');
+	newTabContent = '<div class="tab-pane fade show" id="r_traceability" role="tabpanel" aria-labelledby="r_traceability-tab">' + newTabContent + '</div>';
 	await addTab(data.options.source, fileSource, newLi, newTabContent);
+	// Change table URL in tab of source entity
+	const $list = domHelper.read(fileSource);
+	$list(`#table_${entity_name}`).attr('data-url', `/${data.options.urlValue}/datalist?entity=${data.options.source}&id={id}`);
+	domHelper.write(fileSource, $list);
 
 	return;
+}
+
+exports.doEnableTracking = (data) => {
+	// Add relation entity in file /config/tracking.json
+	const workspacePath = __dirname + '/../workspace/' + data.application.name;
+	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(Object.keys(trackingObj).includes(data.source)){
+		trackingObj[data.source][data.target] = {};
+		fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+	}
+
+	return true;
 }

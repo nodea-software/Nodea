@@ -249,34 +249,40 @@ exports.setupField = async (data) => {
 	}
 
 	/* ----------------- 4 - Add the fields in all the views  ----------------- */
-	const fileBase = workspacePath + '/app/views/' + entity_name;
+	// * A revoir---
+	const entityNoUpdateViews = ['e_traceability'];
 
-	const filePromises = [];
-	/* show_fields.dust file with a disabled input */
-	const htmlFieldData = {
-		type: field_type,
-		givenType: data.options.givenType || null,
-		field: field_name,
-		entity: entity_name,
-		values: field_values,
-		defaultValue: defaultValue
-	};
-	let field_html = fieldHelper.getFieldHtml(htmlFieldData, true, "show");
-	filePromises.push(fieldHelper.updateFile(fileBase, "show_fields", field_html));
+	if(!entityNoUpdateViews.includes(entity_name)) {
+		const fileBase = workspacePath + '/app/views/' + entity_name;
 
-	/* create_fields.dust */
-	field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "create");
-	filePromises.push(fieldHelper.updateFile(fileBase, "create_fields", field_html));
+		const filePromises = [];
+		/* show_fields.dust file with a disabled input */
+		const htmlFieldData = {
+			type: field_type,
+			givenType: data.options.givenType || null,
+			field: field_name,
+			entity: entity_name,
+			values: field_values,
+			defaultValue: defaultValue
+		};
+		let field_html = fieldHelper.getFieldHtml(htmlFieldData, true, "show");
+		filePromises.push(fieldHelper.updateFile(fileBase, "show_fields", field_html));
 
-	/* update_fields.dust */
-	field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "update");
-	filePromises.push(fieldHelper.updateFile(fileBase, "update_fields", field_html));
+		/* create_fields.dust */
+		field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "create");
+		filePromises.push(fieldHelper.updateFile(fileBase, "create_fields", field_html));
 
-	/* list_fields.dust */
-	field_html = fieldHelper.getFieldInHeaderListHtml(field_name, entity_name, field_type);
-	filePromises.push(fieldHelper.updateListFile(fileBase, "list_fields", field_html.headers));
+		/* update_fields.dust */
+		field_html = fieldHelper.getFieldHtml(htmlFieldData, false, "update");
+		filePromises.push(fieldHelper.updateFile(fileBase, "update_fields", field_html));
 
-	await Promise.all(filePromises);
+		/* list_fields.dust */
+		field_html = fieldHelper.getFieldInHeaderListHtml(field_name, entity_name, field_type);
+		filePromises.push(fieldHelper.updateListFile(fileBase, "list_fields", field_html.headers));
+
+		await Promise.all(filePromises);
+	}
+
 	// Field application locales
 	await translateHelper.writeLocales(data.application.name, "field", entity_name, [field_name, data.options.showValue], data.googleTranslate);
 
