@@ -1,4 +1,4 @@
-{>"layout_custom_module"/}
+{>"layout_m_administration"/}
 
 {<custom_css_2}
 	<link href='/core/bundle/nodea_datatable_css.bundle.css' rel='stylesheet' type='text/css'>
@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <h1 class="m-0">
-                    {#__ key="module.custom_module"/}&nbsp;
+                    {#__ key="module.m_administration"/}&nbsp;
                     <small>
                         {#__ key="module.module"/}
                     </small>
@@ -23,9 +23,13 @@
                             {#__ key="module.home"/}
                         </a>
                     </li>
-                    <!-- SUB MODULE - DO NOT REMOVE -->
+                    <li class='breadcrumb-item'>
+					<a href='/module/administration'>
+						{#__ key="module.m_administration"/}
+					</a>
+				</li>
                     <li class="breadcrumb-item active">
-                        {#__ key="entity.custom_entity.label_entity"/}
+                        {#__ key="entity.e_traceability.label_entity"/}
                     </li>
                 </ol>
             </div>
@@ -41,7 +45,7 @@
 					<div class="card-header">
 						<h3 class="card-title">
 							{#__ key="operation.list"/}&nbsp;
-							{#__ key="entity.custom_entity.label_entity"/}
+							{#__ key="entity.e_traceability.label_entity"/}
 						</h3>
 						<div class="card-tools">
 							<button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -54,7 +58,19 @@
 							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
 						</a>&nbsp;&nbsp;
 						<br><br>
-						{>"custom_entity/list_fields"/}
+						<div data-field="f_entity" class="col-6">
+							<div class="form-group">
+								<label for="f_entity">
+									{#__ key="entity.e_traceability.f_entity" /}&nbsp;
+									{@inline_help field="f_entity"}
+									<i data-entity="e_traceability" data-field="f_entity" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+									{/inline_help}
+								</label>
+								<select class="ajax form-control" name="f_entity" data-source="traceability" data-url="/traceability/search?group=f_entity" data-using="f_entity" width="100%"></select>
+							</div>
+						</div>
+						<br>
+						{>"e_traceability/list_fields"/}
 						<br>
 						<a class="btn btn-default" href="javascript:history.back();">
 							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
@@ -78,10 +94,13 @@
 		/* Datatable throw error instead of alert */
 		$.fn.dataTable.ext.errMode = 'throw';
 
+		let datatable;
 		$(function() {
 			$("table:not(.no-init)").each(function() {
-				NodeaTable("#"+$(this).attr('id'));
+				datatable = NodeaTable("#"+$(this).attr('id'));
 			});
 		});
 	</script>
+	<!-- Handle filter entity -->
+	<script src='/core/js/component/tracking.js'></script>
 {/custom_js}

@@ -8,9 +8,6 @@ const Entity = require('@core/abstract_routes/entity');
 const Login = require('@core/routes/login');
 const Root = require('@core/routes/root');
 
-// TODO => Voir si on peut éviter ça
-const Tracking = require('@core/routes/tracking');
-
 module.exports = app => {
 	fs.readdirSync(__dirname)
 		.filter(file => file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js')
@@ -25,7 +22,7 @@ module.exports = app => {
 			let url;
 			if (route instanceof Module)
 				url = '/module';
-			else if (route instanceof Entity || route instanceof Tracking || file.startsWith('c_'))
+			else if (route instanceof Entity || file.startsWith('c_'))
 				url = '/' + file.substring(2);
 			else if (route instanceof Login || route instanceof Root)
 				url = '/';

@@ -175,6 +175,14 @@ const mandatoryInstructions = [
 	"set field Image required",
 	"add field code",
 	"set field code required",
+	"add entity Traceability",
+	"add field Entity with type string",
+	"add field Relation Path with type string",
+	"add field ID Entity with type string",
+	"add field Before with type text",
+	"add field After with type text",
+	"add field Action with type string",
+	"add field User related to user using login",
 	"select module home"
 ];
 

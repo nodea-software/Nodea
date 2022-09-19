@@ -1956,44 +1956,105 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 	};
 };
 
-exports.enabledTracking = async (data) => {
-	data.module_name = 'm_administration';
+exports.enabledTracking = (data) => {
+	const componentName = data.options.source;
+	data.entitySource = data.application.findEntity(data.options.value);
 
-	const entityName = data.options.value;
-	data.trackingExist = data.application.findEntity(entityName);
-
-	data.np_module = data.application.getModule(data.module_name, true);
-	data.entity = data.np_module.addEntity(data.options.value, data.options.showValue, data.options.isParamEntity);
-	data.entitySource = data.np_module.addEntity(data.options.source, data.options.source.substring(2), false);
-
-	if(data.entitySource.getComponent(data.options.source, 'traceability'))
-		throw new Error("structure.component.error.alreadyExistOnEntity");
-
-	await structure_component.createNewTracking(data);
-	data.entitySource.addComponent(data.options.source, data.options.source.substring(2), 'traceability');
-
-	const instructions = [
-		`select entity ${data.options.showValue}`,
-		"add field Entity with type string",
-		"add field Relation Path with type string",
-		"add field ID Entity with type string",
-		"add field Before with type text",
-		"add field After with type text",
-		"add field Action with type string",
-		"add field User related to user using login"
-	];
-
-	// Start doing necessary instruction for component creation
-	if(!data.trackingExist){
-		await this.recursiveInstructionExecute(data, instructions, 0);
+	if(!data.entitySource || !data.entitySource.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
 	}
+
+	structure_component.createNewTracking(data);
 
 	return {
 		message: 'database.component.create.success',
-		messageParams: [data.options.showValue]
+		messageParams: [componentName]
 	};
 
-}
+};
+
+exports.disabledTracking = async (data) => {
+	const componentName = data.options.source;
+	data.entitySource = data.application.findEntity(data.options.value);
+
+	if(!data.entitySource || !data.entitySource.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	await structure_component.disabledTracking(data);
+	if(data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
+		data.entitySource.entity.deleteComponent(`e_${componentName}`, 'tracking');
+	}
+
+	return {
+		message: 'database.component.delete.success',
+		messageParams: [componentName]
+	};
+
+};
+
+exports.showTracking = async (data) => {
+	const componentName = data.options.source;
+	data.entitySource = data.application.findEntity(data.options.value);
+
+	if(!data.entitySource || !data.entitySource.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	// Check if already display
+	if(data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyShow',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.showTracking(data);
+	data.entitySource.entity.addComponent(`e_${componentName}`, componentName, 'tracking');
+
+	return {
+		message: 'database.component.display.show',
+		messageParams: [componentName, data.options.showValue]
+	};
+
+};
+
+exports.hideTracking = async (data) => {
+	const componentName = data.options.source;
+	data.entitySource = data.application.findEntity(data.options.value);
+
+	if(!data.entitySource || !data.entitySource.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	if(!data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyHide',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.hideTracking(data);
+	data.entitySource.entity.deleteComponent(`e_${componentName}`, 'tracking');
+
+	return {
+		message: 'database.component.display.hide',
+		messageParams: [componentName, data.options.showValue]
+	};
+
+};
 
 /* --------------------------------------------------------------- */
 /* -------------------------- INTERFACE -------------------------- */

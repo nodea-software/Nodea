@@ -643,5 +643,18 @@
                 </ul>
             </li>
         {/eq}
+		{#entityAccess entity="traceability"}
+		<li class='nav-item' data-menu="traceability">
+			{#actionAccess entity="traceability" action="read"}
+			<a href='/traceability/list' class="nav-link">
+				<i class="nav-icon fas fa-clipboard"></i>
+				<p>
+					{#__ key="entity.e_traceability.label_entity" /}
+					<i class="right fas fa-angle-right"></i>
+				</p>
+			</a>
+			{/actionAccess}
+		</li>
+		{/entityAccess}
     </ul>
 {/sidebar}

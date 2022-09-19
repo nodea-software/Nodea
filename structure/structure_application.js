@@ -13,6 +13,7 @@ const dbConf = require('../config/database.js');
 const studio_manager = require('../services/studio_manager');
 const models = require('../models/');
 const exec = require('child_process').exec;
+const structure_component = require('./structure_component');
 
 exports.setupApplication = async (data) => {
 
@@ -443,6 +444,11 @@ exports.initializeApplication = async(application) => {
 	//
 	// Remove tests from mandatory app instructions, should be written manually
 	fs.rmdirSync(workspacePath + '/app/tests/jest/', {recursive: true, force: true});
+
+	//
+	// TRACEABILITY
+	//
+	structure_component.initTracking(application);
 
 	return await initializeWorkflow(application);
 }

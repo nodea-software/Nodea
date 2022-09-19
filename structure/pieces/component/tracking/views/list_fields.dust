@@ -1,9 +1,6 @@
 <table id="table_e_traceability" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
 	<thead class="main">
 		<tr class="fields">
-			{#actionAccess entity="traceability" action="read"}
-			<th data-type="show"></th>
-			{/actionAccess}
 			<th data-field="createdAt" data-col="createdAt" data-type="datetimeTZ">
 				{#__ key="entity.e_traceability.createdAt"/}
 			</th>
@@ -33,9 +30,6 @@
 	</thead>
 	<thead class="filters">
 		<tr class="fields">
-			{#actionAccess entity="traceability" action="read"}
-			<th data-type="show"></th>
-			{/actionAccess}
 			<th data-field="createdAt" data-col="createdAt" data-type="datetimeTZ">
 				{#__ key="entity.e_traceability.createdAt"/}
 			</th>

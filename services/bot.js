@@ -817,13 +817,55 @@ exports.createComponentChat = _ => {
 /* TRACEABILITY */
 exports.enabledTracking = result => {
 	const options = {
-		value: 'traceability',
+		value: result[1],
 		processValue: true,
-		source: `e_${result[1].toLowerCase()}`
+		source: 'traceability'
 	};
 
 	const data = {
 		function: "enabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.disabledTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "disabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.showTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "showTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.hideTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "hideTracking",
 		options: options
 	};
 	return data;
@@ -2420,21 +2462,19 @@ const bot_instructions = {
 	],
 	"enabledTracking": [
 		"enable tracking on (.*)",
-		"disabled tracking on (.*)",
-		"activer la tracabilité sur (.*)",
-		"désactiver la tracabilité sur (.*)",
-		"show tracking on (.*)",
-		"hide tracking on (.*)",
-		"afficher la tracabilité sur (.*)",
-		"masquer la tracabilité sur (.*)"
+		"activer la tracabilité sur (.*)"
 	],
-	"createNewTracking": [
-		"add component traceability",
-		"create component traceability",
-		"ajouter un composant tracabilite",
-		"créer un composant tracabilite",
-		"ajouter composant tracabilite",
-		"créer composant tracabilite",
+	"disabledTracking": [
+		"disable tracking on (.*)",
+		"désactiver la tracabilité sur (.*)",
+	],
+	"showTracking": [
+		"show tracking on (.*)",
+		"afficher la tracabilité sur (.*)",
+	],
+	"hideTracking": [
+		"hide tracking on (.*)",
+		"masquer la tracabilité sur (.*)"
 	]
 };
 
