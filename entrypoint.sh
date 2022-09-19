@@ -8,7 +8,7 @@ if [[ "$NODEA_ENV" == "studio" ]]; then
 
 	# Write SSH Config file
 	if [ ! -d "/root/.ssh" ]; then
-		mkdir/root/.ssh
+		mkdir /root/.ssh
 	fi
 
 	if [ ! "/root/.ssh/config" ]; then

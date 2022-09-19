@@ -17,4 +17,8 @@ const config = {
 	}
 }
 
+// Convert to boolean if needed
+if(typeof config[globalConf.env].enabled != 'boolean')
+	config[globalConf.env].enabled = config[globalConf.env].enabled == 'true' || config[globalConf.env].enabled == '1';
+
 module.exports = config[globalConf.env];
