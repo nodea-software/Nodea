@@ -21,7 +21,7 @@ stages:
 node_modules:
   stage: build
   script:
-    - npm i
+    - npm i --no-optional
   artifacts:
     expire_in: 1 days
     when: on_success

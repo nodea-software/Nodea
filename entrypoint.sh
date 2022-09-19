@@ -7,6 +7,14 @@ if [[ "$NODEA_ENV" == "studio" ]]; then
 	git config --global user.email "$SUB_DOMAIN@$DOMAIN_STUDIO"
 
 	# Write SSH Config file
+	if [ ! -d "/root/.ssh" ]; then
+		mkdir/root/.ssh
+	fi
+
+	if [ ! "/root/.ssh/config" ]; then
+		touch /root/.ssh/config
+	fi
+
 	printf "Host gitlab.%s\n	Port 2222\n	StrictHostKeyChecking no\n" "$DOMAIN_STUDIO" > /root/.ssh/config
 	eval "$(ssh-agent -s)"
 fi
