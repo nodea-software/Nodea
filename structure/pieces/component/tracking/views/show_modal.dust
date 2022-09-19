@@ -1,0 +1,85 @@
+{#e_traceability}
+<div id="fields" class="row">
+	<div data-field="f_entity" class="col-6">
+		<div class="form-group">
+			<label for="f_entity">
+				{#__ key="entity.e_traceability.f_entity"/}
+				{@inline_help field="f_entity"}
+				<i data-entity="e_traceability" data-field="f_entity" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control" placeholder='{#__ key="entity.e_traceability.f_entity" /}' name="f_entity" value="{f_entity}" type="text" maxlength="255" readonly="">
+		</div>
+	</div>
+	<div data-field="f_relation_path" class="col-6">
+		<div class="form-group">
+			<label for="f_relation_path">
+				{#__ key="entity.e_traceability.f_relation_path"/}
+				{@inline_help field="f_relation_path"}
+				<i data-entity="e_traceability" data-field="f_relation_path" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control" placeholder='{#__ key="entity.e_traceability.f_relation_path" /}' name="f_relation_path" value="{f_relation_path}" type="text" maxlength="255" readonly="">
+		</div>
+	</div>
+	<div data-field="f_id_entity" class="col-2">
+		<div class="form-group">
+			<label for="f_id_entity">
+				{#__ key="entity.e_traceability.f_id_entity"/}
+				{@inline_help field="f_id_entity"}
+				<i data-entity="e_traceability" data-field="f_id_entity" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control" placeholder='{#__ key="entity.e_traceability.f_id_entity" /}' name="f_id_entity" value="{f_id_entity}" type="text" maxlength="255" readonly="">
+		</div>
+	</div>
+	<div data-field="f_action" class="col-10">
+		<div class="form-group">
+			<label for="f_action">
+				{#__ key="entity.e_traceability.f_action"/}
+				{@inline_help field="f_action"}
+				<i data-entity="e_traceability" data-field="f_action" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control" placeholder='{#__ key="entity.e_traceability.f_action" /}' name="f_action" value="{f_action}" type="text" maxlength="255" readonly="">
+		</div>
+	</div>
+	<div data-field="f_before" class="col-6">
+		<div class="form-group">
+			<label for="f_before">
+				{#__ key="entity.e_traceability.f_before"/}
+				{@inline_help field="f_before"}
+				<i data-entity="e_traceability" data-field="f_before" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<div class="show-textarea">
+				{f_before|s}
+			</div>
+		</div>
+	</div>
+	<div data-field="f_after" class="col-6">
+		<div class="form-group">
+			<label for="f_after">
+				{#__ key="entity.e_traceability.f_after"/}
+				{@inline_help field="f_after"}
+				<i data-entity="e_traceability" data-field="f_after" class="inline-help fa fa-info-circle"></i>
+				{/inline_help}
+			</label>
+			<div class="show-textarea">
+				{f_after|s}
+			</div>
+		</div>
+	</div>
+	<div data-field="f_user" class="col-12">
+		<div class="form-group">
+			<label for="r_user">
+				{#__ key="entity.e_traceability.r_user" /}&nbsp;
+				{@inline_help field="r_user"}
+				<i data-entity="e_traceability" data-field="r_user" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<input class="form-control input" name="r_user" value="{r_user.f_login}" placeholder='{#__ key="entity.e_traceability.r_user" /}' type="text" readonly="">
+		</div>
+	</div>
+</div>
+{/e_traceability}

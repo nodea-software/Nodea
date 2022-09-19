@@ -1,0 +1,69 @@
+{! INLINE HELP MODAL !}
+<div id="inlineHelp" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
+				<button id="prevHelp" type="button" class="btn btn-primary">{#__ key="button.previous" /}</button>
+				<button id="nextHelp" type="button" class="btn btn-primary">{#__ key="button.next" /}</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{! STATUS COMMENT MODAL !}
+<div id="statusComment" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form class="no-init" method="post">
+				<div class="modal-header">
+					<h4 class="modal-title">{#__ key="entity.e_status.modal_title" /}</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<textarea name="comment"></textarea>
+					<input type="hidden" name="parentName">
+					<input type="hidden" name="parentId">
+					<input type="hidden" name="field">
+					<input type="hidden" name="statusId">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
+					<button type="submit" class="btn btn-primary">
+					<i class="fas fa-save">&nbsp;&nbsp;</i>
+					{#__ key="button.save" /}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{! TRACKING LIST MODAL !}
+<div id="trackingModal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog" style="max-width: 800px !important">
+		<div class="modal-content" >
+			<div class="modal-header">
+				<h4 class="modal-title">{#__ key="entity.e_traceability.label_entity" /}</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{! MODAL CONTENT !}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
+			</div>
+		</div>
+	</div>
+</div>
