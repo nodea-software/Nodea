@@ -924,13 +924,13 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 }
 
 exports.createNewTracking = (data) => {
-	const workspacePath = __dirname + '/../workspace/' + data.application.name;
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
 
 	// Simple entity generation
 	const entityName = data.options.value;
 
 	// Add entity in file /config/tracking.json
-	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const trackingConfigPath =`${workspacePath}/config/tracking.json`;
 	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
 
 	if(Object.keys(trackingObj).find(e => e === entityName)){
@@ -941,7 +941,7 @@ exports.createNewTracking = (data) => {
 	trackingObj[data.options.value] = {};
 
 	// Relation type to add tracking
-	const relationType = ['hasOne', 'hasMany', 'hasManyPreset', ''];
+	const relationType = ['hasOne', 'hasMany', 'hasManyPreset'];
 
 	// Add relation entity
 	const optionsEntitySourcePath = `${workspacePath}/app/models/options/${data.options.value}.json`;
@@ -960,8 +960,8 @@ exports.createNewTracking = (data) => {
 const hideTracking = async (data) => {
 	const componentName = data.options.source;
 	const entityName = data.options.value;
-	const workspacePath = __dirname + '/../workspace/' + data.application.name;
-	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
 
 	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
 
@@ -972,8 +972,8 @@ const hideTracking = async (data) => {
 		}
 	}
 
-	const showFile = workspacePath + '/app/views/' + data.options.value + '/show_fields.dust';
-	const $ = await domHelper.read(showFile);
+	const showFieldsFile = `${workspacePath}/app/views/${data.options.value}/show_fields.dust`;
+	let $ = await domHelper.read(showFieldsFile);
 
 	// Remove tab
 	$(`#r_${componentName}-click`).parents('li').remove();
@@ -985,6 +985,11 @@ const hideTracking = async (data) => {
 		$("#tabs").replaceWith($("#home").html());
 	}
 
+	domHelper.write(showFieldsFile, $);
+
+	const showFile = `${workspacePath}/app/views/${data.options.value}/show.dust`;
+	$ = await domHelper.read(showFile);
+	$('#trackingJs').remove();
 	domHelper.write(showFile, $);
 
 	return;
@@ -993,13 +998,13 @@ const hideTracking = async (data) => {
 exports.hideTracking = hideTracking;
 
 exports.disabledTracking = async (data) => {
-	const workspacePath = __dirname + '/../workspace/' + data.application.name;
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
 	const entityName = data.options.value;
 
 	await hideTracking(data);
 
 	// Remove entity in file /config/tracking.json
-	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
 	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
 
 	if(!Object.keys(trackingObj).find(e => e === entityName)){
@@ -1019,8 +1024,8 @@ exports.disabledTracking = async (data) => {
 exports.showTracking = async (data) => {
 	const componentName = data.options.source;
 	const entityName = data.options.value;
-	const workspacePath = __dirname + '/../workspace/' + data.application.name;
-	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
 
 	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
 
@@ -1053,7 +1058,7 @@ exports.showTracking = async (data) => {
 	// Add require script in html for list tracking
 	const fileToWrite =`${workspacePath}/app/views/${data.options.value}/show.dust`;
 	let dustContent = fs.readFileSync(fileToWrite, 'utf8');
-	const script = '	<!-- Handle filter entity -->\n	<script src="/core/js/component/tracking.js"></script>\n{/custom_js}';
+	const script = '	<script id="trackingJs" src="/core/js/component/tracking.js"></script>\n{/custom_js}';
 	dustContent = dustContent.replace(/{\/custom_js}/g, script);
 	fs.writeFileSync(fileToWrite, dustContent, "utf8");
 
@@ -1090,6 +1095,10 @@ exports.initTracking = (application) => {
 
 	// Disable unused route
 	let js_to_write = `
+		data.req.session.toastr = [{
+			level: 'warning',
+			message: 'administration.access_settings.no_access_role'
+		}];
 		data.res.error(_ => data.res.redirect('/'));
 		return false;
 	`;
@@ -1151,8 +1160,8 @@ exports.initTracking = (application) => {
 
 exports.doEnableTracking = (data) => {
 	// Add relation entity in file /config/tracking.json
-	const workspacePath = __dirname + '/../workspace/' + data.application.name;
-	const trackingConfigPath = workspacePath + '/config/tracking.json';
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
 	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
 
 	if(Object.keys(trackingObj).includes(data.source)){

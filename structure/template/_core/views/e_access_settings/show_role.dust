@@ -95,35 +95,45 @@
 													</td>
 
 													{#allRoles currentEntity=.}
-														<td>
-															<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-																<input data-state='0' type="checkbox" class="no-icheck toggle-checks-td custom-control-input" id="switch-{name}-{f_label}">
-																<label class="custom-control-label" for="switch-{name}-{f_label}"></label>
-															</div>
-															{@isActionChecked action="read" source=currentEntity target=f_label}
-																<label class="no-weight" for="{name}.{f_label}.read"><input name="{name}.{f_label}.read" type="checkbox" checked> {#__ key="administration.access_settings.action.read"/}</label>
-															{:else}
-																<label class="no-weight" for="{name}.{f_label}.read"><input name="{name}.{f_label}.read" type="checkbox"> {#__ key="administration.access_settings.action.read"/}</label>
-															{/isActionChecked}
-															<br>
-															{@isActionChecked action="create" source=currentEntity target=f_label}
-																<label class="no-weight" for="{name}.{f_label}.create"><input name="{name}.{f_label}.create" type="checkbox" checked> {#__ key="administration.access_settings.action.create"/}</label>
-															{:else}
-																<label class="no-weight" for="{name}.{f_label}.create"><input name="{name}.{f_label}.create" type="checkbox"> {#__ key="administration.access_settings.action.create"/}</label>
-															{/isActionChecked}
-															<br>
-															{@isActionChecked action="update" source=currentEntity target=f_label}
-																<label class="no-weight" for="{name}.{f_label}.update"><input name="{name}.{f_label}.update" type="checkbox" checked> {#__ key="administration.access_settings.action.update"/}</label>
-															{:else}
-																<label class="no-weight" for="{name}.{f_label}.update"><input name="{name}.{f_label}.update" type="checkbox"> {#__ key="administration.access_settings.action.update"/}</label>
-															{/isActionChecked}
-															<br>
-															{@isActionChecked action="delete" source=currentEntity target=f_label}
-																<label class="no-weight" for="{name}.{f_label}.delete"><input name="{name}.{f_label}.delete" type="checkbox" checked> {#__ key="administration.access_settings.action.delete"/}</label>
-															{:else}
-																<label class="no-weight" for="{name}.{f_label}.delete"><input name="{name}.{f_label}.delete" type="checkbox"> {#__ key="administration.access_settings.action.delete"/}</label>
-															{/isActionChecked}
-														</td>
+														{@select}
+															{! Handle to not display access settings of traceability, except for admin role !}
+															{@ne key=currentEntity.name value="traceability" /}
+															{@eq key=id value=1 /}
+															{@any}
+																<td>
+																	<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																		<input data-state='0' type="checkbox" class="no-icheck toggle-checks-td custom-control-input" id="switch-{name}-{f_label}">
+																		<label class="custom-control-label" for="switch-{name}-{f_label}"></label>
+																	</div>
+																	{@isActionChecked action="read" source=currentEntity target=f_label}
+																		<label class="no-weight" for="{name}.{f_label}.read"><input name="{name}.{f_label}.read" type="checkbox" checked> {#__ key="administration.access_settings.action.read"/}</label>
+																	{:else}
+																		<label class="no-weight" for="{name}.{f_label}.read"><input name="{name}.{f_label}.read" type="checkbox"> {#__ key="administration.access_settings.action.read"/}</label>
+																	{/isActionChecked}
+																	<br>
+																	{@isActionChecked action="create" source=currentEntity target=f_label}
+																		<label class="no-weight" for="{name}.{f_label}.create"><input name="{name}.{f_label}.create" type="checkbox" checked> {#__ key="administration.access_settings.action.create"/}</label>
+																	{:else}
+																		<label class="no-weight" for="{name}.{f_label}.create"><input name="{name}.{f_label}.create" type="checkbox"> {#__ key="administration.access_settings.action.create"/}</label>
+																	{/isActionChecked}
+																	<br>
+																	{@isActionChecked action="update" source=currentEntity target=f_label}
+																		<label class="no-weight" for="{name}.{f_label}.update"><input name="{name}.{f_label}.update" type="checkbox" checked> {#__ key="administration.access_settings.action.update"/}</label>
+																	{:else}
+																		<label class="no-weight" for="{name}.{f_label}.update"><input name="{name}.{f_label}.update" type="checkbox"> {#__ key="administration.access_settings.action.update"/}</label>
+																	{/isActionChecked}
+																	<br>
+																	{@isActionChecked action="delete" source=currentEntity target=f_label}
+																		<label class="no-weight" for="{name}.{f_label}.delete"><input name="{name}.{f_label}.delete" type="checkbox" checked> {#__ key="administration.access_settings.action.delete"/}</label>
+																	{:else}
+																		<label class="no-weight" for="{name}.{f_label}.delete"><input name="{name}.{f_label}.delete" type="checkbox"> {#__ key="administration.access_settings.action.delete"/}</label>
+																	{/isActionChecked}
+																</td>
+															{/any}
+															{@none}
+																<td></td>
+															{/none}
+														{/select}
 													{/allRoles}
 												</tr>
 											{/ne}

@@ -94,10 +94,9 @@
 		/* Datatable throw error instead of alert */
 		$.fn.dataTable.ext.errMode = 'throw';
 
-		let datatable;
 		$(function() {
 			$("table:not(.no-init)").each(function() {
-				datatable = NodeaTable("#"+$(this).attr('id'));
+				NodeaTable("#"+$(this).attr('id'));
 			});
 		});
 	</script>
