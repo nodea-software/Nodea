@@ -15,6 +15,7 @@ module.exports = {
 			const func = 'create' + relation.as.capitalizeFirstLetter();
 			promises.push(entityObject[func](create_obj, {
 				upperEntity: query && query.associationSource ? query.associationSource : null,
+				entitySourceID: entityObject.id,
 				entitySource: entityObject.constructor.getTableName(),
 				user,
 				transaction
@@ -40,6 +41,7 @@ module.exports = {
 
 				await address.update(update_obj, {
 					upperEntity: query && query.associationSource ? query.associationSource : null,
+					entitySourceID: entityObject.id,
 					entitySource: entityObject.constructor.getTableName(),
 					user,
 					transaction

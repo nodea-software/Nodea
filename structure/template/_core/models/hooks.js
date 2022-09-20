@@ -66,6 +66,7 @@ module.exports = {
 			try {
 				const modelName = model.constructor.getTableName();
 				const values = model.dataValues;
+				let idEntitySource = values.id;
 				let relationPath = '';
 
 				const acceptedModelTracking = Object.keys(trackingConfig);
@@ -79,6 +80,7 @@ module.exports = {
 
 				if(!options.upperEntity && options.entitySource !== modelName){
 					relationPath = `${options.entitySource}.${getAliasFromName(options.entitySource, modelName)}`;
+					idEntitySource = options.entitySourceID ? options.entitySourceID : idEntitySource;
 					const acceptedNestedModelTracking = Object.keys(trackingConfig[options.entitySource]);
 					if(!acceptedNestedModelTracking.includes(modelName)){
 						return;
@@ -87,6 +89,7 @@ module.exports = {
 
 				if(options.upperEntity){
 					relationPath = `${options.upperEntity}.${options.entitySource}.${getAliasFromName(options.entitySource, modelName)}`;
+					idEntitySource = options.upperEntityID ? options.upperEntityID : idEntitySource;
 					let acceptedNestedModelTracking = Object.keys(trackingConfig[options.upperEntity]);
 					if(!acceptedNestedModelTracking.includes(options.entitySource)){
 						return;
@@ -140,7 +143,7 @@ module.exports = {
 				const objTracabilite = {
 					f_entity: options.upperEntity ? options.upperEntity : options.entitySource,
 					f_relation_path: relationPath,
-					f_id_entity: values.id,
+					f_id_entity: idEntitySource,
 					f_before: '',
 					f_after: changesNewValues,
 					f_action: 'CREATION',
@@ -167,6 +170,7 @@ module.exports = {
 			try {
 				const modelName = model.constructor.getTableName();
 				const values = model.dataValues;
+				let idEntitySource = values.id;
 				const oldValues = model._previousDataValues;
 				let relationPath = '';
 
@@ -181,6 +185,7 @@ module.exports = {
 
 				if(!options.upperEntity && options.entitySource !== modelName){
 					relationPath = `${options.entitySource}.${getAliasFromName(options.entitySource, modelName)}`;
+					idEntitySource = options.entityID ? options.entityID : idEntitySource;
 					const acceptedNestedModelTracking = Object.keys(trackingConfig[options.entitySource]);
 					if(!acceptedNestedModelTracking.includes(modelName)){
 						return;
@@ -189,6 +194,7 @@ module.exports = {
 
 				if(options.upperEntity){
 					relationPath = `${options.upperEntity}.${options.entitySource}.${getAliasFromName(options.entitySource, modelName)}`;
+					idEntitySource = options.upperEntityID ? options.upperEntityID : idEntitySource;
 					let acceptedNestedModelTracking = Object.keys(trackingConfig[options.upperEntity]);
 					if(!acceptedNestedModelTracking.includes(options.entitySource)){
 						return;
@@ -250,7 +256,7 @@ module.exports = {
 				const objTracabilite = {
 					f_entity: options.upperEntity ? options.upperEntity : options.entitySource,
 					f_relation_path: relationPath,
-					f_id_entity: values.id,
+					f_id_entity: idEntitySource,
 					f_before: changesOldValues,
 					f_after: changesNewValues,
 					f_action: 'MODIFICATION',
