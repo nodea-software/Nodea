@@ -66,28 +66,31 @@
 										<table id="table_users" class="table table-bordered">
 											<thead>
 												<tr>
-													<th>
+													<th data-field="id" data-col="id" data-type="string">
 														ID
 													</th>
-													<th>
+													<th data-field="login" data-col="login" data-type="string">
 														{#__ key="users.login"/}
 													</th>
-													<th>
+													<th data-field="login" data-col="login" data-type="string">
 														{#__ key="users.created_at"/}
 													</th>
-													<th>
+													<th data-field="enabled" data-col="enabled" data-type="boolean">
 														{#__ key="users.enabled"/}
 													</th>
-													<th>
+													<th data-field="email" data-col="email" data-type="email">
 														{#__ key="users.email"/}
 													</th>
-													<th>
+													<th data-field="role" data-col="role" data-type="string">
 														{#__ key="users.role"/}
 													</th>
 													<th>
 														{#__ key="users.applications"/}
 													</th>
-													<th colspan="4" class="text-center">
+													<th>
+														Nb Instructions
+													</th>
+													<th colspan="2" class="text-center">
 														{#__ key="listApplication.action"/}
 													</th>
 												</tr>
@@ -97,7 +100,7 @@
 													<tr>
 														<td>{id}</td>
 														<td>{login}</td>
-														<td>{createdAt}</td>
+														<td>{createdAt|datetime}</td>
 														<td>
 															{?enabled}
 																<input type="checkbox" checked disabled>
@@ -112,6 +115,7 @@
 																<b><a href="/application/preview/{name}" target="_blank">{displayName}</a></b><br>
 															{/Applications}
 														</td>
+														<td>{nb_instruction}</td>
 														<td class="text-center">
 															<a href="/configure/users/show/{id}">
 																<button class="pull-left btn btn-primary">
@@ -119,24 +123,6 @@
 																	<span>{#__ key="button.show"/}</span>
 																</button>
 															</a>
-														</td>
-														<td class="text-center">
-															{@ne key=id value=1}
-																<button class='btn btn-primary reset_password'>
-																	<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
-																	<span>{#__ key="settings.reset_button"/}</span>
-																</button>
-															{/ne}
-														</td>
-														<td class="text-center">
-															{@ne key=id value=1}
-																<a href="/configure/users/update/{id}">
-																	<button class="pull-left btn btn-warning">
-																		<i class="fas fa-edit fa-md"></i>&nbsp;&nbsp;
-																		<span>{#__ key="button.update"/}</span>
-																	</button>
-																</a>
-															{/ne}
 														</td>
 														<td class="text-center">
 															{@ne key=id value=1}

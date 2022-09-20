@@ -69,8 +69,8 @@ router.post('/login', local_authentication.authenticate, function(req, res) {
 
 router.get('/logout', function(req, res) {
 
-	// if(globalConf.demo_mode)
-	// 	return res.redirect('/');
+	if(globalConf.demo_mode && req.session && req.session.passport && req.session.passport.user.id != 1)
+		return res.redirect('/');
 
 	req.logout(err => {
 		if(err) {

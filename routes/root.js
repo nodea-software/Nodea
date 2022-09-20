@@ -5,7 +5,7 @@ const request = require('request');
 const middlewares = require('../helpers/middlewares');
 
 router.get('/', middlewares.loginAccess, function(req, res) {
-	res.redirect('/login');
+	res.redirect('/default/home');
 });
 
 // Waiting room for deploy instruction

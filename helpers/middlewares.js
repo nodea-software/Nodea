@@ -100,7 +100,7 @@ exports.hasAccessApplication = function(req, res, next) {
 // If the user is already identified, he can't access the login page
 exports.loginAccess = function(req, res, next) {
 	// If user is not authenticated in the session, carry on
-	if (!req.isAuthenticated() && !global_config.demo_mode)
+	if (!req.isAuthenticated() || global_config.demo_mode)
 		return next();
 
 	res.redirect('/default/home');
@@ -111,6 +111,16 @@ exports.disableInDemo = (req, res, next) => {
 		return next();
 	req.session.toastr = [{
 		message: "demo.feature_not_available",
+		level: "error"
+	}];
+	return res.redirect('back');
+}
+
+exports.onlyInDemo = (req, res, next) => {
+	if(global_config.demo_mode)
+		return next();
+	req.session.toastr = [{
+		message: "demo.only_in_demo",
 		level: "error"
 	}];
 	return res.redirect('back');

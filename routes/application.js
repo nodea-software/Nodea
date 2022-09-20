@@ -30,6 +30,7 @@ const metadata = require('../database/metadata')();
 const structure_application = require('../structure/structure_application');
 const pourcent_generation = {};
 const appProcessing = {};
+const app_queue = [];
 
 // Exclude from Editor
 const excludeFolder = ["node_modules", "sql", "services", "upload", ".git"];
@@ -406,6 +407,23 @@ router.post('/delete', middlewares.hasAccessApplication, (req, res) => {
 // Simple application creation
 router.post('/initiate', middlewares.isLoggedIn, (req, res) => {
 
+	if (req.body.application == "") {
+		req.session.toastr = [{
+			message: "Missing application name.",
+			level: "error"
+		}];
+		return res.redirect('/module/home');
+	}
+
+	if (globalConf.demo_mode && app_queue.indexOf(req.body.application) == -1) {
+		console.log('NOT IN QUEUE');
+		req.session.toastr = [{
+			message: "You are not in the queue",
+			level: "error"
+		}];
+		return res.redirect('/');
+	}
+
 	// Performance indicator
 	const perf_indicator = 'app_init_' + Date.now();
 	console.time(perf_indicator);
@@ -414,13 +432,6 @@ router.post('/initiate', middlewares.isLoggedIn, (req, res) => {
 	req.setTimeout(60000 * 2);
 
 	pourcent_generation[req.session.passport.user.id] = 1;
-	if (req.body.application == "") {
-		req.session.toastr = [{
-			message: "Missing application name.",
-			level: "error"
-		}];
-		return res.redirect('/module/home');
-	}
 
 	const instructions = [
 		"create application " + req.body.application,
@@ -448,9 +459,15 @@ router.post('/initiate', middlewares.isLoggedIn, (req, res) => {
 		// Perf indicator
 		console.timeEnd(perf_indicator);
 
+		if (globalConf.demo_mode)
+			app_queue.shift();
+
 		res.redirect('/application/preview/' + req.session.app_name);
 	})().catch(err => {
 		console.error(err);
+
+		if (globalConf.demo_mode)
+			app_queue.shift();
 
 		// Delete application
 		bot.execute(req, `delete application ${req.body.application}`, __, {}, false).finally(_ => {
@@ -624,7 +641,7 @@ router.get('/export/:app_name', middlewares.disableInDemo, middlewares.hasAccess
 	});
 });
 
-router.get('/generate_demo', middlewares.isLoggedIn, async (req, res) => {
+router.get('/generate_demo', middlewares.onlyInDemo, async (req, res) => {
 
 	// Check if user has already an application, if yes redirect to it
 	const application = await models.Application.findOne({
@@ -643,9 +660,18 @@ router.get('/generate_demo', middlewares.isLoggedIn, async (req, res) => {
 		return res.redirect('/application/preview/' + application.name);
 
 	// Generate his first application
-	let max_app_id = await models.Application.max('id');
 	res.render('front/waiting_demo', {
-		app_name: 'demo_' + req.session.passport.user.id + '_' + ++max_app_id
+		app_name: 'demo_' + req.session.passport.user.id + '_' + Date.now()
+	});
+});
+
+router.get('/get_generation_queue', (req, res) => {
+	console.log(req.query.app, app_queue.length, app_queue);
+	if(app_queue.indexOf(req.query.app) == -1)
+		app_queue.push(req.query.app);
+	const app_queue_place = app_queue.indexOf(req.query.app) + 1;
+	res.send({
+		cpt: app_queue_place
 	});
 });
 

@@ -87,8 +87,14 @@
 				<h1>{#__ key="demo.generating" /}</h1>
 			</div>
 			<br>
-			<div class="col-12 second-title text-center">
+			<div id="hello_there" class="col-12 second-title text-center animate__animated animate__fadeIn">
+				<h2>{#__ key="demo.hello_there" /}</h2>
+			</div>
+			<div id="please_wait" class="col-12 second-title text-center animate__animated animate__fadeIn" style="display: none;">
 				<h2>{#__ key="demo.please_wait" /}</h2>
+			</div>
+			<div id="oups_queue" class="col-12 second-title text-center animate__animated animate__fadeIn" style="display: none;">
+				<h2>{#__ key="demo.oups_queue" /}</h2>
 			</div>
 			<br>
 			<hr>
@@ -115,9 +121,43 @@
 
 	<script type="text/javascript">
 		const app_name = '{app_name}';
+		let queue_text = $('#oups_queue').html();
 		$(function() {
 
-			$('form[action="/application/initiate').trigger('submit');
+			function randomIntFromInterval(min, max) {
+				return Math.floor(Math.random() * (max - min + 1) + min);
+			}
+
+			const random_wait = randomIntFromInterval(1000, 10000);
+			setTimeout(_ => {
+				let queueInterval;
+				function getCurrentGeneration() {
+					console.log('getCurrentGeneration');
+					$.ajax({
+						url : '/application/get_generation_queue?app=' + app_name,
+						type : 'GET',
+						success: function (data) {
+							$('#hello_there').hide();
+							if(data.cpt > 1){
+								const new_text = queue_text.replace('%cpt', data.cpt);
+								$('#please_wait').hide();
+								$('#oups_queue').html(new_text).show();
+							} else {
+								$('form[action="/application/initiate"]').trigger('submit');
+								clearInterval(queueInterval);
+								$('#oups_queue').hide();
+								$('#please_wait').show();
+							}
+						},
+						error: function (error) {
+							console.error(error);
+						}
+					});
+				}
+				queueInterval = setInterval(getCurrentGeneration, 5000);
+			}, random_wait);
+
+
 			$('#loading-bar').css('width', '10%').css('height', '10%');
 
 			function getPourcent(){

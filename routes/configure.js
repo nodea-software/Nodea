@@ -4,11 +4,13 @@ const crypto = require('crypto');
 const extend = require('util')._extend;
 
 const middlewares = require('../helpers/middlewares');
+const access = require('../helpers/access');
 const models = require('../models/');
 const code_platform = require('../services/code_platform');
 const mailer = require('../utils/mailer');
 const metadata = require('../database/metadata')();
 const language = require('../services/language');
+const global_conf = require('../config/global');
 
 router.get('/', middlewares.isLoggedIn, function(req, res) {
 	res.render('front/configure/main');
@@ -16,17 +18,15 @@ router.get('/', middlewares.isLoggedIn, function(req, res) {
 
 /* Users */
 router.get('/users', middlewares.isAdmin, (req, res) => {
-	const data = {};
 	models.User.findAll({
-		// where: {
-		// 	id: {
-		// 		[models.$ne]: 1
-		// 	}
-		// },
-		include: [{all: true}]
+		include: [{
+			all: true
+		}]
 	}).then(users => {
-		data.users = users;
-		res.render('front/configure/users/list', data);
+		const redirect = global_conf.demo_mode ? 'front/configure/users/list_demo' : 'front/configure/users/list';
+		res.render(redirect, {
+			users: users
+		});
 	})
 })
 
@@ -185,11 +185,16 @@ router.post('/users/delete', middlewares.isAdmin, (req, res) => {
 		}];
 		return res.redirect("/configure/users")
 	}
+
 	models.User.destroy({
 		where: {
 			id: req.body.id
 		}
 	}).then(_ => {
+
+		// Logout user from session
+		access.logout_user(req.body.id);
+
 		req.session.toastr = [{
 			message: 'action.success.destroy',
 			level: "success"

@@ -527,6 +527,7 @@
 	"users": {
 		"connected_as": "Connecté en tant que",
 		"login": "Identifiant",
+		"created_at": "Créé le",
 		"email": "Email",
 		"role": "Rôle",
 		"applications": "Applications",
@@ -602,9 +603,12 @@
 	"demo": {
 		"signup_head": "Obtenez votre environnement privé !",
 		"not_available": "Non disponible en mode demo",
+		"only_in_demo": "Uniquement disponible en mode demo",
 		"feature_not_available": "Cette fonctionnalité n'est pas disponible en mode demo, vous pouvez vous inscrire pour la débloquer !",
 		"generating": "Génération de votre application",
+		"hello_there": "Bonjour, bienvenue sur Nodea ! Nous allons générer votre application dans quelques instants 👍",
 		"please_wait": "Cela ne prendra pas longtemps, vraiment pas longtemps, en général pas plus que 30 secondes !",
+		"oups_queue": "Oups il y a déjà des curieux devant vous ! Pas de soucis vous êtes %cptème dans la file d'attente.",
 		"modal": {
 			"title": "Mode démo de Nodea",
 			"text1": "Bienvenue sur le générateur",

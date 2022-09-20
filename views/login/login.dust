@@ -46,6 +46,7 @@
 		</div>
 		<input type="hidden" name="redirect" value="{redirect}">
 	</form>
+	{@ifFalse key=global_config.open_signup}
 	<hr>
 	<p class="mb-1">
 		<a href="/reset_password"><i class="fa fa-unlock">&nbsp;</i>{#__ key="login.reset_password"/}</a>
@@ -53,6 +54,7 @@
 	<p class="mb-1">
 		<a href="/first_connection"><i class="fa fa-sign-in-alt">&nbsp;</i>{#__ key="login.first_connection.title"/}</a>
 	</p>
+	{/ifFalse}
 	{@ifTrue key=global_config.open_signup}
 		<p class="mb-0">
 			<a href="/signup"><i class="fa fa-user-plus">&nbsp;</i>{#__ key="login.signup.title"/}</a>
