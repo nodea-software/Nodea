@@ -4,7 +4,7 @@ $(document).ready(function() {
 	$('.toggle-checks-td').each(function(){
 		var elements = $(this).parents('td').find('input[type=checkbox]:not(.toggle-checks-td):not(.toggle-checks-tr)');
 		for (var i = 0; i < elements.length; i++) {
-			if(!$(elements[i]).icheck('update')[0].checked)
+			if(!$(elements[i]).is(':checked'))
 				return;
 		}
 		$(this).data('state', '1').trigger('click', true);
@@ -19,6 +19,11 @@ $(document).ready(function() {
 		$(this).data('state', '1').trigger('click', true);
 	});
 
+	$(document).on('click', 'label.no-weight', function(e, ignore) {
+		if(!ignore && e.target.tagName != 'INPUT')
+			$(this).find('input').trigger('click', true);
+	});
+
 	$(document).on('click', '.toggle-checks-td', function(event, ignore) {
 		if(ignore)
 			return;
@@ -26,9 +31,9 @@ $(document).ready(function() {
 		var that = $(this);
 		$(this).parents('td').find('input[type=checkbox]:not(.toggle-checks-td):not(.toggle-checks-tr)').each(function() {
 			if(that.data('state') == '0'){
-				$(this).icheck('checked');
+				$(this).prop('checked', true);
 			} else {
-				$(this).icheck('unchecked');
+				$(this).prop('checked', false);
 			}
 		});
 		$(this).data('state', that.data('state') == '0' ? '1' : '0');
@@ -38,9 +43,9 @@ $(document).ready(function() {
 		var that = $(this);
 		$(this).parents('tr').find('input[type=checkbox]:not(.toggle-checks-td):not(.toggle-checks-tr)').each(function() {
 			if(that.data('state') == '0'){
-				$(this).icheck('checked');
+				$(this).prop('checked', true);
 			} else {
-				$(this).icheck('unchecked');
+				$(this).prop('checked', false);
 			}
 		});
 

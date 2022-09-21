@@ -19,9 +19,6 @@
     </select>
 {/modules}
 
-{! {#entityAccess entity="sisi"}
-{#actionAccess entity="user" action="create"}
- !}
 {<sidebar}
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
@@ -134,13 +131,15 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    {#actionAccess entity="access_settings" action="read"}
+                    {#actionAccess entity="access_settings_role" action="read"}
                         <li class="nav-item">
                             <a href="/access_settings/show_role" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>{#__ key="entity.e_role.label_entity" /}</p>
                             </a>
                         </li>
+                    {/actionAccess}
+                    {#actionAccess entity="access_settings_group" action="read"}
                         <li class="nav-item">
                             <a href="/access_settings/show_group" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -421,13 +420,13 @@
                             {#__ key="administration.menu.access_settings_api" /}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a target=_blank href="/api_documentation" class="nav-link">
-                            <i class="fas fa-caret-right nav-icon"></i>
-                            {#__ key="administration.menu.api_documentation" /}
-                        </a>
-                    </li>
                 {/actionAccess}
+                <li class="nav-item">
+                    <a target=_blank href="/api_documentation" class="nav-link">
+                        <i class="fas fa-caret-right nav-icon"></i>
+                        {#__ key="administration.menu.api_documentation" /}
+                    </a>
+                </li>
                 {#entityAccess entity="api_credentials"}
                 <li class="nav-item">
                     <a href="#" class="nav-link">

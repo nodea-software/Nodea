@@ -16,27 +16,31 @@ class AccessSettings extends CoreAccessSettings {
 		return {
 			show_api: [
 				middlewares.entityAccess("access_settings_api"),
-				middlewares.actionAccess("access_settings", "read")
+				middlewares.actionAccess("access_settings_api", "read")
 			],
 			show_group: [
+				middlewares.entityAccess("access_settings"),
 				middlewares.entityAccess("access_settings_group"),
-				middlewares.actionAccess("access_settings", "read")
+				middlewares.actionAccess("access_settings_group", "read")
 			],
 			show_role: [
+				middlewares.entityAccess("access_settings"),
 				middlewares.entityAccess("access_settings_role"),
-				middlewares.actionAccess("access_settings", "read")
+				middlewares.actionAccess("access_settings_group", "read")
 			],
 			enable_disable_api: [
 				middlewares.entityAccess("access_settings_api"),
-				middlewares.actionAccess("access_settings", "create")
+				middlewares.actionAccess("access_settings", "update")
 			],
 			set_group_access: [
+				middlewares.entityAccess("access_settings"),
 				middlewares.entityAccess("access_settings_group"),
-				middlewares.actionAccess("access_settings", "create")
+				middlewares.actionAccess("access_settings_group", "update")
 			],
 			set_role_access: [
+				middlewares.entityAccess("access_settings"),
 				middlewares.entityAccess("access_settings_role"),
-				middlewares.actionAccess("access_settings", "create")
+				middlewares.actionAccess("access_settings_group", "update")
 			]
 		}
 	}

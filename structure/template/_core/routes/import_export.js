@@ -5,10 +5,9 @@ const exec = require('child_process');
 const dbConfig = require('@config/database');
 const globalConf = require('@config/global');
 const Route = require("@core/abstract_routes/route");
-
 const models = require('@app/models/');
-
 const file_helper = require('@core/helpers/file');
+const access_helper = require('@core/helpers/access');
 
 class CoreImportExport extends Route {
 
@@ -298,6 +297,7 @@ class CoreImportExport extends Route {
 				message: "settings.tool_success",
 				level: "success"
 			});
+			access_helper.reloadAccess();
 			return data.res.success(_ => data.res.redirect("/import_export/access_show"));
 		}));
 	}

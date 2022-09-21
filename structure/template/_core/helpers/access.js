@@ -2,11 +2,36 @@ const fs = require('fs-extra');
 
 const models = require('@app/models');
 
-let LOAD_ACCESS_FILE = true;
+let LOAD_ACCESS_FILE = true, ACCESS;
 function reloadAccess(reload = true) {
 	LOAD_ACCESS_FILE = reload;
 }
-exports.reloadAccess = reloadAccess
+exports.reloadAccess = reloadAccess;
+
+function getAccess() {
+	if (LOAD_ACCESS_FILE || !ACCESS) {
+		try {
+			ACCESS = JSON.parse(fs.readFileSync(__configPath + '/access.json', 'utf8'));
+		} catch (e) {
+			console.error(e);
+			return {};
+		}
+		LOAD_ACCESS_FILE = false;
+	}
+	return ACCESS;
+}
+
+function isInBothArray(stringArray, objectArray) {
+	if (stringArray.length == 0)
+		return false;
+
+	for (let j = 0; j < objectArray.length; j++)
+		for (let i = 0; i < stringArray.length; i++)
+			if (stringArray[i] == objectArray[j].f_label)
+				return true;
+
+	return false;
+}
 
 // Get workspace modules and entities list
 // Also get workspace's groups and roles
@@ -41,6 +66,8 @@ exports.setGroupAccess = function(modules, entities) {
 		// Set new groups to module if needed
 		if (typeof modules[accessModule] !== 'undefined')
 			access[accessModule].groups = modules[accessModule];
+		else
+			access[accessModule].groups = [];
 
 		// Loop through access.json entities
 		for (let i = 0; i < access[accessModule].entities.length; i++) {
@@ -48,6 +75,8 @@ exports.setGroupAccess = function(modules, entities) {
 			// Set new groups to entity if needed
 			if (typeof entities[entity.name] !== 'undefined')
 				access[accessModule].entities[i].groups = entities[entity.name];
+			else
+				access[accessModule].entities[i].groups = [];
 		}
 	}
 
@@ -66,6 +95,15 @@ exports.setRoleAccess = function(entities) {
 		for (let i = 0; i < access[accessModule].entities.length; i++) {
 			if (typeof entities[access[accessModule].entities[i].name] !== 'undefined')
 				access[accessModule].entities[i].actions = entities[access[accessModule].entities[i].name];
+			else {
+				// Not in body, mean that every case is uncheck
+				access[accessModule].entities[i].actions = {
+					read: [],
+					create: [],
+					update: [],
+					delete: []
+				}
+			}
 		}
 	}
 
@@ -74,32 +112,6 @@ exports.setRoleAccess = function(entities) {
 
 	reloadAccess();
 	return 1;
-}
-
-let ACCESS;
-function getAccess() {
-	if (LOAD_ACCESS_FILE || !ACCESS) {
-		try {
-			ACCESS = JSON.parse(fs.readFileSync(__configPath + '/access.json', 'utf8'));
-		} catch (e) {
-			console.error(e);
-			return {};
-		}
-		LOAD_ACCESS_FILE = false;
-	}
-	return ACCESS;
-}
-
-function isInBothArray(stringArray, objectArray) {
-	if (stringArray.length == 0)
-		return false;
-
-	for (let j = 0; j < objectArray.length; j++)
-		for (let i = 0; i < stringArray.length; i++)
-			if (stringArray[i] == objectArray[j].f_label)
-				return true;
-
-	return false;
 }
 
 // Check if user's group have access to module

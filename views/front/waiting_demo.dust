@@ -132,7 +132,6 @@
 			setTimeout(_ => {
 				let queueInterval;
 				function getCurrentGeneration() {
-					console.log('getCurrentGeneration');
 					$.ajax({
 						url : '/application/get_generation_queue?app=' + app_name,
 						type : 'GET',
