@@ -333,7 +333,8 @@
 			</script>
 		{/toastr}
 		<script>
-			var CONFIRM_TEXT = '{#__ key="button.confirm"/}';
+			let CONFIRM_TEXT = '{#__ key="button.confirm"/}';
+			const QUEUE_TEXT = '{#__ key="demo.oups_queue" /}';
 			$(function() {
 				try {
 					toastr.options = {

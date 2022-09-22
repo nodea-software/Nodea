@@ -20,7 +20,7 @@ exports.isLoggedIn = function(req, res, next) {
 				if(req.query.lang == 'en')
 					req.session.lang_user = 'en-EN';
 				// New user, redirect to generate first application
-				return res.redirect('/application/generate_demo');
+				return res.redirect('/build/generate_demo');
 			});
 		} else {
 			// If user is authenticated in the session, carry on
@@ -51,9 +51,11 @@ exports.isAdmin = function(req, res, next) {
 exports.hasAccessApplication = function(req, res, next) {
 	let app_name = null;
 	if(req.params.app_name)
-		app_name = req.params.app_name
+		app_name = req.params.app_name;
 	else if(req.query.app_name)
-		app_name = req.query.app_name
+		app_name = req.query.app_name;
+	else if(req.body.app_name)
+		app_name = req.body.app_name;
 	else
 		app_name = req.session.app_name ? req.session.app_name : null;
 

@@ -86,6 +86,12 @@ exports.setSession = (npFunction, req, info, data) => {
 				data.iframe_url = iframeUrl[0] + "//" + iframeUrl[2] + "/module/home";
 			}
 			break;
+		case "restart":
+			if (data && data.iframe_url) {
+				iframeUrl = data.iframe_url.split("/");
+				data.iframe_url = iframeUrl[0] + "//" + iframeUrl[2] + "/module/home";
+			}
+			break;
 		default:
 			break;
 	}

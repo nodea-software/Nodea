@@ -1,3 +1,9 @@
+/*!
+ * Nodea v3.1
+ * Copyright 2016
+ * Licensed under GPLV3.0 https://www.gnu.org/licenses/gpl.html
+ */
+
 /* ------- IMPORT APPLICATION --------- */
 $(document).on('submit', '#importForm', function(){
 	$(this).find('#importSubmit').text(loadingText).prop('disabled', true);
@@ -6,7 +12,7 @@ $(document).on('submit', '#importForm', function(){
     var filename = $(this).find('input').val();
 
     $.ajax({
-        url: '/application/import',
+        url: '/build/import',
         method: 'POST',
         contentType: false,
         processData: false,
@@ -91,11 +97,11 @@ $(document).on("keyup", "input[name='appname']", function() {
 		if ($("span.applicationSpan").length == 0){
 			$(this).after("<span class='applicationSpan' style='color:red;'><i class='fa fa-exclamation-circle'></i> "+errorText+"</span>");
 		}
-		$("#step2Discover2, #step2Discover1").prop('disabled', true);
+		$("#generate-button").prop('disabled', true);
 	} else {
 		$("span.applicationSpan").remove();
 		$("span.applicationSpanUrl").remove();
-		$("#step2Discover2, #step2Discover1").prop('disabled', false);
+		$("#generate-button").prop('disabled', false);
 
 		/* If online environment */
 		if(dns_studio != "") {

@@ -106,7 +106,7 @@
 		</div>
 	</div>
 
-	<form action="/application/initiate" method="POST" style="display: none;">
+	<form action="/build/application" method="POST" style="display: none;">
 		<input name="application" type="hidden" value="{app_name}" />
 	</form>
 
@@ -123,45 +123,19 @@
 		const app_name = '{app_name}';
 		let queue_text = $('#oups_queue').html();
 		$(function() {
+			$('#loading-bar').css('width', '10%').css('height', '10%');
 
 			function randomIntFromInterval(min, max) {
 				return Math.floor(Math.random() * (max - min + 1) + min);
 			}
 
+			/* Chill time, sponsored by Nodea */
 			const random_wait = randomIntFromInterval(1000, 10000);
-			setTimeout(_ => {
-				let queueInterval;
-				function getCurrentGeneration() {
-					$.ajax({
-						url : '/application/get_generation_queue?app=' + app_name,
-						type : 'GET',
-						success: function (data) {
-							$('#hello_there').hide();
-							if(data.cpt > 1){
-								const new_text = queue_text.replace('%cpt', data.cpt);
-								$('#please_wait').hide();
-								$('#oups_queue').html(new_text).show();
-							} else {
-								$('form[action="/application/initiate"]').trigger('submit');
-								clearInterval(queueInterval);
-								$('#oups_queue').hide();
-								$('#please_wait').show();
-							}
-						},
-						error: function (error) {
-							console.error(error);
-						}
-					});
-				}
-				queueInterval = setInterval(getCurrentGeneration, 5000);
-			}, random_wait);
 
-
-			$('#loading-bar').css('width', '10%').css('height', '10%');
-
+			/* Get application generation progression */
 			function getPourcent(){
 				$.ajax({
-					url : '/application/get_pourcent_generation',
+					url : '/build/get_pourcent_generation',
 					type : 'GET',
 					dataType : 'json',
 					contentType: "application/json",
@@ -169,8 +143,10 @@
 						if(!isNaN(data.pourcent)){
 							const loading_bar = $('#loading-bar')[0].ldBar;
 							loading_bar.set(data.pourcent);
-							if(data.pourcent == 99) {
-								clearInterval(pourcentInterval);
+							if(data.pourcent < 99) {
+								setTimeout(_ => {
+									getPourcent();
+								}, 1000);
 							}
 						}
 					},
@@ -180,7 +156,35 @@
 				});
 			}
 
-			let pourcentInterval = setInterval(getPourcent, 1000);
+			/* Get application queue progression */
+			function getCurrentGeneration() {
+				$.ajax({
+					url : '/build/get_generation_queue?app=' + app_name,
+					type : 'GET',
+					success: function (data) {
+						$('#hello_there').hide();
+						if(data.cpt > 1){
+							const new_text = queue_text.replace('%cpt', data.cpt);
+							setTimeout(getCurrentGeneration, 5000);
+							$('#please_wait').hide();
+							return $('#oups_queue').html(new_text).show();
+						}
+
+						/* Start generation */
+						$('form[action="/build/application"]').trigger('submit');
+						$('#oups_queue').hide();
+						$('#please_wait').show();
+						getPourcent();
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+			}
+
+			setTimeout(_ => {
+				getCurrentGeneration();
+			}, random_wait);
 		});
 	</script>
 </html>

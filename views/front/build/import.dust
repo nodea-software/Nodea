@@ -8,7 +8,7 @@
 	{/global_config.demo_mode}
 	<div class="col-12" id="form_import">
 		{^global_config.demo_mode}
-		<form id='importForm' method="post" enctype="multipart/form-data" action="/application/import">
+		<form id='importForm' method="post" enctype="multipart/form-data" action="/build/import">
 			<div class="form-group">
 				<label for="appName" class='required'>{#__ key="import.appname"/}</label>
 				<input class='form-control input' type="text" name="appName" required>

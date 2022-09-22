@@ -51,7 +51,7 @@ const allLogStream = fs.createWriteStream(path.join(__dirname, 'all.log'), {
 app.use(morgan('dev', {
 	skip: function(req) {
 		// Remove spamming useless logs
-		const skipArray = ["/update_logs", "/get_pourcent_generation", "/status", "/completion", "/watch", "/"];
+		const skipArray = ["/update_logs", "/get_pourcent_generation", "/get_generation_queue", "/script_status", "/completion", "/watch", "/"];
 		let currentURL = req.originalUrl;
 		if (currentURL.indexOf("?") != -1) {
 			// Remove params from URL

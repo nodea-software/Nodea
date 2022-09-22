@@ -178,6 +178,7 @@
 	"listApplication": {
 		"id": "ID",
 		"name": "Name",
+		"createdAt": "Created at",
 		"createdBy": "Created by",
 		"action": "Actions",
 		"sureToDelete": "Are you sure ?",
@@ -317,7 +318,7 @@
 		"notForParamEntity": "You can't do this with a param entity."
 	},
 	"chat": {
-		"welcome": "Hello and welcome ! I'm Nodea, your personnal creation assistant. At any time, I am here to help you discover the Nodea generator.<br> To get started, here are few instructions that you can run below:<br><br>- <b class=\"click-instruction\">add entity Person</b><br>- <b class=\"click-instruction\">add field Name</b><br>- <b class=\"click-instruction\">add field Birthday with type date</b>"
+		"welcome": "Hello and welcome ! I'm Nodea, your personnal creation assistant. At any time, I am here to help you discover the Nodea generator.<br> To get started, here are few instructions that you can run below:<br><br>- <b class=\"click-instruction\">add entity Person</b><br>- <b class=\"click-instruction\">add field Name</b><br>- <b class=\"click-instruction\">add field Birthday with type date</b><br><br>If you are logged out, no worry ! You can:<br>- <b class=\"click-instruction\">Restart</b>"
 	},
 	"database": {
 		"application": {

@@ -1,7 +1,7 @@
 const designer = require('../services/designer.js');
 const dataHelper = require('../utils/data_helper');
 const metadata = require('../database/metadata')();
-const session_manager = require('../services/session.js');
+const session_manager = require('../helpers/preview_session.js');
 const parser = require('../services/bot.js');
 const nodeaTypes = {
 	"string" : [],
@@ -90,7 +90,7 @@ const nodeaTypes = {
 	]
 }
 
-async function execute(req, instruction, __, data = {}, saveMetadata = true) {
+async function execute(req, instruction, data = {}, saveMetadata = true) {
 	// Lower the first word for the basic parser json
 	instruction = dataHelper.prepareInstruction(instruction);
 
@@ -123,8 +123,7 @@ async function execute(req, instruction, __, data = {}, saveMetadata = true) {
 		info = await designer[data.function](data);
 	} catch (err) {
 		console.error('Error on function: ' + data.function + '(Instruction: ' + instruction + ')');
-		console.error(err);
-		throw __(err.message ? err.message : err, err.messageParams || []);
+		throw err;
 	}
 
 	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])

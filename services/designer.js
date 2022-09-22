@@ -19,7 +19,7 @@ const fs = require('fs-extra');
 const models = require('../models/');
 const sequelize = models.sequelize;
 const cloud_manager = require('../services/cloud_manager');
-const session = require("./session");
+const preview_session = require("../helpers/preview_session");
 
 // Metadata
 const metadata = require('../database/metadata')();
@@ -47,7 +47,7 @@ exports.recursiveInstructionExecute = async (recursiveData, instructions, idx) =
 
 	// Execute the designer function
 	const info = await this[data.function](data);
-	session.setSessionObj(data, info);
+	preview_session.setSessionObj(data, info);
 
 	idx += 1;
 	if (instructions.length == idx)
@@ -159,6 +159,7 @@ exports.createNewApplication = async (data) => {
 	if (existingApp) {
 		const err = new Error("database.application.alreadyExist");
 		err.messageParams = [data.options.showValue];
+		err.doNotDeleteApp = true;
 		throw err;
 	}
 

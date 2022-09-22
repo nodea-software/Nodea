@@ -2,7 +2,7 @@
 <hr>
 <div class="row">
 	<div class="col-12">
-		<form action="/instruction_script/execute" id="instructionsScript" method="post" enctype="multipart/form-data">
+		<form action="/build/execute_script" id="instructionsScript" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<div class="row">
 					<div class="col-12">

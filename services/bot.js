@@ -1082,7 +1082,8 @@ const bot_instructions = {
 		"restart",
 		"redémarrer",
 		"redémarrer serveur",
-		"redémarrer le serveur"
+		"redémarrer le serveur",
+		"redémarrer l'application'"
 	],
 	"installNodePackage": [
 		"npm install",

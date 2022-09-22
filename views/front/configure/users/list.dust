@@ -97,7 +97,7 @@
 													<tr>
 														<td>{id}</td>
 														<td>{login}</td>
-														<td>{createdAt}</td>
+														<td>{createdAt|datetime}</td>
 														<td>
 															{?enabled}
 																<input type="checkbox" checked disabled>
