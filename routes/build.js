@@ -397,7 +397,7 @@ router.get('/export/:app_name', middlewares.disableInDemo, middlewares.hasAccess
 	});
 });
 
-router.get('/generate_demo', middlewares.onlyInDemo, async (req, res) => {
+router.get('/generate_demo', middlewares.onlyInDemo, middlewares.isLoggedIn, async (req, res) => {
 
 	// Check if user has already an application, if yes redirect to it
 	const application = await models.Application.findOne({
