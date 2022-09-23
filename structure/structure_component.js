@@ -1091,7 +1091,7 @@ exports.initTracking = (application) => {
 
 	// Traceability views copy
 	fs.emptyDirSync(`${workspacePath}/app/views/${entityName}/`);
-	fs.copySync(`${__piecesPath}/component/tracking/views/`, `${workspacePath}/app/views/${entityName}/`);
+	fs.copySync(`${global.__piecesPath}/component/tracking/views/`, `${workspacePath}/app/views/${entityName}/`);
 
 	// Disable unused route
 	let js_to_write = `
@@ -1114,9 +1114,7 @@ exports.initTracking = (application) => {
 		'fieldset_remove',
 		'destroy'
 	];
-	disabledRoute.map(route => {
-		js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, route, 'start', js_to_write);
-	});
+	disabledRoute.map(route => js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, route, 'start', js_to_write));
 
 	// For select entity on view traceability list
 	js_to_write = `

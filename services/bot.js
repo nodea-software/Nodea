@@ -2461,20 +2461,20 @@ const bot_instructions = {
 		"supprimer le titre (.*)"
 	],
 	"enabledTracking": [
-		"enable tracking on (.*)",
-		"activer la tracabilité sur (.*)"
+		"enable tracking on entity (.*)",
+		"activer la tracabilité sur l'entité (.*)"
 	],
 	"disabledTracking": [
-		"disable tracking on (.*)",
-		"désactiver la tracabilité sur (.*)",
+		"disable tracking on entity (.*)",
+		"désactiver la tracabilité sur l'entité (.*)",
 	],
 	"showTracking": [
-		"show tracking on (.*)",
-		"afficher la tracabilité sur (.*)",
+		"show tracking on entity (.*)",
+		"afficher la tracabilité sur l'entité (.*)",
 	],
 	"hideTracking": [
-		"hide tracking on (.*)",
-		"masquer la tracabilité sur (.*)"
+		"hide tracking on entity (.*)",
+		"masquer la tracabilité sur l'entité (.*)"
 	]
 };
 

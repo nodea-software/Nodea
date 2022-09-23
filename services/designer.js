@@ -351,6 +351,7 @@ exports.deleteModule = async (data) => {
 exports.selectEntity = async (data) => {
 
 	const {np_module, entity} = data.application.findEntity(data.options.value, true, data.options.showValue);
+	data.entity = entity;
 	data.module = np_module;
 	data.doRedirect = await structure_entity.selectEntity(data);
 
@@ -1958,9 +1959,9 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 
 exports.enabledTracking = (data) => {
 	const componentName = data.options.source;
-	data.entitySource = data.application.findEntity(data.options.value);
+	data.entity_source = data.application.findEntity(data.options.value);
 
-	if(!data.entitySource || !data.entitySource.entity){
+	if(!data.entity_source || !data.entity_source.entity){
 		throw {
 			message: 'database.entity.notFound.withThisName',
 			messageParams: [data.options.showValue]
@@ -1973,7 +1974,6 @@ exports.enabledTracking = (data) => {
 		message: 'database.component.create.success',
 		messageParams: [componentName]
 	};
-
 };
 
 exports.disabledTracking = async (data) => {
