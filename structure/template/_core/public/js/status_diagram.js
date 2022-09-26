@@ -203,9 +203,9 @@ function buildStatusBox(status, forSidebar) {
 		statusBox = $("#connectStatusTemplate > .card").clone()
 		statusBox.attr('id', 'connect' + status.id);
 		statusBox.addClass('connectStatus');
-		statusBox.find('.card-header').attr('title', status.f_name);
+		statusBox.find('.card-header').attr('title', status.f_name + ' (' + status.id + ')');
 	}
-	statusBox.css('border', '2px solid ' + status.f_color).data("status", status).find(".statusTitle").text(status.f_name);
+	statusBox.css('border', '2px solid ' + status.f_color).data("status", status).find(".statusTitle").text(status.f_name + ' (' + status.id + ')');
 	return statusBox;
 }
 

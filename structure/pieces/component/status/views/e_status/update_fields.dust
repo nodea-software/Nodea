@@ -68,10 +68,21 @@
 			<input class="form-control input" name="f_comment" value="{f_comment}" type="checkbox"> {/ifTrue}
 		</div>
 	</div>
-	<div data-field="f_default" class="col-xs-12">
+	<div data-field="f_default" class="col-12">
 		<div class="form-group">
-			<label for="f_default"> {#__ key="entity.e_status.f_default"/} {@inline_help field="f_default"}&nbsp;<i data-field="f_default" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label> &nbsp;
-			<br> {@ifTrue key=f_default} <input class="form-control input" name="f_default" value="{f_default}" type="checkbox" checked=""> {:else} <input class="form-control input" name="f_default" value="{f_default}" type="checkbox"> {/ifTrue}
+			<label for="f_default">
+				{#__ key="entity.e_status.f_default"/}
+				{@inline_help field="f_default"}
+					<i data-field="f_default" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			&nbsp;
+			<br>
+			{@ifTrue key=f_default}
+				<input class="form-control input" name="f_default" value="{f_default}" type="checkbox" checked="">
+			{:else}
+				<input class="form-control input" name="f_default" value="{f_default}" type="checkbox">
+			{/ifTrue}
 		</div>
 	</div>
 </div>

@@ -290,7 +290,8 @@
             }
 		},
 		"status": {
-			"diagram": "Diagramme"
+			"diagram": "Diagramme",
+			"add_status": "Ajouter un statut"
 		},
 		"address": {
 			"search": "Recherchez et selectionnez votre adresse",

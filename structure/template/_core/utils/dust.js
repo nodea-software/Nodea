@@ -13,9 +13,13 @@ module.exports = {
 
 		// Translate functions
 		locals.__ = function(ch, con, bo, params) {
+			if(!params.key || params.key == '' || typeof params.key !== 'string')
+				return '';
 			return ch.write(language.__(params.key).replace(/'/g, "&apos;"));
 		}
 		locals.M_ = function(ch, con, bo, params) {
+			if(!params.key || params.key == '' || typeof params.key !== 'string')
+				return '';
 			return ch.write(language.M_(params.key).replace(/'/g, "&apos;"));
 		}
 
