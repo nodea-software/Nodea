@@ -32,6 +32,7 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 	res.locals.config = globalConf;
 	res.locals.corePath = __corePath;
 	res.locals.appPath = __appPath;
+	res.locals.sizeFileLimit = appConf.dropzoneInfo.sizeFileLimit;
 
 	// Helpers / Locals / Filters
 	dustFn.helpers(dust);
