@@ -1,6 +1,6 @@
 $(function() {
 	/* Init Forms */
-	NodeaForms();
+	NodeaForms.elements.ajax_select.initializer($("#entity-select-tracking"));
 
 	/* Handle select entity */
 	const trackingName = 'traceability';
