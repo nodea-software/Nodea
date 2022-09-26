@@ -56,9 +56,9 @@
 					<div class="card-body">
 						<a class="btn btn-default" href="javascript:history.back();">
 							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
-						</a>&nbsp;&nbsp;
+						</a>
 						<br><br>
-						<div data-field="f_entity" class="col-6">
+						<div data-field="f_entity" class="col-12">
 							<div class="form-group">
 								<label for="f_entity">
 									{#__ key="entity.e_traceability.f_entity" /}&nbsp;
@@ -66,7 +66,7 @@
 									<i data-entity="e_traceability" data-field="f_entity" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 									{/inline_help}
 								</label>
-								<select class="ajax form-control" name="f_entity" data-source="traceability" data-url="/traceability/search?group=f_entity" data-using="f_entity" width="100%"></select>
+								<select class="ajax form-control" name="f_entity" data-source="traceability" data-url="/traceability/search?group=f_entity" data-using="f_entity" style="width: 100%"></select>
 							</div>
 						</div>
 						<br>

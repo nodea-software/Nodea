@@ -96,9 +96,7 @@ module.exports = {
 					data.entity[keyValue] = {
 						label_entity: value,
 						plural_entity: value,
-						id_entity: "ID",
-						createdAt: "Date de création",
-						updatedAt: "Date de modification",
+						id_entity: "ID"
 					};
 					break;
 				case 'component':

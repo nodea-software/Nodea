@@ -19,7 +19,7 @@ $(function() {
 			const parent = $(elem.event.target).parents('tr');
 			const id = parent.attr('data-id');
 			$.ajax({
-				url: `/${trackingName}/show?id=${id}&view=modalView`,
+				url: `/${trackingName}/show?id=${id}&ajax=true`,
 				method: 'GET',
 				success: function (result) {
 					$('#trackingModal').find('.modal-body').html(result);

@@ -1958,7 +1958,6 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 };
 
 exports.enabledTracking = (data) => {
-	const componentName = data.options.source;
 	data.entity_source = data.application.findEntity(data.options.value);
 
 	if(!data.entity_source || !data.entity_source.entity){
@@ -1972,15 +1971,14 @@ exports.enabledTracking = (data) => {
 
 	return {
 		message: 'database.component.create.success',
-		messageParams: [componentName]
+		messageParams: [data.options.source]
 	};
 };
 
 exports.disabledTracking = async (data) => {
-	const componentName = data.options.source;
-	data.entitySource = data.application.findEntity(data.options.value);
+	data.entity_source = data.application.findEntity(data.options.value);
 
-	if(!data.entitySource || !data.entitySource.entity){
+	if(!data.entity_source || !data.entity_source.entity){
 		throw {
 			message: 'database.entity.notFound.withThisName',
 			messageParams: [data.options.showValue]
@@ -1988,22 +1986,21 @@ exports.disabledTracking = async (data) => {
 	}
 
 	await structure_component.disabledTracking(data);
-	if(data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
-		data.entitySource.entity.deleteComponent(`e_${componentName}`, 'tracking');
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
 	}
 
 	return {
 		message: 'database.component.delete.success',
-		messageParams: [componentName]
+		messageParams: [data.options.source]
 	};
 
 };
 
 exports.showTracking = async (data) => {
-	const componentName = data.options.source;
-	data.entitySource = data.application.findEntity(data.options.value);
+	data.entity_source = data.application.findEntity(data.options.value);
 
-	if(!data.entitySource || !data.entitySource.entity){
+	if(!data.entity_source || !data.entity_source.entity){
 		throw {
 			message: 'database.entity.notFound.withThisName',
 			messageParams: [data.options.showValue]
@@ -2011,7 +2008,7 @@ exports.showTracking = async (data) => {
 	}
 
 	// Check if already display
-	if(data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
 		throw {
 			message: 'database.component.display.alreadyShow',
 			messageParams: [data.options.source, data.options.showValue]
@@ -2019,27 +2016,26 @@ exports.showTracking = async (data) => {
 	}
 
 	await structure_component.showTracking(data);
-	data.entitySource.entity.addComponent(`e_${componentName}`, componentName, 'tracking');
+	data.entity_source.entity.addComponent(data.options.source, data.options.source, 'tracking');
 
 	return {
 		message: 'database.component.display.show',
-		messageParams: [componentName, data.options.showValue]
+		messageParams: [data.options.source, data.options.showValue]
 	};
 
 };
 
 exports.hideTracking = async (data) => {
-	const componentName = data.options.source;
-	data.entitySource = data.application.findEntity(data.options.value);
+	data.entity_source = data.application.findEntity(data.options.value);
 
-	if(!data.entitySource || !data.entitySource.entity){
+	if(!data.entity_source || !data.entity_source.entity){
 		throw {
 			message: 'database.entity.notFound.withThisName',
 			messageParams: [data.options.showValue]
 		}
 	}
 
-	if(!data.entitySource.entity.getComponent(`e_${componentName}`, 'tracking')){
+	if(!data.entity_source.entity.getComponent(data.options.source, 'tracking')){
 		throw {
 			message: 'database.component.display.alreadyHide',
 			messageParams: [data.options.source, data.options.showValue]
@@ -2047,11 +2043,11 @@ exports.hideTracking = async (data) => {
 	}
 
 	await structure_component.hideTracking(data);
-	data.entitySource.entity.deleteComponent(`e_${componentName}`, 'tracking');
+	data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
 
 	return {
 		message: 'database.component.display.hide',
-		messageParams: [componentName, data.options.showValue]
+		messageParams: [data.options.source, data.options.showValue]
 	};
 
 };
