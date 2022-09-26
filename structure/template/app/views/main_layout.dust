@@ -276,6 +276,7 @@
 
 		{! Nodea init !}
 		<script type="text/javascript">
+			NodeaSizeFileLimit = '{sizeFileLimit}';
 			NodeaForms.elements.select.initializer($("#module-select"));
 			Nodea();
 		</script>

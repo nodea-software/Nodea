@@ -2,6 +2,7 @@ let ctpQrCode = 0;
 let jQueryUILoad = false;
 let openLayerLoad = false;
 const loadedScript = [];
+let NodeaSizeFileLimit = 10000000; // Default size => 10Mb
 
 function loadScript(scriptUrl) {
 	return new Promise((res, rej) => {
@@ -242,6 +243,12 @@ function rebuildAddressLabel(element) {
 	f_label = f_label.replace(/  +/g, ' ');
 	$(element).find(`input[name="${address_as}.f_label"]`).val(f_label)
 }
+
+function humanReadableFileSize(size) {
+	const baseSize = 1000 // Or 1024
+    let i = Math.floor( Math.log(size) / Math.log(baseSize) );
+    return (size / Math.pow(baseSize, i)).toFixed(2) * 1 + ['o', 'Ko', 'Mo', 'Go', 'To'][i];
+};
 
 let NodeaForms = (_ => {
 	const defaults = {
@@ -792,8 +799,8 @@ let NodeaForms = (_ => {
 						}
 						// Size of file
 						const file = files[0];
-						if (file.size > 10000000) { // 10mb
-							toastr.error("File too big. 10MB maximum");
+						if (file.size > NodeaSizeFileLimit) {
+							toastr.error(`File too big. ${humanReadableFileSize(NodeaSizeFileLimit)} maximum`);
 							input[0].value = null;
 							return;
 						}
@@ -806,12 +813,7 @@ let NodeaForms = (_ => {
 							}
 
 						// Selected file display
-						const size = file.size < 1000 ?
-							file.size + 'o' :
-							file.size < 1000000 ?
-							Math.floor(file.size / 1000) + 'ko' :
-							Math.floor(file.size / 1000000) + 'mo';
-						const fileIcon = `<div class="dropzonefile">${file.name} - ${size}&nbsp<i class="remove-file fa fa-times" style='color: red;'></i></div>`;
+						const fileIcon = `<div class="dropzonefile">${file.name} - ${humanReadableFileSize(file.size)}&nbsp<i class="remove-file fa fa-times" style='color: red;'></i></div>`;
 						dropzone.html(fileIcon)
 					});
 				},
