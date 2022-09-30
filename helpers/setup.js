@@ -56,7 +56,7 @@ exports.setupWorkspaceNodeModules = _ => new Promise((resolve, reject) => {
 	console.log("🪄  WORKSPACE NODE MODULES INSTALL...");
 	fs.copySync(__dirname + '/../structure/template/package.json', global.__workspacePath + '/package.json');
 
-	exec('npm install', {
+	exec('npm i --no-optional', {
 		cwd: global.__workspacePath + '/'
 	}, err => {
 		if (err) {
