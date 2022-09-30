@@ -46,7 +46,7 @@
 		</div>
 		<input type="hidden" name="redirect" value="{redirect}">
 	</form>
-	{@ifFalse key=global_config.open_signup}
+	{@ifFalse key=global_config.demo_mode}
 		<hr>
 		<p class="mb-1">
 			<a href="/reset_password"><i class="fa fa-unlock">&nbsp;</i>{#__ key="login.reset_password"/}</a>
