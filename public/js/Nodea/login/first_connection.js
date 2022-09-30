@@ -71,4 +71,10 @@ $(function(){
 
 		return true;
 	});
+
+	// Trigger
+	if($("input[name='login']").val() == 'admin')
+		$("input[name='login']").trigger('blur');
+	else
+		$("input[name='login']").trigger('focus');
 });

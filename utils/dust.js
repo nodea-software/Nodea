@@ -26,10 +26,14 @@ module.exports = {
 	helpers: function(dust) {
 		dust.helpers.ifTrue = function(chunk, context, bodies, params) {
 			const value = params.key;
-
-			if (value == true || value == "true" || value == 1) {
+			if (value == true || value == "true" || value == 1)
 				return true;
-			}
+			return false;
+		}
+		dust.helpers.ifFalse = function(chunk, context, bodies, params) {
+			const value = params.key;
+			if (!value || value === false || value === "false" || value == 0)
+				return true;
 			return false;
 		}
 		dust.helpers.inArray = function(chunk, context, bodies, params) {
