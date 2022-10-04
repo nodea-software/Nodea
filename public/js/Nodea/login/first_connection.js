@@ -47,12 +47,13 @@ $(function(){
 		}
 
 		// Autofill email when admin login in entered
-		if (globalConfEnv == 'develop')
-			$('input[name="email"]').val('admin@local.fr');
-		else
-			$('input[name="email"]').val(window.location.host.split('.')[0] + '-admin@nodea-software.com');
-
-		$('input[name="email"]').attr('readonly', 'readonly');
+		if($('input[name="email"]').val() == ''){
+			if (globalConfEnv == 'develop')
+				$('input[name="email"]').val('admin@local.fr');
+			else
+				$('input[name="email"]').val(window.location.host.split('.')[0] + '-admin@nodea-software.com');
+			$('input[name="email"]').attr('readonly', 'readonly');
+		}
 	});
 
 	$(document).on("submit", "#first_connection", function() {
