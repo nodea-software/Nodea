@@ -116,13 +116,10 @@
 					<a class="btn btn-app" target="_blank" href="https://github.com/nodea-software/nodea/issues/new">
 						<i style='margin-top: 5px;' class="fab fa-github"></i>{#__ key="preview.issue-button"/}
 					</a>
-					{@ifTrue key=support_chat_enabled}
-						{! <div class="btn btn-app" id="message-box" title="" data-toggle="tooltip" data-original-title="Support chat">
-							<i style='margin-top: 5px;' class="fas fa-comment"></i>
-							<div class="badge badge-danger slack-message-count" style="display: none;"></div>
-							{#__ key="preview.help-button"/}
-						</div> !}
-					{/ifTrue}
+					<a class="btn btn-app" target="_blank" href="https://discord.gg/JVq6SXcjag">
+						<i style='margin-top: 5px;' class="fab fa-discord"></i>
+						{#__ key="preview.help-button"/}
+					</a>
 					<a class="btn btn-app" target="_blank" href="https://docs.nodea-software.com">
 						<i style='margin-top: 5px;' class="fas fa-book"></i>{#__ key="button.documentation"/}
 					</a>

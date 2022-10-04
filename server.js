@@ -232,7 +232,6 @@ app.use((req, res, next) => {
 			req.session.toastr = [];
 		}
 		locals.dark_theme = req.session.dark_theme ? req.session.dark_theme : false;
-		locals.support_chat_enabled = global_config.support_chat_enabled;
 		render.call(res, view, locals, cb);
 	};
 	next();

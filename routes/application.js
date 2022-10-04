@@ -71,7 +71,7 @@ router.get('/preview/:app_name', middlewares.hasAccessApplication, (req, res) =>
 		data.session = session_manager.getSession(req);
 
 		if(globalConf.demo_mode)
-			data.session.app_expire = dayjs(db_app.createAt).diff(dayjs(), 'day') + 7;
+			data.session.app_expire = dayjs(db_app.createdAt).diff(dayjs(), 'day') + 7;
 
 		const initialTimestamp = new Date().getTime();
 		let iframe_url = globalConf.protocol + '://';

@@ -19,26 +19,30 @@ exports.setupAdmin = async function() {
 			id: 1,
 			name: 'admin'
 		}
-	})
+	});
 
 	await models.Role.findOrCreate({
 		where: {
 			id: 2,
 			name: 'user'
 		}
-	})
+	});
+
+	let admin_email = globalConf.env == 'studio' ? globalConf.sub_domain + '-admin@nodea-software.com' : 'admin@local.fr';
+	if(process.env.ADMIN_EMAIL)
+		admin_email = process.env.ADMIN_EMAIL;
 
 	const admin = await models.User.create({
 		id: 1,
 		enabled: 0,
-		email: globalConf.env == 'studio' ? globalConf.sub_domain + '-admin@nodea-software.com' : 'admin@local.fr',
+		email: admin_email,
 		firstname: "Admin",
 		lastname: "Nodea",
 		login: "admin",
 		password: null,
 		phone: null,
 		version: 1
-	})
+	});
 
 	await admin.setRole(1);
 }
@@ -56,7 +60,7 @@ exports.setupWorkspaceNodeModules = _ => new Promise((resolve, reject) => {
 	console.log("🪄  WORKSPACE NODE MODULES INSTALL...");
 	fs.copySync(__dirname + '/../structure/template/package.json', global.__workspacePath + '/package.json');
 
-	exec('npm install', {
+	exec('npm i --no-optional', {
 		cwd: global.__workspacePath + '/'
 	}, err => {
 		if (err) {
