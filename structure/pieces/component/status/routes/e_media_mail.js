@@ -6,7 +6,8 @@ const helpers = require('@core/helpers');
 const middlewares = helpers.middlewares;
 const status = helpers.status;
 
-const models = require('@app/models')
+const models = require('@app/models');
+const { from } = require('@config/mail');
 
 class MediaMail extends Entity {
 	constructor() {
@@ -51,7 +52,9 @@ class MediaMail extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			create: {
-				// start: async (data) => {},
+				start: (data) => {
+					data.req.body.f_from = from;
+				},
 				// beforeCreateQuery: async(data) => {},
 				beforeRedirect: async(data) => {
 					const {req, createdRow, transaction} = data;
@@ -71,7 +74,8 @@ class MediaMail extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			update: {
-				start: async (data) => {
+				start: (data) => {
+					data.req.body.f_from = from;
 					data.idEntity = data.req.body.id_media_mail;
 				},
 				beforeRedirect: async(data) => {

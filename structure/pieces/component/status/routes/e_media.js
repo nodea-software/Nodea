@@ -12,6 +12,7 @@ const status = helpers.status;
 const models = require('@app/models');
 
 const fs = require('fs-extra');
+const { from } = require('@config/mail');
 
 const TARGET_ENTITIES = [];
 fs.readdirSync(__appPath + '/models/attributes/').filter(file => file.indexOf('.') !== 0 && file.slice(-5) === '.json' && file.substring(0, 2) == 'e_')
@@ -107,6 +108,7 @@ class Media extends Entity {
 				beforeRender: (data) => {
 					data.target_entities = sortTargetEntities(data.req.session.lang_user);
 					data.icon_list = icon_list;
+					data.from_media_mail = from;
 				}
 			},
 			create: {
@@ -149,7 +151,7 @@ class Media extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
-				beforeQuery: async (data) => {
+				beforeQuery: (data) => {
 					if(data.req.body.attrData && data.req.body.attrData.statustarget)
 						data.query.where = {
 							f_target_entity: data.req.body.attrData.statustarget
