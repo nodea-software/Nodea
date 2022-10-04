@@ -542,7 +542,7 @@ exports.setupRelatedToField = async (data) => {
 					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%"></select>
+			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;"></select>
 		</div>
 	</div>`;
 
@@ -560,7 +560,7 @@ exports.setupRelatedToField = async (data) => {
 					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<!--{#${alias}}-->
 					<option value="{id}" selected>${usingOption.join(' - ')}</option>
 				<!--{/${alias}}-->
@@ -674,7 +674,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		createField = wrapField(`
-			<select multiple="multiple" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple="multiple" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 			</select>
 		`);
 	fieldHelper.updateFile(fileBase, 'create_fields', createField);
@@ -695,7 +695,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		updateField = wrapField(`
-			<select multiple="" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple="" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<option value="">{#__ key="select.default" /}</option>
 				<!--{#${alias}}-->
 					<option value="{id}" selected>${usingOption.join(' - ')}</option>
@@ -720,7 +720,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		showField = wrapField(`
-			<select multiple disabled readonly class="form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple disabled readonly class="form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<!--{#${alias}}-->
 					<option value="${usingOption.join(' - ')}" selected>${usingOption.join(' - ')}</option>
 				<!--{/${alias}}-->

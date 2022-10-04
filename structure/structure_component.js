@@ -517,7 +517,7 @@ exports.newStatus = async (data) => {
 	// Display status as a badge instead of an input
 	// Also add next status buttons after status field
 	$ = await domHelper.read(appPath + '/views/' + source + '/show_fields.dust');
-	const statusBadgeHtml = '<br>\n<span class="badge" style="background: {' + statusAlias + '.f_color};">{' + statusAlias + '.f_name}</span>';
+	const statusBadgeHtml = '<br>\n<span class="badge" style="background: {' + statusAlias + '.f_color}; color: {' + statusAlias + '.f_text_color};">{' + statusAlias + '.f_name}</span>';
 	const nextStatusHtml = '\
 	<div class="form-group">\n\
 		<!--{#' + statusAlias + '.r_children ' + source.substring(2) + 'id=id}-->\n\

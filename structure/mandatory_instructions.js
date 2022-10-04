@@ -38,6 +38,7 @@ const mandatoryInstructions = [
 	"add field Field",
 	"add field Name",
 	"add field Color with type color",
+	"add field Text color",
 	"add field Accepted group related to many Group using Label",
 	"add field Button label",
 	"add field Position with type number",

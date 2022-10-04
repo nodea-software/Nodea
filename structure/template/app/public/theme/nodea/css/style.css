@@ -1,14 +1,14 @@
 :root {
   --theme-primary: #1f72a2;
-  --theme-primary-hover: #0069d9;
+  --theme-primary-hover: #185a80;
   --theme-secondary: #00a9ff;
   --theme-secondary-hover: #12bbff;
   --theme-info: #01c0c8;
   --theme-info-hover: #138496;
   --theme-success: #55ce63;
   --theme-success-hover: #218838;
-  --theme-danger: #f62d51;
-  --theme-danger-hover: #c82333;
+  --theme-danger: #d83b48;
+  --theme-danger-hover: #b42332;
   --theme-warning: #ffbc34;
   --theme-warning-hover: #e0a800;
   --theme-white: #f9fafc;
@@ -24,8 +24,10 @@
 /* --- Main header --- */
 
 .main-header {
-  background: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%);
-  border-image: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%);
+  /* background: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%);
+  border-image: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%); */
+  background: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
+  border-image: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
 }
 
 .main-header .navbar-nav .nav-link {
@@ -148,7 +150,7 @@ a.bg-danger:hover, a.bg-danger:focus, button.bg-danger:hover, button.bg-danger:f
 }
 
 .btn-info {
-  color: #fff;
+  color: #000;
   background-color: var(--theme-info);
   border-color: var(--theme-info);
   box-shadow: none;
@@ -161,14 +163,14 @@ a.bg-danger:hover, a.bg-danger:focus, button.bg-danger:hover, button.bg-danger:f
 }
 
 .btn-info.disabled, .btn-info:disabled {
-  color: #fff;
+  color: #000;
   background-color: var(--theme-info);
   border-color: var(--theme-info);
   opacity: 0.8;
 }
 
 .btn-success {
-  color: #fff;
+  color: #000;
   background-color: var(--theme-success);
   border-color: var(--theme-success);
   box-shadow: none;
@@ -181,27 +183,27 @@ a.bg-danger:hover, a.bg-danger:focus, button.bg-danger:hover, button.bg-danger:f
 }
 
 .btn-success.disabled, .btn-success:disabled {
-  color: #fff;
+  color: #000;
   background-color: var(--theme-success);
   border-color: var(--theme-success);
   opacity: 0.8;
 }
 
 .btn-warning {
-  color: var(--theme-black);
+  color: #000;
   background-color: var(--theme-warning);
   border-color: var(--theme-warning);
   box-shadow: none;
 }
 
 .btn-warning:hover, .btn-warning:focus, .btn-warning.focus {
-  color: var(--theme-black);
+  color: #000;
   background-color: var(--theme-warning-hover);
   border-color: var(--theme-warning-hover);
 }
 
 .btn-warning.disabled, .btn-warning:disabled {
-  color: var(--theme-black);
+  color: #000;
   background-color: var(--theme-warning);
   border-color: var(--theme-warning);
   opacity: 0.8;
@@ -239,4 +241,27 @@ a {
   color: #fff;
   background-color: var(--theme-primary);
   border-color: var(--theme-primary);
+}
+
+/* Overwrite AdminLTE CSS */
+.nav-sidebar > .nav-item > .nav-link:active, .nav-treeview > .nav-item > .nav-link:focus, .nav-sidebar > .nav-item > .nav-link:focus {
+	background-color: rgba(0,0,0,.1);
+}
+
+/* * Text color black on menu header */
+/* .main-header .navbar-nav .nav-link {
+	color: rgba(0,0,0,.8);
+} */
+
+.nav-pills .nav-link:not(.active):hover {
+	color: #00466f;
+}
+
+.btn-default:focus {
+	background-color: #e9ecef;
+	color: #2b2b2b;
+}
+
+.sidebar .form-inline .input-group {
+	flex-wrap: wrap;
 }

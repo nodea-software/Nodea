@@ -277,7 +277,7 @@ let NodeaTable = (function() {
 		            var keys = column.data.split(".");
 		            var statusObj = diveObj(row, keys);
 		            if (statusObj.f_name)
-		                return '<span class="badge" style="background: ' + statusObj.f_color + ';">' + statusObj.f_name + '</span>';
+		                return '<span class="badge" style="background: ' + statusObj.f_color + '; color: ' + statusObj.f_text_color + ';">' + statusObj.f_name + '</span>';
 		            else
 		                return '<span class="badge">' + statusObj + '</span>';
 	        	}

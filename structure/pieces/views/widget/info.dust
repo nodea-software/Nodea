@@ -1,5 +1,5 @@
 <div class="info-box">
-	<span class="info-box-icon bg-info">
+	<span class="info-box-icon bg-primary">
 		<i class="fa fa-envelope-o ENTITY_URL_NAME-icon"></i>
 	</span>
 	<div class="info-box-content">

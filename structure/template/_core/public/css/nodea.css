@@ -166,6 +166,10 @@ label.required:after {
 	color: #FFF;
 }
 
+.badge-version {
+	color: #000;
+}
+
 .form-title {
 	border: 1px solid var(--theme-primary);
 	background-color: #f9fafc;

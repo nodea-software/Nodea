@@ -7,8 +7,8 @@
   --theme-info-hover: #138496;
   --theme-success: #55ce63;
   --theme-success-hover: #218838;
-  --theme-danger: #f62d51;
-  --theme-danger-hover: #c82333;
+  --theme-danger: #d83b48;
+  --theme-danger-hover: #b42332;
   --theme-warning: #ffbc34;
   --theme-warning-hover: #e0a800;
   --theme-white: #f9fafc;
@@ -240,4 +240,22 @@ a {
   color: #fff;
   background-color: var(--theme-primary);
   border-color: var(--theme-primary);
+}
+
+/* Overwrite AdminLTE CSS */
+.nav-sidebar > .nav-item > .nav-link:active, .nav-treeview > .nav-item > .nav-link:focus, .nav-sidebar > .nav-item > .nav-link:focus {
+	background-color: rgba(255,255,255,.1);
+}
+
+.nav-treeview>.nav-item>.nav-link {
+	color: #cbcbcb !important;
+}
+
+.btn-default:focus {
+	background-color: #e9ecef;
+	color: #2b2b2b;
+}
+
+.sidebar .form-inline .input-group {
+	flex-wrap: wrap;
 }

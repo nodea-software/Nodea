@@ -290,12 +290,12 @@ var Nodea = (enables = {}) => {
             // Open sidebar depending on url location
             $('aside.main-sidebar .sidebar a.nav-link').each(function() {
                 if($(this).attr('href') == window.location.pathname) {
-                    $(this).css("color", "#3c8dbc").parents('li').addClass("menu-open");
+                    $(this).css("color", "#00466f").parents('li').addClass("menu-open");
                 } else {
                     // If precise URL not found, then open only the concerned menu if found
                     var splitURL = window.location.pathname.split('/');
-                    if($(this).attr('href').includes('/' + splitURL[1] + '/') && $(this).find('.right.fa-angle-right').length == 0)
-                        $(this).parents('li').addClass("menu-open");
+                    if($(this).attr('href').includes('/' + splitURL[2] + '/') && $(this).find('.right.fa-angle-right').length == 0)
+                        $(this).css("color", "#00466f").parents('li').addClass("menu-open");
                 }
             });
         }
@@ -317,5 +317,11 @@ var Nodea = (enables = {}) => {
                 localStorage.setItem("nodea_sidebar_preference", currentState);
             });
         }
+
+		// Change default class for default button DataTable
+		if($.fn.dataTable && $.fn.dataTable.Buttons){
+			$.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-primary';
+		}
+
     });
 }
