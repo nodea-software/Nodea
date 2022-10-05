@@ -795,6 +795,8 @@ exports.newAddress = (data) => {
 			<div class="address_component" data-as="${data.options.as}">
 				{#${data.options.as}}
 					{>"${data.options.value}/${file}"/}
+				{:else}
+					{>"${data.options.value}/${file}"/}
 				{/${data.options.as}}
 			</div>`);
 		domHelper.write(`${entity_path}/${file}.dust`, $entity);
@@ -816,11 +818,14 @@ exports.newAddress = (data) => {
 				</label>
 				{#${data.options.as}}
 					{>"${data.options.value}/show_fields"/}
+				</div>
+				<div class="col-xs-12 col-sm-6">
+					<div class="address_component_map" id="${data.options.as}_map"></div>
+				</div>
+				{:else}
+					<br>&nbsp;<!--{#__ key="global_component.address.addressNotFound"/}-->
+				</div>
 				{/${data.options.as}}
-			</div>
-			<div class="col-xs-12 col-sm-6">
-				<div class="address_component_map" id="${data.options.as}_map"></div>
-			</div>
 		</div>
 	</div>`);
 	domHelper.write(`${entity_path}/show_fields.dust`, $show);
