@@ -24,8 +24,6 @@
 /* --- Main header --- */
 
 .main-header {
-  /* background: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%);
-  border-image: linear-gradient(to right, var(--theme-info) 0%, var(--theme-primary) 100%); */
   background: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
   border-image: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
 }
