@@ -179,7 +179,7 @@
             "r_program": "Programme"
         },
         "e_page": {
-            "label_entity": "Étapes de nagivation",
+            "label_entity": "Étapes de navigation",
             "id_entity": "ID",
             "f_titre": "Titre",
             "f_script": "Script",

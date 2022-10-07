@@ -176,7 +176,7 @@
 																<div class="form-group">
 																	<label>{#__ key="settings.change_password"/}</label>
 																	<br>
-																	<button type='button' id='resetPassword' class="btn btn-primary">
+																	<button type='button' id='resetPassword' class="btn btn-warning">
 																		<i class="fas fa-sync fa-md"></i>&nbsp;&nbsp;
 																		{#__ key="settings.reset_button"/}
 																	</button>
@@ -187,10 +187,10 @@
 																<div class="form-group">
 																	<label>{#__ key="settings.info_delete_compte"/}</label>
 																	<br>
-																	<a href='mailto:contact@nodea-software.com' class="btn btn-primary">
+																	<a href='mailto:support@nodea-software.com' class="btn btn-danger">
 																		<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
-																		contact@nodea-software.com
-																	</button>
+																		support@nodea-software.com
+																	</a>
 																</div>
 															</div>
 														</div>
