@@ -5,7 +5,8 @@
 {/custom_css}
 
 {<modules}
-	<select id='module-select' class='form-control' onchange='navigate()'></select>
+	<label for="module-select">{#__ key="module.module"/}</label>
+	<select id='module-select' class='form-control' onchange='navigate()' style="width: 100%;" tabindex="0"></select>
 {/modules}
 
 {<sidebar}

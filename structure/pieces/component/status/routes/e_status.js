@@ -215,6 +215,8 @@ class E_status extends Entity {
 					const [entity, field] = req.body.entityStatus.split('.');
 					createObject.f_entity = entity;
 					createObject.f_field = field;
+					// * Auto calculate text color
+					createObject.f_text_color = helpers.status.getTextColor(createObject.f_color);
 				},
 				beforeRedirect: async({req, createObject, createdRow, transaction}) => {
 					if (createObject.f_default && createObject.f_default == 'true') {

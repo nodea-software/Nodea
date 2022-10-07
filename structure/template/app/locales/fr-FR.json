@@ -309,6 +309,7 @@
 			"navigation": "Activer la navigation",
 			"mousePosition": "Afficher les coordonnées de la souris",
 			"addressNotValid": "Adresse non valide",
+			"addressNotFound": "Adresse introuvable",
 			"inline_help": "Pour avoir une carte valide, veuillez utiliser le champ ci-dessous pour saisir l'adresse"
 		}
 	},

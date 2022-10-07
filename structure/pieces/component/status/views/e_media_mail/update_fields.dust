@@ -1,4 +1,12 @@
 <div id="fields" class="row">
+	<div data-field="f_from" class="col-12">
+		<div class="form-group">
+			<label class="mosaic-label" for="f_from">
+				{#__ key="entity.e_media_mail.f_from"/}
+			</label>
+			<input class="form-control input" placeholder='{#__ key="entity.e_media_mail.f_from" /}' name="f_from" value="{f_from}" type="text" disabled>
+		</div>
+	</div>
 	<div data-field="f_to" class="col-xs-12 col-sm-6">
 		<div class="form-group">
 			<label class="mosaic-label" for="f_to">
@@ -77,33 +85,7 @@
 			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_cci" /}' name="f_cci" value="{f_cci}" type="text">
 		</div>
 	</div>
-	<div data-field="f_from" class="col-xs-12 col-sm-6">
-		<div class="form-group">
-			<label class="mosaic-label" for="f_from">
-				{#__ key="entity.e_media_mail.f_from"/}
-			</label>
-			<div class="input-group">
-				<div class="input-group-prepend insert-mosaic">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<i class="fa fa-cogs"></i>&nbsp;<span class="caret"></span>
-					</button>
-					<div class="dropdown-menu" x-placement="bottom-start">
-						<a class="dropdown-item insert" data-type="user" data-for="f_from">
-							{#__ key="component.status.choose_from_user" /}
-						</a>
-						<a class="dropdown-item insert" data-type="group" data-for="f_from">
-							{#__ key="component.status.choose_from_group" /}
-						</a>
-						<a class="dropdown-item insert" data-type="email_field" data-for="f_from">
-							{#__ key="component.status.choose_from_email_field" /}
-						</a>
-					</div>
-				</div>
-			</div>
-			<input class="form-control input mt-2" placeholder='{#__ key="entity.e_media_mail.f_from" /}' name="f_from" value="{f_from}" type="text">
-		</div>
-	</div>
-	<div data-field="f_attachments" class="col-12">
+	<div data-field="f_attachments" class="col-xs-12 col-sm-6">
 		<div class="form-group">
 			<label class="mosaic-label" for="f_attachments">
 				{#__ key="entity.e_media_mail.f_attachments"/}

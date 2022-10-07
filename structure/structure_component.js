@@ -517,7 +517,7 @@ exports.newStatus = async (data) => {
 	// Display status as a badge instead of an input
 	// Also add next status buttons after status field
 	$ = await domHelper.read(appPath + '/views/' + source + '/show_fields.dust');
-	const statusBadgeHtml = '<br>\n<span class="badge" style="background: {' + statusAlias + '.f_color};">{' + statusAlias + '.f_name}</span>';
+	const statusBadgeHtml = '<br>\n<span class="badge" style="background: {' + statusAlias + '.f_color}; color: {' + statusAlias + '.f_text_color};">{' + statusAlias + '.f_name}</span>';
 	const nextStatusHtml = '\
 	<div class="form-group">\n\
 		<!--{#' + statusAlias + '.r_children ' + source.substring(2) + 'id=id}-->\n\
@@ -795,6 +795,8 @@ exports.newAddress = (data) => {
 			<div class="address_component" data-as="${data.options.as}">
 				{#${data.options.as}}
 					{>"${data.options.value}/${file}"/}
+				{:else}
+					{>"${data.options.value}/${file}"/}
 				{/${data.options.as}}
 			</div>`);
 		domHelper.write(`${entity_path}/${file}.dust`, $entity);
@@ -816,11 +818,14 @@ exports.newAddress = (data) => {
 				</label>
 				{#${data.options.as}}
 					{>"${data.options.value}/show_fields"/}
+				</div>
+				<div class="col-xs-12 col-sm-6">
+					<div class="address_component_map" id="${data.options.as}_map"></div>
+				</div>
+				{:else}
+					<br>&nbsp;<!--{#__ key="global_component.address.addressNotFound"/}-->
+				</div>
 				{/${data.options.as}}
-			</div>
-			<div class="col-xs-12 col-sm-6">
-				<div class="address_component_map" id="${data.options.as}_map"></div>
-			</div>
 		</div>
 	</div>`);
 	domHelper.write(`${entity_path}/show_fields.dust`, $show);

@@ -309,6 +309,7 @@
 			"navigation": "Enable navigation",
 			"mousePosition": "Display mouse coordinate",
 			"addressNotValid": "Not valid address",
+			"addressNotFound": "Address not found",
 			"inline_help": "To have a valid map, please use the field below to enter the address"
 		}
 	},

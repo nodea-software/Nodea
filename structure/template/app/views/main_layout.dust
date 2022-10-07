@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr-FR">
 	<head>
 		<meta charset="UTF-8">
 		<title>{#__ key="app.name"/}&nbsp;|&nbsp;{#__ key="module.home"/}</title>
-		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta content="width=device-width, initial-scale=1, maximum-scale=5" name="viewport">
 		{! Nodea Main Bundle !}
 		<link href="/core/bundle/nodea_main_css.bundle.css?v={config.version}-{config.build}" rel="stylesheet">
 		{! Favicon !}
@@ -61,7 +61,7 @@
 					{! Version !}
 					<li class="nav-item">
 						<a class="nav-link" href="#">
-							<span class="badge badge-warning navbar-badge" style="margin-top: 5px;">
+							<span class="badge badge-warning navbar-badge badge-version" style="margin-top: 5px;">
 								{#__ key="app.version"/}&nbsp;{config.version}
 							</span>
 						</a>

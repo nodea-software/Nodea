@@ -516,6 +516,11 @@ let NodeaForms = (_ => {
 				selector: ".timepicker",
 				initializer: (element) => {
 					element.datetimepicker({
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						},
 						format: 'HH:mm'
 					});
 				}
@@ -523,7 +528,8 @@ let NodeaForms = (_ => {
 			datepicker: {
 				selector: '.datepicker',
 				initializer: (element) => {
-					let pickerOpts, mask;
+					let pickerOpts = {};
+					let mask;
 					if (lang_user == 'fr-FR') {
 						pickerOpts = {
 							format: "DD/MM/YYYY",
@@ -547,7 +553,14 @@ let NodeaForms = (_ => {
 					}
 
 					// Init
-					element.datetimepicker(pickerOpts);
+					element.datetimepicker({
+						...pickerOpts,
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						}
+					});
 					element.inputmask(mask);
 
 					// Default date
@@ -575,7 +588,8 @@ let NodeaForms = (_ => {
 			datetimepicker: {
 				selector: '.datetimepicker',
 				initializer: (element) => {
-					let pickerOpts, mask;
+					let pickerOpts = {};
+					let mask;
 					if (lang_user == 'fr-FR') {
 						pickerOpts = {
 							format: "DD/MM/YYYY HH:mm",
@@ -589,7 +603,14 @@ let NodeaForms = (_ => {
 					}
 
 					// Init
-					element.datetimepicker(pickerOpts);
+					element.datetimepicker({
+						...pickerOpts,
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						}
+					});
 
 					// Default date
 					if (element.attr("data-today") == 1)
