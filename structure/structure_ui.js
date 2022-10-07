@@ -1,5 +1,6 @@
 const fs = require("fs-extra");
 const domHelper = require('../helpers/js_dom');
+const setup = require('../helpers/setup');
 const iconList = require('../config/font_awesome_list.json');
 
 exports.setColumnVisibility = async (data) => {
@@ -186,6 +187,7 @@ exports.listLayout = (data) => {
 exports.setTheme = async (data) => {
 
 	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspacePathCore = global.__workspacePath + '/' + data.application.name + '/_core';
 
 	let askedTheme = data.options.value.toLowerCase();
 	askedTheme = askedTheme.trim().replace(/ /g, "-");
@@ -227,8 +229,10 @@ exports.setTheme = async (data) => {
 		promises.push((async() => {
 			const layoutPath = workspacePath + '/views/' + layoutToWrite[i] + '.dust';
 			const $ = await domHelper.read(layoutPath, true);
+
+			// * Works without bundle system
 			// const oldTheme = $("link[data-type='theme']").attr("data-theme");
-			$("link[data-type='theme']").replaceWith("<link href='/theme/" + askedTheme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + askedTheme + "'>");
+			// $("link[data-type='theme']").replaceWith("<link href='/theme/" + askedTheme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + askedTheme + "'>");
 
 			if(themeInformation.sidebar == 'dark'){
 				$(".main-sidebar").removeClass('sidebar-light-primary');
@@ -238,13 +242,14 @@ exports.setTheme = async (data) => {
 				$(".main-sidebar").addClass('sidebar-light-primary');
 			}
 
-			if (typeof themeInformation.js !== "undefined") {
-				// If the theme need js inclusion
-				for (let j = 0; j < themeInformation.js.length; j++) {
-					$("body script:last").after("<script type='text/javascript'></script>");
-					$("body script:last").attr('src', "/theme/" + askedTheme + "/js/" + themeInformation.js[j]);
-				}
-			}
+			// * Works without bundle system
+			// if (typeof themeInformation.js !== "undefined") {
+			// 	// If the theme need js inclusion
+			// 	for (let j = 0; j < themeInformation.js.length; j++) {
+			// 		$("body script:last").after("<script type='text/javascript'></script>");
+			// 		$("body script:last").attr('src', "/theme/" + askedTheme + "/js/" + themeInformation.js[j]);
+			// 	}
+			// }
 
 			domHelper.write(layoutPath, $, true);
 			return;
@@ -252,6 +257,24 @@ exports.setTheme = async (data) => {
 	}
 
 	await Promise.all(promises);
+
+	// Update & Rebuild bundle
+	const conf_bundle = JSON.parse(fs.readFileSync(`${workspacePathCore}/public/bundle.json`, 'utf8'));
+
+	if(conf_bundle.nodea_main_css.files.find(path => path.includes(`@app/public/theme/${askedTheme}/`))){
+		return;
+	}
+
+	conf_bundle.nodea_main_css.files = conf_bundle.nodea_main_css.files.filter(path => !path.includes(`@app/public/theme/`));
+	conf_bundle.nodea_main_css.files.push(`@app/public/theme/${askedTheme}/css/style.css`);
+
+	fs.writeFileSync(`${workspacePathCore}/public/bundle.json`, JSON.stringify(conf_bundle, null, 4));
+
+	await setup.setupTemplateBundle(false, 'nodea_main_css', workspacePath);
+	if (themeInformation.js.length) {
+		await setup.setupTemplateBundle(false, 'nodea_main_js', workspacePath);
+	}
+
 	return;
 }
 

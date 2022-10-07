@@ -63,9 +63,13 @@ async function bundleJS(files) {
 	};
 }
 
-exports.bundleAll = async function (only_missing = false, specific_bundle = null) {
+exports.bundleAll = async function (only_missing = false, specific_bundle = null, workspace_path_app) {
 	const promises = [];
-	for(const path of [appPath, corePath]) {
+	const bundle_core_path = workspace_path_app ? `${workspace_path_app}/../_core` : corePath;
+	const bundle_app_path = workspace_path_app ? workspace_path_app : appPath;
+	const arrPath = [bundle_app_path, bundle_core_path];
+
+	for(const path of arrPath) {
 		const bundle_conf = JSON.parse(fs.readFileSync(path + '/public/bundle.json', 'utf8'));
 
 		if (!fs.existsSync(path + '/public/bundle'))
@@ -93,7 +97,7 @@ exports.bundleAll = async function (only_missing = false, specific_bundle = null
 
 			promises.push((async bundle_name => {
 				console.log('🔨 GENERATING BUNDLE:', bundle_name, '...');
-				bundle.files = bundle.files.map(x => x.replace('@app', appPath).replace('@core', corePath));
+				bundle.files = bundle.files.map(x => x.replace('@app', bundle_app_path).replace('@core', bundle_core_path));
 				let bundle_content;
 				switch (bundle.type) {
 					case 'css':
