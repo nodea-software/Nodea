@@ -35,13 +35,16 @@ If it does not work then follow these steps:
 
 Use .sql file that are in sql/ directory to generate the database, there are 3 files for each available dialect (MariaDB, MySQL, Postgres)
 
-Note that MariaDB is the default dialect, if you want to change please update the dialect key in <b>config/database</b>and <b>structure/template/config/database.js</b>
+Note that MariaDB is the default dialect, if you want to change please update the dialect key in <b>config/database</b> and <b>structure/template/config/database.js</b>
 
-If you want to access your application by <b>localhost:1337</b> instead of <b>127.0.0.1:1337</b> please update the host key in config/global.js
+If you want to access your generator by <b>localhost:1337</b> instead of <b>127.0.0.1:1337</b> please update the host key in <b>config/global.js</b>
 
 Note that if you access the generator with localhost and let the <b>host</b> key to <b>127.0.0.1</b> you'll cookie mismatch and you will often be <b>logged out</b> of generated applications inside the generator
 
-Execute <b>npm install --no-optional</b>
+Install node modules
+<pre>
+npm install --no-optional
+</pre>
 <i>You can remove the --no-optional if you also want to install Cypress.</i>
 
 ### Launch server
