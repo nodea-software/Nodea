@@ -63,10 +63,10 @@ async function bundleJS(files) {
 	};
 }
 
-exports.bundleAll = async function (only_missing = false, specific_bundle = null, workspace_path_app) {
+exports.bundleAll = async function (only_missing = false, specific_bundle = null, custom_path_app) {
 	const promises = [];
-	const bundle_core_path = workspace_path_app ? `${workspace_path_app}/../_core` : corePath;
-	const bundle_app_path = workspace_path_app ? workspace_path_app : appPath;
+	const bundle_core_path = custom_path_app ? `${custom_path_app}/../_core` : corePath;
+	const bundle_app_path = custom_path_app ? custom_path_app : appPath;
 	const arrPath = [bundle_app_path, bundle_core_path];
 
 	for(const path of arrPath) {
