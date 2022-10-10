@@ -15,6 +15,7 @@ class Application {
 		this._associationSeq = 0; // Used for unique generation of workspace assocation table
 		this._modules = [];
 		this._components = [];
+		this._current_theme = 'nodea';
 	}
 
 	// --- Statics ---
@@ -115,6 +116,10 @@ class Application {
 		return ++this._associationSeq;
 	}
 
+	get currentTheme() {
+		return this._current_theme;
+	}
+
 	// --- Setters ---
 	set displayName(displayName) {
 		this._displayName = displayName;
@@ -142,6 +147,10 @@ class Application {
 
 	set associationSeq(seq) {
 		this._associationSeq = seq;
+	}
+
+	set currentTheme(name_theme) {
+		this._current_theme = name_theme;
 	}
 
 	// --- Methods ---
@@ -249,6 +258,7 @@ class Application {
 		newMetadata.displayName = this._displayName;
 		newMetadata.modules = {};
 		newMetadata.components = {};
+		newMetadata.current_theme = this._current_theme;
 
 		// Loop on application modules
 		for (const np_module of this._modules) {

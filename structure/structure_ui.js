@@ -186,55 +186,55 @@ exports.listLayout = (data) => {
 
 exports.setTheme = async (data) => {
 
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
-	const workspacePathCore = global.__workspacePath + '/' + data.application.name + '/_core';
+	const workspace_path = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspace_path_core = global.__workspacePath + '/' + data.application.name + '/_core';
 
-	let askedTheme = data.options.value.toLowerCase();
-	askedTheme = askedTheme.trim().replace(/ /g, "-");
+	let asked_theme = data.options.value.toLowerCase();
+	asked_theme = asked_theme.trim().replace(/ /g, "-");
 
 	function retrieveTheme(themePath) {
-		const themesDir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
-		const themeListAvailable = [];
-		themesDir.forEach(theme => {
-			themeListAvailable.push(theme);
+		const themes_dir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
+		const theme_list_available = [];
+		themes_dir.forEach(theme => {
+			theme_list_available.push(theme);
 		});
-		return themeListAvailable;
+		return theme_list_available;
 	}
 
-	const themeWorkspacePath = workspacePath + '/public/theme';
-	const themeListAvailableWorkspace = retrieveTheme(themeWorkspacePath);
+	const theme_workspace_path = workspace_path + '/public/theme';
+	const theme_list_available_workspace = retrieveTheme(theme_workspace_path);
 
 	// If not found in workspace, look for not imported theme exisiting in structure/template
-	if (themeListAvailableWorkspace.indexOf(askedTheme) == -1) {
-		const themeTemplatePath = __dirname + '/template/app/public/theme';
-		const themeListAvailableTemplate = retrieveTheme(themeTemplatePath);
+	if (theme_list_available_workspace.indexOf(asked_theme) == -1) {
+		const theme_template_path = __dirname + '/template/app/public/theme';
+		const theme_list_available_template = retrieveTheme(theme_template_path);
 
-		if (themeListAvailableTemplate.indexOf(askedTheme) == -1) {
+		if (theme_list_available_template.indexOf(asked_theme) == -1) {
 			const err = new Error('structure.ui.theme.cannotFind');
 			let msgParams = "";
-			for (let i = 0; i < themeListAvailableWorkspace.length; i++)
-				msgParams += "-  " + themeListAvailableWorkspace[i] + "<br>";
+			for (let i = 0; i < theme_list_available_workspace.length; i++)
+				msgParams += "-  " + theme_list_available_workspace[i] + "<br>";
 			err.messageParams = [msgParams];
 			throw err;
 		}
 
-		fs.copySync(themeTemplatePath + "/" + askedTheme + "/", themeWorkspacePath + "/" + askedTheme + "/");
+		fs.copySync(theme_template_path + "/" + asked_theme + "/", theme_workspace_path + "/" + asked_theme + "/");
 	}
 
-	const themeInformation = JSON.parse(fs.readFileSync(workspacePath + "/public/theme/" + askedTheme + "/infos.json"));
+	const theme_information = JSON.parse(fs.readFileSync(workspace_path + "/public/theme/" + asked_theme + "/infos.json"));
 	const promises = [];
-	const layoutToWrite = ["main_layout", "login_layout"];
+	const layout_to_write = ["main_layout", "login_layout"];
 
-	for (let i = 0; i < layoutToWrite.length; i++) {
+	for (let i = 0; i < layout_to_write.length; i++) {
 		promises.push((async() => {
-			const layoutPath = workspacePath + '/views/' + layoutToWrite[i] + '.dust';
-			const $ = await domHelper.read(layoutPath, true);
+			const layout_path = workspace_path + '/views/' + layout_to_write[i] + '.dust';
+			const $ = await domHelper.read(layout_path, true);
 
 			// * Works without bundle system
 			// const oldTheme = $("link[data-type='theme']").attr("data-theme");
-			// $("link[data-type='theme']").replaceWith("<link href='/theme/" + askedTheme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + askedTheme + "'>");
+			// $("link[data-type='theme']").replaceWith("<link href='/theme/" + asked_theme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + asked_theme + "'>");
 
-			if(themeInformation.sidebar == 'dark'){
+			if(theme_information.sidebar == 'dark'){
 				$(".main-sidebar").removeClass('sidebar-light-primary');
 				$(".main-sidebar").addClass('sidebar-dark-primary');
 			} else {
@@ -243,15 +243,15 @@ exports.setTheme = async (data) => {
 			}
 
 			// * Works without bundle system
-			// if (typeof themeInformation.js !== "undefined") {
+			// if (typeof theme_information.js !== "undefined") {
 			// 	// If the theme need js inclusion
-			// 	for (let j = 0; j < themeInformation.js.length; j++) {
+			// 	for (let j = 0; j < theme_information.js.length; j++) {
 			// 		$("body script:last").after("<script type='text/javascript'></script>");
-			// 		$("body script:last").attr('src', "/theme/" + askedTheme + "/js/" + themeInformation.js[j]);
+			// 		$("body script:last").attr('src', "/theme/" + asked_theme + "/js/" + theme_information.js[j]);
 			// 	}
 			// }
 
-			domHelper.write(layoutPath, $, true);
+			domHelper.write(layout_path, $, true);
 			return;
 		})());
 	}
@@ -259,20 +259,24 @@ exports.setTheme = async (data) => {
 	await Promise.all(promises);
 
 	// Update & Rebuild bundle
-	const conf_bundle = JSON.parse(fs.readFileSync(`${workspacePathCore}/public/bundle.json`, 'utf8'));
+	const conf_bundle = JSON.parse(fs.readFileSync(`${workspace_path_core}/public/bundle.json`, 'utf8'));
 
-	if(conf_bundle.nodea_main_css.files.find(path => path.includes(`@app/public/theme/${askedTheme}/`))){
+	if(conf_bundle.nodea_main_css.files.find(path => path.includes(`@app/public/theme/${asked_theme}/`))){
 		return;
 	}
 
-	conf_bundle.nodea_main_css.files = conf_bundle.nodea_main_css.files.filter(path => !path.includes(`@app/public/theme/`));
-	conf_bundle.nodea_main_css.files.push(`@app/public/theme/${askedTheme}/css/style.css`);
+	conf_bundle.nodea_main_css.files = conf_bundle.nodea_main_css.files.filter(path => !path.includes(`@app/public/theme/${data.application.currentTheme}/css/style.css`));
+	conf_bundle.nodea_main_css.files.push(`@app/public/theme/${asked_theme}/css/style.css`);
 
-	fs.writeFileSync(`${workspacePathCore}/public/bundle.json`, JSON.stringify(conf_bundle, null, 4));
+	// Change metadata
+	data.application.currentTheme = asked_theme;
+	data.application.save();
 
-	await setup.setupTemplateBundle(false, 'nodea_main_css', workspacePath);
-	if (themeInformation.js.length) {
-		await setup.setupTemplateBundle(false, 'nodea_main_js', workspacePath);
+	fs.writeFileSync(`${workspace_path_core}/public/bundle.json`, JSON.stringify(conf_bundle, null, 4));
+
+	await setup.setupTemplateBundle(false, 'nodea_main_css', workspace_path);
+	if (theme_information.js.length) {
+		await setup.setupTemplateBundle(false, 'nodea_main_js', workspace_path);
 	}
 
 	return;
