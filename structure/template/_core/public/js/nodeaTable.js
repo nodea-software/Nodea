@@ -16,16 +16,20 @@ let NodeaTable = (function() {
 	        return '-';
 	}
 
-	// Generate the column selector on datatable button click
+		// Generate the column selector on datatable button click
 	//   - append an absolute div to the datalist button
 	//   - display a list of the columns available on page load with a checkbox to hide/show each
 	function generateColumnSelector(tableID) {
-	    var storageColumnsHide = JSON.parse(localStorage.getItem("nodea_hidden_columns_save_" + tableID.substring(1)));
-	    var table = $(tableID).data('table');
-	    var columns = table.tableOptions.columns;
-
-	    var tableHeight = $(tableID).height();
-	    var columnsSelectorDiv = $(`<div id="columnSelector" style="max-height:400px;width:100%;overflow:auto;position:absolute;background: white;border: 1px solid grey;border-radius:10px;padding:20px;z-index:1000;top:40px;"><h4 style="text-align:center;">${STR_LANGUAGE.display}</h4><hr><div class='row'></div></div>`);
+		var storageColumnsHide = JSON.parse(localStorage.getItem("nodea_hidden_columns_save_" + tableID.substring(1)));
+		var table = $(tableID).data('table');
+		var columns = table.tableOptions.columns;
+		var columnsSelectorDiv = $(`
+			<div id="columnSelector">
+			<h4 style="text-align:center;">${STR_LANGUAGE.display}</h4>
+			<hr>
+			<div class='row'></div>
+			</div>
+		`);
 
 	    var columnsToHide = [];
 	    // Loop over the <th> available on page load
@@ -68,18 +72,62 @@ let NodeaTable = (function() {
 	        })(column);
 	    }
 
-	    // Create Apply button and bind click
-	    var applyBtn = $('<div style="text-align:center;margin-top:10px;margin-bottom:5px;"><button class="btn btn-primary">'+STR_LANGUAGE.apply+'</button></div>');
-	    applyBtn.on('click', function(){
-	        // Set new filters to localStorage and reload
-	        localStorage.setItem("nodea_hidden_columns_save_" + tableID.substring(1), JSON.stringify(columnsToHide));
-	        setTimeout(function() {
-	            location.reload();
-	        }, 100);
-	    });
+		let toggleBtn, toggleState = 'check', halfColumnsNumber = columns.length / 2;
+		// Toggle btn for columns selector, if half is uncheck then start by checking them
+		if((halfColumnsNumber - 3) < columnsToHide.length) {
+			toggleState = 'check';
+			toggleBtn = $(`
+				<div style="text-align:center;margin-top:10px;margin-bottom:5px;float:left;">
+					<button class="btn btn-default"><i class="fas fa-sync"></i>&nbsp;${STR_LANGUAGE.check}</button>
+				</div>
+			`);
+		} else {
+			toggleState = 'uncheck';
+			toggleBtn = $(`
+				<div style="text-align:center;margin-top:10px;margin-bottom:5px;float:left;">
+					<button class="btn btn-default"><i class="fas fa-sync"></i>&nbsp;${STR_LANGUAGE.uncheck}</button>
+				</div>
+			`);
+		}
 
-	    columnsSelectorDiv.append('<hr>').append(applyBtn)
-	    return columnsSelectorDiv;
+		toggleBtn.on('click', function(){
+			let check = false;
+			if(toggleState == 'check'){
+				toggleState = 'uncheck';
+				$(this).find('button').html(`<i class="fas fa-sync"></i>&nbsp;${STR_LANGUAGE.uncheck}`);
+				check = true;
+			} else {
+				$(this).find('button').html(`<i class="fas fa-sync"></i>&nbsp;${STR_LANGUAGE.check}`);
+				toggleState = 'check';
+			}
+
+			$('#columnSelector').find('input[type="checkbox"]').each(function(idx) {
+				// Do not toggle the first one
+				if(idx != 0) {
+					if(check)
+						$(this).icheck('checked');
+					else
+						$(this).icheck('unchecked');
+				}
+			})
+		});
+
+		// Create Apply button and bind click
+		const applyBtn = $(`
+			<div style="text-align:center;margin-top:10px;margin-bottom:5px;float:right;">
+				<button class="btn btn-primary"><i class="fas fa-check"></i>&nbsp;${STR_LANGUAGE.apply}</button>
+			</div>
+		`);
+		applyBtn.on('click', function(){
+			// Set new filters to localStorage and reload
+			localStorage.setItem("nodea_hidden_columns_save_" + tableID.substring(1), JSON.stringify(columnsToHide));
+			setTimeout(function() {
+				location.reload();
+			}, 100);
+		});
+
+		columnsSelectorDiv.append('<hr>').append(toggleBtn).append(applyBtn);
+		return columnsSelectorDiv;
 	}
 
 	// Associate custom data to dalalist ajax call

@@ -65,12 +65,11 @@ $(function() {
 	}
 
 	$(document).on("click", "#generate-button", function(){
+		const app_name = $('input[name="application"]').val();
 		if(!app_name || app_name == '')
 			return toastr.warning('Merci de renseigner un nom d\'application');
-
 		queueInterval = null;
 		$('#generate-button').css("display", "none");
-		const app_name = $('input[name="application"]').val();
 		checkStartGeneration(app_name, true);
 	});
 

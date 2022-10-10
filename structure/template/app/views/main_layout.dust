@@ -6,6 +6,7 @@
 		<meta content="width=device-width, initial-scale=1, maximum-scale=5" name="viewport">
 		{! Nodea Main Bundle !}
 		<link href="/core/bundle/nodea_main_css.bundle.css?v={config.version}-{config.build}" rel="stylesheet">
+		{! {>"bundle/nodea_main_css"/} !}
 		{! Favicon !}
 		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
@@ -239,6 +240,7 @@
 		{! --- JS --- !}
 		{! Nodea Main Bundle !}
 		<script src="/core/bundle/nodea_main_js.bundle.js?v={config.version}-{config.build}" type="text/javascript"></script>
+		{! {>"bundle/nodea_main_js"/} !}
 
 		{! SocketIO !}
 		{#config.socket.enabled}
