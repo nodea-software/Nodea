@@ -110,8 +110,8 @@ exports.newFileStorage = (data) => {
 
 exports.newAgenda = async (data) => {
 
-	const corePath = __workspacePath + '/' + data.application.name + '/_core';
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const corePath = global.__workspacePath + '/' + data.application.name + '/_core';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 	const piecesPath = __dirname + '/pieces/component/agenda';
 
 	const valueComponent = data.options.value;
@@ -331,7 +331,7 @@ exports.newAgenda = async (data) => {
 
 exports.deleteAgenda = async (data) => {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 	const layoutFileName = appPath + '/views/layout_' + data.np_module.name + '.dust';
 
 	// Remove agenda route
@@ -818,14 +818,14 @@ exports.newAddress = (data) => {
 				</label>
 				{#${data.options.as}}
 					{>"${data.options.value}/show_fields"/}
-				</div>
-				<div class="col-xs-12 col-sm-6">
-					<div class="address_component_map" id="${data.options.as}_map"></div>
-				</div>
 				{:else}
-					<br>&nbsp;<!--{#__ key="global_component.address.addressNotFound"/}-->
-				</div>
+					<br>
+					<!--{#__ key="global_component.address.addressNotFound"/}-->
 				{/${data.options.as}}
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<div class="address_component_map" id="${data.options.as}_map"></div>
+			</div>
 		</div>
 	</div>`);
 	domHelper.write(`${entity_path}/show_fields.dust`, $show);

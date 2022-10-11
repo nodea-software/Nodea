@@ -52,7 +52,7 @@ $(function() {
 				}
 
 				$('#queue_text_span').hide();
-				$('form[action="/build/application"]').trigger('submit');
+				$('form[action="/build/application"]').trigger('submit', true);
 				$("#app-progress-bar").css("display", "block");
 				pourcentInterval = setInterval(getPourcent, 1000);
 			},
@@ -64,13 +64,13 @@ $(function() {
 		});
 	}
 
-	$(document).on("click", "#generate-button", function(){
-		const app_name = $('input[name="application"]').val();
-		if(!app_name || app_name == '')
-			return toastr.warning('Merci de renseigner un nom d\'application');
-		queueInterval = null;
-		$('#generate-button').css("display", "none");
-		checkStartGeneration(app_name, true);
+	$(document).on('submit', 'form[action="/build/application"]', function(e, submit){
+		if(!submit) {
+			$('button[type="submit"]').css("display", "none");
+			checkStartGeneration($('input[name="application"]').val(), true);
+			e.preventDefault();
+			return false;
+		}
 	});
 
 	$(document).on("keyup", 'input[name="application"]', function(e){

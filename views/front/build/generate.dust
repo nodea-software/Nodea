@@ -10,7 +10,7 @@
 				<label for="application">{#M_ key="application.label"/}</label>
 				<input class="form-control input" name="application" type="text" required>
 				<br>
-				<button id="generate-button" class="btn btn-primary" type="button">
+				<button class="btn btn-primary" type="submit">
 					<i class="fa fa-cog fa-md">&nbsp;&nbsp;</i>{#__ key="button.create"/}
 				</button>
 			</div>
