@@ -134,7 +134,8 @@
             "access_settings_group": "Group access management",
             "access_settings_role": "Role access management",
             "api_documentation": "API Documentation",
-            "db_tool": "DB Tool"
+            "db_tool": "DB Tool",
+			"traceability": "Traceability"
         },
         "access_settings": {
             "moduleList": "Modules",

@@ -7,10 +7,15 @@ const appConf = require('@config/application');
 
 // Add user ID token in morgan ----
 morgan.token('userid', (req) => {
-	let format;
-	if(req.user){
-		format = `- ID ${ req.user ? req.user.id : '' }`
+	let format = '';
+	if(req.apiCredentials && req.apiCredentials.id){
+		format = `- ID API Credentials: ${req.apiCredentials.id}`;
 	}
+
+	if(req.user && req.user.id){
+		format = `- ID ${req.user.id}`;
+	}
+
 	return format;
 });
 

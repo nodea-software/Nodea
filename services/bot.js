@@ -814,6 +814,63 @@ exports.createComponentChat = _ => {
 	}
 }
 
+/* TRACEABILITY */
+exports.enabledTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "enabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.disabledTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "disabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.showTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "showTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.hideTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "hideTracking",
+		options: options
+	};
+	return data;
+};
+
 // ******* INTERFACE ******* //
 exports.setLogo = result => {
 	const value = result[1];
@@ -2377,6 +2434,22 @@ const bot_instructions = {
 		"delete title (.*)",
 		"supprimer  titre (.*)",
 		"supprimer le titre (.*)"
+	],
+	"enabledTracking": [
+		"enable tracking on entity (.*)",
+		"activer la tracabilité sur l'entité (.*)"
+	],
+	"disabledTracking": [
+		"disable tracking on entity (.*)",
+		"désactiver la tracabilité sur l'entité (.*)",
+	],
+	"showTracking": [
+		"show tracking on entity (.*)",
+		"afficher la tracabilité sur l'entité (.*)",
+	],
+	"hideTracking": [
+		"hide tracking on entity (.*)",
+		"masquer la tracabilité sur l'entité (.*)"
 	]
 };
 

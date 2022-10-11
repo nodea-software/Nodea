@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const domHelper = require('../helpers/js_dom');
 const dataHelper = require("../utils/data_helper");
 
@@ -440,6 +441,9 @@ module.exports = {
 	},
 	updateFile: (fileBase, file, string) => {
 		const fileToWrite = fileBase + '/' + file + '.dust';
+		if(!fs.existsSync(fileToWrite)){
+			return;
+		}
 		const $ = domHelper.read(fileToWrite);
 		const $string = domHelper.read(false, false, string);
 		$("#fields").append($string.html());

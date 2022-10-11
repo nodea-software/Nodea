@@ -3,7 +3,7 @@ const language = require('./language');
 const address_fields = ['f_label', 'f_number', 'f_street_1', 'f_street_2', 'f_postal_code', 'f_city', 'f_country', 'f_lat', 'f_lon'];
 
 module.exports = {
-	createAddress: async function({body, user}, entityObject, relations, transaction) {
+	createAddress: async function({body, user, query}, entityObject, relations, transaction) {
 		const address_relations = relations.filter(x => x.component == 'address');
 		const promises = [];
 		for (const relation of address_relations) {
@@ -14,13 +14,16 @@ module.exports = {
 			}
 			const func = 'create' + relation.as.capitalizeFirstLetter();
 			promises.push(entityObject[func](create_obj, {
+				upperEntity: query && query.associationSource ? query.associationSource : null,
+				entitySourceID: entityObject.id,
+				entitySource: entityObject.constructor.getTableName(),
 				user,
 				transaction
 			}));
 		}
 		await Promise.all(promises);
 	},
-	updateAddress: async function({body, user}, entityObject, relations, transaction) {
+	updateAddress: async function({body, user, query}, entityObject, relations, transaction) {
 		const address_relations = relations.filter(x => x.component == 'address');
 		const promises = [];
 		for (const relation of address_relations) {
@@ -37,6 +40,9 @@ module.exports = {
 				}
 
 				await address.update(update_obj, {
+					upperEntity: query && query.associationSource ? query.associationSource : null,
+					entitySourceID: entityObject.id,
+					entitySource: entityObject.constructor.getTableName(),
 					user,
 					transaction
 				});

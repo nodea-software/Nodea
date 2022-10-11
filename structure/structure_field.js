@@ -277,6 +277,7 @@ exports.setupField = async (data) => {
 	filePromises.push(fieldHelper.updateListFile(fileBase, "list_fields", field_html.headers));
 
 	await Promise.all(filePromises);
+
 	// Field application locales
 	await translateHelper.writeLocales(data.application.name, "field", entity_name, [field_name, data.options.showValue], data.googleTranslate);
 
@@ -595,10 +596,11 @@ exports.setupRelatedToField = async (data) => {
 	</div>`;
 
 	file = fileBase + '/show_fields.dust';
-	const $ = await domHelper.read(file);
-	$("#fields").append(showField);
-
-	domHelper.write(file, $)
+	if(fs.existsSync(file)){
+		const $ = await domHelper.read(file);
+		$("#fields").append(showField);
+		domHelper.write(file, $)
+	}
 
 	/* ------------- Add new FIELD in list <thead> ------------- */
 	for (let i = 0; i < usingField.length; i++) {

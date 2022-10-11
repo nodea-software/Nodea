@@ -927,3 +927,252 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 	domHelper.write(workspacePath + '/app/views/' + data.entity.name + '/show_fields.dust', $);
 	return true;
 }
+
+exports.createNewTracking = (data) => {
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+
+	// Simple entity generation
+	const entityName = data.options.value;
+
+	// Add entity in file /config/tracking.json
+	const trackingConfigPath =`${workspacePath}/config/tracking.json`;
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(Object.keys(trackingObj).find(e => e === entityName)){
+		console.error(`Tracking already enabled on entity ${entityName}`);
+		throw new Error("structure.component.error.alreadyExistOnEntity");
+	}
+
+	trackingObj[entityName] = {};
+
+	// Relation type to add tracking
+	const relationType = ['hasOne', 'hasMany', 'hasManyPreset'];
+
+	// Add relation entity
+	const optionsEntitySourcePath = `${workspacePath}/app/models/options/${entityName}.json`;
+	const entitySourceOptions = fs.readFileSync(optionsEntitySourcePath, 'utf8');
+	for (const o of JSON.parse(entitySourceOptions)) {
+		if(relationType.includes(o.structureType) || o.component === 'address'){
+			trackingObj[entityName][o.target] = {};
+		}
+	}
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+
+	return;
+}
+
+exports.showTracking = async (data) => {
+	const componentName = data.options.source;
+	const entityName = data.options.value;
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
+
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(!Object.keys(trackingObj).find(e => e === entityName)){
+		throw {
+			message: 'database.component.notFound.notFoundOnEntity',
+			messageParams: [componentName, data.options.showValue]
+		}
+	}
+
+	// Add hasMany tab on entity
+	const fileSource = `${workspacePath}/app/views/${entityName}/show_fields.dust`;
+	// New entry for source relation view
+	const newLi = '\
+	<li class="nav-item">\n\
+		<a id="r_traceability-click" data-toggle="pill" href="#r_traceability" class="nav-link" role="tab" aria-controls="r_traceability" aria-selected="false">\n\
+			<!--{#__ key="entity.e_traceability.label_entity" /}-->\n\
+		</a>\n\
+	</li>';
+
+	const trackingListPath = `${global.__piecesPath}/component/tracking/views/list_fields.dust`;
+	let newTabContent = fs.readFileSync(trackingListPath, 'utf8');
+	newTabContent = '<div class="tab-pane fade show" id="r_traceability" role="tabpanel" aria-labelledby="r_traceability-tab">' + newTabContent + '</div>';
+	await addTab(entityName, fileSource, newLi, newTabContent);
+	// Change table URL in tab of source entity
+	const $list = domHelper.read(fileSource);
+	$list(`#table_e_${componentName}`).attr('data-url', `/${componentName}/datalist?entity=${entityName}&id={id}`);
+	domHelper.write(fileSource, $list);
+
+	// Add require script in html for list tracking
+	const fileToWrite =`${workspacePath}/app/views/${entityName}/show.dust`;
+	let dustContent = fs.readFileSync(fileToWrite, 'utf8');
+	const script = '	<script id="trackingJs" src="/core/js/component/tracking.js"></script>\n{/custom_js}';
+	dustContent = dustContent.replace(/{\/custom_js}/g, script);
+	fs.writeFileSync(fileToWrite, dustContent, "utf8");
+
+	return;
+}
+
+const hideTracking = async (data) => {
+	const componentName = data.options.source;
+	const entityName = data.options.value;
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
+
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(!Object.keys(trackingObj).find(e => e === entityName)){
+		throw {
+			message: 'database.component.notFound.notFoundOnEntity',
+			messageParams: [componentName, data.options.showValue]
+		}
+	}
+
+	const showFieldsFile = `${workspacePath}/app/views/${entityName}/show_fields.dust`;
+	let $ = await domHelper.read(showFieldsFile);
+
+	// Remove tab
+	$(`#r_${componentName}-click`).parents('li').remove();
+	// Remove tab content
+	$(`#r_${componentName}`).remove();
+
+	// If last tab have been deleted, remove tab structure from view
+	if ($(".tab-content .tab-pane").length == 1){
+		$("#tabs").replaceWith($("#home").html());
+	}
+
+	domHelper.write(showFieldsFile, $);
+
+	const showFile = `${workspacePath}/app/views/${entityName}/show.dust`;
+	$ = await domHelper.read(showFile);
+	$('#trackingJs').remove();
+	domHelper.write(showFile, $);
+
+	return;
+}
+
+exports.hideTracking = hideTracking;
+
+exports.disabledTracking = async (data) => {
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const entityName = data.options.value;
+
+	await hideTracking(data);
+
+	// Remove entity in file /config/tracking.json
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(!Object.keys(trackingObj).find(e => e === entityName)){
+		throw {
+			message: 'database.component.notFound.notFoundOnEntity',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	delete trackingObj[entityName];
+
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+
+	return;
+};
+
+exports.initTracking = (application) => {
+	const workspacePath = `${__dirname}/../workspace/${application.name}`;
+	const entityName = 'e_traceability';
+
+	// Traceability views copy
+	fs.emptyDirSync(`${workspacePath}/app/views/${entityName}/`);
+	fs.copySync(`${global.__piecesPath}/component/tracking/views/`, `${workspacePath}/app/views/${entityName}/`);
+
+	// Disable unused route
+	let js_to_write = `
+		data.req.session.toastr = [{
+			level: 'warning',
+			message: 'administration.access_settings.no_access_role'
+		}];
+		data.res.error(_ => data.res.redirect('/'));
+		return false;
+	`;
+	const disabledRoute = [
+		'subdatalist',
+		'create',
+		'create_form',
+		'update',
+		'update_form',
+		'loadtab',
+		'set_status',
+		'fieldset_add',
+		'fieldset_remove',
+		'destroy'
+	];
+	for (const route of disabledRoute) {
+		js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, route, 'start', js_to_write)
+	}
+
+	// Disable the non-ajax show route
+	js_to_write = `
+		if(!data.req.query.ajax){
+			${js_to_write}
+		}
+	`;
+	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'show', 'start', js_to_write);
+	// Update render file for show modal
+	js_to_write = `data.renderFile = 'e_traceability/show_fields';`;
+	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'show', 'beforeRender', js_to_write);
+
+	// For select entity on view traceability list
+	js_to_write = `
+		if(data.req.query.group){
+			data.query = {
+				...data.query,
+				group: [data.req.query.group]
+			}
+		}
+	`;
+	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'search', 'beforeQuery', js_to_write);
+
+	// Change hook of route for filter on f_entity & f_id_entity
+	js_to_write = `
+		if(data.req.query.entity){
+			data.speWhere = {
+				...data.speWhere,
+				f_entity: data.req.query.entity
+			}
+		}
+
+		if(data.req.query.id){
+			data.speWhere = {
+				...data.speWhere,
+				f_id_entity: data.req.query.id
+			}
+		}
+	`;
+	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'datalist', 'beforeDatatableQuery', js_to_write);
+
+	const translateKey = {
+		label_entity: 'Traçabilité',
+		plural_entity: 'Traçabilité',
+		f_relation_path: 'Chemin relationnel',
+		f_entity: 'Entité',
+		f_id_entity: 'ID Entité',
+		f_before: 'Avant',
+		f_after: 'Après',
+		r_user: 'Utilisateur',
+		createdAt: "Date de création",
+		updatedAt: "Date de modification"
+	}
+
+	for (const key in translateKey) {
+		const element = translateKey[key];
+		translateHelper.updateLocales(application.name, 'fr-FR', ['entity', 'e_traceability', key], element);
+	}
+
+	return true;
+}
+
+exports.doEnableTracking = (data) => {
+	// Add relation entity in file /config/tracking.json
+	const workspacePath = `${__dirname}/../workspace/${data.application.name}`;
+	const trackingConfigPath = `${workspacePath}/config/tracking.json`;
+	const trackingObj = JSON.parse(fs.readFileSync(trackingConfigPath, 'utf8'));
+
+	if(Object.keys(trackingObj).includes(data.source)){
+		trackingObj[data.source][data.target] = {};
+		fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+	}
+
+	return true;
+}

@@ -1,0 +1,105 @@
+{>"layout_m_administration"/}
+
+{<custom_css_2}
+	<link href='/core/bundle/nodea_datatable_css.bundle.css' rel='stylesheet' type='text/css'>
+{/custom_css_2}
+
+{<header}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0">
+                    {#__ key="module.m_administration"/}&nbsp;
+                    <small>
+                        {#__ key="module.module"/}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="/module/home">
+                            <i class="fa fa-home"></i>&nbsp;&nbsp;
+                            {#__ key="module.home"/}
+                        </a>
+                    </li>
+                    <li class='breadcrumb-item'>
+					<a href='/module/administration'>
+						{#__ key="module.m_administration"/}
+					</a>
+				</li>
+                    <li class="breadcrumb-item active">
+                        {#__ key="entity.e_traceability.label_entity"/}
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="operation.list"/}&nbsp;
+							{#__ key="entity.e_traceability.label_entity"/}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<a class="btn btn-default" href="javascript:history.back();">
+							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
+						</a>
+						<br><br>
+						<div data-field="f_entity" class="col-12">
+							<div class="form-group">
+								<label for="f_entity">
+									{#__ key="entity.e_traceability.f_entity" /}&nbsp;
+									{@inline_help field="f_entity"}
+									<i data-entity="e_traceability" data-field="f_entity" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+									{/inline_help}
+								</label>
+								<select class="ajax form-control" name="f_entity" id="entity-select-tracking" data-source="traceability" data-url="/traceability/search?group=f_entity" data-using="f_entity" style="width: 100%"></select>
+							</div>
+						</div>
+						<br>
+						{>"e_traceability/list_fields"/}
+						<br>
+						<a class="btn btn-default" href="javascript:history.back();">
+							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
+						</a>&nbsp;&nbsp;
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script src="/core/bundle/nodea_datatable_js.bundle.js" type="text/javascript"></script>
+
+	<!-- DATATABLE & PLUGINS - New version  -->
+	<!-- TODO: Upgrade with updated version of /AdminLTE/plugins/datatables -->
+	{! <script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script> !}
+
+	<!-- Nodea Table initialization  -->
+	<script>
+		/* Datatable throw error instead of alert */
+		$.fn.dataTable.ext.errMode = 'throw';
+
+		$(function() {
+			$("table:not(.no-init)").each(function() {
+				NodeaTable("#"+$(this).attr('id'));
+			});
+		});
+	</script>
+	<!-- Handle filter entity -->
+	<script src='/core/js/component/tracking.js'></script>
+{/custom_js}

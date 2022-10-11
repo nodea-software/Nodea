@@ -577,6 +577,8 @@ class CoreEntity extends Route {
 					return;
 
 				data.createdRow = await models[this.E_entity].create(data.createObject, {
+					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
 					transaction: data.transaction
 				});
@@ -880,6 +882,8 @@ class CoreEntity extends Route {
 					return;
 
 				await data.updateRow.update(data.updateObject, {
+					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
 					transaction: data.transaction
 				});
@@ -1438,6 +1442,8 @@ class CoreEntity extends Route {
 					return;
 
 				await data.deleteObject.destroy({
+					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
+					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					transaction: data.transaction
 				});
 

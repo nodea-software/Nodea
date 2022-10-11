@@ -6,7 +6,7 @@ const models = require('@app/models')
 const crypto = require('crypto');
 const mailer = require('@core/services/mailer');
 const Route = require('@core/abstract_routes/route');
-const { writeConnectionLog } = require('@core/helpers/connectionLog');
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 class CoreLogin extends Route {
 	constructor(additionalRoutes = []) {

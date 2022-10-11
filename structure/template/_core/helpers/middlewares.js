@@ -1,6 +1,6 @@
 const models = require('@app/models');
 const access = require('@core/helpers/access');
-const { writeConnectionLog } = require('@core/helpers/connectionLog');
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 const upload = require('multer');
 const multer = upload();

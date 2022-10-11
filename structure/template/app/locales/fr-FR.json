@@ -134,7 +134,8 @@
             "access_settings_group": "Gestion des accès par groupe",
             "access_settings_role": "Gestion des actions par rôle",
             "api_documentation": "Documentation de l'API",
-            "db_tool": "Outil BDD"
+            "db_tool": "Outil BDD",
+			"traceability": "Traçabilité"
 		},
 		"access_settings": {
 			"moduleList": "Modules",

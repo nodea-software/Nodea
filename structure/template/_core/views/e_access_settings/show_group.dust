@@ -102,13 +102,23 @@
 													{#__ key=tradKeyEntity /}
 												</td>
 												{#allGroups currentEntity=.}
-													<td>
-														{@isGroupChecked source=currentEntity target=f_label}
-															<input name="entity.{name}.{f_label}" class="no-icheck" checked type="checkbox">
-														{:else}
-															<input name="entity.{name}.{f_label}" class="no-icheck" type="checkbox">
-														{/isGroupChecked}
-													</td>
+													{@select}
+														{! Handle to not display access settings of traceability, except for admin role !}
+														{@ne key=currentEntity.name value="traceability" /}
+														{@eq key=id value=1 /}
+														{@any}
+															<td>
+																{@isGroupChecked source=currentEntity target=f_label}
+																	<input name="entity.{name}.{f_label}" class="no-icheck" checked type="checkbox">
+																{:else}
+																	<input name="entity.{name}.{f_label}" class="no-icheck" type="checkbox">
+																{/isGroupChecked}
+															</td>
+														{/any}
+														{@none}
+															<td></td>
+														{/none}
+													{/select}
 												{/allGroups}
 											</tr>
 										{/entities}

@@ -352,6 +352,7 @@ exports.deleteModule = async (data) => {
 exports.selectEntity = async (data) => {
 
 	const {np_module, entity} = data.application.findEntity(data.options.value, true, data.options.showValue);
+	data.entity = entity;
 	data.module = np_module;
 	data.doRedirect = await structure_entity.selectEntity(data);
 
@@ -878,6 +879,9 @@ exports.createNewHasOne = async (data) => {
 	// Create the opposite hasMany association
 	structure_entity.setupAssociation(reversedOption);
 
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
+
 	// Generator tabulation in display
 	await structure_entity.setupHasOneTab(data);
 
@@ -1153,6 +1157,9 @@ exports.createNewHasMany = async (data) => {
 	structure_entity.setupAssociation(associationOption);
 	// Generate opposite belongsTo relation in options
 	structure_entity.setupAssociation(reversedOptions);
+
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
 
 	// Ajouter le field d'assocation dans create_fields/update_fields. Ajout d'un tab dans le show
 	await structure_entity.setupHasManyTab(data);
@@ -1947,6 +1954,101 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 		message: 'database.component.delete.success',
 		messageParams: ["Document template"]
 	};
+};
+
+exports.enabledTracking = (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	structure_component.createNewTracking(data);
+
+	return {
+		message: 'database.component.create.success',
+		messageParams: [data.options.source]
+	};
+};
+
+exports.disabledTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	await structure_component.disabledTracking(data);
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
+	}
+
+	return {
+		message: 'database.component.delete.success',
+		messageParams: [data.options.source]
+	};
+
+};
+
+exports.showTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	// Check if already display
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyShow',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.showTracking(data);
+	data.entity_source.entity.addComponent(data.options.source, data.options.source, 'tracking');
+
+	return {
+		message: 'database.component.display.show',
+		messageParams: [data.options.source, data.options.showValue]
+	};
+
+};
+
+exports.hideTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	if(!data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyHide',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.hideTracking(data);
+	data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
+
+	return {
+		message: 'database.component.display.hide',
+		messageParams: [data.options.source, data.options.showValue]
+	};
+
 };
 
 /* --------------------------------------------------------------- */

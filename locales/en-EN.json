@@ -365,6 +365,12 @@
 			},
 			"delete": {
 				"success": "The component has been successfully deleted!"
+			},
+			"display": {
+				"show": "Le composant %s a bien été affiché sur l'entité %s !",
+				"alreadyShow": "Le composant %s est déjà affiché sur l'entité %s !",
+				"hide": "Le composant %s a bien été masqué sur l'entité %s !",
+				"alreadyHide": "Le composant %s est déjà masqué sur l'entité %s !"
 			}
 		},
 		"entity": {

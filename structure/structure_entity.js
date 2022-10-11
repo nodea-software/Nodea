@@ -157,7 +157,7 @@ exports.selectEntity = async (data) => {
 	const $ = await domHelper.read(layout_path);
 
 	// Check if entity is a subEntity or not to do the redirection if needed
-	if (typeof $('#' + data.entity_name + '_menu_item')[0] !== "undefined")
+	if (typeof $('li.nav-item[data-menu="'+ data.entity.name.substring(2) +'"]')[0] !== "undefined")
 		return true;
 	return false;
 };
@@ -327,6 +327,11 @@ exports.setupEntity = async (data) => {
 
 	for (let i = 0; i < dustFiles.length; i++) {
 		const fileToWrite = fileBase + '/' + dustFiles[i] + ".dust";
+
+		if(!fs.existsSync(fileToWrite)){
+			continue;
+		}
+
 		let dustContent = fs.readFileSync(fileToWrite, 'utf8');
 		dustContent = dustContent.replace(/custom_module/g, module_name);
 		dustContent = dustContent.replace(/custom_entity/g, entity_name);
