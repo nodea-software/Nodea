@@ -103,6 +103,7 @@
 			"manage_text": "Accéder à toutes vos applications"
 		},
 		"generate": {
+			"wait_npm_install": "Votre générateur termine d'installer un pré-requis, merci de réessayer dans 30sec.",
 			"title": "Vous pouvez créer une nouvelle application",
 			"subtitle": "Et nous nous occupons du reste !"
 		}

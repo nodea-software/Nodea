@@ -12,9 +12,13 @@ const code_platform = require('../services/code_platform');
 const dbConf = require('../config/database.js');
 const studio_manager = require('../services/studio_manager');
 const models = require('../models/');
+const setup_helper = require('../helpers/setup');
 const exec = require('child_process').exec;
 
 exports.setupApplication = async (data) => {
+
+	if(setup_helper.npm_install_in_progress())
+		throw new Error('build.generate.wait_npm_install');
 
 	const appName = data.options.value;
 	const appDisplayName = data.options.showValue;

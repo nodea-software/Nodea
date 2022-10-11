@@ -103,6 +103,7 @@
 			"manage_text": "Manage all your applications"
 		},
 		"generate": {
+			"wait_npm_install": "Your generator is finishing installing a prerequisite, please try again in 30sec.",
 			"title": "You can select or create an application",
 			"subtitle": "We take care of the rest !"
 		}

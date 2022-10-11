@@ -39,7 +39,7 @@ Note that MariaDB is the default dialect, if you want to change please update th
 
 If you want to access your generator by <b>localhost:1337</b> instead of <b>127.0.0.1:1337</b> please update the host key in <b>config/global.js</b>
 
-Note that if you access the generator with localhost and let the <b>host</b> key to <b>127.0.0.1</b> you'll cookie mismatch and you will often be <b>logged out</b> of generated applications inside the generator
+Note that if you access the generator with localhost and let the <b>host</b> key to <b>127.0.0.1</b> you'll have cookie mismatch and you will often be <b>logged out</b> of generated applications inside the generator
 
 Install node modules
 <pre>

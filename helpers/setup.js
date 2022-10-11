@@ -3,6 +3,9 @@ const globalConf = require('../config/global');
 const fs = require('fs-extra');
 const exec = require('child_process').exec;
 const app_bundler = require("../structure/template/_core/tools/bundler");
+let npm_install_in_progress = false;
+
+exports.npm_install_in_progress = _ => npm_install_in_progress;
 
 // Setup the default admin user for Nodea generator
 exports.setupAdmin = async function() {
@@ -48,7 +51,7 @@ exports.setupAdmin = async function() {
 }
 
 // Install node_modules folder in workspace needed by the generated application
-exports.setupWorkspaceNodeModules = _ => new Promise((resolve, reject) => {
+exports.setupWorkspaceNodeModules = _ => new Promise(resolve => {
 
 	// Mandatory workspace folder
 	if (!fs.existsSync(global.__workspacePath))
@@ -58,17 +61,17 @@ exports.setupWorkspaceNodeModules = _ => new Promise((resolve, reject) => {
 
 	// We need to reinstall node modules properly
 	console.log("🪄  WORKSPACE NODE MODULES INSTALL...");
+	npm_install_in_progress = true;
 	fs.copySync(__dirname + '/../structure/template/package.json', global.__workspacePath + '/package.json');
 
-	exec('npm i --no-optional', {
+	exec('npm i --omit=optional', {
 		cwd: global.__workspacePath + '/'
 	}, err => {
-		if (err) {
-			console.error(err)
-			return reject(err);
-		}
-		resolve();
+		npm_install_in_progress = false;
+		if (err)
+			console.error(err);
 	});
+	resolve();
 });
 
 // Pre-bundle JS / CSS ressources to improve app generation rapidity
