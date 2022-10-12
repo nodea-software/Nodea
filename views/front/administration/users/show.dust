@@ -34,211 +34,15 @@
 								</h3>
 								<ul class="nav nav-pills ml-auto p-2">
 									<li class="nav-item">
-										<a class="nav-link" href="/configure">
-											{#__ key="configure.tabs.home"/}
+										<a class="nav-link active" href="/administration/users">
+											{#__ key="administration.tabs.users"/}
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link active" href="#show" data-toggle="tab">
-											Show
+										<a class="nav-link" href="/administration/queue">
+											{#__ key="administration.tabs.queue"/}
 										</a>
 									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="#applications" data-toggle="tab">
-											Applications
-										</a>
-									</li>
-								</ul>
-							</div>
-
-							<div class="card-body">
-								<div class="tab-content">
-									{#user}
-										<div class="tab-pane active" id="show" >
-											<div class="row">
-												<div class="col-12">
-													<h5>{#__ key="configure.users.show"/}</h5>
-													<br>
-												</div>
-												<div data-field="id" class="col-12">
-													<div class="form-group">
-														<label for="id">ID</label>
-														<input type="text" name="sourceId" value="{id}" disabled="" class="form-control"/>
-													</div>
-												</div>
-												<div data-field="login" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="login">
-															{#__ key="users.login"/}&nbsp;
-														</label>
-														<input class="form-control input" placeholder='{#__ key="users.login" /}' value="{login}" type="text" maxlength="255" readonly="">
-													</div>
-												</div>
-												<div data-field="role" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="role">
-															{#__ key="users.role" /}
-														</label>
-														<input class="form-control input" placeholder='{#__ key="users.role" /}' value="{Role.name}" type="text" readonly="">
-													</div>
-												</div>
-												<div data-field="firstname" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="firstname">
-															{#__ key="users.firstname"/}&nbsp;
-														</label>
-														<input class="form-control input" placeholder='{#__ key="users.firstname" /}' value="{firstname}" type="text" maxlength="255" readonly="">
-													</div>
-												</div>
-												<div data-field="lastname" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="lastname">
-															{#__ key="users.lastname"/}&nbsp;
-														</label>
-														<input class="form-control input" placeholder='{#__ key="users.lastname" /}' value="{lastname}" type="text" maxlength="255" readonly="">
-													</div>
-												</div>
-												<div data-field="phone" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="phone">
-															{#__ key="users.phone"/}&nbsp;
-														</label>
-														<input class="form-control input" placeholder='{#__ key="users.phone" /}' value="{phone}" type="text" maxlength="255" readonly="">
-													</div>
-												</div>
-												<div data-field="email" class="col-xs-12 col-sm-6">
-													<div class="form-group">
-														<label for="email">
-															{#__ key="users.email"/}&nbsp;
-														</label>
-														<div class="input-group">
-															<div class="input-group-prepend">
-																<div class="input-group-text">
-																	<span class="fas fa-envelope"></span>
-																</div>
-															</div>
-															<input class="form-control input" placeholder='{#__ key="users.email" /}' value="{email}" type="text" data-type="email" readonly="">
-														</div>
-													</div>
-												</div>
-											</div>
-											<form action="/configure/users/delete" method="POST" style="display: inline-block;">
-												<button class="btn btn-danger btn-confirm">
-													<i class="fas fa-trash fa-md">&nbsp;&nbsp;</i>
-													<span>{#__ key="button.delete"/}</span>
-												</button>&nbsp;&nbsp;
-											</form>
-											<input name="id" type="hidden" value="{id}" class="form-control">
-											<a href="/configure/users/update/{id}" class="btn btn-warning">
-												<i class="far fa-edit fa-md"></i>&nbsp;&nbsp;<span>{#__ key="button.update"/}</span>
-											</a>&nbsp;&nbsp;
-											<a href="/configure/users" type="submit" class="btn btn-primary">
-												<i class="fa fa-list fa-md"></i>&nbsp;&nbsp;<span>{#__ key="button.list"/}</span>
-											</a>
-										</div>
-										<div class="tab-pane" id="applications" >
-											<form action="/configure/users/assign" method="POST">
-												<label>Donner l'accès aux applications:</label>
-												<div class="input-group">
-													<select required multiple name="app" class="form-control select" style="width: 300px;">
-														{#otherApp}
-															<option value="{id}">{id} - {displayName}</option>
-														{/otherApp}
-													</select>
-													<input type="hidden" name="id_user" value="{user.id}">
-													<button style="margin-left: 10px;" class="btn btn-primary" type="submit">Donner accès</button>
-												</div>
-											</form>
-											<br>
-											<table id="table_applications" class="table table-bordered">
-												<thead class="main">
-													<tr class="fields">
-														<th data-field="id" data-col="id" data-type="string">
-															ID
-														</th>
-														<th data-field="displayName" data-col="displayName" data-type="string">
-															{#__ key="application.label"/}
-														</th>
-														<th colspan="2" style="width:25%;">Action</th>
-													</tr>
-												</thead>
-												<tbody>
-													{#Applications}
-														<tr id="bodyTR">
-															<td data-field="id" data-type="string">{id}</td>
-															<td data-field="login" data-type="string">{displayName}</td>
-															<td>
-																<a class="pull-left" href="/application/preview/{name}" target="_blank">
-																	<button class="btn btn-info">
-																		<i class="fa fa-desktop fa-md">&nbsp;&nbsp;</i>
-																		<span>{#__ key="button.show"/}</span>
-																	</button>
-																</a>&nbsp;&nbsp;&nbsp;
-															</td><td>
-																<form class="pull-left" action="/configure/users/remove_access" method="POST" style="margin-left: 10px;">
-																	<input type="hidden" name="id_app" value="{id}">
-																	<input type="hidden" name="id_user" value="{user.id}">
-																	<button class="btn btn-danger">
-																		<i class="fa fa-times fa-md">&nbsp;&nbsp;</i>
-																		<span>{#__ key="button.remove"/}</span>
-																	</button>
-																</form>
-															</td>
-														</tr>
-													{/Applications}
-												</tbody>
-											</table>
-										</div>
-									{/user}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-{/content}
-
-{<content}
-	<!-- Page content -->
-	<div class="content-wrapper">
-		<!-- Main content -->
-		<div class="content">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-12">
-						<!-- Custom Tabs -->
-						<div class="card main-card">
-							<div class="card-header d-flex p-0">
-								<h3 class="card-title p-3">
-									<img class="animate__animated" src="/img/picto/multilingue2.png" alt="Users picto">
-									{#__ key="configure.tabs.users"/}
-								</h3>
-								<ul class="nav nav-pills ml-auto p-2">
-									<li class="nav-item">
-										<a class="nav-link" href="/configure">
-											{#__ key="configure.tabs.home"/}
-										</a>
-									</li>
-
-									<li class="nav-item">
-										<a class="nav-link" href="/configure/account">
-											{#__ key="configure.tabs.account"/}
-										</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="/configure/settings">
-											{#__ key="configure.tabs.settings"/}
-										</a>
-									</li>
-									{#isAdmin}
-										<li class="nav-item">
-											<a class="nav-link active" href="/configure/users">
-												{#__ key="configure.tabs.users"/}
-											</a>
-										</li>
-									{/isAdmin}
 								</ul>
 							</div>
 
@@ -265,9 +69,7 @@
 												</ul>
 											</div>
 										</div>
-										<!-- /.card -->
 									</div>
-									<!-- /.col -->
 									<div class="col-md-9">
 										<div class="card">
 											<div class="card-header p-2">
@@ -283,7 +85,7 @@
 														</a>
 													</li>
 												</ul>
-											</div><!-- /.card-header -->
+											</div>
 											<div class="card-body">
 												<div class="tab-content">
 													<div class="active tab-pane" id="home">
@@ -352,7 +154,7 @@
 													<div class="tab-pane" id="applications">
 														<div class="row">
 															<div class="col-12">
-																<form action="/configure/users/assign" method="POST">
+																<form action="/administration/users/assign" method="POST">
 																	<label>Donner l'accès aux applications:</label>
 																	<div class="input-group">
 																		<select required multiple name="app" class="form-control select" style="width: 300px;">
@@ -392,7 +194,7 @@
 																						</button>
 																					</a>&nbsp;&nbsp;&nbsp;
 																				</td><td>
-																					<form class="pull-left" action="/configure/users/remove_access" method="POST" style="margin-left: 10px;">
+																					<form class="pull-left" action="/administration/users/remove_access" method="POST" style="margin-left: 10px;">
 																						<input type="hidden" name="id_app" value="{id}">
 																						<input type="hidden" name="id_user" value="{user.id}">
 																						<button class="btn btn-danger">
@@ -412,7 +214,7 @@
 											</div>
 
 											<div class="card-footer">
-												<form action="/configure/users/delete" method="POST" style="display: inline-block;">
+												<form action="/administration/users/delete" method="POST" style="display: inline-block;">
 													<input name="id" type="hidden" value="{user.id}" class="form-control">
 													<button class="btn btn-danger btn-confirm">
 														<i class="fas fa-trash fa-md">&nbsp;&nbsp;</i>
@@ -420,12 +222,12 @@
 													</button>&nbsp;&nbsp;
 												</form>
 
-												<a href="/configure/users/update/{user.id}" class="btn btn-warning">
+												<a href="/administration/users/update/{user.id}" class="btn btn-warning">
 													<i class="far fa-edit fa-md"></i>&nbsp;&nbsp;
 													<span>{#__ key="button.update"/}</span>
 												</a>&nbsp;&nbsp;
 
-												<a href="/configure/users" type="submit" class="btn btn-primary">
+												<a href="/administration/users" type="submit" class="btn btn-primary">
 													<i class="fa fa-list fa-md"></i>&nbsp;&nbsp;
 													<span>{#__ key="button.list"/}</span>
 												</a>

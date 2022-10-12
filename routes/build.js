@@ -20,7 +20,6 @@ const metadata = require('../database/metadata')();
 const structure_application = require('../structure/structure_application');
 const mandatoryInstructions = require('../structure/mandatory_instructions');
 
-const app_queue = [];
 const pourcent_generation = {};
 const script_infos = {};
 const script_processing = {
@@ -141,14 +140,14 @@ router.post('/application', middlewares.isLoggedIn, (req, res) => {
 		return res.redirect('/module/home');
 	}
 
-	if (app_queue.indexOf(req.body.application) == -1) {
+	if (global.app_queue.indexOf(req.body.application) == -1) {
 		console.log('NOT IN QUEUE');
 		req.session.toastr = [{
 			message: "You are not in the queue",
 			level: "error"
 		}];
 		return res.redirect('/build#_generate');
-	} else if(app_queue.filter(x => x == req.body.application).length > 1) {
+	} else if(global.app_queue.filter(x => x == req.body.application).length > 1) {
 		console.log('ALREADY IN QUEUE');
 		req.session.toastr = [{
 			message: "Someone as already taken your app name or you are already generating it",
@@ -189,8 +188,8 @@ router.post('/application', middlewares.isLoggedIn, (req, res) => {
 		// Perf indicator
 		console.timeEnd(perf_indicator);
 
-		if(app_queue.indexOf(req.body.application) != -1)
-			app_queue.splice(app_queue.indexOf(req.body.application), 1);
+		if(global.app_queue.indexOf(req.body.application) != -1)
+			global.app_queue.splice(global.app_queue.indexOf(req.body.application), 1);
 
 		res.redirect('/application/preview/' + req.session.app_name);
 	})().catch(err => {
@@ -199,8 +198,8 @@ router.post('/application', middlewares.isLoggedIn, (req, res) => {
 		// Needed for translation purpose
 		const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
 
-		if(app_queue.indexOf(req.body.application) != -1)
-			app_queue.splice(app_queue.indexOf(req.body.application), 1);
+		if(global.app_queue.indexOf(req.body.application) != -1)
+			global.app_queue.splice(global.app_queue.indexOf(req.body.application), 1);
 
 		if(err.doNotDeleteApp) {
 			req.session.toastr = [{
@@ -229,14 +228,14 @@ router.get('/get_pourcent_generation', (req, res) => {
 
 router.get('/get_generation_queue', (req, res) => {
 	let app_queue_place;
-	if(app_queue.indexOf(req.query.app) == -1)
-		app_queue.push(req.query.app);
+	if(global.app_queue.indexOf(req.query.app) == -1)
+		global.app_queue.push(req.query.app);
 	else if(req.query.first == 'true')
 		app_queue_place = -1;
 
 	// -1 Mean that the application is already in generation with the same or with an other user
 	if(app_queue_place != -1)
-		app_queue_place = app_queue.indexOf(req.query.app) + 1;
+		app_queue_place = global.app_queue.indexOf(req.query.app) + 1;
 
 	res.send({
 		cpt: app_queue_place
@@ -429,14 +428,14 @@ router.post('/execute_script', middlewares.isLoggedIn, multer({
 	const user_id = req.session.passport.user.id;
 	const __ = require("../services/language")(req.session.lang_user).__; // eslint-disable-line
 
-	if (app_queue.indexOf('script_user_' + user_id) == -1) {
+	if (global.app_queue.indexOf('script_user_' + user_id) == -1) {
 		console.log('NOT IN QUEUE');
 		req.session.toastr = [{
 			message: "You are not in the queue",
 			level: "error"
 		}];
 		return res.redirect('/build#_script');
-	} else if(app_queue.filter(x => x == 'script_user_' + user_id).length > 1) {
+	} else if(global.app_queue.filter(x => x == 'script_user_' + user_id).length > 1) {
 		console.log('ALREADY IN QUEUE');
 		req.session.toastr = [{
 			message: "Someone as already taken your app name or you are already generating it",
@@ -477,12 +476,12 @@ router.post('/execute_script', middlewares.isLoggedIn, multer({
 
 	try {
 		build_helper.executeFile(req, user_id, __, script_infos, script_processing).then(_ => {
-			if(app_queue.indexOf('script_user_' + user_id) != -1)
-				app_queue.splice(app_queue.indexOf('script_user_' + user_id), 1);
+			if(global.app_queue.indexOf('script_user_' + user_id) != -1)
+				global.app_queue.splice(global.app_queue.indexOf('script_user_' + user_id), 1);
 		});
 	} catch (err) {
-		if(app_queue.indexOf('script_user_' + user_id) != -1)
-			app_queue.splice(app_queue.indexOf('script_user_' + user_id), 1);
+		if(global.app_queue.indexOf('script_user_' + user_id) != -1)
+			global.app_queue.splice(global.app_queue.indexOf('script_user_' + user_id), 1);
 		console.error(err);
 		return build_helper.scriptGeneratingEnd(req.file.path, user_id, script_infos, script_processing);
 	}
@@ -493,14 +492,14 @@ router.post('/execute_script_alt', middlewares.isLoggedIn, function(req, res) {
 	const user_id = req.session.passport.user.id;
 	const __ = require("../services/language")(req.session.lang_user).__; // eslint-disable-line
 
-	if (app_queue.indexOf('script_user_' + user_id) == -1) {
+	if (global.app_queue.indexOf('script_user_' + user_id) == -1) {
 		console.log('NOT IN QUEUE');
 		req.session.toastr = [{
 			message: "You are not in the queue",
 			level: "error"
 		}];
 		return res.redirect('/build#_script');
-	} else if(app_queue.filter(x => x == 'script_user_' + user_id).length > 1) {
+	} else if(global.app_queue.filter(x => x == 'script_user_' + user_id).length > 1) {
 		console.log('ALREADY IN QUEUE');
 		req.session.toastr = [{
 			message: "Someone as already taken your app name or you are already generating it",
@@ -573,12 +572,12 @@ router.post('/execute_script_alt', middlewares.isLoggedIn, function(req, res) {
 			path: tmpPath
 		};
 		build_helper.executeFile(req, user_id, __, script_infos, script_processing).then(_ => {
-			if(app_queue.indexOf('script_user_' + user_id) != -1)
-				app_queue.splice(app_queue.indexOf('script_user_' + user_id), 1);
+			if(global.app_queue.indexOf('script_user_' + user_id) != -1)
+				global.app_queue.splice(global.app_queue.indexOf('script_user_' + user_id), 1);
 		});
 	} catch (err) {
-		if(app_queue.indexOf('script_user_' + user_id) != -1)
-			app_queue.splice(app_queue.indexOf('script_user_' + user_id), 1);
+		if(global.app_queue.indexOf('script_user_' + user_id) != -1)
+			global.app_queue.splice(global.app_queue.indexOf('script_user_' + user_id), 1);
 		console.error(err);
 		return build_helper.scriptGeneratingEnd(null, user_id, script_infos, script_processing);
 	}

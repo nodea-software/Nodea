@@ -40,32 +40,20 @@
 								</h3>
 								<ul class="nav nav-pills ml-auto p-2">
 									<li class="nav-item">
-										<a class="nav-link" href="/configure">
-											{#__ key="configure.tabs.home"/}
-										</a>
-									</li>
-
-									<li class="nav-item">
-										<a class="nav-link" href="/configure/account">
-											{#__ key="configure.tabs.account"/}
-										</a>
-									</li>
-
-									<li class="nav-item">
-										<a class="nav-link" href="/configure/settings">
-											{#__ key="configure.tabs.settings"/}
+										<a class="nav-link active" href="/administration/users">
+											{#__ key="administration.tabs.users"/}
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link active" href="/configure/users">
-											{#__ key="configure.tabs.users"/}
+										<a class="nav-link" href="/administration/queue">
+											{#__ key="administration.tabs.queue"/}
 										</a>
 									</li>
 								</ul>
 							</div>
 
 							<div class="card-body">
-								<form action="/configure/users/create" method="post">
+								<form action="/administration/users/create" method="post">
 									<div class="row">
 										<div class="col-12">
 											<h5>{#__ key="configure.users.add"/}</h5>

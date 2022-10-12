@@ -11,6 +11,7 @@ const dbConfig = require('./config/database');
 
 global.__piecesPath = __dirname + '/structure/pieces';
 global.__workspacePath = __dirname + '/workspace';
+global.app_queue = [];
 
 let SessionStore, pg;
 // MySql
@@ -51,7 +52,7 @@ const allLogStream = fs.createWriteStream(path.join(__dirname, 'all.log'), {
 app.use(morgan('dev', {
 	skip: function(req) {
 		// Remove spamming useless logs
-		const skipArray = ["/update_logs", "/get_pourcent_generation", "/get_generation_queue", "/script_status", "/completion", "/watch", "/"];
+		const skipArray = ["/update_logs", "/get_pourcent_generation", "/get_generation_queue", "/get_queue", "/script_status", "/completion", "/watch", "/"];
 		let currentURL = req.originalUrl;
 		if (currentURL.indexOf("?") != -1) {
 			// Remove params from URL

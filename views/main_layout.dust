@@ -96,15 +96,21 @@
 								<a href="#" class="nav-link">{#__ key="menu.deploy"/}</a>
 							</li>
 							<li id="configure-dropdown-nav" class="nav-item dropdown">
-								<a id="configure-dropdown" href="/configure" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.configure"/}</a>
+								<a id="configure-dropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.configure"/}</a>
 								<ul aria-labelledby="configure-dropdown" class="dropdown-menu border-0 shadow">
 									<li><a href="/configure/account" class="dropdown-item">{#__ key="configure.tabs.account"/}</a></li>
 									<li><a href="/configure/settings" class="dropdown-item">{#__ key="configure.tabs.settings"/}</a></li>
-									{#isAdmin}
-										<li><a href="/configure/users" class="dropdown-item">{#__ key="configure.tabs.users"/}</a></li>
-									{/isAdmin}
 								</ul>
 							</li>
+							{#isAdmin}
+								<li id="administration-dropdown-nav" class="nav-item dropdown">
+									<a id="administration-dropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.administration"/}</a>
+									<ul aria-labelledby="administration-dropdown" class="dropdown-menu border-0 shadow">
+										<li><a href="/administration/users" class="dropdown-item">{#__ key="administration.tabs.users"/}</a></li>
+										<li><a href="/administration/queue" class="dropdown-item">{#__ key="administration.tabs.queue"/}</a></li>
+									</ul>
+								</li>
+							{/isAdmin}
 						</ul>
 
 						<!-- SEARCH FORM -->
