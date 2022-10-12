@@ -20,7 +20,7 @@ class E_task extends CoreModel {
 		this.hooks.attachToRobot = {
 			type: 'beforeCreate',
 			func: async (model) => {
-				const result = await models().sequelize.query("\
+				const [result] = await models().sequelize.query("\
 					SELECT\
 						`E_robot`.`id` as `robot`,\
 						count(`E_task`.`id`) as `nb_pending_task`\

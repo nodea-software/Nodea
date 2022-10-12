@@ -103,16 +103,6 @@
                         <input class="form-control input" placeholder='{#__ key="entity.e_status.f_color" /}' name="f_color" value="{f_color}" type="color" readonly="">
                     </div>
                 </div>
-                <div data-field="f_color" class="col-xs-12 col-sm-6">
-                    <div class="form-group">
-                        <label for="f_color">
-                            {#__ key="entity.e_status.f_color"/}
-                            {@inline_help field="f_color"}&nbsp;<i data-field="f_color" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
-                            {/inline_help}
-                        </label>
-                        <input class="form-control input" placeholder='{#__ key="entity.e_status.f_color" /}' name="f_color" value="{f_color}" type="color" readonly="">
-                    </div>
-                </div>
 				<div data-field="f_text_color" class="col-xs-12 col-sm-6">
                     <div class="form-group">
                         <label for="f_text_color">

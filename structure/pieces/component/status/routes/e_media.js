@@ -99,6 +99,9 @@ class Media extends Entity {
 							message: 'Media not found'
 						}) && false;
 
+					if(e_media.fk_id_media_task){
+						e_media.r_media_task.r_process = await e_media.r_media_task.getR_process();
+					}
 					data.e_media = e_media;
 				}
 			},
@@ -126,6 +129,9 @@ class Media extends Entity {
 							message: 'Media not found'
 						}) && false;
 
+					if(e_media.fk_id_media_task){
+						e_media.r_media_task.r_process = await e_media.r_media_task.getR_process();
+					}
 					data.e_media = e_media;
 					data.target_entities = sortTargetEntities(data.req.session.lang_user);
 					data.icon_list = icon_list;
