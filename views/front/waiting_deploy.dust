@@ -123,7 +123,7 @@
 	<script type="text/javascript">
 		var redirect = "{redirect}";
 		var checkLeaving = true;
-		var messageStayOnPage = '#{#__ key="deploy_content.stayonpage" /}';
+		const messageStayOnPage = '#{#__ key="deploy_content.stayonpage" /}';
 		function checkDeployStatus() {
 			$.ajax({
 				url: '/waiting',
@@ -150,7 +150,7 @@
 			});
 		}
 
-		$(document).ready(function() {
+		$(function() {
 			$('a[href*=\\#]:not([href=\\#])').click(function() {
 				if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname){
 					var target = $(this.hash);

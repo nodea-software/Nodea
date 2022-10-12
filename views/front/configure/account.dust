@@ -53,13 +53,6 @@
 											{#__ key="configure.tabs.settings"/}
 										</a>
 									</li>
-									{#isAdmin}
-										<li class="nav-item">
-											<a class="nav-link" href="/configure/users">
-												{#__ key="configure.tabs.users"/}
-											</a>
-										</li>
-									{/isAdmin}
 								</ul>
 							</div>
 

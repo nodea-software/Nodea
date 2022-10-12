@@ -1,0 +1,101 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+	</style>
+{/custom_css}
+
+{<title}
+	{#__ key="menu.home"/}<small>{#__ key="menu.module"/}</small>
+{/title}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/multilingue2.png" alt="Users picto">
+									{#__ key="administration.tabs.users"/}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-2">
+									<li class="nav-item">
+										<a class="nav-link" href="/administration/users">
+											{#__ key="administration.tabs.users"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link active" href="/administration/queue">
+											{#__ key="administration.tabs.queue"/}
+										</a>
+									</li>
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="row">
+									<div class="col-12">
+										<table id="queue_list" class="table table-bordered">
+											<thead>
+												<tr>
+													<th>Idx</th>
+													<th data-field="id" data-col="id" data-type="string">
+														{#__ key="administration.queue.list"/}
+													</th>
+													<th data-field="id" data-col="id" data-type="string">
+														{#__ key="listApplication.action"/}
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script>
+		const DELETE_TRAD = '{#__ key="button.delete"/}';
+		$(function() {
+			function updateQueueList() {
+				$.ajax({
+					url: '/administration/get_queue',
+					success: function(queue) {
+						$('#queue_list').find('tbody').empty();
+						for(let i=0; i < queue.length; i++) {
+							$('#queue_list').find('tbody').append('<tr><td>'+ (i+1) +'</td><td>'+ queue[i] +'</td><td><button type="button" id="remove-'+ i +'" class="btn btn-danger remove-queue"><i class="fas fa-trash fa-md"></i>&nbsp;&nbsp;' + DELETE_TRAD + '</button></td></tr>');
+						}
+						setTimeout(updateQueueList, 1000);
+					}
+				});
+			}
+			updateQueueList();
+
+			$(document).on('click', '.remove-queue', function() {
+				$(this).prop('disabled', true);
+				const idx_to_remove = $(this).attr('id').split('remove-')[1];
+				$.ajax({
+					url: '/administration/remove_in_queue',
+					method: 'POST',
+					data: {
+						idx_to_remove
+					}
+				});
+			});
+		});
+	</script>
+{/custom_js}

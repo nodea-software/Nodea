@@ -38,23 +38,13 @@
 								</h3>
 								<ul class="nav nav-pills ml-auto p-2">
 									<li class="nav-item">
-										<a class="nav-link" href="/configure">
-											{#__ key="configure.tabs.home"/}
+										<a class="nav-link active" href="/administration/users">
+											{#__ key="administration.tabs.users"/}
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="/configure/account">
-											{#__ key="configure.tabs.account"/}
-										</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="/configure/settings">
-											{#__ key="configure.tabs.settings"/}
-										</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link active" href="/configure/users">
-											{#__ key="configure.tabs.users"/}
+										<a class="nav-link" href="/administration/queue">
+											{#__ key="administration.tabs.queue"/}
 										</a>
 									</li>
 								</ul>
@@ -66,31 +56,28 @@
 										<table id="table_users" class="table table-bordered">
 											<thead>
 												<tr>
-													<th data-field="id" data-col="id" data-type="string">
+													<th>
 														ID
 													</th>
-													<th data-field="login" data-col="login" data-type="string">
+													<th>
 														{#__ key="users.login"/}
 													</th>
-													<th data-field="login" data-col="login" data-type="string">
+													<th>
 														{#__ key="users.created_at"/}
 													</th>
-													<th data-field="enabled" data-col="enabled" data-type="boolean">
+													<th>
 														{#__ key="users.enabled"/}
 													</th>
-													<th data-field="email" data-col="email" data-type="email">
+													<th>
 														{#__ key="users.email"/}
 													</th>
-													<th data-field="role" data-col="role" data-type="string">
+													<th>
 														{#__ key="users.role"/}
 													</th>
 													<th>
 														{#__ key="users.applications"/}
 													</th>
-													<th>
-														Nb Instructions
-													</th>
-													<th colspan="2" class="text-center">
+													<th colspan="4" class="text-center">
 														{#__ key="listApplication.action"/}
 													</th>
 												</tr>
@@ -115,9 +102,8 @@
 																<b><a href="/application/preview/{name}" target="_blank">{displayName}</a></b><br>
 															{/Applications}
 														</td>
-														<td>{nb_instruction}</td>
 														<td class="text-center">
-															<a href="/configure/users/show/{id}">
+															<a href="/administration/users/show/{id}">
 																<button class="pull-left btn btn-primary">
 																	<i class="fa fa-eye fa-md"></i>&nbsp;&nbsp;
 																	<span>{#__ key="button.show"/}</span>
@@ -126,7 +112,25 @@
 														</td>
 														<td class="text-center">
 															{@ne key=id value=1}
-																<form class="pull-left" action="/configure/users/delete" method="post">
+																<button class='btn btn-primary reset_password'>
+																	<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
+																	<span>{#__ key="settings.reset_button"/}</span>
+																</button>
+															{/ne}
+														</td>
+														<td class="text-center">
+															{@ne key=id value=1}
+																<a href="/administration/users/update/{id}">
+																	<button class="pull-left btn btn-warning">
+																		<i class="fas fa-edit fa-md"></i>&nbsp;&nbsp;
+																		<span>{#__ key="button.update"/}</span>
+																	</button>
+																</a>
+															{/ne}
+														</td>
+														<td class="text-center">
+															{@ne key=id value=1}
+																<form class="pull-left" action="/administration/users/delete" method="post">
 																	<input type="hidden" name="id" value="{id}">
 																	<button class="btn btn-danger btn-confirm">
 																		<i class="fas fa-trash fa-md"></i>&nbsp;&nbsp;
@@ -144,7 +148,7 @@
 							</div>
 
 							<div class="card-footer">
-								<a href="/configure/users/create">
+								<a href="/administration/users/create">
 									<button class="btn btn-success">
 										<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
 										<span>{#__ key="button.create"/}</span>
@@ -170,7 +174,7 @@
 				$(this).prop('disabled', true);
 
 				$.ajax({
-					url : '/configure/settings/reset_password?other=1',
+					url : '/administration/settings/reset_password?other=1',
 					type : 'POST',
 					data : {
 						login: $(this).parents('tr').find('td[data-field="login"]').text(),
