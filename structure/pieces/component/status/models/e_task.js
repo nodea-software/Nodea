@@ -46,7 +46,7 @@ class E_task extends CoreModel {
 						`nb_pending_task` ASC\
 				", {type: models().sequelize.QueryTypes.SELECT});
 				if (result)
-					model.fk_id_robot_robot = result.robot;
+					model.fk_id_robot_robot = result[0].robot;
 				return model;
 			}
 		};

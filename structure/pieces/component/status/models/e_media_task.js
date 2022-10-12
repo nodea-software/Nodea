@@ -63,7 +63,7 @@ class E_media_task extends CoreModel {
 			return newString || "";
 		}
 
-		const task = await self.sequelize.models.Task.create({
+		const task = await self.sequelize.models.E_task.create({
 			f_title: insertVariablesValue('f_task_name'),
 			f_type: self.f_task_type,
 			f_data_flow: insertVariablesValue('f_data_flow'),
