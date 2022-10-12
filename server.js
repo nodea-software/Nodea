@@ -11,7 +11,7 @@ const dbConfig = require('./config/database');
 
 global.__piecesPath = __dirname + '/structure/pieces';
 global.__workspacePath = __dirname + '/workspace';
-global.app_queue = ["ok", "okok"];
+global.app_queue = [];
 
 let SessionStore, pg;
 // MySql
