@@ -70,7 +70,7 @@ class E_media_task extends CoreModel {
 			fk_id_process_process: self.fk_id_process_process
 		})
 		const taskAttributes = JSON.parse(fs.readFileSync(__dirname+'/attributes/e_task.json'));
-		await status_helper().setInitialStatus(task, 'e_task', taskAttributes, {user: {id: 1}}) // eslint-disable-line
+		await status_helper().setInitialStatus(task, 'E_task', taskAttributes, {user: {id: 1}}) // eslint-disable-line
 	}
 }
 
