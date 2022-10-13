@@ -827,7 +827,7 @@ exports.createNewHasOne = async (data) => {
 		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
 
 	// Check already existing relation from target to source
-	const optionsFile = fs.readFileSync(__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.target + '.json');
+	const optionsFile = fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.target + '.json');
 	const targetOptionsObject = JSON.parse(optionsFile);
 
 	for (let i = 0; i < targetOptionsObject.length; i++) {

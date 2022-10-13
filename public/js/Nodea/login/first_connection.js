@@ -74,8 +74,14 @@ $(function(){
 	});
 
 	// Trigger
-	if($("input[name='login']").val() == 'admin')
-		$("input[name='login']").trigger('blur');
+	if($("input[name='login']").val() == 'admin'){
+		if($('input[name="email"]').val() != ''){
+			$("input[name='login']").attr('readonly', 'readonly');
+			$('input[name="email"]').attr('readonly', 'readonly');
+		}
+		else
+			$("input[name='login']").trigger('blur');
+	}
 	else
 		$("input[name='login']").trigger('focus');
 });

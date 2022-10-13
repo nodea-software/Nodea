@@ -294,6 +294,20 @@ async function initializeWorkflow(application) {
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'disconnected', 'DÉCONNECTÉ', 'fr-FR');
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'working', 'EN COURS', 'fr-FR');
 
+	// Change default demo code app name by just Demo
+	if(globalConf.demo_mode) {
+		translateHelper.writeTree(application.name, {
+			app: {
+				name: "Demo"
+			}
+		}, 'en-EN');
+		translateHelper.writeTree(application.name, {
+			app: {
+				name: "Demo"
+			}
+		}, 'fr-FR');
+	}
+
 	return await finalizeApplication(application);
 }
 

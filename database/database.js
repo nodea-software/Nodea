@@ -104,6 +104,7 @@ exports.getDatabaseSQLType = async(params) => {
 }
 
 exports.retrieveWorkspaceHasManyData = async (data, entity, foreignKey) => {
+	delete require.cache[require.resolve(global.__workspacePath + '/' + data.application.name + '/config/database')];
 	// eslint-disable-next-line global-require
 	const dbConf = require(global.__workspacePath + '/' + data.application.name + '/config/database');
 	let conn;
