@@ -15,22 +15,25 @@
 
 	<form id="first_connection" action="/first_connection" method="post">
 		<input type="hidden" name="token" value="{token}">
+		<label for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" value="{login}" required>
+			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" id="login" value="{login}" required>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-user"></span>
 				</div>
 			</div>
 		</div>
+		<label for="email">{#__ key="login.mail"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.mail"/}' name="email" value="{email}" data-type='email' required>
+			<input type="text" class="form-control" placeholder='{#__ key="login.mail"/}' name="email" id="email" value="{email}" data-type='email' required>
 			<div class="input-group-append">
 				<div class="input-group-text login-help" data-title='{#__ key="login.first_connection.help.email_title"/}' data-content='{#__ key="login.first_connection.help.email_content"/}'>
 					<span class="animate__animated animate__heartBeat fas fa-envelope"></span>
 				</div>
 			</div>
 		</div>
+		<label for="password">{#__ key="login.password"/}</label>
 		<div class="input-group mb-3">
 			<input type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
 			<div class="input-group-append">
@@ -39,6 +42,7 @@
 				</div>
 			</div>
 		</div>
+		<label for="confirm_password">{#__ key="login.confirm_password"/}</label>
 		<div class="input-group mb-3">
 			<input type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" required>
 			<div class="input-group-append">

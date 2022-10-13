@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr-FR">
 	<head>
 		<meta charset="UTF-8">
 		<title>{#__ key="app.name"/}</title>
@@ -146,7 +146,7 @@
 					</ul>
 					<ul class="order-1 order-md-3 navbar-nav ml-auto">
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="modal" data-target="#bugFix" style="cursor: pointer;">
+							<a href="#" class="nav-link" data-toggle="modal" data-target="#bugFix" style="cursor: pointer;">
 								<i class="fas fa-bug"></i>
 							</a>
 						</li>
