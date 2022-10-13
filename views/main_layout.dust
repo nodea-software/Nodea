@@ -136,13 +136,19 @@
 					</ul> !}
 					{?global_config.demo_mode}
 						<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
-							<span id="demo_signup_btn" class="badge badge-success animate__animated animate__pulse">
+							<a href="https://nodea-software.com/signup" target="_blank" id="demo_signup_btn" class="badge badge-success animate__animated animate__pulse">
 								<i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}
-							</span>
+							</a>
 						</ul>
 					{/global_config.demo_mode}
 					<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
-						{#__ key="users.connected_as"/}&nbsp;<a href="/configure/account"><b>{user_login}</b></a>
+						{#__ key="users.connected_as"/}&nbsp;<a href="/configure/account"><b>
+							{?global_config.demo_mode}
+								Demo
+							{:else}
+								{user_login}
+							{/global_config.demo_mode}
+						</b></a>
 					</ul>
 					<ul class="order-1 order-md-3 navbar-nav ml-auto">
 						<li class="nav-item">
@@ -256,7 +262,7 @@
 
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-success" data-dismiss="modal"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</button>
+							<a href="https://nodea-software.com/signup" target="_blank" class="btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</a>
 						</div>
 					</div>
 				</div>
@@ -283,7 +289,7 @@
 
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-success" data-dismiss="modal"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</button>
+							<a href="https://nodea-software.com/signup" target="_blank" class="btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</a>
 						</div>
 					</div>
 				</div>
