@@ -186,6 +186,14 @@ router.post('/preview', middlewares.hasAccessApplication, (req, res) => {
 			fs.writeFileSync(historyScriptPath, historyScript);
 		}
 
+		// On select application in preview, redirect on good application
+		if (data.function == 'selectApplication') {
+			data.toRedirect = true;
+			data.url = `/application/preview/${data.options.value}`;
+			app_helper.setChat(req, data.options.value, currentUserID, "Nodea", data.message, data.messageParams);
+			return data;
+		}
+
 		if (data.function == "deleteApplication") {
 			// Kill server
 			if(process_server_per_app[appName])
