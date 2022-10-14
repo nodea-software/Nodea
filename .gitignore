@@ -9,3 +9,4 @@ structure/template/app/views/bundle
 *.log
 .npm
 .eslintcache
+.vscode

@@ -203,7 +203,7 @@
                 <i data-field="f_type" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <select class="form-control select" name="f_type" width="100%">
+            <select class="form-control select" name="f_type" style="width: 100%;">
                 <option value="">
                     {#__ key="select.default" /}
                 </option>
@@ -279,39 +279,6 @@
             </div>
         </div>
     </div>
-    <div class="col-3">
-        <div id="btn-variables-script">
-            <div class="btn-group insert-mosaic">
-                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
-                </button>
-                <div class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" onclick="add_script_variable('step_index');">{#__ key="automation.script_menu_step_index"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('step_serial_number');">{#__ key="automation.script_menu_step_serial_number"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('env');">{#__ key="automation.script_menu_env_variable"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('session');">{#__ key="automation.script_menu_session_variable"/}</a>
-                </div>
-            </div>
-        </div>
-        <div id="btn-variables-sequence" style="display: none;">
-            <div class="btn-group insert-mosaic">
-                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" onclick="add_sequence_variable('step_index');">{#__ key="automation.sequence_menu_step_index"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('step_serial_number');">{#__ key="automation.sequence_menu_step_serial_number"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('env');">{#__ key="automation.sequence_menu_env_variable"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('session');">{#__ key="automation.sequence_menu_session_variable"/}</a>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <br>
     <div class="col-12">
         <div class="form-group">
             <label for="f_script">
@@ -320,6 +287,37 @@
                 <i data-field="f_script" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
+			<div id="btn-variables-script">
+				<div class="btn-group insert-mosaic">
+					<button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+					</button>
+					<div class="dropdown-menu" role="menu">
+						<a class="dropdown-item" onclick="add_script_variable('step_index');">{#__ key="automation.script_menu_step_index"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('step_serial_number');">{#__ key="automation.script_menu_step_serial_number"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('env');">{#__ key="automation.script_menu_env_variable"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('session');">{#__ key="automation.script_menu_session_variable"/}</a>
+					</div>
+				</div>
+			</div>
+			<div id="btn-variables-sequence" style="display: none;">
+				<div class="btn-group insert-mosaic">
+					<button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<a class="dropdown-item" onclick="add_sequence_variable('step_index');">{#__ key="automation.sequence_menu_step_index"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('step_serial_number');">{#__ key="automation.sequence_menu_step_serial_number"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('env');">{#__ key="automation.sequence_menu_env_variable"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('session');">{#__ key="automation.sequence_menu_session_variable"/}</a>
+					</ul>
+				</div>
+			</div>
+			<br>
             <textarea class="form-control textarea regular-textarea" placeholder='{#__ key="entity.e_page.f_script" /}' name="f_script" id="f_script_textareaid" type="text">{f_script|s}</textarea>
         </div>
     </div>
