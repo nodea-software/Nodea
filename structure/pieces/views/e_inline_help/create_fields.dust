@@ -1,7 +1,7 @@
 <div id="fields" class="row">
 	<div data-field="f_entite_de_gestion" class="col-12 form-group">
 		<label for="f_entity" class="required">
-			Entité
+			{#__ key="entity.e_inline_help.f_entity"/}
 		</label>
 		<select id="entitiesSelect" required name="f_entity" style="width: 100%;">
 			<option value="" default="">{#__ key="select.default" /}</option>
@@ -15,7 +15,7 @@
 		{#entities}
 			<div id="select-{entity}">
 				<label for="{entity}" class="required">
-					Champs
+					{#__ key="entity.e_inline_help.f_field"/}
 				</label>
 				<select class="entitiesFields regular-select" name="f_field" disabled style="width: 100%;">
 					<option value="" default="">{#__ key="select.default" /}</option>
