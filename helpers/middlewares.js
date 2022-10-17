@@ -102,10 +102,18 @@ exports.hasAccessApplication = function(req, res, next) {
 // If the user is already identified, he can't access the login page
 exports.loginAccess = function(req, res, next) {
 	// If user is not authenticated in the session, carry on
-	if (!req.isAuthenticated() || global_config.demo_mode)
-		return next();
+	if (!req.isAuthenticated() || global_config.demo_mode){
+		// Check if admin is initialized, if not redirect to initialiazation
+		models.User.findByPk(1).then(admin => {
+			const redirect = '/first_connection?login=admin&email=' + admin.email;
+			if(admin.enabled == 0 && !admin.password && req.url != redirect && req.method == 'GET')
+				return res.redirect(redirect);
+			return next();
+		});
+	} else {
+		res.redirect('/default/home');
+	}
 
-	res.redirect('/default/home');
 };
 
 exports.disableInDemo = (req, res, next) => {
