@@ -267,6 +267,7 @@ models.sequelize.sync({
 	}
 
 	if(global_config.demo_mode) {
+		// Cleaning app older than 7 days in demo mode
 		new CronJob('0 0 * * * *', function() {
 			try {
 				// eslint-disable-next-line global-require
@@ -276,6 +277,16 @@ models.sequelize.sync({
 			}
 		}, null, true, 'Europe/Paris');
 	}
+
+	// Clean queue list if older than 10 minutes
+	new CronJob('0 * * * * *', function() {
+		try {
+			// eslint-disable-next-line global-require
+			require('./services/cron/clean_queue.js')();
+		} catch(err) {
+			console.error(err);
+		}
+	}, null, true, 'Europe/Paris');
 }).catch(err => {
 	console.log("❌ ERROR - SYNC");
 	console.error(err);
