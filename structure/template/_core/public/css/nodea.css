@@ -52,6 +52,19 @@ table.dataTable > tbody > tr:hover {
 	cursor: pointer;
 }
 
+#columnSelector {
+	max-height:400px;
+	width: 350px;
+	overflow:auto;
+	position:absolute;
+	background: white;
+	border: 1px solid grey;
+	border-radius:10px;
+	padding:20px;
+	z-index:999999;
+	top:40px;
+}
+
 label.no-weight {
 	font-weight: normal !important;
 	cursor: pointer;

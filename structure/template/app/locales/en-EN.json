@@ -380,6 +380,8 @@
 		},
 		"choose_columns": "Choose Columns",
 		"apply": "Apply",
+		"check": "Check all",
+		"uncheck": "Uncheck all",
 		"display": "Display",
 		"boolean_filter": {
 			"null": "Not specified",
