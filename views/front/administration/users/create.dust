@@ -36,7 +36,7 @@
 							<div class="card-header d-flex p-0">
 								<h3 class="card-title p-3">
 									<img class="animate__animated" src="/img/picto/multilingue2.png" alt="Users picto">
-									{#__ key="configure.tabs.users"/}
+									{#__ key="administration.tabs.users"/}
 								</h3>
 								<ul class="nav nav-pills ml-auto p-2">
 									<li class="nav-item">
