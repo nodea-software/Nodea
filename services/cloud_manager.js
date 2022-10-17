@@ -74,8 +74,8 @@ async function getStack(stackName) {
 async function generateCloneUrl(data) {
 	// 1 - Generate temporary personnal access token to clone repository on cloud env
 	const today = moment().format('YYYY-MM-DD');
-	// Expire tomorrow
-	const expireAt = moment().add(1, 'd').format('YYYY-MM-DD');
+	// Expire today
+	const expireAt = moment().format('YYYY-MM-DD');
 	const tokenName = 'deploy_token_' + today;
 	const accessToken = await gitlab.generateAccessToken(data.code_platform.user, tokenName, ['read_repository', 'write_repository'], expireAt);
 
@@ -291,7 +291,6 @@ async function generateStack(data) {
 			"application": {
 				"container_name": data.stackName + '_app',
 				"image": "nodeasoftware/application:latest",
-				"depends_on": 'database',
 				"environment": {
 					"GIT_URL": data.git_url,
 					"APP_NAME": data.repoName,

@@ -379,6 +379,8 @@
             "sortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
         },
         "choose_columns": "Choix Colonnes",
+		"check": "Cocher Tout",
+		"uncheck": "Décocher Tout",
         "apply": "Appliquer",
         "display": "Afficher",
         "boolean_filter": {
