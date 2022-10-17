@@ -952,7 +952,7 @@ exports.createNewTracking = (data) => {
 	const optionsEntitySourcePath = `${workspacePath}/app/models/options/${entityName}.json`;
 	const entitySourceOptions = fs.readFileSync(optionsEntitySourcePath, 'utf8');
 	for (const o of JSON.parse(entitySourceOptions)) {
-		if(relationType.includes(o.structureType) || o.component === 'address'){
+		if(relationType.includes(o.structureType) && !o.target.startsWith('e_history') || o.component === 'address'){
 			trackingObj[entityName][o.target] = {};
 		}
 	}
@@ -1077,6 +1077,7 @@ exports.initTracking = (application) => {
 	fs.emptyDirSync(`${workspacePath}/app/views/${entityName}/`);
 	fs.copySync(`${global.__piecesPath}/component/tracking/views/`, `${workspacePath}/app/views/${entityName}/`);
 
+	const file_route = `${workspacePath}/app/routes/${entityName}.js`;
 	// Disable unused route
 	let js_to_write = `
 		data.req.session.toastr = [{
@@ -1099,7 +1100,7 @@ exports.initTracking = (application) => {
 		'destroy'
 	];
 	for (const route of disabledRoute) {
-		js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, route, 'start', js_to_write)
+		js_writer.writeInHook(file_route, route, 'start', js_to_write)
 	}
 
 	// Disable the non-ajax show route
@@ -1108,10 +1109,10 @@ exports.initTracking = (application) => {
 			${js_to_write}
 		}
 	`;
-	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'show', 'start', js_to_write);
+	js_writer.writeInHook(file_route, 'show', 'start', js_to_write);
 	// Update render file for show modal
 	js_to_write = `data.renderFile = 'e_traceability/show_fields';`;
-	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'show', 'beforeRender', js_to_write);
+	js_writer.writeInHook(file_route, 'show', 'beforeRender', js_to_write);
 
 	// For select entity on view traceability list
 	js_to_write = `
@@ -1122,7 +1123,24 @@ exports.initTracking = (application) => {
 			}
 		}
 	`;
-	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'search', 'beforeQuery', js_to_write);
+	js_writer.writeInHook(file_route, 'search', 'beforeQuery', js_to_write);
+
+	js_to_write = `
+		// Check file tracking.json if no result
+		if(!data.results.rows.length){
+			const confTrack = JSON.parse(fs.readFileSync(__configPath + "/tracking.json"));
+			data.results.rows = Object.keys(confTrack).map(key => { return {f_entity: key, id: key} });
+		}
+	`;
+	js_writer.writeInHook(file_route, 'search', 'beforeResponse', js_to_write);
+	// Add additional module on entity
+	let content_file = fs.readFileSync(file_route, 'utf8');
+	const additional_module = `
+		// ADDITIONAL MODULE
+		const fs = require('fs-extra');`
+	content_file = content_file.replace(/\/\/ ADDITIONAL_MODULE/g, additional_module);
+	fs.writeFileSync(file_route, content_file);
+
 
 	// Change hook of route for filter on f_entity & f_id_entity
 	js_to_write = `
@@ -1140,7 +1158,7 @@ exports.initTracking = (application) => {
 			}
 		}
 	`;
-	js_writer.writeInHook(`${workspacePath}/app/routes/${entityName}.js`, 'datalist', 'beforeDatatableQuery', js_to_write);
+	js_writer.writeInHook(file_route, 'datalist', 'beforeDatatableQuery', js_to_write);
 
 	const translateKey = {
 		label_entity: 'Traçabilité',

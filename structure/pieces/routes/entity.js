@@ -5,6 +5,7 @@ const attributes = require('@app/models/attributes/ENTITY_NAME');
 
 const helpers = require('@core/helpers');
 const middlewares = helpers.middlewares;
+// ADDITIONAL_MODULE
 
 class MODEL_NAME extends Entity {
 	constructor() {
