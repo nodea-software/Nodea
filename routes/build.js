@@ -237,6 +237,16 @@ router.get('/get_generation_queue', (req, res) => {
 	if(app_queue_place != -1)
 		app_queue_place = global.app_queue.indexOf(req.query.app) + 1;
 
+	if(req.query.app.split('_').length == 3){
+		const timestamp = req.query.app.split('_')[2].slice(0, -3);
+		const date = dayjs.unix(parseInt(timestamp))
+		if(dayjs().diff(date, 'minutes') >= 10){
+			console.log('AUTHORIZE FROM QUEUE FOR WAITING 10 MINUTES', req.query.app)
+			// Let through for waiting more than 10 minutes
+			app_queue_place = 1
+		}
+	}
+
 	res.send({
 		cpt: app_queue_place
 	});
