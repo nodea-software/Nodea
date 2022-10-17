@@ -1116,31 +1116,13 @@ exports.initTracking = (application) => {
 
 	// For select entity on view traceability list
 	js_to_write = `
-		if(data.req.query.group){
-			data.query = {
-				...data.query,
-				group: [data.req.query.group]
-			}
-		}
+		data.results = {
+			rows: helpers.tracking.listEntityTrack()
+		};
+		data.res.success(_ => data.res.json(data.results));
+		return false;
 	`;
-	js_writer.writeInHook(file_route, 'search', 'beforeQuery', js_to_write);
-
-	js_to_write = `
-		// Check file tracking.json if no result
-		if(!data.results.rows.length){
-			const confTrack = JSON.parse(fs.readFileSync(__configPath + "/tracking.json"));
-			data.results.rows = Object.keys(confTrack).map(key => { return {f_entity: key, id: key} });
-		}
-	`;
-	js_writer.writeInHook(file_route, 'search', 'beforeResponse', js_to_write);
-	// Add additional module on entity
-	let content_file = fs.readFileSync(file_route, 'utf8');
-	const additional_module = `
-		// ADDITIONAL MODULE
-		const fs = require('fs-extra');`
-	content_file = content_file.replace(/\/\/ ADDITIONAL_MODULE/g, additional_module);
-	fs.writeFileSync(file_route, content_file);
-
+	js_writer.writeInHook(file_route, 'search', 'start', js_to_write);
 
 	// Change hook of route for filter on f_entity & f_id_entity
 	js_to_write = `
