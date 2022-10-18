@@ -52,7 +52,7 @@ class Program extends Entity {
 				programFile = program.f_program_file;
 			else {
 				const [filePath, fileName] = helpers.file.createPathAndName('e_program', 'program_file.zip');
-				programFile = `${filePath}/${fileName}`;
+				programFile = filePath + fileName;
 				await program.update({f_program_file: programFile}, {transaction: data.transaction});
 			}
 			fs.copySync(zipFilePath, helpers.file.fullPath(programFile));
