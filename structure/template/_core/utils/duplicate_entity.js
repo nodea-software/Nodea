@@ -2,25 +2,26 @@ const models = require('@app/models');
 const fs = require('fs-extra');
 const globalConfig = require('@config/global');
 const moment = require('moment');
+const file_helper = require('@core/helpers/file');
 
 async function duplicateFile(entityName, entitySource, fileAttribute) {
-	const sourceFileName = entitySource[fileAttribute];
-	const sourceFolder = sourceFileName.split('-')[0];
-	const sourceFilePath = `${globalConfig.localstorage}${entityName}/${sourceFolder}/${sourceFileName}`;
+	const source_file_name = entitySource[fileAttribute];
+	const source_file_path = `${globalConfig.localstorage}${source_file_name}`;
 
-	const dateStr = moment().format("YYYYMMDD-HHmmss");
-	const newFolderName = dateStr.split('-')[0];
-	const newFileName = `${dateStr}_DUPLICATE_${sourceFileName.split('-')[1]}`;
-	const newFilePath = `${globalConfig.localstorage}${entityName}/${newFolderName}/${newFileName}`;
+	const date_str = moment().format("YYYYMMDD-HHmmss");
+	const format_file_name = `${date_str}_DUPLICATE_${file_helper.originalFilename(source_file_name)}`;
+	const [new_file_path, new_file_name] = file_helper.createPathAndName(entityName, format_file_name);
+
+	const complete_file_path = new_file_path + new_file_name;
 
 	try {
-		await fs.copy(sourceFilePath, newFilePath);
+		await fs.copy(source_file_path, `${globalConfig.localstorage}${complete_file_path}`);
 	} catch (err) {
-		console.error(`WARN: Couldn't duplicate file ${sourceFileName}`);
+		console.error(`WARN: Couldn't duplicate file ${source_file_name}`);
 		console.error(err);
 	}
 
-	return [newFilePath, newFileName];
+	return [new_file_path, complete_file_path];
 }
 
 module.exports = async function(entityId, entityName, includes) {
