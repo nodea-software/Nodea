@@ -431,7 +431,7 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	if (globalConf.env != 'studio') {
+	if (globalConf.env != 'studio' || globalConf.demo_mode) {
 		const port = 9000 + parseInt(data.appID);
 		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
 		return {

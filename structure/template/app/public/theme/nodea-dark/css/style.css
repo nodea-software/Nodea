@@ -27,8 +27,8 @@
 /* --- Main header --- */
 
 .main-header {
-  background: linear-gradient(to right, var(--theme-dark) 0%, var(--theme-dark-light) 100%);
-  border-image: linear-gradient(to right, var(--theme-dark) 0%, var(--theme-dark-light) 100%);
+  background: linear-gradient(to right, var(--theme-dark) 0%, var(--theme-dark-light) 50%, var(--theme-dark) 100%);
+  border-image: linear-gradient(to right, var(--theme-dark) 0%, var(--theme-dark-light) 50%, var(--theme-dark) 100%);
 }
 
 .main-header .navbar-nav .nav-link {
@@ -260,4 +260,8 @@ a {
 
 .sidebar .form-inline .input-group {
 	flex-wrap: wrap;
+}
+
+.sidebar label {
+  color: var(--theme-white);
 }

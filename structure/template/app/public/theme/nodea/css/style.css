@@ -24,8 +24,8 @@
 /* --- Main header --- */
 
 .main-header {
-  background: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
-  border-image: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 100%);
+  background: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 50%, var(--theme-primary) 100%);
+  border-image: linear-gradient(to right, var(--theme-primary) 0%, var(--theme-info) 50%, var(--theme-primary) 100%);
 }
 
 .main-header .navbar-nav .nav-link {

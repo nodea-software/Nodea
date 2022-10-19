@@ -93,7 +93,7 @@
 				</div>
 				<div class="modal-body text-center">
 					{#__ key="listApplication.gitlab.text1" /}<br><br>
-					<i>HTTP:<br><b>git clone <span id="code_platform_repo_url"></span></b></i><br>
+					<i>HTTP:<br><b>git clone <span id="code_platform_repo_url"></span></b></i><br><br>
 					<i>SSH:<br><b>git clone <span id="code_platform_repo_ssh_url"></span></b></i><br><br>
 					{#__ key="listApplication.gitlab.text2" /}<br><br>
 					<i><b>{code_platform_user.name}</b></i><br><br>
