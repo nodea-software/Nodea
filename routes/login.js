@@ -55,13 +55,14 @@ router.post('/login', local_authentication.authenticate, function(req, res) {
 			res.redirect('/default/home');
 	}).catch(err => {
 		console.error(err);
-		req.session.toastr = [{
-			message: err.message || "error.oops",
-			level: "error"
-		}];
-		req.logout(err => {
-			if(err)
-				console.error(err);
+		req.logout(error => {
+			if(error)
+				console.error(error);
+
+			req.session.toastr = [{
+				message: err.message || "error.oops",
+				level: "error"
+			}];
 			res.redirect('/');
 		});
 	});

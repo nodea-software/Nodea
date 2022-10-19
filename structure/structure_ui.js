@@ -230,10 +230,6 @@ exports.setTheme = async (data) => {
 			const layout_path = workspace_path + '/views/' + layout_to_write[i] + '.dust';
 			const $ = await domHelper.read(layout_path, true);
 
-			// * Works without bundle system
-			// const oldTheme = $("link[data-type='theme']").attr("data-theme");
-			// $("link[data-type='theme']").replaceWith("<link href='/theme/" + asked_theme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + asked_theme + "'>");
-
 			if(theme_information.sidebar == 'dark'){
 				$(".main-sidebar").removeClass('sidebar-light-primary');
 				$(".main-sidebar").addClass('sidebar-dark-primary');
@@ -241,15 +237,6 @@ exports.setTheme = async (data) => {
 				$(".main-sidebar").removeClass('sidebar-dark-primary');
 				$(".main-sidebar").addClass('sidebar-light-primary');
 			}
-
-			// * Works without bundle system
-			// if (typeof theme_information.js !== "undefined") {
-			// 	// If the theme need js inclusion
-			// 	for (let j = 0; j < theme_information.js.length; j++) {
-			// 		$("body script:last").after("<script type='text/javascript'></script>");
-			// 		$("body script:last").attr('src', "/theme/" + asked_theme + "/js/" + theme_information.js[j]);
-			// 	}
-			// }
 
 			domHelper.write(layout_path, $, true);
 			return;
