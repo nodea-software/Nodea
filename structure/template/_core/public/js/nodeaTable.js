@@ -434,7 +434,7 @@ let NodeaTable = (function() {
 	    	},
 	    	text: {
 	    		render: ({value, row, column, entity, additionalData}) => {
-			        if(value && value.length > 75){
+			        if(value){
 			        	var decoded = HtmlDecode(value);
 		                var shortText = $.parseHTML(decoded.slice(0, 75))[0].data ? $.parseHTML(decoded.slice(0, 75))[0].data : $(decoded).text().slice(0, 75);
 		                shortText = HtmlEncode(shortText);
