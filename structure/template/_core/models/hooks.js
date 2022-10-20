@@ -110,6 +110,10 @@ module.exports = {
 						values[item] = values[item] ? dayjs(values[item], formatDate).format("DD/MM/YYYY HH:mm") : values[item];
 					}
 
+					if(typeof attributes[item] !== "undefined" && attributes[item].nodeaType === 'password'){
+						continue;
+					}
+
 					if (notTrackField.includes(item))
 						continue;
 
@@ -216,6 +220,10 @@ module.exports = {
 					if (typeof attributes[item] !== "undefined" && attributes[item].type == "DATE") {
 						values[item] = values[item] ? dayjs(values[item], formatDate).format("DD/MM/YYYY HH:mm") : values[item];
 						oldValues[item] = oldValues[item] ? dayjs(oldValues[item], formatDate).format("DD/MM/YYYY HH:mm") : oldValues[item];
+					}
+
+					if(typeof attributes[item] !== "undefined" && attributes[item].nodeaType === 'password'){
+						continue;
 					}
 
 					for (const oldItem in oldValues) {
