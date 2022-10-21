@@ -92,20 +92,22 @@ function dive(locales, newLocales, replaceBoolean) {
 		for (const locale in locales) {
 			if (locale == newLocale && typeof newLocales[newLocale] === 'object') {
 				found = true;
-				dive(locales[locale], newLocales[newLocale])
-			} else if (!replaceBoolean && locale == newLocale)
+				dive(locales[locale], newLocales[newLocale], replaceBoolean)
+			} else if (!replaceBoolean && locale == newLocale){
 				found = true;
+			}
 		}
 		if (!found)
 			locales[newLocale] = newLocales[newLocale];
 	}
+	return locales;
 }
 
 module.exports = {
 	writeTree: function(appName, object, language, replaceBoolean = true) {
 		try {
-			const localesObj = JSON.parse(helpers.readFileSyncWithCatch(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json'));
-			dive(localesObj, object, replaceBoolean);
+			let localesObj = JSON.parse(helpers.readFileSyncWithCatch(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json'));
+			localesObj = dive(localesObj, object, replaceBoolean);
 			fs.writeFileSync(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json', JSON.stringify(localesObj, null, 4), 'utf8');
 		} catch(err) {
 			console.error(err);
