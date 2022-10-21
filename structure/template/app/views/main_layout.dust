@@ -62,7 +62,7 @@
 					{! Version !}
 					<li class="nav-item">
 						<a class="nav-link" href="#">
-							<span class="badge badge-warning navbar-badge badge-version" style="margin-top: 5px;">
+							<span class="badge badge-warning navbar-badge badge-version" style="margin-top: 3px;">
 								{#__ key="app.version"/}&nbsp;{config.version}
 							</span>
 						</a>

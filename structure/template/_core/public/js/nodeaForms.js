@@ -450,7 +450,9 @@ let NodeaForms = (_ => {
 				},
 				validator: (element, form) => {
 					if (element.val().length > 0 && !element.inputmask("isComplete")) {
-						element.css("border", "1px solid red").parent().after("<span style='color: red;'>Le champ est incomplet.</span>");
+						if(!element.parent().parent().find('.field-mail-error').length){
+							element.css("border", "1px solid red").parent().after("<span class='field-mail-error' style='color: red;'>Le champ est incomplet.</span>");
+						}
 						return false;
 					} else
 						element.css("border", "1px solid black").parent().find('span').remove();

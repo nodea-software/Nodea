@@ -438,8 +438,8 @@ module.exports = {
 		}
 	},
 	getTextColor: function (color) {
-		const wht = '#fff';
-		const blk = '#000';
+		const wht = '#ffffff';
+		const blk = '#000000';
 
 		function hexToRgb(hexValue) {
 			const hex = hexValue.substring(1).match(/.{1,2}/g);
