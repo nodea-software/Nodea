@@ -173,6 +173,12 @@ a {
 	color: var(--nodea-blue);
 }
 
+label.required:after {
+	color: #e32;
+	content: ' *';
+	display:inline;
+}
+
 /* Backgrounds */
 .bg-primary {
 	background-color: var(--nodea-blue) !important;

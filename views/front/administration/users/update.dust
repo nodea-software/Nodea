@@ -131,7 +131,7 @@
 																	<span class="fas fa-phone"></span>
 																</div>
 															</div>
-															<input class="form-control input" placeholder='{#__ key="users.phone" /}' value="{phone}" type="text" maxlength="255" name="phone">
+															<input class="form-control input" placeholder='{#__ key="users.phone" /}' value="{phone}" type="tel" maxlength="255" name="phone">
 														</div>
 													</div>
 												</div>
@@ -157,11 +157,13 @@
 {<custom_js}
 	<!-- Select2 -->
 	<script src="/AdminLTE/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+	<!-- Input Mask -->
+	<script src="/js/plugins/input-mask/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
+	<!-- NodeaForms -->
+	<script src="/js/Nodea/nodeaForms.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$("select").each(function () {
-				$(this).select2();
-			});
+		$(function() {
+			NodeaForms();
 		});
 	</script>
 {/custom_js}

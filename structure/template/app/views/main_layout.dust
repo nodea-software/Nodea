@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr-FR">
+<html lang="{lang_user}">
 	<head>
 		<meta charset="UTF-8">
 		<title>{#__ key="app.name"/}&nbsp;|&nbsp;{#__ key="module.home"/}</title>

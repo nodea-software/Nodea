@@ -94,7 +94,7 @@ router.post('/users/create', middlewares.isAdmin, (req, res) => {
 			login: req.body.login.toLowerCase(),
 			id_role: req.body.role,
 			password: null,
-			phone: null,
+			phone: req.body.phone,
 			version: 1
 		});
 
@@ -170,14 +170,14 @@ router.post('/users/update', middlewares.isAdmin, (req, res) => {
 			message: "action.success.update",
 			level: "success"
 		}];
-		res.redirect("/administration/users/update/" + req.body.id);
+		res.redirect("/administration/users/show/" + req.body.id);
 	}).catch(err => {
 		console.error(err);
 		req.session.toastr = [{
 			message: err.message,
 			level: "error"
 		}];
-		res.redirect("/administration/users/update/" + req.body.id);
+		res.redirect("/administration/users/show/" + req.body.id);
 	});
 });
 

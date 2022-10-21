@@ -28,6 +28,13 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 			}]
 		});
 
+		if(!req.session.app_name){
+			return {
+				currentApp: req.session.app_name,
+				allApps: applications
+			}
+		}
+
 		// Get all user for current app
 		const appUsers = await models.User.findAll({
 			include: [{
@@ -41,12 +48,6 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 
 		// Code platform disabled
 		if (!code_platform.config.enabled)
-			return {
-				currentApp: req.session.app_name,
-				allApps: applications
-			}
-
-		if(!req.session.app_name)
 			return {
 				currentApp: req.session.app_name,
 				allApps: applications
