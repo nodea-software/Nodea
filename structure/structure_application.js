@@ -295,7 +295,7 @@ async function initializeWorkflow(application) {
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'working', 'EN COURS', 'fr-FR');
 
 	// Change default demo code app name by just Demo
-	if(globalConf.demo_mode) {
+	if(globalConf.demo_mode && application.name.startsWith('a_demo')) {
 		translateHelper.writeTree(application.name, {
 			app: {
 				name: "Demo"
