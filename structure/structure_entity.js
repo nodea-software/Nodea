@@ -145,10 +145,10 @@ exports.setupAssociation = (data) => {
 			toSyncObject[source].options = [];
 
 		toSyncObject[source].options.push(baseOptions);
-		fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, 4));
+		fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, '\t'));
 	}
 
-	fs.writeFileSync(optionsFileName, JSON.stringify(optionsObject, null, 4));
+	fs.writeFileSync(optionsFileName, JSON.stringify(optionsObject, null, '\t'));
 	return;
 };
 
@@ -214,10 +214,10 @@ exports.setupEntity = async (data) => {
 			"validate": false
 		}
 	};
-	fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity_name + '.json', JSON.stringify(baseAttributes, null, 4));
+	fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity_name + '.json', JSON.stringify(baseAttributes, null, '\t'));
 
 	// CREATE MODEL OPTIONS (ASSOCIATIONS) FILE
-	fs.writeFileSync(workspacePath + '/app/models/options/' + entity_name + '.json', JSON.stringify([], null, 4));
+	fs.writeFileSync(workspacePath + '/app/models/options/' + entity_name + '.json', JSON.stringify([], null, '\t'));
 
 	// CREATE TEST FILE
 	let testTemplate = fs.readFileSync(global.__piecesPath + '/tests/entity.test.js', 'utf8');
@@ -372,7 +372,7 @@ exports.setupEntity = async (data) => {
 			update: ["admin"]
 		}
 	});
-	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
+	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, '\t'), "utf8");
 
 	// Separate access.lock.json handlingto avoid filling it with access.json content
 	const accessLockPath = workspacePath + '/config/access.lock.json';
@@ -387,7 +387,7 @@ exports.setupEntity = async (data) => {
 			update: []
 		}
 	});
-	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, 4), "utf8");
+	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, '\t'), "utf8");
 
 	// Add entity locals
 	await translateHelper.writeLocales(data.application.name, "entity", entity_name, entity_display_name, data.googleTranslate);
@@ -420,7 +420,7 @@ exports.deleteEntity = async (data) => {
 			if (options[i].target != data.entity.name)
 				optionsCpy.push(options[i]);
 		if (optionsCpy.length != options.length)
-			fs.writeFileSync(baseFolder + '/app/models/options/' + optionFiles[file], JSON.stringify(optionsCpy, null, 4));
+			fs.writeFileSync(baseFolder + '/app/models/options/' + optionFiles[file], JSON.stringify(optionsCpy, null, '\t'));
 	}
 
 	// Clean up access config
@@ -428,13 +428,13 @@ exports.deleteEntity = async (data) => {
 	for (let i = 0; i < access[data.np_module.name.substring(2)].entities.length; i++)
 		if (access[data.np_module.name.substring(2)].entities[i].name == data.entity.name.substring(2))
 			access[data.np_module.name.substring(2)].entities.splice(i, 1);
-	fs.writeFileSync(baseFolder + '/config/access.json', JSON.stringify(access, null, 4));
+	fs.writeFileSync(baseFolder + '/config/access.json', JSON.stringify(access, null, '\t'));
 
 	const accessLock = JSON.parse(fs.readFileSync(baseFolder + '/config/access.lock.json', 'utf8'));
 	for (let i = 0; i < accessLock[data.np_module.name.substring(2)].entities.length; i++)
 		if (accessLock[data.np_module.name.substring(2)].entities[i].name == data.entity.name.substring(2))
 			accessLock[data.np_module.name.substring(2)].entities.splice(i, 1);
-	fs.writeFileSync(baseFolder + '/config/access.lock.json', JSON.stringify(accessLock, null, 4));
+	fs.writeFileSync(baseFolder + '/config/access.lock.json', JSON.stringify(accessLock, null, '\t'));
 
 	// Remove entity entry from layout select
 	const filePath = baseFolder + '/app/views/layout_' + data.np_module.name + '.dust';
@@ -465,8 +465,8 @@ exports.setupHasManyTab = async (data) => {
 	dataFR.entity[source][alias] = showAlias;
 	dataEN.entity[source][alias] = showAlias;
 
-	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, 4), 'utf8');
-	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, 4), 'utf8');
+	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, '\t'), 'utf8');
+	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, '\t'), 'utf8');
 
 	// Setup association tab for show_fields.dust
 	const fileBase = __dirname + '/../workspace/' + data.application.name + '/app/views/' + source;
@@ -505,8 +505,8 @@ exports.setupHasManyPresetTab = async (data) => {
 	dataFR.entity[source][alias] = showAlias;
 	dataEN.entity[source][alias] = showAlias;
 
-	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, 4));
-	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, 4));
+	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, '\t'));
+	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, '\t'));
 
 	// Setup association tab for show_fields.dust
 	const fileBase = workspacePath + '/app/views/' + source;
@@ -534,7 +534,7 @@ exports.saveHasManyData = (data, workspaceData, foreignKey) => {
 	/* Insert value in toSync queries array to add values of the old has many in the belongs to many */
 	for (let i = 0; i < data.length; i++)
 		toSync.queries.push("INSERT INTO " + data.options.through + "(" + firstKey + ", " + secondKey + ") VALUES(" + data[i].id + ", " + data[i][foreignKey] + ");");
-	fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, 4));
+	fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, '\t'));
 	return true;
 };
 
@@ -555,8 +555,8 @@ exports.setupHasOneTab = async (data) => {
 	dataFR.entity[source][alias] = showAlias;
 	dataEN.entity[source][alias] = showAlias;
 
-	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, 2))
-	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, 2))
+	fs.writeFileSync(fileTranslationFR, JSON.stringify(dataFR, null, '\t'))
+	fs.writeFileSync(fileTranslationEN, JSON.stringify(dataEN, null, '\t'))
 
 	// Setup association tab for show_fields.dust
 	const fileBase = __dirname + '/../workspace/' + data.application.name + '/app/views/' + source;
@@ -630,9 +630,9 @@ exports.deleteTab = async (data) => {
 			}
 		}
 		if(autoGenerateFound)
-			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, 4), "utf8");
+			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, '\t'), "utf8");
 	}
-	fs.writeFileSync(jsonPath, JSON.stringify(options, null, 4), "utf8");
+	fs.writeFileSync(jsonPath, JSON.stringify(options, null, '\t'), "utf8");
 
 	const showFile = workspacePath + '/app/views/' + data.entity.name + '/show_fields.dust';
 	const $ = await domHelper.read(showFile)

@@ -405,7 +405,7 @@ exports.listEntity = async (data) => { // eslint-disable-line
 
 async function deleteEntity(data) {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 	const foundEntity = data.application.findEntity(data.options.value, true);
 
 	data.np_module = foundEntity.np_module;
@@ -472,7 +472,7 @@ async function deleteEntity(data) {
 		}
 
 		options = options.filter((val, idx) => idxToRemove.indexOf(idx) == -1);
-		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, 4), 'utf8')
+		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, '\t'), 'utf8')
 
 		// Loop on entity options
 		for (let i = 0; i < options.length; i++) {
@@ -636,7 +636,7 @@ exports.setFieldKnownAttribute = async (data) => {
 
 	// Standard field not found, looking for related to field
 	if (!data.field || data.field.type == 'relatedTo') {
-		const optionsArray = JSON.parse(fs.readFileSync(__workspacePath + '/' + data.application.name + '/app/models/options/' + data.entity_name + '.json'));
+		const optionsArray = JSON.parse(fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.entity_name + '.json'));
 		for (let i = 0; i < optionsArray.length; i++) {
 			if (optionsArray[i].showAs == data.options.showValue) {
 				if (optionsArray[i].structureType == "relatedTo") {
@@ -798,7 +798,7 @@ exports.createNewHasOne = async (data) => {
 	}
 
 	// Check already existing relation from source to target
-	const sourceOptionsPath = __workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.source + '.json';
+	const sourceOptionsPath = global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.source + '.json';
 	const optionsSourceObject = JSON.parse(fs.readFileSync(sourceOptionsPath));
 	let saveFile = false;
 
@@ -824,7 +824,7 @@ exports.createNewHasOne = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	// Check already existing relation from target to source
 	const optionsFile = fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.target + '.json');
@@ -1047,7 +1047,7 @@ exports.createNewHasMany = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	const answer = {};
 	let toSync = true;
@@ -1173,7 +1173,7 @@ exports.createNewHasMany = async (data) => {
 exports.createNewHasManyPreset = async (data) => {
 
 	const exportsContext = this;
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	const sourceEntity = data.application.findEntity(data.options.source, true);
 	data.np_module = sourceEntity.np_module;
@@ -1241,7 +1241,7 @@ exports.createNewHasManyPreset = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8")
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8")
 
 	const targetOptions = JSON.parse(fs.readFileSync(appPath + '/models/options/' + data.options.target + '.json'));
 	let cptExistingHasMany = 0;
@@ -1375,7 +1375,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	// Check if an association already exists from target to source
 	const optionsObject = JSON.parse(fs.readFileSync(appPath + '/models/options/' + data.options.target + '.json'));
@@ -1438,7 +1438,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 exports.createNewFieldRelatedToMultiple = async (data) => {
 
 	const alias = data.options.as;
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Get source entity
 	data.source_entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
@@ -1641,9 +1641,9 @@ async function deleteComponentStatus(data) {
 		delete require.cache[require.resolve(modelsPath)];
 		// eslint-disable-next-line global-require
 		const moduleAlias = require('module-alias');
-		moduleAlias.addAlias('@config', __workspacePath + '/' + data.application.name + '/config');
-		moduleAlias.addAlias('@core', __workspacePath + '/' + data.application.name + '/_core');
-		moduleAlias.addAlias('@app', __workspacePath + '/' + data.application.name + '/app');
+		moduleAlias.addAlias('@config', global.__workspacePath + '/' + data.application.name + '/config');
+		moduleAlias.addAlias('@core', global.__workspacePath + '/' + data.application.name + '/_core');
+		moduleAlias.addAlias('@app', global.__workspacePath + '/' + data.application.name + '/app');
 		workspacesModels[data.application.name] = require(modelsPath); // eslint-disable-line
 	}
 	const historyTableName = workspacesModels[data.application.name]['E_' + historyInfo.target.substring(2)].getTableName();

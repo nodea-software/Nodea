@@ -143,13 +143,13 @@ exports.setupField = async (data) => {
 			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 	} else if (field_type == "radio") {
 		// Remove all special caractere for all enum values
@@ -201,8 +201,8 @@ exports.setupField = async (data) => {
 	attributesObject[field_name].validate = true;
 	// We allow null by default for all attributes
 	attributesObject[field_name].allowNull = true;
-	fs.writeFileSync(attributesFileName, JSON.stringify(attributesObject, null, 4));
-	fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, 4));
+	fs.writeFileSync(attributesFileName, JSON.stringify(attributesObject, null, '\t'));
+	fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, '\t'));
 
 	// Translation for enum and radio values
 	if (field_type == "enum") {
@@ -223,7 +223,7 @@ exports.setupField = async (data) => {
 		}
 		enumData[entity_name] = json;
 		// Write Enum file
-		fs.writeFileSync(fileEnum, JSON.stringify(enumData, null, 4));
+		fs.writeFileSync(fileEnum, JSON.stringify(enumData, null, '\t'));
 	}
 
 	// Translation for radio values
@@ -245,7 +245,7 @@ exports.setupField = async (data) => {
 		radioData[entity_name] = json;
 
 		// Write Enum file
-		fs.writeFileSync(fileRadio, JSON.stringify(radioData, null, 4));
+		fs.writeFileSync(fileRadio, JSON.stringify(radioData, null, '\t'));
 	}
 
 	/* ----------------- 4 - Add the fields in all the views  ----------------- */
@@ -425,8 +425,8 @@ exports.setRequiredAttribute = async (data) => {
 				toSync.queries.push('ALTER TABLE "' + tableName + '" ALTER COLUMN "' + data.options.value + '" DROP NOT NULL');
 			}
 		}
-		fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, 4));
-		fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, 4));
+		fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, '\t'));
+		fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, '\t'));
 	} else {
 		// If not in attributes, maybe in options
 		const pathToOptionJson = __dirname + '/../workspace/' + data.application.name + '/app/models/options/' + data.entity_name + ".json";
@@ -437,7 +437,7 @@ exports.setRequiredAttribute = async (data) => {
 				optionsObj[i].allowNull = set;
 
 		// Save option
-		fs.writeFileSync(pathToOptionJson, JSON.stringify(optionsObj, null, 4));
+		fs.writeFileSync(pathToOptionJson, JSON.stringify(optionsObj, null, '\t'));
 	}
 
 	return;
@@ -458,14 +458,14 @@ exports.setUniqueField = (data) => {
 		throw new Error('structure.field.attributes.notUnderstand');
 
 	// Update the Sequelize attributes.json to set unique
-	const pathToAttributesJson = __workspacePath + '/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
+	const pathToAttributesJson = global.__workspacePath + '/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
 	const attributesContent = fs.readFileSync(pathToAttributesJson);
 	const attributesObj = JSON.parse(attributesContent);
 
 	// If the current field is an fk field then we won't find it in attributes.json
 	if (typeof attributesObj[data.options.value] !== "undefined")
 		attributesObj[data.options.value].unique = set;
-	fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, 4));
+	fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, '\t'));
 
 	return;
 }
@@ -804,11 +804,11 @@ exports.deleteField = async (data) => {
 			}
 		}
 		if(autoGenerateFound)
-			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, 4), "utf8");
+			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, '\t'), "utf8");
 	}
 
 	// Write back either options.json or attributes.json file
-	fs.writeFileSync(jsonPath, JSON.stringify(dataToWrite, null, 4), "utf8");
+	fs.writeFileSync(jsonPath, JSON.stringify(dataToWrite, null, '\t'), "utf8");
 
 	// Remove field from create/update/show views files
 	const viewsPath = workspacePath + '/app/views/' + data.entity.name + '/';
@@ -894,7 +894,7 @@ exports.deleteField = async (data) => {
 			}
 		}
 		if (toSave)
-			fs.writeFileSync(optionsPath + file, JSON.stringify(currentOption, null, 4), "utf8");
+			fs.writeFileSync(optionsPath + file, JSON.stringify(currentOption, null, '\t'), "utf8");
 	});
 
 	// Wait for all promises execution
@@ -907,7 +907,7 @@ exports.deleteField = async (data) => {
 	if (typeof enumJson[data.entity.name] !== "undefined") {
 		if (typeof enumJson[data.entity.name][info.fieldToDrop] !== "undefined") {
 			delete enumJson[data.entity.name][info.fieldToDrop];
-			fs.writeFileSync(enumsPath, JSON.stringify(enumJson, null, 4));
+			fs.writeFileSync(enumsPath, JSON.stringify(enumJson, null, '\t'));
 		}
 	}
 

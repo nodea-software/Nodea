@@ -4,7 +4,7 @@ const setup = require('../helpers/setup');
 const iconList = require('../config/font_awesome_list.json');
 
 exports.setColumnVisibility = async (data) => {
-	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
+	const pathToViews = global.global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 
 	const possibilityShow = ["show", "visible"];
 	const possibilityHide = ["hide", "hidden", "non visible", "caché"];
@@ -54,7 +54,7 @@ exports.setColumnVisibility = async (data) => {
 
 // eslint-disable-next-line require-await
 exports.setLogo = async (data) => {
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app/';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app/';
 
 	// Check if logo exist
 	if (!fs.existsSync(workspacePath + '/public/img/logo/' + data.options.value))
@@ -83,7 +83,7 @@ exports.setLogo = async (data) => {
 // eslint-disable-next-line require-await
 exports.removeLogo = async (data) => {
 
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	let message;
 	const layouts = ['login_layout', 'main_layout'];
 
@@ -124,7 +124,7 @@ exports.removeLogo = async (data) => {
 
 exports.setLayout = async (data) => {
 
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const askedLayout = data.options.value.toLowerCase().trim().replace(/ /g, "-");
 
@@ -162,7 +162,7 @@ exports.setLayout = async (data) => {
 
 exports.listLayout = (data) => {
 
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const layoutsDir = fs.readdirSync(layoutPath).filter(file => file.indexOf('.') !== 0 && (file.slice(-4) === '.css' && file.slice(0, 1) !== '_'));
@@ -186,8 +186,8 @@ exports.listLayout = (data) => {
 
 exports.setTheme = async (data) => {
 
-	const workspace_path = global.__workspacePath + '/' + data.application.name + '/app';
-	const workspace_path_core = global.__workspacePath + '/' + data.application.name + '/_core';
+	const workspace_path = global.global.__workspacePath + '/' + data.application.name + '/app';
+	const workspace_path_core = global.global.__workspacePath + '/' + data.application.name + '/_core';
 
 	let asked_theme = data.options.value.toLowerCase();
 	asked_theme = asked_theme.trim().replace(/ /g, "-");
@@ -259,7 +259,7 @@ exports.setTheme = async (data) => {
 	data.application.currentTheme = asked_theme;
 	data.application.save();
 
-	fs.writeFileSync(`${workspace_path_core}/public/bundle.json`, JSON.stringify(conf_bundle, null, 4));
+	fs.writeFileSync(`${workspace_path_core}/public/bundle.json`, JSON.stringify(conf_bundle, null, '\t'));
 
 	await setup.setupTemplateBundle(false, 'nodea_main_css', workspace_path);
 	if (theme_information.js.length) {
@@ -271,7 +271,7 @@ exports.setTheme = async (data) => {
 
 exports.listTheme = (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const themePath = workspacePath + '/public/theme';
 	const themesDir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
 
@@ -292,7 +292,7 @@ exports.listTheme = (data) => {
 }
 
 exports.setIcon = async(data) => {
-	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	const layout_filename = 'layout_' + data.module_name + '.dust';
 	const entityWithouPrefix = data.entity_name.substring(2);
 
@@ -334,7 +334,7 @@ exports.setIcon = async(data) => {
 
 exports.addTitle = async (data) => {
 
-	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
+	const pathToViews = global.global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
 	const viewsToProcess = ["create_fields", "update_fields", "show_fields"];
 	const processPromises = [];
 
@@ -363,7 +363,7 @@ exports.addTitle = async (data) => {
 }
 
 exports.removeTitle = async (data) => {
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 	const viewsToProcess = ["create_fields", "update_fields", "show_fields"];
 	const processPromises = [];
 	let titleFound = false;
@@ -390,7 +390,7 @@ exports.removeTitle = async (data) => {
 }
 
 exports.createWidget = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const layout_filename = 'layout_' + data.np_module.name + '.dust';
 
 	// Get entity's icon
@@ -401,7 +401,7 @@ exports.createWidget = async (data) => {
 
 	// Add widget to module's layout
 	$ = await domHelper.read(layout_view_filename);
-	const $2 = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $2 = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	let widgetElemId = data.widgetType + '_' + data.entity.name + '_widget';
 
@@ -427,7 +427,7 @@ exports.createWidget = async (data) => {
 }
 
 exports.createWidgetPiechart = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	if (!data.field) {
 		// TODO: Refactor to remove `definitlyNotFound`
@@ -457,7 +457,7 @@ exports.createWidgetPiechart = async (data) => {
 	// Add widget to module's layout
 	const layoutFile = workspacePath + '/views/modules/' + data.np_module.name + '.dust';
 	const $ = await domHelper.read(layoutFile);
-	const $2 = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $2 = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	// Widget box title traduction
 	$2(".box-title").html(`<!--{#__ key="defaults.widgets.piechart.distribution" /}-->&nbsp;<!--{#__ key="entity.${data.entity.name}.label_entity" /}-->&nbsp;-&nbsp;<!--{#__ key="entity.${data.entity.name}.${data.field.name}" /}-->`);
@@ -486,7 +486,7 @@ exports.createWidgetPiechart = async (data) => {
 
 exports.createWidgetLastRecords = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Look for related to fields in entity's options
 	const definitlyNotFound = [];
@@ -518,7 +518,7 @@ exports.createWidgetLastRecords = async (data) => {
 
 	const layoutFile = workspacePath + '/views/modules/' + data.np_module.name + '.dust';
 	const $ = await domHelper.read(layoutFile);
-	const $template = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $template = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	const widgetElemId = data.widgetType + '_' + data.entity.name + '_widget';
 	let newHtml = "";
@@ -561,7 +561,7 @@ exports.createWidgetLastRecords = async (data) => {
 }
 
 exports.deleteWidget = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Delete from view
 	const $ = await domHelper.read(workspacePath + '/views/modules/' + data.np_module.name + '.dust');

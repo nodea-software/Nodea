@@ -1,7 +1,7 @@
 {
 	"app": {
 		"name": "Application",
-        "version": "version"
+		"version": "version"
 	},
 	"notification": {
 		"deleteAll": "Delete all notifications",
@@ -56,55 +56,55 @@
 		"error4": "Your current password is not valid.",
 		"success": "Your profile has been updated."
 	},
-    "automation": {
-        "add_action": "Add action",
-        "toggle_dropdown": "Toggle Dropdown",
-        "script_menu_input": "Input field",
-        "script_menu_select": "Choose value in drop-down list",
-        "script_menu_checkbox": "Click on checkbox",
-        "script_menu_radio": "Activate radio button",
-        "script_menu_submit": "Submit form",
-        "script_menu_read_text": "Read a text",
-        "script_menu_read_field": "Read a field",
-        "script_menu_click_element": "Click element",
-        "script_menu_find_element": "Find an element",
-        "script_menu_keydown_enter": "Press Enter key",
-        "script_menu_keydown_tab": "Press Tab key",
-        "script_menu_keydown_backspace": "Press Backspace key",
-        "script_menu_keydown_esc": "Press Escape key",
-        "script_menu_keydown_any": "Press any key",
-        "script_menu_open_tab": "Open new tab",
-        "script_menu_change_tab": "Switch tab",
-        "script_menu_open_url": "Navigate to URL",
-        "script_menu_error": "Stop program and throw error",
-        "sequence_menu_test": "Execute a test",
-        "sequence_menu_download": "Download a document",
-        "sequence_menu_upload": "Upload a document",
-        "sequence_menu_mapping": "Transform value according to a mapping table",
-        "sequence_menu_update_entity": "Update server entity",
-        "sequence_menu_encrypt": "Encrypt variable value",
-        "sequence_menu_decrypt": "Decrypt variable value",
-        "sequence_menu_mouse_move": "Move mouse to a specific position",
-        "sequence_menu_mouse_click": "Click",
-        "sequence_menu_mouse_right_click": "Right-click",
-        "sequence_menu_mouse_double_click": "Double-click",
-        "sequence_menu_type_text": "Input text",
-        "sequence_menu_next_step": "Jump to step",
-        "sequence_menu_error": "Stop program and throw error",
-        "add_variable": "Add variable",
-        "script_menu_step_index": "Step index",
-        "script_menu_step_serial_number": "Step serial number",
-        "script_menu_env_variable": "Environment variables (data flow)",
-        "script_menu_session_variable": "Session variables",
-        "sequence_menu_step_index": "Step index",
-        "sequence_menu_step_serial_number": "Step serial number",
-        "sequence_menu_env_variable": "Environment variables (data flow)",
-        "sequence_menu_session_variable": "Session variables",
-        "zip_created_replaced": "Zip file created and program file replaced",
-        "duplication_success": "Duplication success. The new program is displayed",
-        "no_zip_for_pages": "No program file",
-        "pages_generated": "Pages generated"
-    },
+	"automation": {
+		"add_action": "Add action",
+		"toggle_dropdown": "Toggle Dropdown",
+		"script_menu_input": "Input field",
+		"script_menu_select": "Choose value in drop-down list",
+		"script_menu_checkbox": "Click on checkbox",
+		"script_menu_radio": "Activate radio button",
+		"script_menu_submit": "Submit form",
+		"script_menu_read_text": "Read a text",
+		"script_menu_read_field": "Read a field",
+		"script_menu_click_element": "Click element",
+		"script_menu_find_element": "Find an element",
+		"script_menu_keydown_enter": "Press Enter key",
+		"script_menu_keydown_tab": "Press Tab key",
+		"script_menu_keydown_backspace": "Press Backspace key",
+		"script_menu_keydown_esc": "Press Escape key",
+		"script_menu_keydown_any": "Press any key",
+		"script_menu_open_tab": "Open new tab",
+		"script_menu_change_tab": "Switch tab",
+		"script_menu_open_url": "Navigate to URL",
+		"script_menu_error": "Stop program and throw error",
+		"sequence_menu_test": "Execute a test",
+		"sequence_menu_download": "Download a document",
+		"sequence_menu_upload": "Upload a document",
+		"sequence_menu_mapping": "Transform value according to a mapping table",
+		"sequence_menu_update_entity": "Update server entity",
+		"sequence_menu_encrypt": "Encrypt variable value",
+		"sequence_menu_decrypt": "Decrypt variable value",
+		"sequence_menu_mouse_move": "Move mouse to a specific position",
+		"sequence_menu_mouse_click": "Click",
+		"sequence_menu_mouse_right_click": "Right-click",
+		"sequence_menu_mouse_double_click": "Double-click",
+		"sequence_menu_type_text": "Input text",
+		"sequence_menu_next_step": "Jump to step",
+		"sequence_menu_error": "Stop program and throw error",
+		"add_variable": "Add variable",
+		"script_menu_step_index": "Step index",
+		"script_menu_step_serial_number": "Step serial number",
+		"script_menu_env_variable": "Environment variables (data flow)",
+		"script_menu_session_variable": "Session variables",
+		"sequence_menu_step_index": "Step index",
+		"sequence_menu_step_serial_number": "Step serial number",
+		"sequence_menu_env_variable": "Environment variables (data flow)",
+		"sequence_menu_session_variable": "Session variables",
+		"zip_created_replaced": "Zip file created and program file replaced",
+		"duplication_success": "Duplication success. The new program is displayed",
+		"no_zip_for_pages": "No program file",
+		"pages_generated": "Pages generated"
+	},
 	"navbar": {
 		"about": "About",
 		"support": "Support"
@@ -117,75 +117,75 @@
 		"module": "Module",
 		"administration": "Administration"
 	},
-    "administration": {
-        "menu": {
+	"administration": {
+		"menu": {
 			"dashboard": "Dashboard",
-            "profils_utilisateurs": "User profiles",
-            "access_settings": "Access settings",
-            "workflows": "Workflows",
-            "automatisation": "Automation",
-            "documentation": "Documentation",
-            "api": "API",
-            "import_export": "Import / Export",
-            "configuration": "Configuration",
-            "offline_mode": "Offline mode",
-            "access_settings_api": "API access",
-            "access_tool": "Access file",
-            "access_settings_group": "Group access management",
-            "access_settings_role": "Role access management",
-            "api_documentation": "API Documentation",
-            "db_tool": "DB Tool",
+			"profils_utilisateurs": "User profiles",
+			"access_settings": "Access settings",
+			"workflows": "Workflows",
+			"automatisation": "Automation",
+			"documentation": "Documentation",
+			"api": "API",
+			"import_export": "Import / Export",
+			"configuration": "Configuration",
+			"offline_mode": "Offline mode",
+			"access_settings_api": "API access",
+			"access_tool": "Access file",
+			"access_settings_group": "Group access management",
+			"access_settings_role": "Role access management",
+			"api_documentation": "API Documentation",
+			"db_tool": "DB Tool",
 			"traceability": "Traceability"
-        },
-        "access_settings": {
-            "moduleList": "Modules",
-            "entityList": "Entities",
-            "action": {
-                "read": "Show",
-                "create": "Create",
-                "update": "Update",
-                "delete": "Delete"
-            },
-            "no_access_group_module": "Your group doesn't have acces to this module",
-            "no_access_group_entity": "Your group doesn't have acces to this entity",
-            "no_access_change_status": "Your group can't change this status",
-            "no_access_role": "Your role allow for this action",
-            "no_group": "Your account doesn't have acces to the application. Contact your administrator"
-        },
-        "import_export": {
-            "access": {
-                "title": "Acces file configuration",
-                "export": "Export acces configuration",
-                "import": "Import acces configuration",
-                "import_file_name": "access.json file:",
-                "warning": "Warning, this file must have the same structure as the current access.json ! Otherwise the application won't be usable anymore"
-            },
-            "db": {
-                "title": "DB Tool",
-                "export_title": "Export",
-                "import_title": "Import",
-                "export_action": "Export",
-                "all_db": "Full database",
-                "import_action": "Import",
-                "import_file": "SQL file",
-                "import_success": "Import success",
-                "import_error": "An error occured, check the logs",
-                "file_needed": "Please provide import file",
-                "wrong_db_pwd": "Incorrect password",
-                "modal_password_title": "Password confirmation",
-                "modal_password_content": "Please provide database's password:",
-                "wrong_dialect": "Sorry, DB Tools only work with SQL at the moment",
-                "no_choice": "Choose what to export"
-            }
-        },
+		},
+		"access_settings": {
+			"moduleList": "Modules",
+			"entityList": "Entities",
+			"action": {
+				"read": "Show",
+				"create": "Create",
+				"update": "Update",
+				"delete": "Delete"
+			},
+			"no_access_group_module": "Your group doesn't have acces to this module",
+			"no_access_group_entity": "Your group doesn't have acces to this entity",
+			"no_access_change_status": "Your group can't change this status",
+			"no_access_role": "Your role allow for this action",
+			"no_group": "Your account doesn't have acces to the application. Contact your administrator"
+		},
+		"import_export": {
+			"access": {
+				"title": "Acces file configuration",
+				"export": "Export acces configuration",
+				"import": "Import acces configuration",
+				"import_file_name": "access.json file:",
+				"warning": "Warning, this file must have the same structure as the current access.json ! Otherwise the application won't be usable anymore"
+			},
+			"db": {
+				"title": "DB Tool",
+				"export_title": "Export",
+				"import_title": "Import",
+				"export_action": "Export",
+				"all_db": "Full database",
+				"import_action": "Import",
+				"import_file": "SQL file",
+				"import_success": "Import success",
+				"import_error": "An error occured, check the logs",
+				"file_needed": "Please provide import file",
+				"wrong_db_pwd": "Incorrect password",
+				"modal_password_title": "Password confirmation",
+				"modal_password_content": "Please provide database's password:",
+				"wrong_dialect": "Sorry, DB Tools only work with SQL at the moment",
+				"no_choice": "Choose what to export"
+			}
+		},
 		"user": {
 			"send_first_connection_mail": "Would you like to send a first connection email to the user?",
 			"resend_email": "Resend a first connection email",
 			"resend_email_success": "The email has been successfully sent.",
 			"cannot_modify_admin": "You can't modify the main admin account of the application.",
-            "cannot_delete_admin": "You can't delete the main admin account of the application."
+			"cannot_delete_admin": "You can't delete the main admin account of the application."
 		}
-    },
+	},
 	"button": {
 		"disconnect": "Log out",
 		"show": "Show",
@@ -209,9 +209,9 @@
 		"return": "Return",
 		"delete_confirm": "Are you sure you want to delete this record?",
 		"loading": "Loading...",
-        "generate_replace": "Generate and replace",
-        "generate_pages": "Generate pages from zip",
-        "duplicate": "Duplicate"
+		"generate_replace": "Generate and replace",
+		"generate_pages": "Generate pages from zip",
+		"duplicate": "Duplicate"
 	},
 	"operation": {
 		"show": "Show",
@@ -257,15 +257,15 @@
 		},
 		"document_template": {
 			"template_example_dust": "Dust template example",
-            "format_pairs": {
-                "dust_pdf": "Dust template to PDF document",
-                "docx_docx": "Word template to Word document"
-            },
+			"format_pairs": {
+				"dust_pdf": "Dust template to PDF document",
+				"docx_docx": "Word template to Word document"
+			},
 			"help": {
 				"menu": "Document Template Help",
 				"description": "<p style='text-align:justify;'>\nDocument templates can be used in the corresponding tab of any entity with the component <b>Document template</b>.\nWhen creating your template, you must include the variables listed below where you want them to appear, they'll be replaced on the spot when you click on the 'Generate' button.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; To use createdAt and updatedAt of each entity please add:<br>\n<b>{createdAt}</b> for the date of creation<br>\n<b>{updatedAt}</b> for the date of update<br>\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n{variable.value} to acces the untranslated value of field<br>\n{variable.translation} to acces the translated value\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n{variable.value} to acces the untranslated value<br>\n{variable.translation} to acces the translated value<br>\n</h5>\n<p>Select an entity in the dropdown to discover available variables and how to use them.</p>\n",
 				"pageTitle": "Building document templates",
- 				"entityInformations": "Entity informations",
+				"entityInformations": "Entity informations",
 				"entityTableRow1": "Entity",
 				"entityTableRow2": "Variable",
 				"entityTableRow3": "Variable access",
@@ -284,11 +284,11 @@
 				"variables": "Global variables",
 				"description": "These varibales start with <b>g_</b> and are accessible in all entities."
 			},
-            "images_ressources": {
-                "label": "Image ressources",
-                "description": "<p>These variables start with <b> img_ </b> and are available from any entity.</p>\n<p>They allow inclusion of Image ressources previously created in the administration module. Use Image ressource's <b> code </b> field in your template so it can be replaced by the image's base64 buffer</p>",
-                "example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"<b>{img_logo}</b>\"</p>"
-            }
+			"images_ressources": {
+				"label": "Image ressources",
+				"description": "<p>These variables start with <b> img_ </b> and are available from any entity.</p>\n<p>They allow inclusion of Image ressources previously created in the administration module. Use Image ressource's <b> code </b> field in your template so it can be replaced by the image's base64 buffer</p>",
+				"example": "<p>Example :<br>To include an Image ressource with the following code <b>{img_logo}</b> in a Dust template, provide the image's buffer to an img HTML element : src=\"<b>{img_logo}</b>\"</p>"
+			}
 		},
 		"status": {
 			"diagram": "Diagram",
@@ -389,6 +389,6 @@
 			"unchecked": "Unchecked",
 			"all": "Both"
 		},
-        "min_one_column_display": "You must leave at least one column displayed."
+		"min_one_column_display": "You must leave at least one column displayed."
 	}
 }

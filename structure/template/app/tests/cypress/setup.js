@@ -205,9 +205,9 @@ function getParams(code) {
 
 	await Promise.all(template_promises);
 
-	fs.writeFileSync(__dirname + '/fixtures/users.json', JSON.stringify(users_fixtures, null, 4), 'utf8');
-	fs.writeFileSync(__dirname + '/fixtures/entity.json', JSON.stringify(entity_fixtures, null, 4), 'utf8');
-	fs.writeFileSync(__dirname + '/fixtures/routes.json', JSON.stringify(routes_fixtures, null, 4), 'utf8');
+	fs.writeFileSync(__dirname + '/fixtures/users.json', JSON.stringify(users_fixtures, null, '\t'), 'utf8');
+	fs.writeFileSync(__dirname + '/fixtures/entity.json', JSON.stringify(entity_fixtures, null, '\t'), 'utf8');
+	fs.writeFileSync(__dirname + '/fixtures/routes.json', JSON.stringify(routes_fixtures, null, '\t'), 'utf8');
 	fs.writeFileSync(__dirname + '/e2e/generated/all.cy.js', all_cy_content, 'utf8');
 
 	process.exit(0);

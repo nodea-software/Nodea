@@ -75,7 +75,7 @@ router.get('/', middlewares.isLoggedIn, function(req, res) {
 	})
 
 	gitPromise.then(() => {
-		const templatesInfos = JSON.parse(fs.readFileSync(templateDir + "/templates.json", "utf8"), null, 4).templates;
+		const templatesInfos = JSON.parse(fs.readFileSync(templateDir + "/templates.json", "utf8"), null, '\t').templates;
 		const templatesNames = [];
 		data.templates = [];
 		for(let i=0; i<templatesInfos.length; i++)

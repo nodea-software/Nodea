@@ -9,10 +9,6 @@ module.exports = {
 
 		// Setting value only for update / show page
 		let value = "", value2 = "";
-		if (file != "create") {
-			value = "{" + field + "}";
-			value2 = field;
-		}
 
 		// Handling default value format
 		if (defaultValue) {
@@ -52,6 +48,11 @@ module.exports = {
 					value = defaultValue;
 					break;
 			}
+		}
+
+		if (file != "create") {
+			value = "{" + field + "}";
+			value2 = field;
 		}
 
 		// Radiobutton HTML can't understand a simple readOnly ... So it's disabled for them
