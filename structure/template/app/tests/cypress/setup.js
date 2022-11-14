@@ -16,12 +16,12 @@ const Entity = require('@core/abstract_routes/entity');
 // Write reset if you want to reset de test database and fill it with default app/sql/setup.sql data
 
 function getCombinaisons(...args) {
-	var r = [],
+	const r = [],
 		max = args.length - 1;
 
 	function helper(arr, i) {
-		for (var j = 0, l = args[i].length; j < l; j++) {
-			var a = arr.slice(0);
+		for (let j = 0, l = args[i].length; j < l; j++) {
+			const a = arr.slice(0);
 			a.push(args[i][j]);
 			if (i == max)
 				r.push(a);
@@ -35,7 +35,8 @@ function getCombinaisons(...args) {
 
 const query_regex = new RegExp(/data\.req\.query\.(.*?)[ ;),.\]]/g);
 function getQuery(code) {
-	let queries = [], results = [];
+	let queries = [];
+	const results = [];
 	while ((queries = query_regex.exec(code)) !== null) {
 		if(!results.includes(queries[1]))
 			results.push(queries[1]);
@@ -45,7 +46,8 @@ function getQuery(code) {
 
 const params_regex = new RegExp(/data\.req\.params\.(.*?)[ ;),.\]}]/g);
 function getParams(code) {
-	let queries = [], results = [];
+	let queries = [];
+	const results = [];
 	while ((queries = params_regex.exec(code)) !== null) {
 		if(!results.includes(queries[1]))
 			results.push(queries[1]);
@@ -134,7 +136,7 @@ function getParams(code) {
 	const routes = fs.readdirSync(routes_path).filter(file => file.indexOf('.') !== 0 && file != 'index.js' && file.slice(-3) === '.js');
 	const entity_fixtures = {}, routes_fixtures = {};
 	for (let i = 0; i < routes.length; i++) {
-		const Route = require('@app/routes/' + routes[i]);
+		const Route = require('@app/routes/' + routes[i]); // eslint-disable-line
 		const instance = new Route();
 		// if(!instance.entity)
 		// 	console.log(routes[i]);
@@ -147,7 +149,7 @@ function getParams(code) {
 			if (!routeConf)
 				continue;
 
-			const {method, path, middlewares, func} = routeConf;
+			const {method, path, middlewares, func} = routeConf; // eslint-disable-line
 			if(method.toLowerCase() != 'get')
 				continue;
 

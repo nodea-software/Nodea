@@ -377,7 +377,7 @@ async function generateStack(data) {
 	});
 }
 
-const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/);
+const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/);
 async function portainerDeploy(data){
 	const appNameWithoutPrefix = data.application.name.substring(2);
 	const repoName = globalConf.host + '-' + appNameWithoutPrefix;

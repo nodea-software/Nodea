@@ -1610,7 +1610,7 @@ exports.createNewComponentStatus = async (data) => {
 
 const workspacesModels = {};
 async function deleteComponentStatus(data) {
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	/* If there is no defined name for the module, set the default */
 	if (typeof data.options.value === 'undefined') {

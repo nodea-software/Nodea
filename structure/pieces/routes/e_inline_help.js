@@ -21,7 +21,7 @@ class E_inline_help extends Entity {
 	}
 
 	help() {
-		this.router.get('/help/:entity/:field', this.asyncRoute( async (data) => {
+		this.router.get('/help/:entity/:field', this.asyncRoute(async (data) => {
 			const help = await models.E_inline_help.findOne({
 				where: {
 					f_entity: data.req.params.entity.startsWith('e_') ? data.req.params.entity : 'e_' + data.req.params.entity,
@@ -114,7 +114,7 @@ class E_inline_help extends Entity {
 				}
 			},
 			create: {
-				start: async (data) => {
+				start: (data) => {
 					if (!data.req.body.f_entity ||
 						!data.req.body.f_field ||
 						data.req.body.f_entity == '' ||

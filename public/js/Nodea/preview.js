@@ -285,7 +285,7 @@ $(function() {
 			localStorage.setItem("nodea_given_instruction_history_" + appName, JSON.stringify(instructionHistory));
 		}
 
-		$("#execute_instruction").html("Loading...");
+		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText + "...");
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
 
@@ -346,7 +346,7 @@ $(function() {
 
 					$("#instruction").val("");
 					$("#instruction").blur().focus();
-					$("#execute_instruction").html("Executer");
+					$("#execute_instruction").html("<i class='fas fa-rocket'></i>&nbsp;&nbsp;" + executeButtonText);
 					$("#execute_instruction").prop("disabled", false);
 
 					var bottomCoord = $('#chat-box')[0].scrollHeight;

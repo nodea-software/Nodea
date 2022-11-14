@@ -62,7 +62,7 @@ class E_status extends Entity {
 	}
 
 	diagram() {
-		this.router.get('/diagram', middlewares.actionAccess("status", "read"), this.asyncRoute(async (data) => {
+		this.router.get('/diagram', middlewares.actionAccess("status", "read"), this.asyncRoute((data) => {
 			data.res.success(_ => data.res.render('e_status/diagram', {statuses: helpers.status.entityStatusFieldList()}));
 		}));
 	}

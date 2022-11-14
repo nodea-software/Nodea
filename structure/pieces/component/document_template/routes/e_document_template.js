@@ -101,6 +101,7 @@ class DocumentTemplate extends CoreDocumentTemplate {
 			},
 			search: {
 				// start: async (data) => {},
+				// eslint-disable-next-line require-await
 				beforeQuery: async (data) => {
 					data.query.where = {
 						f_entity: data.req.body.attrData.entity

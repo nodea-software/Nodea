@@ -58,16 +58,18 @@ router.get('/getPage/:entity/:page', middlewares.hasAccessApplication, (req, res
 	page += '_fields.dust';
 
 	const entity = req.params.entity;
-	const languagePath = __workspacePath + '/' + req.session.app_name + '/_core/helpers/language';
+	const languagePath = global.__workspacePath + '/' + req.session.app_name + '/_core/helpers/language';
 
 	// eslint-disable-next-line global-require
 	const moduleAlias = require('module-alias');
-	moduleAlias.addAlias('@config', __workspacePath + '/' + req.session.app_name + '/config');
-	moduleAlias.addAlias('@core', __workspacePath + '/' + req.session.app_name + '/_core');
-	moduleAlias.addAlias('@app', __workspacePath + '/' + req.session.app_name + '/app');
+	moduleAlias.addAlias('@config', global.__workspacePath + '/' + req.session.app_name + '/config');
+	moduleAlias.addAlias('@core', global.__workspacePath + '/' + req.session.app_name + '/_core');
+	moduleAlias.addAlias('@app', global.__workspacePath + '/' + req.session.app_name + '/app');
 
+	// Clean require cache
+	delete require.cache[require.resolve(languagePath)];
 	const workspaceLanguage = require(languagePath)(req.session.lang_user); // eslint-disable-line
-	const pageUri = __workspacePath + '/' + req.session.app_name + '/app/views/' + entity + '/' + page;
+	const pageUri = global.__workspacePath + '/' + req.session.app_name + '/app/views/' + entity + '/' + page;
 
 	const $ = domHelper.read(pageUri);
 
@@ -111,7 +113,7 @@ router.post('/setPage/:entity/:page', middlewares.hasAccessApplication, (req, re
 
 		const entity = req.params.entity;
 		const html = req.body.html;
-		const pageUri = __workspacePath + '/' + req.session.app_name + '/app/views/' + entity + '/' + page;
+		const pageUri = global.__workspacePath + '/' + req.session.app_name + '/app/views/' + entity + '/' + page;
 
 		const $ = await domHelper.loadFromHtml(html);
 
