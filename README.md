@@ -83,17 +83,16 @@ services:
   nodea:
     container_name: nodea_app
     image: nodeasoftware/nodea:latest
-    links:
-      - "database:database"
     ports:
       - "1337:1337"
       - "9001-9025:9001-9025" # 25 applications max, you can increase to 9100 for 100 applications if necessary
     networks:
       - nodea_network
     volumes:
-      - app:/app
+      - workspace:/nodea/workspace
     environment:
       NODEA_ENV: "develop"
+      HOSTNAME: "127.0.0.1"
       SERVER_IP: "127.0.0.1"
       DATABASE_IP: "database"
       DATABASE_USER: "nodea"
@@ -117,7 +116,7 @@ networks:
 
 volumes:
   db_data:
-  app:
+  workspace:
 </pre>
 
 Execute Docker compose command:
