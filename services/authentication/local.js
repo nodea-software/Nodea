@@ -14,7 +14,11 @@ async (req, login, password, done) => {
 
 	const user = await models.User.findOne({
 		where: {
-			login: login.toLowerCase()
+			[models.$or]: [{
+				login: login.toLowerCase()
+			}, {
+				email: login.toLowerCase()
+			}]
 		}
 	})
 
