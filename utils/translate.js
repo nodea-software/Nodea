@@ -108,7 +108,7 @@ module.exports = {
 		try {
 			let localesObj = JSON.parse(helpers.readFileSyncWithCatch(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json'));
 			localesObj = dive(localesObj, object, replaceBoolean);
-			fs.writeFileSync(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json', JSON.stringify(localesObj, null, 4), 'utf8');
+			fs.writeFileSync(__dirname + '/../workspace/' + appName + '/app/locales/' + language + '.json', JSON.stringify(localesObj, null, '\t'), 'utf8');
 		} catch(err) {
 			console.error(err);
 		}
@@ -132,7 +132,7 @@ module.exports = {
 								}
 
 			if (success == true)
-				fs.writeFileSync(__dirname+'/../workspace/'+app_name+'/app/locales/enum_radio.json', JSON.stringify(enumTrads, null, 4), 'utf8');
+				fs.writeFileSync(__dirname+'/../workspace/'+app_name+'/app/locales/enum_radio.json', JSON.stringify(enumTrads, null, '\t'), 'utf8');
 		} catch(err) {
 			console.error(err);
 		}
@@ -169,7 +169,7 @@ module.exports = {
 					}
 					const workingLocales = file.slice(0, -5);
 					dataLocales = addLocal(type, dataLocales, workingLocales, value, keyValue, keyValueField, alias);
-					fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, 4));
+					fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, '\t'));
 					resolve();
 				}));
 			}
@@ -196,7 +196,7 @@ module.exports = {
 				else if (type == "module")
 					delete dataLocales.module[value];
 
-				fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, 4));
+				fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, '\t'));
 			});
 		} catch(err) {
 			console.error(err);
@@ -216,7 +216,7 @@ module.exports = {
 				} else if (i + 1 == keys.length)
 					depth[keys[i]] = value;
 			}
-			fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, 4));
+			fs.writeFileSync(urlFile, JSON.stringify(dataLocales, null, '\t'));
 		} catch(err) {
 			console.error(err);
 		}

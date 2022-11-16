@@ -59,7 +59,7 @@ function addAccessManagment(appName, urlComponent, urlModule) {
 			delete: ["admin"]
 		}
 	});
-	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
+	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, '\t'), "utf8");
 	// Access lock handling
 	const accessLockPath = global.__workspacePath + '/' + appName + '/config/access.lock.json';
 	const accessLockObject = JSON.parse(fs.readFileSync(accessLockPath, 'utf8'));
@@ -73,7 +73,7 @@ function addAccessManagment(appName, urlComponent, urlModule) {
 			delete: []
 		}
 	});
-	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, 4), "utf8");
+	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, '\t'), "utf8");
 }
 
 exports.newFileStorage = (data) => {
@@ -88,7 +88,7 @@ exports.newFileStorage = (data) => {
 		optionFile[i].isFileStorage = true;
 		break;
 	}
-	fs.writeFileSync(appPath + '/models/options/' + data.entity.name + '.json', JSON.stringify(optionFile, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/options/' + data.entity.name + '.json', JSON.stringify(optionFile, null, '\t'), 'utf8');
 
 	// Create tab.dust file
 	const tabContent = '{>"tabs/file_storage" /}\n';
@@ -357,7 +357,7 @@ exports.deleteAgenda = async (data) => {
 }
 
 exports.newStatus = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name;
+	const workspacePath = global.__workspacePath + '/' + data.application.name;
 	const appPath = workspacePath + '/app';
 	const source = data.entity.name;
 
@@ -386,7 +386,7 @@ exports.newStatus = async (data) => {
 		history_table: 'e_' + data.history_table_db_name,
 		history_model: 'e_' + data.history_table
 	};
-	fs.writeFileSync(appPath + '/models/attributes/' + source + '.json', JSON.stringify(attributesObj, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/attributes/' + source + '.json', JSON.stringify(attributesObj, null, '\t'), 'utf8');
 
 	// Replace history table name with history model name in access file
 	const access = JSON.parse(fs.readFileSync(workspacePath + '/config/access.json', 'utf8'));
@@ -395,7 +395,7 @@ exports.newStatus = async (data) => {
 			if (access[npsModule].entities[i].name == data.history_table_db_name)
 				access[npsModule].entities[i].name = data.history_table;
 
-	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, '\t'), 'utf8');
 
 	// Access lock handling
 	const accessLock = JSON.parse(fs.readFileSync(workspacePath + '/config/access.lock.json', 'utf8'));
@@ -403,28 +403,28 @@ exports.newStatus = async (data) => {
 		for (let i = 0; i < accessLock[npsModule].entities.length; i++)
 			if (accessLock[npsModule].entities[i].name == data.history_table_db_name)
 				accessLock[npsModule].entities[i].name = data.history_table;
-	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, '\t'), 'utf8');
 
 	// Change target of source entity to match history MODEL name (instead of TABLE name)
 	const optionsObj = JSON.parse(fs.readFileSync(appPath + '/models/options/' + source + '.json'));
 	for (const opt in optionsObj)
 		if (optionsObj[opt].target == 'e_' + data.history_table_db_name)
 		{optionsObj[opt].target = 'e_' + data.history_table;break;}
-	fs.writeFileSync(appPath + '/models/options/' + source + '.json', JSON.stringify(optionsObj, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/options/' + source + '.json', JSON.stringify(optionsObj, null, '\t'), 'utf8');
 
 	// Remove useless options on e_status
 	const statusModel = JSON.parse(fs.readFileSync(appPath + '/models/options/e_status.json'));
 	for (let i = 0; i < statusModel.length; i++)
 		if (statusModel[i].target == 'e_' + data.history_table_db_name)
 		{statusModel.splice(i, 1);break;}
-	fs.writeFileSync(appPath + '/models/options/e_status.json', JSON.stringify(statusModel, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/options/e_status.json', JSON.stringify(statusModel, null, '\t'), 'utf8');
 
 	// Remove useless options on e_user (association hasMany with history table needs to be removed)
 	const userModel = JSON.parse(fs.readFileSync(appPath + '/models/options/e_user.json'));
 	for (let i = 0; i < userModel.length; i++)
 		if (userModel[i].target == 'e_' + data.history_table_db_name)
 		{userModel.splice(i, 1);break;}
-	fs.writeFileSync(appPath + '/models/options/e_user.json', JSON.stringify(userModel, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/options/e_user.json', JSON.stringify(userModel, null, '\t'), 'utf8');
 
 	// Remove useless options in toSync
 	const toSync = JSON.parse(fs.readFileSync(appPath + '/models/toSync.json', 'utf8'));
@@ -437,7 +437,7 @@ exports.newStatus = async (data) => {
 		if (prop.indexOf('_history_') > 0)
 			toSync[prop].options = undefined;
 	}
-	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify(toSync, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify(toSync, null, '\t'), 'utf8');
 
 	// Remove useless history tab from Status views
 	let $ = await domHelper.read(appPath + "/views/e_status/show_fields.dust")
@@ -495,7 +495,7 @@ exports.newStatus = async (data) => {
 		localesFR.entity['e_' + data.history_table_db_name] = undefined;
 		// Change entity's status tab name for FR (Historique instead of History)
 		localesFR.entity[source]['r_history_'+data.options.urlValue] = "Historique "+data.options.showValue;
-		fs.writeFileSync(appPath + '/locales/fr-FR.json', JSON.stringify(localesFR, null, 4), 'utf8');
+		fs.writeFileSync(appPath + '/locales/fr-FR.json', JSON.stringify(localesFR, null, '\t'), 'utf8');
 
 		const localesEN = JSON.parse(fs.readFileSync(appPath + '/locales/en-EN.json', 'utf8'));
 		localesEN.entity['e_' + data.history_table_db_name]['as_r_' + data.history_table] = "History " + source.substring(2) + " " + statusAliasSubstring;
@@ -503,7 +503,7 @@ exports.newStatus = async (data) => {
 		// Rename traduction key to use history MODEL value, delete old traduction key
 		localesEN.entity['e_' + data.history_table] = localesEN.entity['e_' + data.history_table_db_name];
 		localesEN.entity['e_' + data.history_table_db_name] = undefined;
-		fs.writeFileSync(appPath + '/locales/en-EN.json', JSON.stringify(localesEN, null, 4), 'utf8');
+		fs.writeFileSync(appPath + '/locales/en-EN.json', JSON.stringify(localesEN, null, '\t'), 'utf8');
 	}
 
 	domHelper.write(appPath + '/views/e_' + data.history_table + '/list_fields.dust', $);
@@ -560,7 +560,7 @@ exports.newStatus = async (data) => {
 
 exports.deleteStatus = async (data) => {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Delete history views
 	helpers.rmdirSyncRecursive(appPath + '/views/' + data.historyName);
@@ -575,7 +575,7 @@ exports.deleteStatus = async (data) => {
 		toSyncObject.queries = [];
 
 	toSyncObject.queries.push("DROP TABLE " + data.historyTableName);
-	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify(toSyncObject, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify(toSyncObject, null, '\t'), 'utf8');
 
 	// Clean attribute status field
 	const attributesPath = appPath + '/models/attributes/' + data.entity + '.json';
@@ -583,7 +583,7 @@ exports.deleteStatus = async (data) => {
 	for(const attribute in attributes)
 		if(attribute == data.status_field)
 			delete attributes[attribute];
-	fs.writeFileSync(attributesPath, JSON.stringify(attributes, null, 4), 'utf8');
+	fs.writeFileSync(attributesPath, JSON.stringify(attributes, null, '\t'), 'utf8');
 
 	// Clean options
 	let options, idxToRemove;
@@ -604,7 +604,7 @@ exports.deleteStatus = async (data) => {
 
 		options = options.filter((val, idx) => idxToRemove.indexOf(idx) == -1);
 
-		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, 4), 'utf8')
+		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, '\t'), 'utf8')
 	});
 
 	const statusName = data.status_field.substring(2);
@@ -638,14 +638,14 @@ exports.deleteStatus = async (data) => {
 		if(idToRemove)
 			access[npsModule].entities = access[npsModule].entities.filter((x, idx) => idx != idToRemove);
 	}
-	fs.writeFileSync(appPath + '/../config/access.lock.json', JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/../config/access.lock.json', JSON.stringify(access, null, '\t'), 'utf8');
 
 	return true;
 }
 
 exports.setupChat = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name;
-	const piecesPath = __piecesPath + '/component/socket';
+	const workspacePath = global.__workspacePath + '/' + data.application.name;
+	const piecesPath = global.__piecesPath + '/component/socket';
 
 	// Copy chat files
 	fs.copySync(piecesPath + '/chat/js/chat.js', workspacePath + '/core/public/js/component/chat.js');
@@ -680,13 +680,13 @@ exports.setupChat = async (data) => {
 		through: "chat_user_channel",
 		as: "r_user_channel"
 	});
-	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, 4), 'utf8')
+	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, '\t'), 'utf8')
 
 	// Set socket and chat config to enabled/true
 	const appConf = JSON.parse(fs.readFileSync(workspacePath + '/config/application.json'));
 	appConf.socket.enabled = true;
 	appConf.socket.chat = true;
-	fs.writeFileSync(workspacePath + '/config/application.json', JSON.stringify(appConf, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/application.json', JSON.stringify(appConf, null, '\t'), 'utf8');
 
 	// Add custom user_channel/user_chat columns to toSync file
 	// Id will not be used but is required by sequelize to be able to query on the junction table
@@ -713,7 +713,7 @@ exports.setupChat = async (data) => {
 		},
 		force: true
 	};
-	fs.writeFileSync(workspacePath + '/app/models/toSync.json', JSON.stringify(toSync, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/toSync.json', JSON.stringify(toSync, null, '\t'), 'utf8');
 
 	// Add chat locales
 	const newLocalesEN = JSON.parse(fs.readFileSync(piecesPath + '/chat/locales/en-EN.json'));
@@ -755,7 +755,7 @@ exports.newAddress = (data) => {
 			}
 		}
 	}
-	fs.writeFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', JSON.stringify(relations, null, 4), 'utf8')
+	fs.writeFileSync(workspacePath + '/app/models/options/' + data.entity.name + '.json', JSON.stringify(relations, null, '\t'), 'utf8')
 
 	const search_input = domHelper.read(`${pieces_path}/views/input_label.dust`);
 	for(const file of ['create_fields', 'update_fields', 'show_fields']) {
@@ -886,8 +886,8 @@ exports.removeAddress = (data) => {
 
 exports.createComponentDocumentTemplate = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name;
-	const piecesPath = __piecesPath + '/component/document_template/';
+	const workspacePath = global.__workspacePath + '/' + data.application.name;
+	const piecesPath = global.__piecesPath + '/component/document_template/';
 
 	// Update locales
 	const langFR = JSON.parse(fs.readFileSync(workspacePath + '/app/locales/fr-FR.json', 'utf8'));
@@ -895,8 +895,8 @@ exports.createComponentDocumentTemplate = async (data) => {
 
 	langFR.entity.e_document_template["tab_name_" + data.entity.name] = data.options.showValue == 'Document template' ? 'Modèle de document' : data.options.showValue;
 	langEN.entity.e_document_template["tab_name_" + data.entity.name] = data.options.showValue;
-	fs.writeFileSync(workspacePath + '/app/locales/fr-FR.json', JSON.stringify(langFR, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/app/locales/en-EN.json', JSON.stringify(langEN, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/locales/fr-FR.json', JSON.stringify(langFR, null, '\t'), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/locales/en-EN.json', JSON.stringify(langEN, null, '\t'), 'utf8');
 
 	// New entry for source relation view
 	const newLi = '\
@@ -914,7 +914,7 @@ exports.createComponentDocumentTemplate = async (data) => {
 
 exports.deleteComponentDocumentTemplate = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name;
+	const workspacePath = global.__workspacePath + '/' + data.application.name;
 	const $ = await domHelper.read(workspacePath + '/app/views/' + data.entity.name + '/show_fields.dust');
 
 	$('#r_' + data.options.urlValue + '-click').parent().remove(); //remove li tab
@@ -956,7 +956,7 @@ exports.createNewTracking = (data) => {
 			trackingObj[entityName][o.target] = {};
 		}
 	}
-	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, '\t'), 'utf8');
 
 	return;
 }
@@ -1064,7 +1064,7 @@ exports.disabledTracking = async (data) => {
 
 	delete trackingObj[entityName];
 
-	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+	fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, '\t'), 'utf8');
 
 	return;
 };
@@ -1171,7 +1171,7 @@ exports.doEnableTracking = (data) => {
 
 	if(Object.keys(trackingObj).includes(data.source)){
 		trackingObj[data.source][data.target] = {};
-		fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, 4), 'utf8');
+		fs.writeFileSync(trackingConfigPath, JSON.stringify(trackingObj, null, '\t'), 'utf8');
 	}
 
 	return true;

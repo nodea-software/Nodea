@@ -65,7 +65,7 @@ class MediaTask extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			update: {
-				start: async (data) => {
+				start: (data) => {
 					data.idEntity = data.req.body.id_media_task;
 				},
 				beforeRedirect: async(data) => {

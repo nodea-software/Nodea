@@ -16,7 +16,7 @@ class MediaMail extends Entity {
 	}
 
 	entity_tree() {
-		this.router.get('/entityTree', middlewares.isLoggedIn, this.asyncRoute(async (req, res) => {
+		this.router.get('/entityTree', middlewares.isLoggedIn, this.asyncRoute((req, res) => {
 			res.json(status.entityFieldTree('e_media_mail'));
 		}));
 	}

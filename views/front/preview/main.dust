@@ -102,8 +102,6 @@
 	<script src="/js/Nodea/sidebar_tree.js" type="text/javascript"></script>
 	<!-- Nodea grid editor -->
 	<script src="/js/Nodea/grideditor.js" type="text/javascript"></script>
-	<!-- Nodea speech recognition -->
-	<script src="/js/Nodea/speech_recognition.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
 		var appName = "{application.name}";
@@ -114,6 +112,7 @@
 		intro2 += '{#__ key="editor.intro3"/}';
 		var savingButtonText = '{#__ key="button.save"/}';
 		var loadingButtonText = '{#__ key="button.loading"/}';
+		const executeButtonText = '{#__ key="button.execute"/}';
 
 		$('#chat-box').slimScroll({
 			height: '525px',

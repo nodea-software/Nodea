@@ -37,7 +37,7 @@ class Action extends Entity {
 				// beforeRender: async(data) => {}
 			},
 			create_form: {
-				start: async (data) => {
+				start: (data) => {
 					// This is mandatory to be in assoction tab from a status to create an action
 					if (data.req.query.associationSource != 'e_status') {
 						data.req.session.toastr = [{

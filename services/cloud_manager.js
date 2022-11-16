@@ -377,7 +377,7 @@ async function generateStack(data) {
 	});
 }
 
-const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/);
+const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/);
 async function portainerDeploy(data){
 	const appNameWithoutPrefix = data.application.name.substring(2);
 	const repoName = globalConf.host + '-' + appNameWithoutPrefix;
@@ -446,7 +446,7 @@ exports.deploy = async (data) => {
 	// Get and increment application's deploy count
 	const applicationConf = JSON.parse(fs.readFileSync(workspacePath + '/config/application.json'));
 	applicationConf.build++;
-	fs.writeFileSync(workspacePath +'/config/application.json', JSON.stringify(applicationConf, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath +'/config/application.json', JSON.stringify(applicationConf, null, '\t'), 'utf8');
 
 	// public/version.txt generation
 	const deployVersion = applicationConf.version + "b" + applicationConf.build;
@@ -462,7 +462,7 @@ exports.deploy = async (data) => {
 	fs.copySync(workspacePath + '/app/models/toSyncProd.json', workspacePath + '/app/models/toSyncProd.lock.json');
 
 	// Clear toSyncProd (not locked) file
-	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, '\t'), 'utf8');
 
 	// Push on git before deploy
 	await gitHelper.gitCommit(data);

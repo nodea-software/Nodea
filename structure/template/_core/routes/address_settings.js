@@ -57,7 +57,7 @@ class CoreAddressSettings extends Route {
 				}
 				i++;
 			}
-			fs.writeFileSync(__configPath + '/address_settings.json', JSON.stringify(data.config, null, 4));
+			fs.writeFileSync(__configPath + '/address_settings.json', JSON.stringify(data.config, null, '\t'));
 			data.req.session.toastr = [{
 				message: 'message.update.success',
 				level: "success"

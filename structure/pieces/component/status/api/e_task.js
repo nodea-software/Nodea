@@ -40,7 +40,7 @@ class ApiE_inline_help extends ApiEntity {
 	}
 
 	error_file() {
-		this.router.post('/:id/error_file', this.asyncRoute(async (req, res) => {
+		this.router.post('/:id/error_file', this.asyncRoute((req, res) => {
 			upload(req, res, error => {
 				if (error) {
 					console.error(error);

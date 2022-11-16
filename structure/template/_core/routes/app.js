@@ -223,7 +223,7 @@ class CoreApp extends Route {
 
 			// Write current lang in application.json
 			appConf.lang = req.body.lang;
-			fs.writeFileSync(`${__configPath}/application.json`, JSON.stringify(appConf, null, 4));
+			fs.writeFileSync(`${__configPath}/application.json`, JSON.stringify(appConf, null, '\t'));
 
 			res.json({
 				success: true

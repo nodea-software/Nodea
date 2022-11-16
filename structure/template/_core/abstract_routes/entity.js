@@ -1,4 +1,3 @@
-const globalConfig = require('@config/global');
 const Route = require('@core/abstract_routes/route');
 const enums_radios = require('@core/utils/enum_radio');
 

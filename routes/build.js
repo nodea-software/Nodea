@@ -318,7 +318,7 @@ router.post('/import', middlewares.disableInDemo, middlewares.isLoggedIn, (req, 
 			metadataContentObj[data.options.value].codePlatformRepoHTTP = oldMetadataObj[data.options.value].codePlatformRepoHTTP;
 			metadataContentObj[data.options.value].codePlatformRepoSSH = oldMetadataObj[data.options.value].codePlatformRepoSSH;
 
-			fs.writeFileSync(workspacePath + '/config/metadata.json', JSON.stringify(metadataContentObj, null, 4));
+			fs.writeFileSync(workspacePath + '/config/metadata.json', JSON.stringify(metadataContentObj, null, '\t'));
 
 			// Replace DB config with the generated one
 			fs.writeFileSync(workspacePath + '/config/database.js', newDBConf);

@@ -154,7 +154,7 @@ class CoreAccessSettings extends Route {
 			const applicationConfigPath = __configPath+'/application.json';
 			const applicationConfig = JSON.parse(fs.readFileSync(applicationConfigPath, 'utf8'));
 			applicationConfig.api_enabled = enable == 'true';
-			fs.writeFileSync(applicationConfigPath, JSON.stringify(applicationConfig, null, 4), 'utf8');
+			fs.writeFileSync(applicationConfigPath, JSON.stringify(applicationConfig, null, '\t'), 'utf8');
 
 			if (await this.getHook('show_role', 'beforeResponse', data) === false)
 				return;

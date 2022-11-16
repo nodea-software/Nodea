@@ -15,7 +15,7 @@ const fs = require('fs-extra');
 const { from } = require('@config/mail');
 
 const TARGET_ENTITIES = [];
-fs.readdirSync(__appPath + '/models/attributes/').filter(file => file.indexOf('.') !== 0 && file.slice(-5) === '.json' && file.substring(0, 2) == 'e_')
+fs.readdirSync(global.__appPath + '/models/attributes/').filter(file => file.indexOf('.') !== 0 && file.slice(-5) === '.json' && file.substring(0, 2) == 'e_')
 	.forEach(file => {
 		TARGET_ENTITIES.push({
 			codename: file.substring(0, file.length-5),

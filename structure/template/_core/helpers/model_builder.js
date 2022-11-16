@@ -295,6 +295,17 @@ exports.buildSequelizeAttributes = (DataTypes, attributes) => {
 			}
 		}
 
+		if(object[field].nodeaType == 'decimal' || object[field].nodeaType == 'currency') {
+			object[field] = {
+				...object[field],
+				get() {
+					// Workaround until sequelize issue #8019 is fixed
+					const value = this.getDataValue(field);
+					return value === null ? null : parseFloat(value);
+				}
+			}
+		}
+
 		// Validator
 		if (attr_def.validate === true && (validator = validators(attr_def)))
 			object[field].validate = validator;

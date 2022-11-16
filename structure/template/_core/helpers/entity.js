@@ -4,7 +4,6 @@ const moment = require("moment");
 const language = require('./language');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio');
-const globalConfig = require('@config/global');
 
 const models = require('@app/models');
 

@@ -81,7 +81,7 @@ exports.setGroupAccess = function(modules, entities) {
 	}
 
 	// Write back new data to file
-	fs.writeFileSync(accessFileName, JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(accessFileName, JSON.stringify(access, null, '\t'), 'utf8');
 
 	reloadAccess();
 	return 1;
@@ -108,7 +108,7 @@ exports.setRoleAccess = function(entities) {
 	}
 
 	// Write back new data to file
-	fs.writeFileSync(accessFileName, JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(accessFileName, JSON.stringify(access, null, '\t'), 'utf8');
 
 	reloadAccess();
 	return 1;
@@ -206,7 +206,7 @@ exports.accessFileManagment = function() {
 				}
 			}
 		}
-		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
 	}
 
 	// Generate access.lock.json file
@@ -292,6 +292,6 @@ exports.accessFileManagment = function() {
 		}
 
 		// Write access.json with new entries
-		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
 	}
 }

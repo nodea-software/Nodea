@@ -32,7 +32,7 @@ exports.setupApplication = async (data) => {
 	// Add appname to application.json
 	const applicationJSON = JSON.parse(fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', 'utf8'));
 	applicationJSON.appname = appName;
-	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, 4), 'utf8');
+	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, '\t'), 'utf8');
 
 	// Prepare app db user STRONG password
 	const db_pwd = `NP_${data.dbAppID}_${appName}`;
@@ -166,7 +166,7 @@ async function finalizeApplication(application) {
 	const appPath = global.__workspacePath + '/' + application.name + '/app';
 
 	// Reset toSync file
-	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify({}, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify({}, null, '\t'), 'utf8');
 
 	// eslint-disable-next-line global-require
 	const moduleAlias = require('module-alias');
@@ -207,7 +207,7 @@ async function initializeWorkflow(application) {
 		"through": "1_role",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
-	}], null, 4), 'utf8');
+	}], null, '\t'), 'utf8');
 
 	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify([{
 		"target": "e_user",
@@ -218,7 +218,7 @@ async function initializeWorkflow(application) {
 		"through": "2_group",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
-	}], null, 4), 'utf8');
+	}], null, '\t'), 'utf8');
 
 	// Clean useless auto_generate key in user option about role and group hasMany/BelongsTo
 	let userOptions = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_user.json'));
@@ -227,7 +227,7 @@ async function initializeWorkflow(application) {
 			return false;
 		return true;
 	});
-	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, '\t'), 'utf8');
 
 	// Remove existing has many from Status, the instruction is only used to generate the tab and views
 	const statusModel = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_status.json'));
@@ -247,7 +247,7 @@ async function initializeWorkflow(application) {
 		as: 'r_children'
 	});
 
-	fs.writeFileSync(workspacePath + '/app/models/options/e_status.json', JSON.stringify(statusModel, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_status.json', JSON.stringify(statusModel, null, '\t'), 'utf8');
 
 	// Status models pieces
 	fs.copySync(statusPiecesPath + '/models/e_status.js', workspacePath + '/app/models/e_status.js');
@@ -346,7 +346,7 @@ exports.initializeApplication = async(application) => {
 	function uniqueField(entity, field) {
 		const model = JSON.parse(fs.readFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', 'utf8'));
 		model[field].unique = true;
-		fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', JSON.stringify(model, null, 4), 'utf8');
+		fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', JSON.stringify(model, null, '\t'), 'utf8');
 	}
 	uniqueField('e_user', 'f_login');
 	uniqueField('e_role', 'f_label');
@@ -387,8 +387,8 @@ exports.initializeApplication = async(application) => {
 			}
 		});
 	}
-	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, '\t'), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, '\t'), 'utf8');
 
 	// Set role-group/user structureType to hasManyPreset to be used by ajax
 	let opts = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_role.json', 'utf8'));
@@ -397,14 +397,14 @@ exports.initializeApplication = async(application) => {
 		value: 'f_login',
 		type: 'string'
 	}];
-	fs.writeFileSync(workspacePath + '/app/models/options/e_role.json', JSON.stringify(opts, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_role.json', JSON.stringify(opts, null, '\t'), 'utf8');
 	opts = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_group.json', 'utf8'));
 	opts[0].structureType = "hasManyPreset";
 	opts[0].usingField = [{
 		value: 'f_login',
 		type: 'string'
 	}];
-	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify(opts, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify(opts, null, '\t'), 'utf8');
 
 	// Set custom administration module layout
 	fs.copySync(piecesPath + '/administration/views/layout_m_administration.dust', workspacePath + '/app/views/layout_m_administration.dust');

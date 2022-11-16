@@ -74,7 +74,7 @@ exports.writeInHook = (filepath, route, hook, content) => {
 	let route_fn = file_content.substring(idx_start_route, idx_end_route);
 
 	// Uncomment hook if necessary
-	const comment_regex = new RegExp(`[\/]{2} ${hook}|[\/]{2}${hook}`);
+	const comment_regex = new RegExp(`[/]{2} ${hook}|[/]{2}${hook}`);
 	route_fn = route_fn.replace(comment_regex, hook);
 
 	let idx_start_hook = route_fn.indexOf(hook + ':');

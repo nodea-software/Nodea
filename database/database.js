@@ -10,7 +10,7 @@ function pushToSyncQuery(app, query) {
 		if (!toSync.queries)
 			toSync.queries = [];
 		toSync.queries.push(query);
-		fs.writeFileSync('workspace/' + app.name + '/app/models/toSync.json', JSON.stringify(toSync, null, 4), 'utf8');
+		fs.writeFileSync('workspace/' + app.name + '/app/models/toSync.json', JSON.stringify(toSync, null, '\t'), 'utf8');
 	} catch (e) {
 		console.log(e);
 		return false;

@@ -10,9 +10,10 @@ services:
     networks:
       - nodea_network
     volumes:
-      - app:/app
+      - workspace:/nodea/workspace
     environment:
       NODEA_ENV: "develop"
+      HOSTNAME: "127.0.0.1"
       SERVER_IP: "127.0.0.1"
       DATABASE_IP: "database"
       DATABASE_USER: "nodea"
@@ -36,4 +37,4 @@ networks:
 
 volumes:
   db_data:
-  app:
+  workspace:

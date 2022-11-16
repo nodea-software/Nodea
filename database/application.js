@@ -335,7 +335,7 @@ class Application {
 			newMetadata.components[component.type][component.name].displayName = component.displayName;
 		}
 
-		fs.writeFileSync(workspacePath + appName + '/config/metadata.json', JSON.stringify({[appName]: newMetadata}, null, 4))
+		fs.writeFileSync(workspacePath + appName + '/config/metadata.json', JSON.stringify({[appName]: newMetadata}, null, '\t'))
 	}
 }
 

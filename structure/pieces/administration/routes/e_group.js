@@ -103,7 +103,7 @@ class E_group extends Entity {
 					}
 
 					// eslint-disable-next-line no-undef
-					fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+					fs.writeFileSync(global.__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
 				}
 			},
 			loadtab: {

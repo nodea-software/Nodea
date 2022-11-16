@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 module.exports = {
 	getModels: function() {
 		if (!this.models)
-			this.models = require('@app/models');
+			this.models = require('@app/models'); // eslint-disable-line global-require
 		return this.models;
 	},
 	getAliasFromFk: function (entity, fk) {

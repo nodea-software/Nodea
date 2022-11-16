@@ -290,7 +290,7 @@ exports.executeFile = (req, user_id, __, script_infos, script_processing) => new
 						toSyncObject[entity].options = cleanOptions;
 					}
 				}
-			fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, 4), 'utf8');
+			fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, '\t'), 'utf8');
 		} catch(err) {
 			console.error(err);
 		}

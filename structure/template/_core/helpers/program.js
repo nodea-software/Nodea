@@ -165,7 +165,7 @@ async function generateZip(idProgram) {
 	try {
 		fs.mkdirsSync(tmpProgFolder);
 
-		fs.writeFileSync(tmpProgFolder+'/config.json', JSON.stringify(json, null, 4), 'utf8');
+		fs.writeFileSync(tmpProgFolder+'/config.json', JSON.stringify(json, null, '\t'), 'utf8');
 		for (const file of filesToCreate)
 			fs.writeFileSync(`${tmpProgFolder}/${file.filename}`, file.content, 'utf8');
 
