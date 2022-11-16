@@ -17,7 +17,7 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 	}
 
 	// If not a person (healthcheck service or other spamming services)
-	if(typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0)
+	if(!req.session || typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0)
 		return res.sendStatus(200);
 
 	if (!req.session.lang_user)
@@ -27,9 +27,12 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 		req.session.toastr = [];
 
 	res.locals.lang_user = req.session.lang_user;
+	// eslint-disable-next-line global-require
+	res.locals.locales = require('@app/locales/' + req.session.lang_user);
 	res.locals.config = globalConf;
 	res.locals.corePath = __corePath;
 	res.locals.appPath = __appPath;
+	res.locals.sizeFileLimit = appConf.dropzoneInfo.sizeFileLimit;
 
 	// Helpers / Locals / Filters
 	dustFn.helpers(dust);

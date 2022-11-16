@@ -8,9 +8,9 @@
 	"timezone": "Europe/Paris",
 	"contact_field_for_sms": "f_phone",
 	"socket": {
-		"enabled": true,
+		"enabled": false,
 		"chat": false,
-		"notification": true
+		"notification": false
 	},
 	"document_template": {
 		"format_pairs": [{
@@ -27,24 +27,6 @@
 		"input_extentions": ["pdf", "dust", "html", "doc", "docx"],
 		"output_extentions": ["docx", "pdf", "html"]
 	},
-	"synchronization": {
-		"ignore_list": [
-			"e_action",
-			"e_api_credentials",
-			"e_group",
-			"e_role",
-			"e_media_function",
-			"e_media_mail",
-			"e_media_notification",
-			"e_notification",
-			"e_status",
-			"e_synchronization",
-			"e_synchro_credentials",
-			"e_translation",
-			"e_media_sms",
-			"e_user"
-		]
-	},
 	"resizePicture": {
 		"enabled": false,
 		"width": 400,
@@ -56,5 +38,8 @@
 		"width": 30,
 		"height": 30,
 		"quality": 60
+	},
+	"dropzoneInfo": {
+		"sizeFileLimit": 50000000
 	}
 }

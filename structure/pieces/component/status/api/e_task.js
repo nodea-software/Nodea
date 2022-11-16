@@ -1,5 +1,4 @@
 const globalConf = require('@config/global');
-const access = require('@core/helpers/access');
 const models = require('@app/models');
 const attributes = require('@app/models/attributes/e_task');
 const options = require('@app/models/options/e_task');
@@ -41,7 +40,7 @@ class ApiE_inline_help extends ApiEntity {
 	}
 
 	error_file() {
-		this.router.post('/:id/error_file', this.asyncRoute(async (req, res) => {
+		this.router.post('/:id/error_file', this.asyncRoute((req, res) => {
 			upload(req, res, error => {
 				if (error) {
 					console.error(error);

@@ -103,7 +103,7 @@ class E_media_mail extends CoreModel {
 					const regKey = intermediateData[prop].placeholder.replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\-]', 'g'), '\\$&')
 					// Replace globaly
 					const reg = new RegExp(regKey, 'g');
-					self[property] = self[property].replace(reg, intermediateData[prop].emails.join(', '));
+					self[property] = self[property].replace(reg, intermediateData[prop].emails.join(';'));
 				}
 			}
 		}
@@ -151,9 +151,7 @@ class E_media_mail extends CoreModel {
 						path: getFilePath(diveData(dataInstance, matches[1].split('.'), 0))
 					});
 				self[property] = newString || [];
-			}
-
-			else{
+			} else {
 				while ((matches = regex.exec(self[property])) != null)
 					newString = newString.replace(matches[0], diveData(dataInstance, matches[1].split('.'), 0));
 				self[property] = newString || "";

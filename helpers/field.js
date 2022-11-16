@@ -1,17 +1,14 @@
-const domHelper = require('../utils/jsDomHelper');
+const fs = require('fs-extra');
+const domHelper = require('../helpers/js_dom');
 const dataHelper = require("../utils/data_helper");
 
 module.exports = {
 	getFieldHtml: ({type, givenType, field, entity, values, defaultValue}, readOnly, file) => {
 
-		const placeholder = `{#__ key="entity.${entity}.${field}" /}`;
+		const placeholder = `__key=entity.${entity}.${field}`;
 
 		// Setting value only for update / show page
 		let value = "", value2 = "";
-		if (file != "create") {
-			value = "{" + field + "}";
-			value2 = field;
-		}
 
 		// Handling default value format
 		if (defaultValue) {
@@ -53,6 +50,11 @@ module.exports = {
 			}
 		}
 
+		if (file != "create") {
+			value = "{" + field + "}";
+			value2 = field;
+		}
+
 		// Radiobutton HTML can't understand a simple readOnly ... So it's disabled for them
 		const disabled = readOnly ? 'disabled' : '';
 		readOnly = readOnly ? 'readOnly' : '';
@@ -61,9 +63,9 @@ module.exports = {
 		<div data-field='${field}' class='col-12'>\n\
 			<div class='form-group'>\n\
 				<label for='${field}'>\n\
-					<!--{#__ key="entity.${entity}.${field}"/}-->&nbsp;\n\
+					<!--{#__ key="entity.${entity}.${field}"/}-->\n\
 					<!--{@inline_help field="${field}"}-->\n\
-						<i data-field="${field}" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>\n\
+						<i data-entity="${entity}" data-field="${field}" class="inline-help fa fa-info-circle"></i>\n\
 					<!--{/inline_help}-->\n\
 				</label>\n`;
 
@@ -73,12 +75,12 @@ module.exports = {
 		// Insert HTML depending of type
 		switch (type) {
 			case "string" :
-				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
+				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
 				break;
 			case "color" :
 				if (value == "")
 					value = "#000000";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='color' maxLength='255' " + readOnly + " " + disabled + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='color' maxLength='255' " + readOnly + " " + disabled + "/>\n";
 				break;
 			case "currency":
 				const moneyIcon = givenType == 'dollar' ? 'dollar-sign' : givenType == 'euro' ? 'euro-sign' : 'coins'; // eslint-disable-line
@@ -88,7 +90,7 @@ module.exports = {
 				str += "				<i class='fas fa-" + moneyIcon + "'></i>\n";
 				str += "			</span>\n";
 				str += "		</div>\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='currency' " + readOnly + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' data-type='currency' data-precision='10,2' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "qrcode":
@@ -99,13 +101,14 @@ module.exports = {
 				str += "			</span>\n";
 				str += "		</div>\n";
 				if (file == "show")
-					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "'  type='text' data-type='qrcode' " + readOnly + "/>\n";
+					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "'  type='text' data-type='qrcode' " + readOnly + "/>\n";
 				else
-					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "'  type='text' maxLength='255' " + readOnly + "/>\n";
+					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "'  type='text' maxLength='255' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "barcode":
 				inputType = 'number';
+				givenType = givenType == 'barcode' ? 'code128' : givenType;
 				if (givenType === "code39" || givenType === "code128")
 					inputType = 'text';
 				str += "	<div class='input-group'>\n";
@@ -115,9 +118,9 @@ module.exports = {
 				str += "			</span>\n";
 				str += "		</div>\n";
 				if (file == "show")
-					str += "	<input class='form-control' data-custom-type='" + givenType + "' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' show='true' type='text' data-type='barcode' " + readOnly + "/>\n";
+					str += "	<input class='form-control' data-custom-type='" + givenType + "' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' show='true' type='text' data-type='barcode' " + readOnly + "/>\n";
 				else
-					str += "	<input class='form-control' data-custom-type='" + givenType + "' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' data-type='barcode' type='" + inputType + "'" + readOnly + "/>\n";
+					str += "	<input class='form-control' data-custom-type='" + givenType + "' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' data-type='barcode' type='" + inputType + "'" + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "url" :
@@ -135,21 +138,21 @@ module.exports = {
 					str += "				<i class='fa fa-link'></i>\n";
 					str += "			</span>\n";
 					str += "		</div>\n";
-					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='url' data-type='url' " + readOnly + "/>\n";
+					str += "	<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='url' data-type='url' " + readOnly + "/>\n";
 					str += "	</div>\n";
 				}
 				break;
 			case "password" :
-				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='password' " + readOnly + "/>\n";
+				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='password' " + readOnly + "/>\n";
 				break;
 			case "number" :
-				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' max='2147483648' " + readOnly + "/>\n";
+				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='number' max='2147483648' " + readOnly + "/>\n";
 				break;
 			case "big number" :
-				str += "<input class='form-control' data-custom-type='bigint' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' max='9223372036854775807' " + readOnly + "/>\n";
+				str += "<input class='form-control' data-custom-type='bigint' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='number' max='9223372036854775807' " + readOnly + "/>\n";
 				break;
 			case "decimal" :
-				str += "<input class='form-control' data-custom-type='decimal' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
+				str += "<input class='form-control' data-custom-type='decimal' data-precision='14,4' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
 				break;
 			case "date" :
 				str += "   <div class='input-group'>\n";
@@ -159,11 +162,11 @@ module.exports = {
 				str += "			</span>\n";
 				str += "		</div>\n";
 				if (file == "show") {
-					str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
+					str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
 				} else if (file == "update") {
-					str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
+					str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='{" + value2 + "|date}' type='text' " + readOnly + "/>\n";
 				} else if (file == "create") {
-					str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
+					str += "		<input class='form-control datepicker' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
 				}
 				str += "	</div>\n";
 				break;
@@ -177,9 +180,9 @@ module.exports = {
 				if (file == "show")
 					str += "		<input class='form-control' placeholder='" + placeholder + "' value='{" + value2 + "|datetime}' type='text' " + readOnly + "/>\n";
 				else if (file == "update")
-					str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|datetime}' type='text' " + readOnly + "/>\n";
+					str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='{" + value2 + "|datetime}' type='text' " + readOnly + "/>\n";
 				else if (file == "create")
-					str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
+					str += "		<input class='form-control datetimepicker' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' type='text' " + value + " " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "time" :
@@ -191,7 +194,7 @@ module.exports = {
 					str += "					<i class='fas fa-clock'></i>\n";
 					str += "				</span>\n";
 					str += "			</div>\n";
-					str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{" + value2 + "|time}' type='text' " + readOnly + "/>\n";
+					str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='{" + value2 + "|time}' type='text' " + readOnly + "/>\n";
 					str += "		</div>\n";
 					str += "	</div>\n";
 				} else {
@@ -202,7 +205,7 @@ module.exports = {
 					str += "					<i class='fas fa-clock'></i>\n";
 					str += "				</span>\n";
 					str += "			</div>\n";
-					str += "			<input class='form-control timepicker' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
+					str += "			<input class='form-control timepicker' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' " + readOnly + "/>\n";
 					str += "		</div>\n";
 					str += "	</div>\n";
 				}
@@ -214,7 +217,7 @@ module.exports = {
 				str += "				<i class='fas fa-envelope'></i>\n";
 				str += "			</span>\n";
 				str += "		</div>\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' data-type='email' " + readOnly + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' data-type='email' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "phone" :
@@ -224,7 +227,7 @@ module.exports = {
 				str += "				<i class='fa fa-phone'></i>\n";
 				str += "			</span>\n";
 				str += "		</div>\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='tel' " + readOnly + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='tel' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "fax" :
@@ -234,21 +237,21 @@ module.exports = {
 				str += "				<i class='fa fa-fax'></i>\n";
 				str += "			</span>\n";
 				str += "		</div>\n";
-				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='number' " + readOnly + "/>\n";
+				str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='number' " + readOnly + "/>\n";
 				str += "	</div>\n";
 				break;
 			case "boolean" :
 				str += "	&nbsp;\n<br>\n";
 				if (file == "create") {
 					if (value === true)
-						str += "	<input class='form-control' name='" + field + "' type='checkbox' checked />\n";
+						str += "	<input class='form-control' name='" + field + "' id='" + field + "' type='checkbox' checked />\n";
 					else
-						str += "	<input class='form-control' name='" + field + "' type='checkbox' />\n";
+						str += "	<input class='form-control' name='" + field + "' id='" + field + "' type='checkbox' />\n";
 				} else {
 					str += "	<!--{@ifTrue key=" + field + "}-->";
-					str += "		<input class='form-control' name='" + field + "' value='" + value + "' type='checkbox' checked " + disabled + "/>\n";
+					str += "		<input class='form-control' name='" + field + "' id='" + field + "' value='" + value + "' type='checkbox' checked " + disabled + "/>\n";
 					str += "	<!--{:else}-->";
-					str += "		<input class='form-control' name='" + field + "' value='" + value + "' type='checkbox' " + disabled + "/>\n";
+					str += "		<input class='form-control' name='" + field + "' id='" + field + "' value='" + value + "' type='checkbox' " + disabled + "/>\n";
 					str += "	<!--{/ifTrue}-->";
 				}
 				break;
@@ -265,9 +268,9 @@ module.exports = {
 						str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
 						str += "		<label class='no-weight'>";
 						str += "		<!--{@eq key=\"" + clearDefaultValue + "\" value=\"{.value}\" }-->\n";
-						str += "			<input name='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		<!--{:else}-->\n";
-						str += "			<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		<!--{/eq}-->\n";
 						str += "		</label>";
 						str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
@@ -276,7 +279,7 @@ module.exports = {
 						str += "<span class='radio-group' data-radio='" + field + "'>\n";
 						str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
 						str += "		<label class='no-weight'>\n";
-						str += "			<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		</label>";
 						str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
 						str += "<span>\n";
@@ -298,9 +301,9 @@ module.exports = {
 					str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
 					str += "	<label class='no-weight'>";
 					str += "	<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-					str += "		<input name='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "		<input name='" + field + "' id='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "	<!--{:else}-->\n";
-					str += "		<input name='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "		<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "	<!--{/eq}-->\n";
 					str += "	</label>";
 					str += "<!--{/enum_radio." + entity + "." + field + "}-->\n";
@@ -310,15 +313,15 @@ module.exports = {
 			case "enum" :
 				if (file == "show") {
 					str += "	<!--{^" + value2 + "}-->\n";
-					str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' type='text' " + readOnly + "/>\n";
+					str += "		<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' type='text' " + readOnly + "/>\n";
 					str += "	<!--{/" + value2 + "}-->\n";
 					str += "	<!--{#enum_radio." + entity + "." + field + "}-->\n";
 					str += "		<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-					str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='{.translation}' type='text' " + readOnly + "/>\n";
+					str += "			<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='{.translation}' type='text' " + readOnly + "/>\n";
 					str += "		<!--{/eq}-->\n";
 					str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
 				} else if (file != "create") {
-					str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
+					str += "	<select class='form-control select' name='" + field + "' id='" + field + "' " + disabled + " style='width: 100%;'>\n";
 					str += "		<option value=''><!--{#__ key=\"select.default\" /}--></option>\n";
 					str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
 					str += "			<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
@@ -329,7 +332,7 @@ module.exports = {
 					str += "		<!--{/enum_radio." + entity + "." + field + "}-->\n";
 					str += "	</select>\n";
 				} else if (value != "") {
-					str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
+					str += "	<select class='form-control select' name='" + field + "' id='" + field + "' " + disabled + " style='width: 100%;'>\n";
 					str += "		<option value=''><!--{#__ key=\"select.default\" /}--></option>\n";
 					str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
 					str += "			<!--{@eq key=\"" + value + "\" value=\"{.value}\" }-->\n";
@@ -340,7 +343,7 @@ module.exports = {
 					str += "		<!--{/enum_radio." + entity + "." + field + "}-->\n";
 					str += "	</select>\n";
 				} else {
-					str += "	<select class='form-control select' name='" + field + "' " + disabled + " width='100%'>\n";
+					str += "	<select class='form-control select' name='" + field + "' id='" + field + "' " + disabled + " style='width: 100%;'>\n";
 					str += "		<option value='' selected><!--{#__ key=\"select.default\" /}--></option>\n";
 					str += "		<!--{#enum_radio." + entity + "." + field + "}-->\n";
 					str += "			<option value=\"{.value}\"> {.translation} </option>\n";
@@ -352,9 +355,9 @@ module.exports = {
 				if (file == 'show')
 					str += "	<div class='show-textarea'>{" + field + "|s}</div>\n";
 				else if (file == 'create')
-					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">" + value + "</textarea>\n";
+					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">" + value + "</textarea>\n";
 				else
-					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">{" + value2 + "|htmlencode}</textarea>\n";
+					str += "	<textarea class='form-control textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' id='" + field + "_textareaid' rows='5' type='text' " + readOnly + ">{" + value2 + "|htmlencode}</textarea>\n";
 
 				break;
 			case "regular text" :
@@ -362,12 +365,12 @@ module.exports = {
 				if (file == 'show')
 					str += "	<textarea readonly='readonly' class='show-textarea regular-textarea'>" + value + "</textarea>\n";
 				else
-					str += "	<textarea class='form-control textarea regular-textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "_textareaid' type='text' " + readOnly + ">" + value + "</textarea>\n";
+					str += "	<textarea class='form-control textarea regular-textarea' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' id='" + field + "_textareaid' type='text' " + readOnly + ">" + value + "</textarea>\n";
 				break;
 			case "file":
 				if (file == 'create') {
 					str += "	<div class='nodea-dropzone'><i class='fas fa-download'></i>&nbsp;&nbsp;<!--{#__ key=\"message.insert_file\" /}--></div>\n";
-					str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
+					str += "	<input type='file' name='" + field + "' id='" + field + "' value='" + value + "' style='display: none;'/>\n";
 				} else if (file == 'update') {
 					str += '	<div class="nodea-dropzone">\n';
 					str += '		<!--{#'+field+'}-->\n';
@@ -388,7 +391,7 @@ module.exports = {
 					str += "					<i class='fa fa-download'></i>\n";
 					str += "				</span>\n";
 					str += "			</div>\n";
-					str += "			<input value='{" + value2 + "|filename}' data-entity=" + entity + " data-field=" + value2 + " data-id='{id}' class='form-control text-left preview_file' name='" + field + "' />\n";
+					str += "			<input value='{" + value2 + "|filename}' data-entity=" + entity + " data-field=" + value2 + " data-id='{id}' class='form-control text-left preview_file' name='" + field + "' id='" + field + "' />\n";
 					str += "		{:else}\n";
 					str += "			{#__ key=\"message.empty_file\" /}\n";
 					str += "		{/" + value2 + "}\n";
@@ -398,19 +401,19 @@ module.exports = {
 			case "picture":
 				if (file == 'create') {
 					str += "	<div class='nodea-dropzone image'><i class='fas fa-download'></i>&nbsp;&nbsp;<!--{#__ key=\"message.insert_file\" /}--></div>\n";
-					str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
+					str += "	<input type='file' name='" + field + "' id='" + field + "' value='" + value + "' style='display: none;'/>\n";
 				} else if (file == 'update') {
 					str += '	<div class="nodea-dropzone image">{#'+field+'}<div class="dropzonefile">{.|filename}&nbsp<i class="remove-file fa fa-times" style="color: red;"></i></div>{/'+field+'}</div>\n';
-					str += "	<input type='file' name='" + field + "' value='" + value + "' style='display: none;'/>\n";
+					str += "	<input type='file' name='" + field + "' id='" + field + "' value='" + value + "' style='display: none;'/>\n";
 					str += "	<input type='hidden' name='"+ field + "_modified' value='false' />\n";
 				} else if (file == 'show') {
 					str += "	<div class='input-group'>\n";
-					str += "		<a href='/app/download?entity=" + entity + "&field=" + value2 + "&id={id}'><img src=data:image/;base64,{" + value2 + ".buffer}  class='img-fluid' data-type='picture' alt=" + value + " name=" + field + "  " + readOnly + " height='400' width='400' /></a>\n";
+					str += "		<a href='/app/download?entity=" + entity + "&field=" + value2 + "&id={id}'><img src=\"data:image/;base64,{" + value2 + ".buffer}\" class='img-fluid' data-type='picture' alt=\"" + value + "\" name=" + field + "  " + readOnly + " height='400' width='400' /></a>\n";
 					str += "	</div>\n";
 				}
 				break;
 			default:
-				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
+				str += "<input class='form-control' placeholder='" + placeholder + "' name='" + field + "' id='" + field + "' value='" + value + "' type='text' maxLength='255' " + readOnly + "/>\n";
 				break;
 		}
 
@@ -420,7 +423,7 @@ module.exports = {
 
 		return str;
 	},
-	getFieldInHeaderListHtml: (fieldName, entityName, type) => {
+	getFieldInHeaderListHtml: (fieldName, entityName, type = 'string') => {
 		const entity = entityName.toLowerCase();
 		const field = fieldName.toLowerCase();
 		const result = {
@@ -439,20 +442,18 @@ module.exports = {
 	},
 	updateFile: (fileBase, file, string) => {
 		const fileToWrite = fileBase + '/' + file + '.dust';
+		if(!fs.existsSync(fileToWrite)){
+			return;
+		}
 		const $ = domHelper.read(fileToWrite);
-
-		// TODO: Make a function that gives a jsDom ready string (comment dust, format placeholders)
-		// Use it everywhere code is directly appended to dom, and remove manualy added comments
-		// string = commentDust(string);
-		string = string.replace(/placeholder=["'](.+?)["'](.+?)["'](.+?)["']/g, 'placeholder="$1\'$2\'$3"');
-
-		$("#fields").append(string);
+		const $string = domHelper.read(false, false, string);
+		$("#fields").append($string.html());
 		domHelper.write(fileToWrite, $);
 		return;
 	},
 	updateListFile: (fileBase, file, thString) => {
 		const fileToWrite = fileBase + '/' + file + '.dust';
-		const $ = domHelper.read(fileToWrite)
+		const $ = domHelper.read(fileToWrite);
 
 		// Add to header thead and filter thead
 		$(".fields").each(function () {

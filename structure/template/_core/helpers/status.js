@@ -58,7 +58,7 @@ module.exports = {
 		});
 		return status && status.r_actions || [];
 	},
-	executeActions: async (modelName, idEntity, actions, transaction) => {
+	executeActions: async (modelName, idEntity, actions, transaction, customValues = {}) => {
 		if (!actions || !actions.length)
 			return;
 		let usedFields = [];
@@ -72,6 +72,11 @@ module.exports = {
 			include,
 			transaction
 		});
+
+		// Add custom values to media data
+		for (const key in customValues)
+			if (Object.hasOwnProperty.call(customValues, key))
+				mediaData[key] = customValues[key];
 
 		const mediaExecutionPromises = [];
 		for (const action of actions)
@@ -128,13 +133,14 @@ module.exports = {
 						f_field: fieldIn,
 						f_name: 'Initial',
 						f_default: true,
-						f_color: '#999999'
+						f_color: '#999999',
+						f_text_color: '#000000'
 					},
 					transaction: optionnals.transaction,
 					user: optionnals.user
 				});
 
-				if (!created) {
+				if (!created && !optionnals.noActions) {
 					const actions = await self.getActions(status.id);
 					await self.executeActions(modelName, entity.id, actions, optionnals.transaction)
 				}
@@ -430,5 +436,46 @@ module.exports = {
 				}
 			}
 		}
+	},
+	getTextColor: function (color) {
+		const wht = '#ffffff';
+		const blk = '#000000';
+
+		function hexToRgb(hexValue) {
+			const hex = hexValue.substring(1).match(/.{1,2}/g);
+			const rgb = [
+				parseInt(hex[0], 16),
+				parseInt(hex[1], 16),
+				parseInt(hex[2], 16)
+			];
+			return rgb;
+		}
+
+		const luminance = (r, g, b) => {
+			const [lumR, lumG, lumB] = [r, g, b].map(component => {
+				const proportion = component / 255;
+
+				return proportion <= 0.03928
+					? proportion / 12.92
+					: Math.pow((proportion + 0.055) / 1.055, 2.4);
+			});
+
+			return 0.2126 * lumR + 0.7152 * lumG + 0.0722 * lumB;
+		}
+
+		const contrastRatio = (luminance1, luminance2) => {
+			const lighterLum = Math.max(luminance1, luminance2);
+			const darkerLum = Math.min(luminance1, luminance2);
+
+			return (lighterLum + 0.05) / (darkerLum + 0.05);
+		}
+
+		const backColorLum = luminance(...hexToRgb(color));
+		const whiteLum = luminance(255, 255, 255);
+		const blackLum = luminance(0, 0, 0);
+		const ratioW = contrastRatio(whiteLum, backColorLum);
+		const ratioB = contrastRatio(blackLum, backColorLum);
+
+		return ratioW > ratioB ? wht : blk;
 	}
 }

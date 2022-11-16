@@ -1,5 +1,8 @@
 node_modules/*
 *.log
 upload/*
+upload_test/*
 config/access.json
 package-lock.json
+app/public/bundle/*
+_core/public/bundle/*

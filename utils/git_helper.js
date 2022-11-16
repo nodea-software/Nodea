@@ -43,14 +43,10 @@ async function initializeGit(repoInfo, user) {
 	gitProcesses[repoInfo.origin].isProcessing = true;
 	try {
 		await gitProcesses[repoInfo.origin][user.id].simpleGit.init();
+		await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.tokenUrl);
 		await gitProcesses[repoInfo.origin][user.id].simpleGit.add('.');
 		const commitSummary = await gitProcesses[repoInfo.origin][user.id].simpleGit.commit("First commit - Workspace initialization");
 		console.log(commitSummary);
-		try {
-			await gitProcesses[repoInfo.origin][user.id].simpleGit.addRemote(repoInfo.origin, repoInfo.url);
-		} catch(err) {
-			console.error(err.message);
-		}
 		gitProcesses[repoInfo.origin][user.id].simpleGit.push(['-u', repoInfo.origin, 'master']);
 	} catch(err) {
 		gitProcesses[repoInfo.origin].isProcessing = false;
@@ -60,6 +56,8 @@ async function initializeGit(repoInfo, user) {
 }
 
 function initRepoGitProcess(repoInfo, data, workspacePath) {
+	console.log("GIT => INIT USER " + repoInfo.origin);
+
 	if (typeof gitProcesses[repoInfo.origin] === 'undefined')
 		gitProcesses[repoInfo.origin] = {
 			isProcessing: false
@@ -69,15 +67,14 @@ function initRepoGitProcess(repoInfo, data, workspacePath) {
 		repoInfo.tokenUrl = repoInfo.tokenUrl.replace('$TOKEN$', data.code_platform.user.accessToken);
 		// Git process per origin and per nodea user
 		gitProcesses[repoInfo.origin][data.currentUser.id] = {
-			simpleGit: require('simple-git/promise')(workspacePath, { // eslint-disable-line
+			simpleGit: require('simple-git')(workspacePath, { // eslint-disable-line
 				config: [
-					`remote.${repoInfo.origin}.url=${repoInfo.tokenUrl}`,
 					`url.${repoInfo.tokenUrl}.insteadOf=${repoInfo.url}`,
 					`user.name=${data.code_platform.user.username}`,
 					`user.email=${data.code_platform.user.email}`
 				]
 			})
-		}
+		};
 	}
 }
 

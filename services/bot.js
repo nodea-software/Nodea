@@ -1,4 +1,5 @@
 const bot_helper = require('../helpers/bot');
+const metadata = require('../database/metadata')();
 
 // ******* BASIC ******* //
 exports.showSession = _ => {
@@ -754,37 +755,29 @@ exports.deleteAgendaWithName = result => {
  * @param {type} result of bot analyzer (this.parse)
  * @returns {function name and user instruction}
  */
-exports.createNewComponentAddress = result => {
+exports.addComponentAddress = result => {
+	// Default name is Address
+	const value = result[1] ? result[1] : 'Address';
 	const options = {
-		componentName: "Address",
-		instruction: result[0]
-	};
-	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, "Address");
-};
-
-/**
- * Component Address
- * @param {type} result of bot analyzer (this.parse)
- * @returns {function name and user instruction}
- */
-exports.createNewComponentAddressWithName = result => {
-	const options = {
-		componentName: result[1],
-		value: result[1],
+		value,
 		processValue: true,
 		instruction: result[0]
 	};
-	return bot_helper.checkAndCreateAttr("createNewComponentAddress", options, result[1]);
+	return bot_helper.checkAndCreateAttr("addComponentAddress", options, value);
 };
 
 /**
  * Delete component address
  */
-exports.deleteComponentAddress = result => {
-	return {
-		function: "deleteComponentAddress",
-		options: result
+exports.removeComponentAddress = result => {
+	// Default name is Address
+	const value = result[1] ? result[1] : 'Address';
+	const options = {
+		value,
+		processValue: true,
+		instruction: result[0]
 	};
+	return bot_helper.checkAndCreateAttr("removeComponentAddress", options, value);
 };
 
 /**
@@ -820,6 +813,63 @@ exports.createComponentChat = _ => {
 		function: "createComponentChat"
 	}
 }
+
+/* TRACEABILITY */
+exports.enabledTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "enabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.disabledTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "disabledTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.showTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "showTracking",
+		options: options
+	};
+	return data;
+};
+
+exports.hideTracking = result => {
+	const options = {
+		value: result[1],
+		processValue: true,
+		source: 'traceability'
+	};
+
+	const data = {
+		function: "hideTracking",
+		options: options
+	};
+	return data;
+};
 
 // ******* INTERFACE ******* //
 exports.setLogo = result => {
@@ -1089,7 +1139,8 @@ const bot_instructions = {
 		"restart",
 		"redémarrer",
 		"redémarrer serveur",
-		"redémarrer le serveur"
+		"redémarrer le serveur",
+		"redémarrer l'application'"
 	],
 	"installNodePackage": [
 		"npm install",
@@ -2124,41 +2175,13 @@ const bot_instructions = {
 		"supprimer le composant ligne de temps nommée (.*)",
 		"supprimer la ligne de temps nommée (.*)"
 	],
-	"createNewComponentCra": [
-		"ajouter composant gestion de temps",
-		"ajouter un composant gestion de temps",
-		"create component cra",
-		"add component cra",
-		"create component activity report",
-		"add component activity report",
-		"create component time sheet",
-		"add component time sheet",
-		"create component timesheet",
-		"add component timesheet",
-		"créer un composant cra",
-		"ajouter un composant cra",
-		"créer composant cra",
-		"ajouter composant cra",
-		"créer le composant cra",
-		"ajouter le composant cra",
-		"créer un composant compte-rendu d'activité",
-		"ajouter un composant compte-rendu d'activité",
-		"créer composant compte-rendu d'activité",
-		"ajouter composant compte-rendu d'activité",
-		"créer un composant compte-rendu d'activités",
-		"ajouter un composant compte-rendu d'activités",
-		"créer composant compte-rendu d'activités",
-		"ajouter composant compte-rendu d'activités"
-	],
-	"createNewComponentAddress": [
+	"addComponentAddress": [
 		"add component address",
 		"create component address",
 		"ajouter un composant adresse",
 		"créer un composant adresse",
 		"ajouter composant adresse",
-		"créer composant adresse"
-	],
-	"createNewComponentAddressWithName": [
+		"créer composant adresse",
 		"add component address with name (.*)",
 		"add component address called (.*)",
 		"create component address with name (.*)",
@@ -2168,19 +2191,26 @@ const bot_instructions = {
 		"ajouter composant adresse nommé (.*)",
 		"ajouter composant adresse appelé (.*)"
 	],
-	"deleteComponentAddress": [
+	"removeComponentAddress": [
 		"delete component address",
+		"remove component address",
 		"supprimer composant adresse",
-		"supprimer le composant adresse"
+		"supprimer le composant adresse",
+		"delete component address called (.*)",
+		"remove component address called (.*)",
+		"delete component address with name (.*)",
+		"remove component address with name (.*)",
+		"supprimer composant adresse appelé (.*)",
+		"supprimer le composant adresse nommé (.*)"
 	],
-	"createComponentChat": [
+	/*"createComponentChat": [
 		"add component chat",
 		"create component chat",
 		"ajouter le composant Discussion",
 		"ajouter composant Discussion",
 		"ajouter le composant discussion",
 		"ajouter composant discussion"
-	],
+	],*/
 	"setLogo": [
 		"add logo (.*)",
 		"add a logo (.*)",
@@ -2201,7 +2231,7 @@ const bot_instructions = {
 		"enlever le logo",
 		"enlever logo"
 	],
-	"setLayout": [
+	/*"setLayout": [
 		"set layout (.*)",
 		"appliquer le layout (.*)",
 		"appliquer la disposition (.*)",
@@ -2219,7 +2249,7 @@ const bot_instructions = {
 		"lister disposition",
 		"lister les dispositions",
 		"afficher les dispositions"
-	],
+	],*/
 	"setTheme": [
 		"set theme (.*)",
 		"appliquer le thème (.*)",
@@ -2324,12 +2354,9 @@ const bot_instructions = {
 		"créer widget derniers enregistrements sur l'entité (.*) avec les colonnes (.*)"
 	],
 	"createWidgetOnEntity": [
-		"créer une (.*) sur l'entité (.*)",
 		"créer un widget (.*) sur l'entité (.*)",
-		"ajouter une (.*) sur l'entité (.*)",
 		"ajouter un widget (.*) sur l'entité (.*)",
 		"créer widget (.*) sur l'entité (.*)",
-		"ajouter (.*) sur l'entité (.*)",
 		"ajouter widget (.*) sur l'entité (.*)",
 		"add widget (.*) on entity (.*)",
 		"create widget (.*) on entity (.*)",
@@ -2338,6 +2365,7 @@ const bot_instructions = {
 	],
 	"createWidget": [
 		"add widget (.*)",
+		"add a widget (.*)",
 		"create widget (.*)",
 		"ajouter widget (.*)",
 		"créer widget (.*)",
@@ -2406,6 +2434,22 @@ const bot_instructions = {
 		"delete title (.*)",
 		"supprimer  titre (.*)",
 		"supprimer le titre (.*)"
+	],
+	"enabledTracking": [
+		"enable tracking on entity (.*)",
+		"activer la tracabilité sur l'entité (.*)"
+	],
+	"disabledTracking": [
+		"disable tracking on entity (.*)",
+		"désactiver la tracabilité sur l'entité (.*)",
+	],
+	"showTracking": [
+		"show tracking on entity (.*)",
+		"afficher la tracabilité sur l'entité (.*)",
+	],
+	"hideTracking": [
+		"hide tracking on entity (.*)",
+		"masquer la tracabilité sur l'entité (.*)"
 	]
 };
 
@@ -2447,9 +2491,20 @@ exports.parse = (instruction) => {
 }
 
 // ******* Completion *******
-exports.complete = function (instruction) {
+exports.complete = function (instruction, app_name = null) {
 
 	let answers = [];
+	const app_metadata = metadata.getApplication(app_name);
+	const modules = [];
+	const entities = [];
+
+	if(app_name)
+		for (let i = 0; i < app_metadata.modules.length; i++) {
+			modules.push(app_metadata.modules[i].displayName);
+			for (let j = 0; j < app_metadata.modules[i].entities.length; j++) {
+				entities.push(app_metadata.modules[i].entities[j].displayName);
+			}
+		}
 
 	// Check all bot_instructions key phrases
 	for (const action in bot_instructions) {
@@ -2500,36 +2555,68 @@ exports.complete = function (instruction) {
 				let found = false;
 				let firstLoop = true;
 
-				while (k < n && !found) {
-					// Return next keyword
-					if (template[k] != "(.*)")
-						answer = answer + template[k] + " ";
-					else {
-						if (template[k - 1] == "type")
-							answer = answer + "[type] ";
-						// Return [variable] to explain this is something dynamic
-						else if (template[k - 1] == 'widget')
-							answer = answer + '[widget] ';
-						else
-							answer = answer + "[variable] ";
-
-						// If first loop on variable, we need to display possible end of instruction
-						// Else, it means we have keyword at the beginning of suggestion, so we cut on variable step
-						if (!firstLoop)
-							found = true;
+				// If no more argument left to parse on instruction, introduce searching on custom string for entities & modules
+				if(k == n) {
+					const last_term = instr[instr.length - 2];
+					// eslint-disable-next-line default-case
+					switch(last_term) {
+						case 'entity':
+						case 'entité':
+							answer = `[entity search=${instr[instr.length-1]}]`;
+							break;
+						case 'module':
+							answer = `[module search=${instr[instr.length-1]}]`;
+							break;
 					}
+				} else {
+					while (k < n && !found) {
+						// Return next keyword
+						if (template[k] != "(.*)") {
+							answer = answer + template[k] + " ";
+						} else {
+							if (template[k - 1] == 'type')
+								answer = answer + '[type] ';
+							// Return [variable] to explain this is something dynamic
+							else if (template[k - 1] == 'widget')
+								answer = answer + '[widget] ';
+							else if ((template[k - 1] == 'entity' || template[k - 1] == 'entité') && !['add', 'create', 'ajouter', 'créer'].some(x => template.includes(x)))
+								answer = answer + '[entity] ';
+							else if (template[k - 1] == 'module' && !['add', 'create', 'ajouter', 'créer'].some(x => template.includes(x)))
+								answer = answer + '[module] ';
+							else {
+								answer = answer + '[variable] ';
+							}
 
-					firstLoop = false;
-					k++;
+							// If first loop on variable, we need to display possible end of instruction
+							// Else, it means we have keyword at the beginning of suggestion, so we cut on variable step
+							if (!firstLoop)
+								found = true;
+						}
+
+						firstLoop = false;
+						k++;
+					}
 				}
 
+				// Build array of string answers
 				// Add list of types to answer
 				if (answer.trim() == "[type]")
 					answers = [...answers, ...bot_helper.getNodeaTypes()];
 				else if (answer.trim() == '[widget]')
-					answers = [...answers, 'info', 'stat', 'statistique', 'piechart']
-				// Build array of string answers
-				else
+					answers = [...answers, 'info', 'stat', 'statistique', 'piechart'];
+				else if (answer.trim() == '[entity]')
+					answers = [...answers, ...entities];
+				else if(answer.match(/\[entity search=(.*)]/)){
+					const search = answer.match(/\[entity search=(.*)]/)[1];
+					answers = [...answers, ...entities.filter(x => x.toLowerCase().startsWith(search.toLowerCase()))];
+				}
+				else if (answer.trim() == '[module]')
+					answers = [...answers, ...modules];
+				else if(answer.match(/\[module search=(.*)]/)){
+					const search = answer.match(/\[module search=(.*)]/)[1];
+					answers = [...answers, ...modules.filter(x => x.toLowerCase().startsWith(search.toLowerCase()))];
+				}
+				else if(answer.trim() != '')
 					answers.push(answer.trim());
 			}
 		}
@@ -2545,7 +2632,6 @@ exports.complete = function (instruction) {
 	// Sort array of results
 	out.sort();
 
-	// out.reverse();
 	return out.filter(x => x != '');
 }
 

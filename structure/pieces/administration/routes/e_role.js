@@ -82,7 +82,7 @@ class E_role extends Entity {
 					if(!data.labelChanged)
 						return;
 
-					const access = JSON.parse(fs.readFileSync(__configPath + '/access.json'));
+					const access = JSON.parse(fs.readFileSync(global.__configPath + '/access.json'));
 					const actions = ['read', 'create', 'update', 'delete'];
 
 					for(const appModule in access) {
@@ -97,7 +97,7 @@ class E_role extends Entity {
 						}
 					}
 
-					fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+					fs.writeFileSync(global.__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
 				}
 			},
 			loadtab: {

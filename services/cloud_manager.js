@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 const json2yaml = require('json2yaml');
 const fs = require('fs-extra');
-const math = require('math');
 const moment = require('moment');
 
 const globalConf = require('../config/global.js');
@@ -75,8 +74,8 @@ async function getStack(stackName) {
 async function generateCloneUrl(data) {
 	// 1 - Generate temporary personnal access token to clone repository on cloud env
 	const today = moment().format('YYYY-MM-DD');
-	// Expire tomorrow
-	const expireAt = moment().add(1, 'd').format('YYYY-MM-DD');
+	// Expire today
+	const expireAt = moment().format('YYYY-MM-DD');
 	const tokenName = 'deploy_token_' + today;
 	const accessToken = await gitlab.generateAccessToken(data.code_platform.user, tokenName, ['read_repository', 'write_repository'], expireAt);
 
@@ -310,7 +309,7 @@ async function generateStack(data) {
 					}
 				},
 				"volumes": [
-					"app:/app"
+					"app:/app/" + data.repoName
 				],
 				"labels": [
 					"traefik.enable=true",
@@ -378,7 +377,7 @@ async function generateStack(data) {
 	});
 }
 
-const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/);
+const dnsRegex = new RegExp(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/);
 async function portainerDeploy(data){
 	const appNameWithoutPrefix = data.application.name.substring(2);
 	const repoName = globalConf.host + '-' + appNameWithoutPrefix;
@@ -432,8 +431,8 @@ exports.deploy = async (data) => {
 	console.log("STARTING DEPLOY");
 
 	// If local/develop environnement, then just give the generated application url
-	if (globalConf.env != 'studio') {
-		const port = math.add(9000, data.appID);
+	if (globalConf.env != 'studio' || globalConf.demo_mode) {
+		const port = 9000 + parseInt(data.appID);
 		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
 		return {
 			message: "botresponse.applicationavailable",
@@ -447,7 +446,7 @@ exports.deploy = async (data) => {
 	// Get and increment application's deploy count
 	const applicationConf = JSON.parse(fs.readFileSync(workspacePath + '/config/application.json'));
 	applicationConf.build++;
-	fs.writeFileSync(workspacePath +'/config/application.json', JSON.stringify(applicationConf, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath +'/config/application.json', JSON.stringify(applicationConf, null, '\t'), 'utf8');
 
 	// public/version.txt generation
 	const deployVersion = applicationConf.version + "b" + applicationConf.build;
@@ -463,7 +462,7 @@ exports.deploy = async (data) => {
 	fs.copySync(workspacePath + '/app/models/toSyncProd.json', workspacePath + '/app/models/toSyncProd.lock.json');
 
 	// Clear toSyncProd (not locked) file
-	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, '\t'), 'utf8');
 
 	// Push on git before deploy
 	await gitHelper.gitCommit(data);

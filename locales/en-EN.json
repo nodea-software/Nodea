@@ -50,7 +50,8 @@
 		"develop": "Develop",
 		"test": "Test",
 		"deploy": "Deploy",
-		"configure": "Configure"
+		"configure": "Configure",
+		"administration": "Administration"
 	},
 	"button": {
 		"generate": "Generate",
@@ -74,7 +75,8 @@
 		"clone": "Clone",
 		"understand": "Get it !",
 		"export": "Export",
-		"confirm": "Are you sure you want to continue ?"
+		"confirm": "Are you sure you want to continue ?",
+		"start": "Start"
 	},
 	"home": {
 		"website": "Website",
@@ -102,6 +104,7 @@
 			"manage_text": "Manage all your applications"
 		},
 		"generate": {
+			"wait_npm_install": "Your generator is finishing installing a prerequisite, please try again in 30sec.",
 			"title": "You can select or create an application",
 			"subtitle": "We take care of the rest !"
 		}
@@ -153,7 +156,6 @@
 		"subtitle": "Settings",
 		"tabs": {
 			"home": "Home",
-			"users": "User",
 			"account": "My account",
 			"settings": "Settings"
 		},
@@ -174,9 +176,19 @@
 			"signup_date": "Registration date"
 		}
 	},
+	"administration": {
+		"tabs": {
+			"users": "Users",
+			"queue": "Queue managment"
+		},
+		"queue": {
+			"list": "Current generation"
+		}
+	},
 	"listApplication": {
 		"id": "ID",
 		"name": "Name",
+		"createdAt": "Created at",
 		"createdBy": "Created by",
 		"action": "Actions",
 		"sureToDelete": "Are you sure ?",
@@ -249,10 +261,11 @@
 		"reset_button": "Reset",
 		"sure_reset": "Are you sure ? You will logout, your password will be reset and you\\'ll receive an email to set a new one.",
 		"sure_reset_other": "Are you sure ? This user's password will be reset and he will receive an email to configure a new one.",
-		"activate_translation": "Activate automatic translation (Internet connection and valid Google API Key is required)",
 		"english": "English",
 		"french": "French",
-		"info_delete_compte": "If you wish to delete your account, please contact us:"
+		"info_delete_compte": "If you wish to delete your account, please contact us:",
+		"reset_tuto": "Reset the Nodea tutorial",
+		"reset_tuto_ok": "The tutorial has been successfully reset !"
 	},
 	"preview":{
 		"title": "Preview",
@@ -270,7 +283,9 @@
 		"session": {
 			"noApplication": "No application selected",
 			"noModule": "No module selected",
-			"noEntity": "No entity selected"
+			"noEntity": "No entity selected",
+			"app_expire": "Expire",
+			"day": "Day(s)"
 		},
 		"logo": {
 			"title": "Add a logo",
@@ -307,12 +322,13 @@
 		"textthree": "simply go back.",
 		"404": "The link you followed may be broken, or the page may have been removed.",
 		"valueTooLong": "Sorry, but the given value (%s) is too long (<30).",
+		"fkValueTooLong": "Sorry, the value provided for the foreign key exceeds the maximum allowed length (<=60) after generation (%s). Please try to give more compact instructions, you can later change the translations for the display.",
 		"cannotFindInstruction": "Sorry, I do not understand what you're asking of me.",
 		"missingParametersInstruction": "The syntax or parameters of your instruction are wrong. Please see the documentation.",
 		"notForParamEntity": "You can't do this with a param entity."
 	},
 	"chat": {
-		"welcome": "Hello and welcome ! I'm Nodea, your personnal creation assistant. At any time, I am here to help you discover the Nodea generator.<br> To get started, here are few instructions that you can run below:<br><br>- <b class=\"click-instruction\">add entity Person</b><br>- <b class=\"click-instruction\">add field Name</b><br>- <b class=\"click-instruction\">add field Birthday with type date</b>"
+		"welcome": "Hello and welcome ! I'm Nodea, your personnal creation assistant. At any time, I am here to help you discover the Nodea generator.<br> To get started, here are few instructions that you can run below:<br><br>- <b class=\"click-instruction\">add entity Person</b><br>- <b class=\"click-instruction\">add field Name</b><br>- <b class=\"click-instruction\">add field Birthday with type date</b><br><br>If you are logged out, no worry ! You can:<br>- <b class=\"click-instruction\">Restart</b>"
 	},
 	"database": {
 		"application": {
@@ -358,6 +374,12 @@
 			},
 			"delete": {
 				"success": "The component has been successfully deleted!"
+			},
+			"display": {
+				"show": "Le composant %s a bien été affiché sur l'entité %s !",
+				"alreadyShow": "Le composant %s est déjà affiché sur l'entité %s !",
+				"hide": "Le composant %s a bien été masqué sur l'entité %s !",
+				"alreadyHide": "Le composant %s est déjà masqué sur l'entité %s !"
 			}
 		},
 		"entity": {
@@ -521,7 +543,8 @@
 	},
 	"users":{
 		"connected_as": "Connected as",
-		"login": "Identifiant",
+		"login": "Login",
+		"created_at": "Created at",
 		"email": "Email",
 		"role": "Role",
 		"applications": "Applications",
@@ -592,6 +615,38 @@
 		}
 	},
 	"alpha": {
-		"text": "Be aware that this is an alpha version, if you find a bug or have a suggestion you can contact us on:<br><b>support@nodea-software.com</b><br>Thank you !"
+		"text": "Be aware that this version is still in development, if you find a bug or have a suggestion you can participate to our <a href=\"https://github.com/nodea-software/nodea/issues\" target=_blank>official Github</a> or contact us on:<br><br><b>support@nodea-software.com</b><br><br>Thank you !"
+	},
+	"demo": {
+		"signup_head": "Get your own private environment !",
+		"not_available": "Not available in demo mode",
+		"only_in_demo": "Only available in demo mode",
+		"feature_not_available": "This feature is not available in demo mode, you can signup to unlock it !",
+		"generating": "Generating your application",
+		"hello_there": "Hello there, welcome to Nodea! We will generate your application in a few moments 👍",
+		"please_wait": "It won't take long, really not long, usually no more than 30 seconds!",
+		"oups_queue": "Oops there are already curious people in front of you! Don't worry you are %cptth in the queue.",
+		"modal": {
+			"title": "Nodea demo mode",
+			"text1": "Welcome on the generator",
+			"text2": "You are currently on a demo environment allowing you to simply try the management application <b>generation</b> with Nodea.",
+			"text3": "I invite you to follow the tutorial popups to familiarize yourself with <b>the interface</b> and the concept of <b>instructions</b>.",
+			"text4": "If you have any questions you can go to our <b>documentation</b>:",
+			"text5": "Or join our <b>Discord</b> where we will do our best to answer you as soon as possible:"
+		},
+		"expire_modal": {
+			"title": "Your app expired",
+			"text1": "In Nodea's <b>demonstration</b> mode your applications have an expiration time of <b>7 days</b>.",
+			"text2": "After this time your session and your applications will be <b>deleted</b>.",
+			"text3": "If you wish to <b>keep</b> your applications, we invite you to <b>register</b> in order to access <b>your Nodea environment</b>!"
+		},
+		"instructions_modal": {
+			"title": "Congratulations!",
+			"text1": "Congratulations you have already executed",
+			"text2": "instructions with Nodea!",
+			"text3": "If you want to learn more about the <b>instructions</b> you can find them all on our <b>documentation</b>:",
+			"text4": "Also if you have any questions feel free to <b>join</b> our Discord:",
+			"text5": "Finally, if you want to <b>privatize</b>, <b>keep</b> and access the <b>code</b> of your generated applications, I invite you to generate today < b>your private environment</b>!"
+		}
 	}
 }

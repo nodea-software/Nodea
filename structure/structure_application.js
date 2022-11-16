@@ -1,81 +1,28 @@
 const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
-const path = require("path");
 const mysql = require('promise-mysql');
 const {Client} = require('pg');
 
-// Gitlab
+// Code Platform
 const globalConf = require('../config/global.js');
 const code_platform = require('../services/code_platform');
 
 const dbConf = require('../config/database.js');
 const studio_manager = require('../services/studio_manager');
 const models = require('../models/');
+const setup_helper = require('../helpers/setup');
 const exec = require('child_process').exec;
+const structure_component = require('./structure_component');
 
-function installAppModules(data) {
-	return new Promise((resolve, reject) => {
-
-		// Mandatory workspace folder
-		if (!fs.existsSync(__workspacePath))
-			fs.mkdirSync(__workspacePath);
-
-		if (fs.existsSync(__dirname + '/../workspace/node_modules')) {
-			console.log("Everything's ok about global workspaces node modules.");
-
-			if (typeof data !== "undefined") {
-				/* When we are in the "npm install" instruction from preview */
-				let command = "npm install";
-				console.log(data.specificModule)
-				if (data.specificModule)
-					command += " " + data.specificModule;
-
-				console.log("Executing " + command + " in application: " + data.application.name + "...");
-
-				exec(command, {
-					cwd: __dirname + '/../workspace/' + data.application.name + '/'
-				}, err => {
-					if (err)
-						return reject(err);
-					console.log('Application ' + data.application.name + ' node modules successfully installed !');
-					resolve();
-				});
-			} else {
-				resolve();
-			}
-		} else {
-			// We need to reinstall node modules properly
-			console.log("Workspaces node modules initialization...");
-			fs.copySync(path.join(__dirname, 'template', 'package.json'), path.join(__dirname, '..', 'workspace', 'package.json'))
-
-			exec('npm install', {
-				cwd: __dirname + '/../workspace/'
-			}, err => {
-				if (err){
-					console.error(err)
-					return reject(err);
-				}
-				console.log('Workspaces node modules successfuly initialized.');
-				resolve();
-			});
-		}
-	});
-}
-exports.installAppModules = installAppModules;
-
-// Application
 exports.setupApplication = async (data) => {
+
+	if(setup_helper.npm_install_in_progress())
+		throw new Error('build.generate.wait_npm_install');
 
 	const appName = data.options.value;
 	const appDisplayName = data.options.showValue;
-
-	try {
-		await installAppModules();
-	} catch(err) {
-		throw new Error("An error occurred while initializing the node modules.");
-	}
 
 	// *** Copy template folder to new workspace ***
 	fs.copySync(__dirname + '/template/', __dirname + '/../workspace/' + appName);
@@ -85,29 +32,38 @@ exports.setupApplication = async (data) => {
 	// Add appname to application.json
 	const applicationJSON = JSON.parse(fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', 'utf8'));
 	applicationJSON.appname = appName;
-	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, 4), 'utf8');
+	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/application.json', JSON.stringify(applicationJSON, null, '\t'), 'utf8');
 
-	// Create database instance for application
+	// Prepare app db user STRONG password
+	const db_pwd = `NP_${data.dbAppID}_${appName}`;
+
 	let conn, db_requests = [];
-	if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
-
+	// Create database instance for application
+	if(dbConf.dialect == 'mysql') {
 		db_requests = [
 			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'127.0.0.1' IDENTIFIED BY 'np_" + appName + "';",
-			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY 'np_" + appName + "';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'127.0.0.1';",
-			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'%';"
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY '" + db_pwd + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
+			"FLUSH PRIVILEGES;"
 		];
-
-		if(dbConf.dialect == 'mysql') {
-			db_requests.push("ALTER USER 'np_" + appName + "'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
-			db_requests.push("ALTER USER 'np_" + appName + "'@'%' IDENTIFIED WITH mysql_native_password BY 'np_" + appName + "';");
-		}
-
-		db_requests.push("FLUSH PRIVILEGES;");
-
+		conn = await mysql.createConnection({
+			host: dbConf.host,
+			user: dbConf.user,
+			password: dbConf.password,
+			port: dbConf.port
+		});
+	} else if(dbConf.dialect == 'mariadb') {
+		db_requests = [
+			"CREATE DATABASE IF NOT EXISTS `np_" + appName + "` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'" + dbConf.host + "' IDENTIFIED BY '" + db_pwd + "';",
+			"CREATE USER IF NOT EXISTS 'np_" + appName + "'@'%' IDENTIFIED BY '" + db_pwd + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'" + dbConf.host + "';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO 'np_" + appName + "'@'%';",
+			"GRANT ALL PRIVILEGES ON `np_" + appName + "`.* TO '" + dbConf.user + "'@'" + dbConf.host + "';",
+			"FLUSH PRIVILEGES;"
+		];
 		conn = await mysql.createConnection({
 			host: dbConf.host,
 			user: dbConf.user,
@@ -117,7 +73,7 @@ exports.setupApplication = async (data) => {
 	} else if(dbConf.dialect == 'postgres') {
 		db_requests = [
 			"CREATE DATABASE \"np_" + appName + "\" ENCODING 'UTF8';",
-			"CREATE USER \"np_" + appName + "\" WITH PASSWORD 'np_" + appName + "';",
+			"CREATE USER \"np_" + appName + "\" WITH PASSWORD '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO \"np_" + appName + "\";",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO " + dbConf.user + ";"
 		];
@@ -132,11 +88,17 @@ exports.setupApplication = async (data) => {
 	}
 
 	for (let i = 0; i < db_requests.length; i++) {
+		const request = db_requests[i];
 		try {
-			await conn.query(db_requests[i]); // eslint-disable-line
+			await conn.query(request); // eslint-disable-line
 		} catch(err) {
+			if(request.startsWith('GRANT ALL PRIVILEGES')){
+				console.warn('Unable to GRANT PRIVILEGES, may cause issues later. REQUEST:', request);
+				if(err.sqlMessage)
+					console.error(err.sqlMessage);
+			}
 			// Postgres error about db user that already exist, indeed postgres do not handle the 'IF NOT EXISTS' syntax...
-			if(dbConf.dialect != 'postgres' || err.code != '42710'){
+			else if(dbConf.dialect != 'postgres' || err.code != '42710'){
 				console.error(err);
 				throw new Error("An error occurred while initializing the workspace database.");
 			}
@@ -147,8 +109,17 @@ exports.setupApplication = async (data) => {
 
 	// Update workspace database config file to point on the new separate DB
 	let appDatabaseConfig = fs.readFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', 'utf8');
-	appDatabaseConfig = appDatabaseConfig.replace(/nodea/g, 'np_' + appName, 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/node@_pwd/g, db_pwd, 'utf8');
+	appDatabaseConfig = appDatabaseConfig.replace(/node@/g, 'np_' + appName, 'utf8');
 	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/config/database.js', appDatabaseConfig);
+
+	// Update .gitlab-ci.yml with new app DB info
+	let gitlab_ci_yml = fs.readFileSync(__dirname + '/../workspace/' + appName + '/.gitlab-ci.yml', 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__USER__/g, 'np_' + appName, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__PWD__/g, db_pwd, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__DATABASE__/g, 'test_np_' + appName, 'utf8');
+	gitlab_ci_yml = gitlab_ci_yml.replace(/__DIALECT__/g, dbConf.dialect, 'utf8');
+	fs.writeFileSync(__dirname + '/../workspace/' + appName + '/.gitlab-ci.yml', gitlab_ci_yml);
 
 	// Create the application on distant repository ?
 	if (!code_platform.config.enabled)
@@ -192,17 +163,18 @@ exports.setupApplication = async (data) => {
 
 async function finalizeApplication(application) {
 
-	const appPath = __workspacePath + '/' + application.name + '/app';
+	const appPath = global.__workspacePath + '/' + application.name + '/app';
 
 	// Reset toSync file
-	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify({}, null, 4), 'utf8');
+	fs.writeFileSync(appPath + '/models/toSync.json', JSON.stringify({}, null, '\t'), 'utf8');
 
 	// eslint-disable-next-line global-require
 	const moduleAlias = require('module-alias');
-	moduleAlias.addAlias('@config', __workspacePath + '/' + application.name + '/config');
-	moduleAlias.addAlias('@core', __workspacePath + '/' + application.name + '/_core');
-	moduleAlias.addAlias('@app', __workspacePath + '/' + application.name + '/app');
+	moduleAlias.addAlias('@config', global.__workspacePath + '/' + application.name + '/config');
+	moduleAlias.addAlias('@core', global.__workspacePath + '/' + application.name + '/_core');
+	moduleAlias.addAlias('@app', global.__workspacePath + '/' + application.name + '/app');
 
+	delete require.cache[require.resolve(appPath + '/models/')];
 	const workspaceSequelize = require(appPath + '/models/'); // eslint-disable-line
 
 	await workspaceSequelize.sequelize.sync({
@@ -235,7 +207,7 @@ async function initializeWorkflow(application) {
 		"through": "1_role",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
-	}], null, 4), 'utf8');
+	}], null, '\t'), 'utf8');
 
 	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify([{
 		"target": "e_user",
@@ -246,7 +218,7 @@ async function initializeWorkflow(application) {
 		"through": "2_group",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
-	}], null, 4), 'utf8');
+	}], null, '\t'), 'utf8');
 
 	// Clean useless auto_generate key in user option about role and group hasMany/BelongsTo
 	let userOptions = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_user.json'));
@@ -255,7 +227,7 @@ async function initializeWorkflow(application) {
 			return false;
 		return true;
 	});
-	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_user.json', JSON.stringify(userOptions, null, '\t'), 'utf8');
 
 	// Remove existing has many from Status, the instruction is only used to generate the tab and views
 	const statusModel = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_status.json'));
@@ -275,7 +247,7 @@ async function initializeWorkflow(application) {
 		as: 'r_children'
 	});
 
-	fs.writeFileSync(workspacePath + '/app/models/options/e_status.json', JSON.stringify(statusModel, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_status.json', JSON.stringify(statusModel, null, '\t'), 'utf8');
 
 	// Status models pieces
 	fs.copySync(statusPiecesPath + '/models/e_status.js', workspacePath + '/app/models/e_status.js');
@@ -290,8 +262,9 @@ async function initializeWorkflow(application) {
 	// Copy API routes
 	fs.copySync(statusPiecesPath + '/api/', workspacePath + '/app/api/');
 
-	// Remove notification views
+	// Remove notification views & route
 	fs.removeSync(workspacePath + '/app/views/e_notification');
+	fs.unlinkSync(workspacePath + '/app/routes/e_notification.js');
 
 	const mediaModels = [
 		'e_media.js',
@@ -320,6 +293,20 @@ async function initializeWorkflow(application) {
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'connected', 'CONNECTÉ', 'fr-FR');
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'disconnected', 'DÉCONNECTÉ', 'fr-FR');
 	translateHelper.writeEnumTrad(application.name, 'e_robot', 'f_current_status', 'working', 'EN COURS', 'fr-FR');
+
+	// Change default demo code app name by just Demo
+	if(globalConf.demo_mode && application.name.startsWith('a_demo')) {
+		translateHelper.writeTree(application.name, {
+			app: {
+				name: "Demo"
+			}
+		}, 'en-EN');
+		translateHelper.writeTree(application.name, {
+			app: {
+				name: "Demo"
+			}
+		}, 'fr-FR');
+	}
 
 	return await finalizeApplication(application);
 }
@@ -359,7 +346,7 @@ exports.initializeApplication = async(application) => {
 	function uniqueField(entity, field) {
 		const model = JSON.parse(fs.readFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', 'utf8'));
 		model[field].unique = true;
-		fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', JSON.stringify(model, null, 4), 'utf8');
+		fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity + '.json', JSON.stringify(model, null, '\t'), 'utf8');
 	}
 	uniqueField('e_user', 'f_login');
 	uniqueField('e_role', 'f_label');
@@ -367,6 +354,7 @@ exports.initializeApplication = async(application) => {
 
 	// Manualy add custom menus to access file because it's not a real entity
 	const access = JSON.parse(fs.readFileSync(workspacePath + '/config/access.json', 'utf8'));
+	const accessLock = JSON.parse(fs.readFileSync(workspacePath + '/config/access.lock.json', 'utf8'));
 	const arrayKey = [
 		"access_settings",
 		"db_tool",
@@ -388,9 +376,19 @@ exports.initializeApplication = async(application) => {
 				delete: ["admin"]
 			}
 		});
+		accessLock.administration.entities.push({
+			name: key,
+			groups: [],
+			actions: {
+				read: [],
+				create: [],
+				update: [],
+				delete: []
+			}
+		});
 	}
-	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, 4), 'utf8');
-	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.json', JSON.stringify(access, null, '\t'), 'utf8');
+	fs.writeFileSync(workspacePath + '/config/access.lock.json', JSON.stringify(accessLock, null, '\t'), 'utf8');
 
 	// Set role-group/user structureType to hasManyPreset to be used by ajax
 	let opts = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_role.json', 'utf8'));
@@ -399,30 +397,18 @@ exports.initializeApplication = async(application) => {
 		value: 'f_login',
 		type: 'string'
 	}];
-	fs.writeFileSync(workspacePath + '/app/models/options/e_role.json', JSON.stringify(opts, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_role.json', JSON.stringify(opts, null, '\t'), 'utf8');
 	opts = JSON.parse(fs.readFileSync(workspacePath + '/app/models/options/e_group.json', 'utf8'));
 	opts[0].structureType = "hasManyPreset";
 	opts[0].usingField = [{
 		value: 'f_login',
 		type: 'string'
 	}];
-	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify(opts, null, 4), 'utf8');
+	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify(opts, null, '\t'), 'utf8');
 
 	// Set custom administration module layout
 	fs.copySync(piecesPath + '/administration/views/layout_m_administration.dust', workspacePath + '/app/views/layout_m_administration.dust');
 	fs.copySync(piecesPath + '/administration/views/modules/m_administration.dust', workspacePath + '/app/views/modules/m_administration.dust');
-
-	//
-	// SYNCHRONIZATION
-	//
-	// Delete and copy synchronization files/pieces
-	const synchroViews = fs.readdirSync(workspacePath + '/app/views/e_synchronization');
-	for (let i = 0; i < synchroViews.length; i++)
-		fs.remove(workspacePath + '/app/views/e_synchronization/' + synchroViews[i], (err) => {
-			if (err) console.error(err);
-		});
-
-	fs.copySync(piecesPath + '/component/synchronization/routes/e_synchronization.js', workspacePath + '/app/routes/e_synchronization.js');
 
 	//
 	// API
@@ -464,6 +450,17 @@ exports.initializeApplication = async(application) => {
 	// Routes
 	fs.copySync(piecesPath + '/component/automatisation/routes/', workspacePath + '/app/routes/');
 
+	//
+	// TESTS
+	//
+	// Remove tests from mandatory app instructions, should be written manually
+	fs.rmdirSync(workspacePath + '/app/tests/jest/', {recursive: true, force: true});
+
+	//
+	// TRACEABILITY
+	//
+	structure_component.initTracking(application);
+
 	return await initializeWorkflow(application);
 }
 
@@ -502,7 +499,7 @@ exports.deleteApplication = async(data) => {
 	}
 
 	try {
-		let conn;
+		let conn, db_requests = [];
 		if(dbConf.dialect == 'mysql' || dbConf.dialect == 'mariadb') {
 			conn = await mysql.createConnection({
 				host: dbConf.host,
@@ -510,23 +507,41 @@ exports.deleteApplication = async(data) => {
 				password: dbConf.password,
 				port: dbConf.port
 			});
-			await conn.query("DROP DATABASE IF EXISTS `np_" + app_name + "`;");
-			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'127.0.0.1';");
-			await conn.query("DROP USER IF EXISTS 'np_" + app_name + "'@'%';");
+			db_requests = [
+				"DROP DATABASE IF EXISTS `np_" + app_name + "`;",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'127.0.0.1';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'localhost';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'" + dbConf.host + "';",
+				"DROP USER IF EXISTS 'np_" + app_name + "'@'%';",
+				"FLUSH PRIVILEGES;"
+			];
 		} else if(dbConf.dialect == 'postgres') {
 			conn = new Client({
-				host: globalConf.env == 'studio' ? process.env.DATABASE_IP : dbConf.host,
-				user: globalConf.env == 'studio' ? dbConf.user : dbConf.user,
-				password: globalConf.env == 'studio' ? dbConf.password : dbConf.password,
+				host: dbConf.host,
+				user: dbConf.user,
+				password: dbConf.password,
 				database: dbConf.database,
 				port: dbConf.port
 			});
 			conn.connect();
-			await conn.query("REVOKE CONNECT ON DATABASE \"np_" + app_name + "\" FROM public;");
-			await conn.query("SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();");
-			await conn.query("DROP DATABASE \"np_" + app_name + "\";");
-			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";");
-			await conn.query("DROP USER IF EXISTS \"np_" + app_name + "@%\";");
+			db_requests = [
+				"REVOKE CONNECT ON DATABASE \"np_" + app_name + "\" FROM public;",
+				"SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();",
+				"DROP DATABASE \"np_" + app_name + "\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@" + dbConf.host + "\";",
+				"DROP USER IF EXISTS \"np_" + app_name + "@%\";"
+			];
+		}
+
+		for (let i = 0; i < db_requests.length; i++) {
+			const request = db_requests[i];
+			try {
+				await conn.query(request); // eslint-disable-line
+			} catch(err) {
+				console.log('ERROR ON SQL REQUEST: ', request);
+				console.error(err);
+			}
 		}
 		conn.end();
 	} catch (err) {
@@ -546,3 +561,29 @@ exports.deleteApplication = async(data) => {
 
 	return;
 }
+
+// Handle specific node_modules installation in workspace folder
+exports.installAppModules = (data) => new Promise((resolve, reject) => {
+
+	// Mandatory workspace folder
+	if (!fs.existsSync(global.__workspacePath))
+		fs.mkdirSync(global.__workspacePath);
+
+	if (!data || typeof data === "undefined")
+		return resolve();
+
+	/* When we are in the "npm install" instruction from preview */
+	let command = "npm install";
+	if (data.specificModule)
+		command += " " + data.specificModule;
+
+	console.log("EXECUTING " + command + " IN " + data.application.name + "...");
+
+	exec(command, {
+		cwd: __dirname + '/../workspace/' + data.application.name + '/'
+	}, err => {
+		if (err)
+			return reject(err);
+		resolve();
+	});
+});

@@ -173,6 +173,12 @@ a {
 	color: var(--nodea-blue);
 }
 
+label.required:after {
+	color: #e32;
+	content: ' *';
+	display:inline;
+}
+
 /* Backgrounds */
 .bg-primary {
 	background-color: var(--nodea-blue) !important;
@@ -355,4 +361,14 @@ img.powertip-nodea {
 	margin-top: 30px;
 	margin-left: 10px;
 	margin-right: 10px;
+}
+
+#demo_signup_btn {
+	cursor: pointer;
+	font-size: 14px;
+	padding: 7px;
+}
+
+#demo_signup_btn:hover {
+	background-color: #49bf64;
 }

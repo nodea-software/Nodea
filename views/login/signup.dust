@@ -12,8 +12,9 @@
 	<div id="error-box"></div>
 
 	<form action="/signup" method="post">
+		<label for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
+			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required style='text-transform: lowercase;'>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-user"></span>
@@ -25,8 +26,9 @@
 
 			<input type="text" class="form-control" placeholder='{#__ key="login.firstname"/}' name="firstname" required>
 		</div>
+		<label for="email">{#__ key="login.mail"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.mail"/}' name="email" value="{email}" data-type='email' required>
+			<input type="text" class="form-control" placeholder='{#__ key="login.mail"/}' id="email" name="email" value="{email}" data-type='email' required>
 			<div class="input-group-append">
 				<div class="input-group-text login-help" data-title='{#__ key="login.first_connection.help.email_title"/}' data-content='{#__ key="login.first_connection.help.email_content"/}'>
 					<span class="fas fa-envelope"></span>

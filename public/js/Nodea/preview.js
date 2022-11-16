@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(function() {
 
 	function getTranslation(key, params) {
 		return new Promise(resolve => {
@@ -248,6 +248,8 @@ $(document).ready(function() {
 		}
 	});
 
+	// Nb instructions that will popup modal demo
+	const demo_popup_instruction_nb = [3, 9, 15, 20];
 	$(document).on("submit", "form#previewForm", async(e) => {
 		e.preventDefault();
 
@@ -283,7 +285,7 @@ $(document).ready(function() {
 			localStorage.setItem("nodea_given_instruction_history_" + appName, JSON.stringify(instructionHistory));
 		}
 
-		$("#execute_instruction").html("Loading...");
+		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText + "...");
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
 
@@ -296,6 +298,11 @@ $(document).ready(function() {
 				instruction: $(this).find('input[name="instruction"]').val()
 			},
 			success: function(data) {
+
+				if(nodea_demo_mode && data.nb_instruction && demo_popup_instruction_nb.includes(data.nb_instruction)){
+					$("#demo_instructions_modal").find('#nb_instructions_count_modal').html(data.nb_instruction);
+					$("#demo_instructions_modal").modal();
+				}
 
 				$("#errorIframe").hide();
 				$('iframe#iframe').show();
@@ -339,7 +346,7 @@ $(document).ready(function() {
 
 					$("#instruction").val("");
 					$("#instruction").blur().focus();
-					$("#execute_instruction").html("Executer");
+					$("#execute_instruction").html("<i class='fas fa-rocket'></i>&nbsp;&nbsp;" + executeButtonText);
 					$("#execute_instruction").prop("disabled", false);
 
 					var bottomCoord = $('#chat-box')[0].scrollHeight;
@@ -402,12 +409,12 @@ $(document).ready(function() {
 
 	$(document).on("click", "#restart-server", function(e) {
 		$("#instruction").val("restart server");
-		$("form#previewForm").submit();
+		$("form#previewForm").trigger('submit');
 	});
 
 	$(document).on("click", "#save-server", function(e) {
 		$("#instruction").val("save");
-		$("form#previewForm").submit();
+		$("form#previewForm").trigger('submit');
 	});
 
 	/////////
@@ -418,7 +425,8 @@ $(document).ready(function() {
 		delay: 200,
 		source: function(request, response) {
 			$.getJSON('/default/completion', {
-				"str": request.term
+				app_name: appName,
+				str: request.term
 			}, response);
 		},
 		search: function() {
@@ -437,7 +445,9 @@ $(document).ready(function() {
 				var completeVal = ui.item.value;
 				// If complete value have already typed string in it, dont concat with current value
 				if (completeVal.indexOf(this.value) == 0) {
-					this.value = completeVal.split("[variable]").join("").split('[type]').join("").trim();
+					this.value = completeVal;
+					for(const value of ['variable', 'type', 'widget', 'entity', 'module'])
+						this.value = this.value.split(`[${value}]`).join("").trim();
 				} else {
 					// Remove the last word of already typed instruction because it is also in the completed value
 					var parts = this.value.split(' ');
@@ -447,12 +457,14 @@ $(document).ready(function() {
 						compareNum = 0;
 						l = Math.min(completeVal.length, parts[parts.length - 1].length);
 						for (i = 0; i < l; i++) {
-							if (completeVal.charAt(i) == parts[parts.length - 1].charAt(i)) compareNum++;
+							if (completeVal.charAt(i).toLowerCase() == parts[parts.length - 1].charAt(i).toLowerCase()) compareNum++;
 						}
-						if (compareNum <= completeVal.length && completeVal.substring(0, compareNum) == parts[parts.length - 1])
+						if (compareNum <= completeVal.length && completeVal.substring(0, compareNum).toLowerCase() == parts[parts.length - 1].toLowerCase())
 							parts.pop();
 					}
-					this.value = parts.join(' ') + ' ' + completeVal.split("[variable]").join("").split('[type]').join("").trim();
+					this.value = parts.join(' ') + ' ' + completeVal;
+					for(const value of ['variable', 'type', 'widget', 'entity', 'module'])
+						this.value = this.value.split(`[${value}]`).join("").trim();
 				}
 
 				var TABKEY = 9;

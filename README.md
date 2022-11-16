@@ -4,16 +4,17 @@
 
 # NODEA
 
-NODEA is a computer aided software that enable to generate NodeJS applications by giving instructions to a bot.<br>
-Official website: https://nodea-software.com
+**Nodea** is a computer aided software that enable to generate **Node.js** applications by giving **instructions** to a bot.<br><br>
+Official website: https://nodea-software.com<br>
 Official documentation: https://docs.nodea-software.com
 
 ## Classic Installation
 
 ### Prerequisites
 
-NodeJS lts/fermium (v14)<br>
-MySQL (5.7 or higher) / MariaDB (v10 or higher) or PostgreSQL server installed and running.
+Node.js LTS / Fermium (v14 or later)<br>
+Default: MariaDB (v10.3 or higher)
+Optional: MySQL (8 or higher) / PostgreSQL
 
 ### Instructions
 
@@ -34,9 +35,17 @@ If it does not work then follow these steps:
 
 Use .sql file that are in sql/ directory to generate the database, there are 3 files for each available dialect (MariaDB, MySQL, Postgres)
 
-Note that MariaDB is the default dialect, if you want to change please update the dialect key in config/database and structure/template/config/database.js
+Note that MariaDB is the default dialect, if you want to change please update the dialect key in <b>config/database</b> and <b>structure/template/config/database.js</b>
 
-Execute <b>npm install</b>
+If you want to access your generator by <b>localhost:1337</b> instead of <b>127.0.0.1:1337</b> please update the host key in <b>config/global.js</b>
+
+Note that if you access the generator with localhost and let the <b>host</b> key to <b>127.0.0.1</b> you'll have cookie mismatch and you will often be <b>logged out</b> of generated applications inside the generator
+
+Install node modules
+<pre>
+npm install --no-optional
+</pre>
+<i>You can remove the --no-optional if you also want to install Cypress.</i>
 
 ### Launch server
 
@@ -74,17 +83,16 @@ services:
   nodea:
     container_name: nodea_app
     image: nodeasoftware/nodea:latest
-    links:
-      - "database:database"
     ports:
       - "1337:1337"
       - "9001-9025:9001-9025" # 25 applications max, you can increase to 9100 for 100 applications if necessary
     networks:
       - nodea_network
     volumes:
-      - app:/app
+      - workspace:/nodea/workspace
     environment:
       NODEA_ENV: "develop"
+      HOSTNAME: "127.0.0.1"
       SERVER_IP: "127.0.0.1"
       DATABASE_IP: "database"
       DATABASE_USER: "nodea"
@@ -108,7 +116,7 @@ networks:
 
 volumes:
   db_data:
-  app:
+  workspace:
 </pre>
 
 Execute Docker compose command:

@@ -1,13 +1,10 @@
 const sequelize = require('@app/models').sequelize;
-const globalConf = require('@config/global');
 const moment = require('moment');
 const fs = require('fs-extra');
 
 // After Sequelize sync (see Sequelize doc) we have to handle manually ALTER in database depeding on instructions done on the generator.
 // This method use toSync.json and toSyncProd.json
 module.exports.customAfterSync = async () => {
-	if (globalConf.env == "tablet")
-		return;
 
 	const toSyncProdObject = JSON.parse(fs.readFileSync(__appPath + '/models/toSyncProd.json'));
 
@@ -184,6 +181,6 @@ module.exports.customAfterSync = async () => {
 			}
 		}
 
-	fs.writeFileSync(__appPath + '/models/toSyncProd.json', JSON.stringify(toSyncProdObject, null, 4));
+	fs.writeFileSync(__appPath + '/models/toSyncProd.json', JSON.stringify(toSyncProdObject, null, '\t'));
 	fs.writeFileSync(__appPath + '/models/toSync.json', '{}', 'utf8');
 };

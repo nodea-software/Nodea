@@ -19,7 +19,7 @@ const fs = require('fs-extra');
 const models = require('../models/');
 const sequelize = models.sequelize;
 const cloud_manager = require('../services/cloud_manager');
-const session = require("./session");
+const preview_session = require("../helpers/preview_session");
 
 // Metadata
 const metadata = require('../database/metadata')();
@@ -47,7 +47,7 @@ exports.recursiveInstructionExecute = async (recursiveData, instructions, idx) =
 
 	// Execute the designer function
 	const info = await this[data.function](data);
-	session.setSessionObj(data, info);
+	preview_session.setSessionObj(data, info);
 
 	idx += 1;
 	if (instructions.length == idx)
@@ -159,6 +159,7 @@ exports.createNewApplication = async (data) => {
 	if (existingApp) {
 		const err = new Error("database.application.alreadyExist");
 		err.messageParams = [data.options.showValue];
+		err.doNotDeleteApp = true;
 		throw err;
 	}
 
@@ -171,6 +172,8 @@ exports.createNewApplication = async (data) => {
 		name: data.options.value,
 		displayName: data.options.showValue
 	});
+
+	data.dbAppID = dbApp.id;
 
 	// Metadata
 	const newApp = new Application(data.options.value, data.options.showValue);
@@ -349,6 +352,7 @@ exports.deleteModule = async (data) => {
 exports.selectEntity = async (data) => {
 
 	const {np_module, entity} = data.application.findEntity(data.options.value, true, data.options.showValue);
+	data.entity = entity;
 	data.module = np_module;
 	data.doRedirect = await structure_entity.selectEntity(data);
 
@@ -401,7 +405,7 @@ exports.listEntity = async (data) => { // eslint-disable-line
 
 async function deleteEntity(data) {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 	const foundEntity = data.application.findEntity(data.options.value, true);
 
 	data.np_module = foundEntity.np_module;
@@ -468,7 +472,7 @@ async function deleteEntity(data) {
 		}
 
 		options = options.filter((val, idx) => idxToRemove.indexOf(idx) == -1);
-		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, 4), 'utf8')
+		fs.writeFileSync(appPath + '/models/options/' + file, JSON.stringify(options, null, '\t'), 'utf8')
 
 		// Loop on entity options
 		for (let i = 0; i < options.length; i++) {
@@ -632,7 +636,7 @@ exports.setFieldKnownAttribute = async (data) => {
 
 	// Standard field not found, looking for related to field
 	if (!data.field || data.field.type == 'relatedTo') {
-		const optionsArray = JSON.parse(fs.readFileSync(__workspacePath + '/' + data.application.name + '/app/models/options/' + data.entity_name + '.json'));
+		const optionsArray = JSON.parse(fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.entity_name + '.json'));
 		for (let i = 0; i < optionsArray.length; i++) {
 			if (optionsArray[i].showAs == data.options.showValue) {
 				if (optionsArray[i].structureType == "relatedTo") {
@@ -794,7 +798,7 @@ exports.createNewHasOne = async (data) => {
 	}
 
 	// Check already existing relation from source to target
-	const sourceOptionsPath = __workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.source + '.json';
+	const sourceOptionsPath = global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.source + '.json';
 	const optionsSourceObject = JSON.parse(fs.readFileSync(sourceOptionsPath));
 	let saveFile = false;
 
@@ -820,10 +824,10 @@ exports.createNewHasOne = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	// Check already existing relation from target to source
-	const optionsFile = fs.readFileSync(__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.target + '.json');
+	const optionsFile = fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/app/models/options/' + data.options.target + '.json');
 	const targetOptionsObject = JSON.parse(optionsFile);
 
 	for (let i = 0; i < targetOptionsObject.length; i++) {
@@ -874,6 +878,9 @@ exports.createNewHasOne = async (data) => {
 	structure_entity.setupAssociation(associationOption);
 	// Create the opposite hasMany association
 	structure_entity.setupAssociation(reversedOption);
+
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
 
 	// Generator tabulation in display
 	await structure_entity.setupHasOneTab(data);
@@ -1006,7 +1013,7 @@ async function belongsToMany(data, optionObj, setupFunction, exportsContext) {
 // Create a tab with an add button to create multiple new object associated to source entity
 exports.createNewHasMany = async (data) => {
 	const exportsContext = this;
-	const appPath = __workspacePath + '/' + data.application.name + '/app/';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app/';
 
 	const sourceEntity = data.application.findEntity(data.options.source, true);
 	data.np_module = sourceEntity.np_module;
@@ -1040,7 +1047,7 @@ exports.createNewHasMany = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	const answer = {};
 	let toSync = true;
@@ -1151,6 +1158,9 @@ exports.createNewHasMany = async (data) => {
 	// Generate opposite belongsTo relation in options
 	structure_entity.setupAssociation(reversedOptions);
 
+	// Check if tracking enabled on entity source
+	structure_component.doEnableTracking(associationOption);
+
 	// Ajouter le field d'assocation dans create_fields/update_fields. Ajout d'un tab dans le show
 	await structure_entity.setupHasManyTab(data);
 	return {
@@ -1163,7 +1173,7 @@ exports.createNewHasMany = async (data) => {
 exports.createNewHasManyPreset = async (data) => {
 
 	const exportsContext = this;
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	const sourceEntity = data.application.findEntity(data.options.source, true);
 	data.np_module = sourceEntity.np_module;
@@ -1231,7 +1241,7 @@ exports.createNewHasManyPreset = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8")
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8")
 
 	const targetOptions = JSON.parse(fs.readFileSync(appPath + '/models/options/' + data.options.target + '.json'));
 	let cptExistingHasMany = 0;
@@ -1303,7 +1313,7 @@ exports.createNewHasManyPreset = async (data) => {
 // Create a field in create/show/update related to target entity
 exports.createNewFieldRelatedTo = async (data) => {
 
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Get source entity
 	data.source_entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
@@ -1365,7 +1375,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 
 	// Changes to be saved, remove auto_generate key
 	if(saveFile)
-		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, 4), "utf8");
+		fs.writeFileSync(sourceOptionsPath, JSON.stringify(optionsSourceObject, null, '\t'), "utf8");
 
 	// Check if an association already exists from target to source
 	const optionsObject = JSON.parse(fs.readFileSync(appPath + '/models/options/' + data.options.target + '.json'));
@@ -1428,7 +1438,7 @@ exports.createNewFieldRelatedTo = async (data) => {
 exports.createNewFieldRelatedToMultiple = async (data) => {
 
 	const alias = data.options.as;
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Get source entity
 	data.source_entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
@@ -1579,7 +1589,6 @@ exports.createNewComponentStatus = async (data) => {
 		"add field " + data.options.showValue + " related to Status using name",
 		"add field Comment with type text",
 		"add field Modified by related to user using login",
-		"entity status has many " + data.history_table_db_name,
 		"select entity " + data.entity.name.substring(2),
 		"add field " + data.options.showValue + " related to Status using name"
 	];
@@ -1601,7 +1610,7 @@ exports.createNewComponentStatus = async (data) => {
 
 const workspacesModels = {};
 async function deleteComponentStatus(data) {
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	/* If there is no defined name for the module, set the default */
 	if (typeof data.options.value === 'undefined') {
@@ -1632,9 +1641,9 @@ async function deleteComponentStatus(data) {
 		delete require.cache[require.resolve(modelsPath)];
 		// eslint-disable-next-line global-require
 		const moduleAlias = require('module-alias');
-		moduleAlias.addAlias('@config', __workspacePath + '/' + data.application.name + '/config');
-		moduleAlias.addAlias('@core', __workspacePath + '/' + data.application.name + '/_core');
-		moduleAlias.addAlias('@app', __workspacePath + '/' + data.application.name + '/app');
+		moduleAlias.addAlias('@config', global.__workspacePath + '/' + data.application.name + '/config');
+		moduleAlias.addAlias('@core', global.__workspacePath + '/' + data.application.name + '/_core');
+		moduleAlias.addAlias('@app', global.__workspacePath + '/' + data.application.name + '/app');
 		workspacesModels[data.application.name] = require(modelsPath); // eslint-disable-line
 	}
 	const historyTableName = workspacesModels[data.application.name]['E_' + historyInfo.target.substring(2)].getTableName();
@@ -1795,47 +1804,49 @@ exports.createComponentChat = async (data) => { // eslint-disable-line
 	// }
 }
 
-// Create new component address
-exports.createNewComponentAddress = async (data) => {
+exports.addComponentAddress = async (data) => {
 
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
-	if(data.options.componentName) {
-		// TODO - 2.10
-		// data.options.as = 'r_address_' + data.options.value;
-		// data.options.urlValue = 'address_' + data.entity_name + '_' + data.options.value;
-		// data.options.value = 'e_address_' + data.entity_name + '_' + data.options.value;
+	data.is_default_name = data.options.value == 'e_address';
 
-		data.options.as = 'r_address';
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = data.options.componentName;
-		data.options.urlValue = 'address_' + data.entity_name;
-	} else {
-		data.options.value = 'e_address_' + data.entity_name;
-		data.options.showValue = 'Address ' + data.entity.displayName;
-		data.options.urlValue = 'address_' + data.entity_name;
-		data.options.as = 'r_address';
-	}
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ? 'Address ' + data.entity.displayName : data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = 'r_' + data.options.urlValue;
 
 	if(data.entity.getComponent(data.options.value, 'address'))
 		throw new Error("structure.component.error.alreadyExistOnEntity");
 
-	const associationOption = {
-		application: data.application,
-		source: data.entity.name,
-		target: data.options.value,
-		foreignKey: 'fk_id_address',
-		as: data.options.as,
-		type: "relatedTo",
-		relation: "belongsTo",
-		targetType: "component",
-		toSync: true
-	};
+	const instructions = [
+		`entity ${data.entity.displayName} has one ${instruction_value}`,
+		`select entity ${instruction_value}`,
+		"add field Label",
+		"add field Number",
+		"add field Street 1",
+		"add field Street 2",
+		"add field Postal Code",
+		"add field City",
+		"add field Country",
+		"add field Lat",
+		"add field Lon"
+	];
 
-	structure_entity.setupAssociation(associationOption);
+	// Start doing necessary instruction for component creation
+	await this.recursiveInstructionExecute(data, instructions, 0);
 
-	await structure_component.addNewComponentAddress(data);
-	data.entity.addComponent(data.options.value, 'Address', 'address');
+	structure_component.newAddress(data);
+	data.entity.addComponent(data.options.value, instruction_value, 'address');
 
 	return {
 		message: 'database.component.create.success',
@@ -1843,13 +1854,27 @@ exports.createNewComponentAddress = async (data) => {
 	};
 }
 
-exports.deleteComponentAddress = async (data) => {
-
+exports.removeComponentAddress = async (data) => {
 	data.entity = data.application.getModule(data.module_name, true).getEntity(data.entity_name, true);
 
-	data.options.value = 'e_address_' + data.entity_name;
-	data.options.showValue = 'Address ' + data.entity.displayName;
-	data.options.urlValue = 'address_' + data.entity_name;
+	data.is_default_name = data.options.value == 'e_address';
+
+	// If specific name was given by instruction
+	const instruction_value = data.is_default_name ?
+		'Address ' + data.entity.displayName :
+		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+
+	// Regenerate data.options with the 'new' instruction value
+	const {options} = dataHelper.reworkData({
+		options: {
+			value: instruction_value,
+			processValue: true
+		},
+		function: data.function
+	});
+
+	data.options = options;
+	data.options.as = data.is_default_name ? 'r_address' : 'r_' + data.options.urlValue;
 
 	if(!data.entity.getComponent(data.options.value, 'address')){
 		const err = new Error("database.component.notFound.notFoundOnEntity");
@@ -1857,11 +1882,28 @@ exports.deleteComponentAddress = async (data) => {
 		throw err;
 	}
 
-	await structure_component.deleteComponentAddress(data);
-	data.fieldToDrop = 'fk_id_address';
-	database.dropFKField(data);
+	const instructions = [
+		`delete entity ${instruction_value}`
+	];
 
-	data.entity.deleteComponent(data.options.value, 'address');
+	try {
+		// Start doing necessary instruction for component creation
+		await this.recursiveInstructionExecute(data, instructions, 0);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		structure_component.removeAddress(data);
+	} catch(err) {
+		console.error(err);
+	}
+
+	try {
+		data.entity.deleteComponent(data.options.value, 'address');
+	} catch(err) {
+		console.error(err);
+	}
 
 	return {
 		message: 'database.component.delete.success'
@@ -1911,6 +1953,101 @@ exports.deleteComponentDocumentTemplate = async (data) => {
 		message: 'database.component.delete.success',
 		messageParams: ["Document template"]
 	};
+};
+
+exports.enabledTracking = (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	structure_component.createNewTracking(data);
+
+	return {
+		message: 'database.component.create.success',
+		messageParams: [data.options.source]
+	};
+};
+
+exports.disabledTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	await structure_component.disabledTracking(data);
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
+	}
+
+	return {
+		message: 'database.component.delete.success',
+		messageParams: [data.options.source]
+	};
+
+};
+
+exports.showTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	// Check if already display
+	if(data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyShow',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.showTracking(data);
+	data.entity_source.entity.addComponent(data.options.source, data.options.source, 'tracking');
+
+	return {
+		message: 'database.component.display.show',
+		messageParams: [data.options.source, data.options.showValue]
+	};
+
+};
+
+exports.hideTracking = async (data) => {
+	data.entity_source = data.application.findEntity(data.options.value);
+
+	if(!data.entity_source || !data.entity_source.entity){
+		throw {
+			message: 'database.entity.notFound.withThisName',
+			messageParams: [data.options.showValue]
+		}
+	}
+
+	if(!data.entity_source.entity.getComponent(data.options.source, 'tracking')){
+		throw {
+			message: 'database.component.display.alreadyHide',
+			messageParams: [data.options.source, data.options.showValue]
+		}
+	}
+
+	await structure_component.hideTracking(data);
+	data.entity_source.entity.deleteComponent(data.options.source, 'tracking');
+
+	return {
+		message: 'database.component.display.hide',
+		messageParams: [data.options.source, data.options.showValue]
+	};
+
 };
 
 /* --------------------------------------------------------------- */

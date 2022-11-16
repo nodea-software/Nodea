@@ -3,309 +3,19 @@ const router = express.Router();
 const crypto = require('crypto');
 const extend = require('util')._extend;
 
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const models = require('../models/');
 const code_platform = require('../services/code_platform');
 const mailer = require('../utils/mailer');
-const metadata = require('../database/metadata')();
 const language = require('../services/language');
 
-router.get('/', block_access.isLoggedIn, function(req, res) {
+
+router.get('/', middlewares.isLoggedIn, function(req, res) {
 	res.render('front/configure/main');
 });
 
-/* Users */
-router.get('/users', block_access.isAdmin, (req, res) => {
-	const data = {};
-	models.User.findAll({
-		// where: {
-		// 	id: {
-		// 		[models.$ne]: 1
-		// 	}
-		// },
-		include: [{all: true}]
-	}).then(users => {
-		data.users = users;
-		res.render('front/configure/users/list', data);
-	})
-})
-
-router.get('/users/show/:id', block_access.isAdmin, (req, res) => {
-	const user_id = req.params.id;
-	models.User.findOne({
-		where: {
-			id: user_id
-		},
-		include: [{all: true}]
-	}).then(user => {
-		const idAppUser = [];
-		for (let i = 0; i < user.Applications.length; i++)
-			idAppUser.push(user.Applications[i].id)
-		models.Application.findAll({
-			where: {
-				id: {
-					[models.$notIn]: idAppUser
-				}
-			}
-		}).then(applications => {
-			res.render('front/configure/users/show', {user: user, otherApp: applications})
-		})
-	})
-})
-
-router.get('/users/create', block_access.isAdmin, (req, res) => {
-	models.Role.findAll().then(roles => {
-		res.render('front/configure/users/create', {roles: roles})
-	})
-})
-
-router.post('/users/create', block_access.isAdmin, (req, res) => {
-	(async() => {
-		if (req.body.login == '' || req.body.id_role == '' || req.body.email == '')
-			throw new Error('action.missing_values');
-
-		const alreadyExistLogin = await models.User.findOne({
-			where: {
-				login: req.body.login.toLowerCase()
-			}
-		});
-
-		if(alreadyExistLogin)
-			throw new Error('configure.users.user_already_exist');
-
-		const alreadyExistEmail = await models.User.findOne({
-			where: {
-				email: req.body.email
-			}
-		});
-
-		if(alreadyExistEmail)
-			throw new Error('configure.users.email_already_exist');
-
-		const user = await models.User.create({
-			email: req.body.email,
-			enabled: 0,
-			firstname: req.body.firstname,
-			lastname: req.body.lastname,
-			login: req.body.login.toLowerCase(),
-			id_role: req.body.role,
-			password: null,
-			phone: null,
-			version: 1
-		});
-
-		if(req.body.send_mail_to_user == 'on')
-			mailer.sendTemplate('signup', {
-				to: req.body.email,
-				subject: "Nodea - Inscription",
-				data: {
-					user: user,
-					first_connection_url: mailer.config.host + '/first_connection?login=' + user.login + '&email=' + user.email
-				}
-			});
-
-		return user;
-	})().then(user => {
-		req.session.toastr = [{
-			message: "action.success.create",
-			level: "success"
-		}];
-		res.redirect("/configure/users/show/" + user.id)
-	}).catch(err => {
-		console.error(err);
-		req.session.toastr = [{
-			message: err.message || 'Sorry, an error occured',
-			level: "error"
-		}];
-		res.redirect("/configure/users/create");
-	})
-})
-
-router.get('/users/update/:id', block_access.isAdmin, (req, res) => {
-
-	if(req.params.id == 1){
-		req.session.toastr = [{
-			message: "You can't modify the main administrator account",
-			level: "error"
-		}];
-		return res.redirect("/configure/users");
-	}
-
-	models.User.findOne({
-		where: {
-			id: req.params.id
-		},
-		include: [{all: true}]
-	}).then(user => {
-		models.Role.findAll().then(roles => {
-			res.render('front/configure/users/update', {user: user, roles: roles})
-		})
-	})
-})
-
-router.post('/users/update', block_access.isAdmin, (req, res) => {
-	if(req.body.id == 1){
-		req.session.toastr = [{
-			message: "You can't modify the main administrator account",
-			level: "error"
-		}];
-		return res.redirect("/configure/users");
-	}
-
-	models.User.update({
-		firstname: req.body.firstname,
-		lastname: req.body.lastname,
-		id_role: req.body.role,
-		phone: req.body.phone
-	}, {
-		where: {
-			id: req.body.id
-		}
-	}).then(_ => {
-		req.session.toastr = [{
-			message: "action.success.update",
-			level: "success"
-		}];
-		res.redirect("/configure/users/update/" + req.body.id);
-	}).catch(err => {
-		console.error(err);
-		req.session.toastr = [{
-			message: err.message,
-			level: "error"
-		}];
-		res.redirect("/configure/users/update/" + req.body.id);
-	});
-})
-
-router.post('/users/delete', block_access.isAdmin, (req, res) => {
-	if(req.body.id == 1){
-		req.session.toastr = [{
-			message: 'users.not_delete_admin',
-			level: "error"
-		}];
-		return res.redirect("/configure/users")
-	}
-	models.User.destroy({
-		where: {
-			id: req.body.id
-		}
-	}).then(_ => {
-		req.session.toastr = [{
-			message: 'action.success.destroy',
-			level: "success"
-		}];
-		res.redirect("/configure/users")
-	})
-})
-
-router.post('/users/assign', block_access.isAdmin, (req, res) => {
-	(async () => {
-		let appID = req.body.app;
-		const userID = req.body.id_user;
-		const user = await models.User.findByPk(userID);
-
-		if (!user)
-			throw new Error("Nodea user not found in database.");
-
-		if(!user.enabled)
-			throw new Error("This Nodea user is not activated yet.");
-
-		// Add user to code plateform project too
-		if(code_platform.config.enabled){
-			if(!Array.isArray(appID))
-				appID = [appID];
-
-			const code_platform_user = await code_platform.getUser(user);
-
-			if(!code_platform_user)
-				throw new Error('Cannot find code platform user with email: ' + user.email);
-
-			for (let i = 0; i < appID.length; i++) {
-				const application = await models.Application.findByPk(appID[i]); // eslint-disable-line
-				const metadataApp = metadata.getApplication(application.name)
-				await code_platform.addUserToProject(code_platform_user, { // eslint-disable-line
-					id: metadataApp.repoID
-				});
-			}
-		}
-
-		await user.addApplication(appID);
-
-		return userID;
-	})().then(userID => {
-		req.session.toastr = [{
-			message: "L'application a bien été ajoutée !",
-			level: 'success'
-		}];
-		res.redirect('/configure/users/show/' + userID + "#_applications");
-	}).catch(err => {
-		console.error(err);
-		req.session.toastr = [{
-			message: err.message,
-			level: 'error'
-		}];
-		return res.redirect('/configure/users');
-	})
-})
-
-router.post('/users/remove_access', block_access.isAdmin, (req, res) => {
-
-	(async () => {
-		const appID = req.body.id_app;
-		const userID = req.body.id_user;
-		const user = await models.User.findByPk(userID);
-		if (!user)
-			throw new Error("Nodea user not found in database.");
-
-		if(!user.enabled)
-			throw new Error("This Nodea user is not activated yet.");
-
-		const applications = await user.getApplications();
-
-		// Remove entity from association array
-		for (let i = 0; i < applications.length; i++)
-			if (applications[i].id == appID) {
-				applications.splice(i, 1);
-				break;
-			}
-
-		// Remove code platform access
-		if(code_platform.config.enabled) {
-			const application = await models.Application.findByPk(appID);
-			const code_platform_user = await code_platform.getUser(user);
-			if(!code_platform_user)
-				throw new Error('Cannot find code platform user with email: ' + user.email);
-			const metadataApp = metadata.getApplication(application.name);
-			try {
-				await code_platform.removeUserFromProject(code_platform_user, {
-					id: metadataApp.repoID
-				});
-			} catch(err) {
-				console.error('Error removing access on gitlab project to user ' + user.login);
-			}
-		}
-
-		await user.setApplications(applications);
-
-		return user.id;
-	})().then(userID => {
-		req.session.toastr = [{
-			message: "L'accès à application a bien été retiré !",
-			level: 'success'
-		}];
-		res.redirect('/configure/users/show/' + userID + "#_applications");
-	}).catch(err => {
-		console.error(err);
-		req.session.toastr = [{
-			message: err.message || "Sorry, an error occured",
-			level: 'error'
-		}];
-		res.redirect('/configure/users/show/' + req.body.id_user + "#_applications");
-	})
-})
-
 /* Account */
-router.get('/account', block_access.isLoggedIn, (req, res) => {
+router.get('/account', middlewares.isLoggedIn, (req, res) => {
 	models.User.findOne({
 		where: {
 			id: req.session.passport.user.id
@@ -330,7 +40,7 @@ router.get('/account', block_access.isLoggedIn, (req, res) => {
 	});
 });
 
-router.post('/account/update', block_access.isLoggedIn, (req, res) => {
+router.post('/account/update', middlewares.isLoggedIn, (req, res) => {
 	models.User.update({
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
@@ -348,7 +58,7 @@ router.post('/account/update', block_access.isLoggedIn, (req, res) => {
 })
 
 /* Settings */
-router.get('/settings/', block_access.isLoggedIn, function(req, res) {
+router.get('/settings/', middlewares.isLoggedIn, function(req, res) {
 	const data = {};
 	// Récupération des toastr en session
 	data.toastr = req.session.toastr;
@@ -363,7 +73,7 @@ router.get('/settings/', block_access.isLoggedIn, function(req, res) {
 });
 
 // Fonction de changement du language
-router.post('/settings/change_language', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/change_language', middlewares.isLoggedIn, function(req, res) {
 	if (typeof req.body !== 'undefined' && typeof req.body.lang !== 'undefined') {
 		req.session.lang_user = req.body.lang;
 		res.locals = extend(res.locals, language(req.body.lang));
@@ -376,27 +86,15 @@ router.post('/settings/change_language', block_access.isLoggedIn, function(req, 
 		});
 });
 
-router.post('/settings/change_theme', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/change_theme', middlewares.isLoggedIn, function(req, res) {
 	req.session.dark_theme = req.body.choice;
 	res.json({
 		success: true
 	});
 });
 
-router.post('/settings/activate_translation', block_access.isLoggedIn, function(req, res) {
-	if (typeof req.body !== 'undefined' && typeof req.body.activate !== 'undefined') {
-		req.session.toTranslate = req.body.activate;
-		res.json({
-			success: true
-		});
-	} else
-		res.json({
-			success: false
-		});
-});
-
 // Reset password - Generate token, insert into DB, send email
-router.post('/settings/reset_password', block_access.isLoggedIn, function(req, res) {
+router.post('/settings/reset_password', middlewares.isLoggedIn, function(req, res) {
 
 	(async () => {
 		// Check if user with login + email exist in DB
@@ -430,8 +128,8 @@ router.post('/settings/reset_password', block_access.isLoggedIn, function(req, r
 		});
 	})().then(_ => {
 		req.session.toastr = [{
-			message: req.query.other == 1 ? "login.emailResetSentOther" : "emailResetSent",
-			level: "success"
+			message: req.query.other == 1 ? 'login.emailResetSentOther' : 'login.emailResetSent',
+			level: 'success'
 		}];
 
 		res.status(200).send(true);

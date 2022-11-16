@@ -1,4 +1,15 @@
 <div id="fields" class="row">
+    <div data-field="f_order" class="col-12">
+        <div class="form-group">
+            <label for="f_order">
+                {#__ key="entity.e_page.f_order"/}&nbsp;
+                {@inline_help field="f_order"}
+                <i data-field="f_order" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+                {/inline_help}
+            </label>
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_order" /}' name="f_order" value="{f_order}" type="number" max="2147483648" readonly="">
+        </div>
+    </div>
     <div data-field="f_titre" class="col-12">
         <div class="form-group">
             <label for="f_titre">
@@ -10,18 +21,7 @@
             <input class="form-control input" placeholder='{#__ key="entity.e_page.f_titre" /}' name="f_titre" value="{f_titre}" type="text" maxlength="255" readonly="">
         </div>
     </div>
-    <div data-field="f_script" class="col-12">
-        <div class="form-group">
-            <label for="f_script">
-                {#__ key="entity.e_page.f_script"/}&nbsp;
-                {@inline_help field="f_script"}
-                <i data-field="f_script" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            <textarea readonly="readonly" class="show-textarea regular-textarea">{f_script|s}</textarea>
-        </div>
-    </div>
-    <div data-field="f_delay" class="col-12">
+    <div data-field="f_delay" class="col-6">
         <div class="form-group">
             <label for="f_delay">
                 {#__ key="entity.e_page.f_delay"/}&nbsp;
@@ -32,73 +32,15 @@
             <input class="form-control input" placeholder='{#__ key="entity.e_page.f_delay" /}' name="f_delay" value="{f_delay}" type="number" max="2147483648" readonly="">
         </div>
     </div>
-
-    <div data-field="f_startwith_url" class="col-12">
+    <div data-field="f_timeout" class="col-6">
         <div class="form-group">
-            <label for="f_startwith_url">
-                {#__ key="entity.e_page.f_startwith_url"/}&nbsp;
-                {@inline_help field="f_startwith_url"}
-                <i data-field="f_startwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+            <label for="f_timeout">
+                {#__ key="entity.e_page.f_timeout"/}&nbsp;
+                {@inline_help field="f_timeout"}
+                <i data-field="f_timeout" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <br><a href="{f_startwith_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_startwith_url}</a>
-            {?f_startwith_url}
-            <div class="copy-button">
-                <i class="fa fa-copy"></i>
-            </div>
-            {/f_startwith_url}
-        </div>
-    </div>
-    <div data-field="f_startwith_method" class="col-12">
-        <div class="form-group">
-            <label for="f_startwith_method">
-                {#__ key="entity.e_page.f_startwith_method"/}&nbsp;
-                {@inline_help field="f_startwith_method"}
-                <i data-field="f_startwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            {^f_startwith_method}
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_startwith_method" /}' name="f_startwith_method" type="text" readonly="">
-            {/f_startwith_method}
-            {#enum_radio.e_page.f_startwith_method}
-            {@eq key=f_startwith_method value="{.value}" }
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_startwith_method" /}' name="f_startwith_method" value="{.translation}" type="text" readonly="">
-            {/eq}
-            {/enum_radio.e_page.f_startwith_method}
-        </div>
-    </div>
-    <div data-field="f_endwith_url" class="col-12">
-        <div class="form-group">
-            <label for="f_endwith_url">
-                {#__ key="entity.e_page.f_endwith_url"/}&nbsp;
-                {@inline_help field="f_endwith_url"}
-                <i data-field="f_endwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            <br><a href="{f_endwith_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_endwith_url}</a>
-            {?f_endwith_url}
-            <div class="copy-button">
-                <i class="fa fa-copy"></i>
-            </div>
-            {/f_endwith_url}
-        </div>
-    </div>
-    <div data-field="f_endwith_method" class="col-12">
-        <div class="form-group">
-            <label for="f_endwith_method">
-                {#__ key="entity.e_page.f_endwith_method"/}&nbsp;
-                {@inline_help field="f_endwith_method"}
-                <i data-field="f_endwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            {^f_endwith_method}
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_endwith_method" /}' name="f_endwith_method" type="text" readonly="">
-            {/f_endwith_method}
-            {#enum_radio.e_page.f_endwith_method}
-            {@eq key=f_endwith_method value="{.value}" }
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_endwith_method" /}' name="f_endwith_method" value="{.translation}" type="text" readonly="">
-            {/eq}
-            {/enum_radio.e_page.f_endwith_method}
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_timeout" /}' name="f_timeout" value="{f_timeout}" type="number" max="2147483648" readonly="">
         </div>
     </div>
     <div data-field="f_execute_on_error" class="col-12">
@@ -111,22 +53,141 @@
             </label>
             &nbsp;
             <br>
-            {@ifTrue key=f_execute_on_error} <input class="form-control input" name="f_execute_on_error" value="{f_execute_on_error}" type="checkbox" checked="" disabled="">
-            {:else} <input class="form-control input" name="f_execute_on_error" value="{f_execute_on_error}" type="checkbox" disabled="">
+            {@ifTrue key=f_execute_on_error}
+				<input class="form-control input" name="f_execute_on_error" value="{f_execute_on_error}" type="checkbox" checked="" disabled="">
+            {:else}
+				<input class="form-control input" name="f_execute_on_error" value="{f_execute_on_error}" type="checkbox" disabled="">
             {/ifTrue}
         </div>
     </div>
-    <div data-field="f_timeout" class="col-12">
-        <div class="form-group">
-            <label for="f_timeout">
-                {#__ key="entity.e_page.f_timeout"/}&nbsp;
-                {@inline_help field="f_timeout"}
-                <i data-field="f_timeout" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_timeout" /}' name="f_timeout" value="{f_timeout}" type="number" max="2147483648" readonly="">
-        </div>
-    </div>
+    <div class="col-4">
+        <div class="card card-default">
+            <div class="card-header with-border">
+                <label>
+                    {#__ key="entity.e_page.startWith" /}
+                </label>
+            </div>
+            <div class="card-body">
+				<div data-field="f_startwith_url" class="col-12">
+					<div class="form-group">
+						<label for="f_startwith_url">
+							{#__ key="entity.e_page.f_startwith_url"/}&nbsp;
+							{@inline_help field="f_startwith_url"}
+							<i data-field="f_startwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						<br><a href="{f_startwith_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_startwith_url}</a>
+						{?f_startwith_url}
+						<div class="copy-button">
+							<i class="fa fa-copy"></i>
+						</div>
+						{/f_startwith_url}
+					</div>
+				</div>
+				<div data-field="f_startwith_method" class="col-12">
+					<div class="form-group">
+						<label for="f_startwith_method">
+							{#__ key="entity.e_page.f_startwith_method"/}&nbsp;
+							{@inline_help field="f_startwith_method"}
+							<i data-field="f_startwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						{^f_startwith_method}
+						<input class="form-control input" placeholder='{#__ key="entity.e_page.f_startwith_method" /}' name="f_startwith_method" type="text" readonly="">
+						{/f_startwith_method}
+						{#enum_radio.e_page.f_startwith_method}
+						{@eq key=f_startwith_method value="{.value}" }
+						<input class="form-control input" placeholder='{#__ key="entity.e_page.f_startwith_method" /}' name="f_startwith_method" value="{.translation}" type="text" readonly="">
+						{/eq}
+						{/enum_radio.e_page.f_startwith_method}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header with-border">
+                <label>
+                    {#__ key="entity.e_page.endWith" /}
+                </label>
+            </div>
+            <div class="card-body">
+				<div data-field="f_endwith_url" class="col-12">
+					<div class="form-group">
+						<label for="f_endwith_url">
+							{#__ key="entity.e_page.f_endwith_url"/}&nbsp;
+							{@inline_help field="f_endwith_url"}
+							<i data-field="f_endwith_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						<br><a href="{f_endwith_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_endwith_url}</a>
+						{?f_endwith_url}
+						<div class="copy-button">
+							<i class="fa fa-copy"></i>
+						</div>
+						{/f_endwith_url}
+					</div>
+				</div>
+				<div data-field="f_endwith_method" class="col-12">
+					<div class="form-group">
+						<label for="f_endwith_method">
+							{#__ key="entity.e_page.f_endwith_method"/}&nbsp;
+							{@inline_help field="f_endwith_method"}
+							<i data-field="f_endwith_method" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						{^f_endwith_method}
+						<input class="form-control input" placeholder='{#__ key="entity.e_page.f_endwith_method" /}' name="f_endwith_method" type="text" readonly="">
+						{/f_endwith_method}
+						{#enum_radio.e_page.f_endwith_method}
+						{@eq key=f_endwith_method value="{.value}" }
+						<input class="form-control input" placeholder='{#__ key="entity.e_page.f_endwith_method" /}' name="f_endwith_method" value="{.translation}" type="text" readonly="">
+						{/eq}
+						{/enum_radio.e_page.f_endwith_method}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header with-border">
+                <label>
+                    {#__ key="entity.e_page.download" /}
+                </label>
+            </div>
+            <div class="card-body">
+				<div data-field="f_download_url" class="col-12">
+					<div class="form-group">
+						<label for="f_download_url">
+							{#__ key="entity.e_page.f_download_url"/}&nbsp;
+							{@inline_help field="f_download_url"}
+							<i data-field="f_download_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						<br><a href="{f_download_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_download_url}</a>
+						{?f_download_url}
+						<div class="copy-button">
+							<i class="fa fa-copy"></i>
+						</div>
+						{/f_download_url}
+					</div>
+				</div>
+				<div data-field="f_download_filename" class="col-12">
+					<div class="form-group">
+						<label for="f_download_filename">
+							{#__ key="entity.e_page.f_download_filename"/}&nbsp;
+							{@inline_help field="f_download_filename"}
+							<i data-field="f_download_filename" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+							{/inline_help}
+						</label>
+						<input class="form-control input" placeholder='{#__ key="entity.e_page.f_download_filename" /}' name="f_download_filename" value="{f_download_filename}" type="text" maxlength="255" readonly="">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
     <div data-field="f_type" class="col-12">
         <div class="form-group">
             <label for="f_type">
@@ -145,42 +206,15 @@
             {/enum_radio.e_page.f_type}
         </div>
     </div>
-    <div data-field="f_order" class="col-12">
+    <div data-field="f_script" class="col-12">
         <div class="form-group">
-            <label for="f_order">
-                {#__ key="entity.e_page.f_order"/}&nbsp;
-                {@inline_help field="f_order"}
-                <i data-field="f_order" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+            <label for="f_script">
+                {#__ key="entity.e_page.f_script"/}&nbsp;
+                {@inline_help field="f_script"}
+                <i data-field="f_script" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_order" /}' name="f_order" value="{f_order}" type="number" max="2147483648" readonly="">
-        </div>
-    </div>
-    <div data-field="f_download_url" class="col-12">
-        <div class="form-group">
-            <label for="f_download_url">
-                {#__ key="entity.e_page.f_download_url"/}&nbsp;
-                {@inline_help field="f_download_url"}
-                <i data-field="f_download_url" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            <br><a href="{f_download_url}" target="_blank" type="url" data-type="url" style="display: table-cell;padding-right: 5px;">{f_download_url}</a>
-            {?f_download_url}
-            <div class="copy-button">
-                <i class="fa fa-copy"></i>
-            </div>
-            {/f_download_url}
-        </div>
-    </div>
-    <div data-field="f_download_filename" class="col-12">
-        <div class="form-group">
-            <label for="f_download_filename">
-                {#__ key="entity.e_page.f_download_filename"/}&nbsp;
-                {@inline_help field="f_download_filename"}
-                <i data-field="f_download_filename" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
-                {/inline_help}
-            </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_download_filename" /}' name="f_download_filename" value="{f_download_filename}" type="text" maxlength="255" readonly="">
+            <textarea readonly="readonly" class="show-textarea regular-textarea">{f_script|s}</textarea>
         </div>
     </div>
 </div>

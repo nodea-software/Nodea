@@ -1,5 +1,23 @@
-let maskMoneyPrecision = 2;
 let ctpQrCode = 0;
+let jQueryUILoad = false;
+let openLayerLoad = false;
+const loadedScript = [];
+let NodeaSizeFileLimit = 10000000; // Default size => 10Mb
+
+function loadScript(scriptUrl) {
+	return new Promise((res, rej) => {
+		if(loadedScript.includes(scriptUrl)){
+			console.warn('Script already loaded:', scriptUrl);
+			return;
+		}
+		$.getScript(scriptUrl).done(function (script, textStatus) {
+			loadedScript.push(scriptUrl);
+			res();
+		}).fail(function (jqxhr, settings, exception) {
+			rej(exception);
+		});
+	});
+}
 
 function firstElementFocus(tab, idx) {
     if(!idx)
@@ -10,99 +28,13 @@ function firstElementFocus(tab, idx) {
         firstElementFocus(idx+1);
 }
 
-const addressMapsInstance = [];
-function initMap(mapElement, options) {
-	// Dynamically load OpenLayer script to avoid unnecessarily loading it on pages without addresses or without maps enabled
-	if (!this.isOpenLayerLoaded) {
-		$.getScript('/js/plugins/ol/ol.js', _ => {
-			this.isOpenLayerLoaded = true;
-			initMap(mapElement, options)
-		});
-		return;
-	}
-	let {
-		lat,
-		lon,
-		zoomBar = true,
-		mousePosition = true,
-		navigation = true
-	} = options;
-
-	if (!lat || !lon)
-		return console.error("Missing latitude or longitude to init map");
-
-    mapElement.empty();
-    const mapControls = [];
-    lon = parseFloat(lon);
-    lat = parseFloat(lat);
-
-    const markerSource = new ol.source.Vector();
-    var markerStyle = new ol.style.Style({
-        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-            anchor: [0.5, 46],
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            opacity: 0.75,
-            src: '/img/address_map_marker.png'
-        }))
-    });
-    var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-            'EPSG:3857')),
-        name: '',
-        population: 4000,
-        rainfall: 500
-    });
-
-    markerSource.addFeature(iconFeature);
-    if (zoomBar === true) {
-        var zoomSlider = new ol.control.ZoomSlider();
-        mapControls.push(zoomSlider)
-    }
-    if (mousePosition === true) {
-        var mousePositionControl = new ol.control.MousePosition({
-            coordinateFormat: ol.coordinate.createStringXY(4),
-            projection: 'EPSG:4326',
-            // comment the following two lines to have the mouse position
-            // be placed within the map.
-            className: 'custom-mouse-position',
-            // target: document.getElementById('mouse-position'),
-            undefinedHTML: '&nbsp;'
-        });
-        mapControls.push(mousePositionControl);
-    }
-    const control = ol.control.defaults();
-    const mapConfig = {
-        controls: control.extend(mapControls),
-        target: mapElement.attr('id'),
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            }),
-            new ol.layer.Vector({
-                source: markerSource,
-                style: markerStyle,
-            })
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([lon, lat]),
-            zoom: 17
-        })
-    };
-    if (navigation === false) {
-        mapConfig.interactions = [];
-        mapConfig.controls = [];
-    }
-    var map = new ol.Map(mapConfig);
-    addressMapsInstance.push(map);
-    return map;
-}
-
 function ajax_select(select, placeholder) {
     if (!placeholder)
         placeholder = SELECT_DEFAULT_TEXT;
 
     var searchField = select.data('using') && select.data('using').split(',') || 'id';
+	if(Array.isArray(searchField))
+		searchField = searchField.map(x => x.trim());
 
     // Use custom url on select or build default url
     var url = select.data('href') ? select.data('href') : select.data('url') ? select.data('url') : '/' + select.data('source') + '/search';
@@ -173,7 +105,152 @@ function ajax_select(select, placeholder) {
         });
 }
 
-var NodeaForms = (_ => {
+const addressMapsInstance = [];
+function initMap(mapElement, options) {
+
+	let {
+		lat,
+		lon,
+		zoomBar = true,
+		mousePosition = true,
+		navigation = true
+	} = options;
+
+	if (!lat || !lon)
+		return console.warn("Missing latitude or longitude to init map");
+
+	mapElement.empty();
+	const mapControls = [];
+	lon = parseFloat(lon);
+	lat = parseFloat(lat);
+
+	const markerSource = new ol.source.Vector();
+
+	const markerStyle = new ol.style.Style({
+		image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+			anchor: [0.5, 46],
+			anchorXUnits: 'fraction',
+			anchorYUnits: 'pixels',
+			opacity: 0.75,
+			src: '/img/address_map_marker.png'
+		}))
+	});
+
+	const iconFeature = new ol.Feature({
+	    geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
+	    name: '',
+	    population: 4000,
+	    rainfall: 500
+	});
+
+	markerSource.addFeature(iconFeature);
+
+	if (zoomBar === true) {
+		var zoomSlider = new ol.control.ZoomSlider();
+		mapControls.push(zoomSlider)
+	}
+
+	if (mousePosition === true) {
+		var mousePositionControl = new ol.control.MousePosition({
+			coordinateFormat: ol.coordinate.createStringXY(4),
+			projection: 'EPSG:4326',
+			// comment the following two lines to have the mouse position
+			// be placed within the map.
+			className: 'custom-mouse-position',
+			undefinedHTML: '&nbsp;'
+		});
+		mapControls.push(mousePositionControl);
+	}
+
+	const control = ol.control.defaults();
+
+	const mapConfig = {
+		controls: control.extend(mapControls),
+		target: mapElement[0],
+		layers: [
+			new ol.layer.Tile({
+				source: new ol.source.OSM()
+			}),
+			new ol.layer.Vector({
+				source: markerSource,
+				style: markerStyle,
+			})
+		],
+		view: new ol.View({
+			center: ol.proj.fromLonLat([lon, lat]),
+			zoom: 17
+		})
+	};
+
+	if (navigation === false) {
+		mapConfig.interactions = [];
+		mapConfig.controls = [];
+	}
+
+	const map = new ol.Map(mapConfig);
+	addressMapsInstance.push(map);
+	return map;
+}
+
+function initAddressSearchInput(input) {
+	input.autocomplete({
+		minLength: 1,
+		source: function (req, res) {
+			$.ajax({
+				url: 'https://api-adresse.data.gouv.fr/search/',
+				type: 'GET',
+				data: {
+					limit: 10,
+					q: input.val()
+				},
+				dataType: 'json',
+				success: data => res(data.features.map(x => {
+					x.properties.coordinates = x.geometry.coordinates;
+					return {
+						label: x.properties.label,
+						value: x.properties
+					}
+				}))
+			});
+		},
+		select: function (e, ui) {
+			const address = ui.item.value;
+			input.val('');
+			const parent = input.parents('.address_component');
+			const as = parent.data('as');
+			$(parent).find(`input[name="${as}.f_label"]`).val(address.label);
+			$(parent).find(`input[name="${as}.f_number"]`).val(address.housenumber);
+			$(parent).find(`input[name="${as}.f_street_1"]`).val(address.street);
+			$(parent).find(`input[name="${as}.f_postal_code"]`).val(address.postcode);
+			$(parent).find(`input[name="${as}.f_city"]`).val(address.city);
+			$(parent).find(`input[name="${as}.f_country"]`).val('FRANCE');
+			$(parent).find(`input[name="${as}.f_lon"]`).val(address.coordinates[0]);
+			$(parent).find(`input[name="${as}.f_lat"]`).val(address.coordinates[1]);
+			return false;
+		}
+	});
+}
+
+function rebuildAddressLabel(element) {
+	const address_as = $(element).data('as');
+	const f_number = $(element).find(`input[name="${address_as}.f_number"]`).val();
+	const f_street_1 = $(element).find(`input[name="${address_as}.f_street_1"]`).val();
+	const f_street_2 = $(element).find(`input[name="${address_as}.f_street_2"]`).val();
+	const f_postal_code = $(element).find(`input[name="${address_as}.f_postal_code"]`).val();
+	const f_city = $(element).find(`input[name="${address_as}.f_city"]`).val();
+
+	let f_label = `${f_number} ${f_street_1} ${f_street_2} ${f_postal_code} ${f_city}`;
+	f_label = f_label.replace(/  +/g, ' ');
+	$(element).find(`input[name="${address_as}.f_label"]`).val(f_label)
+}
+
+function humanReadableFileSize(size) {
+	const baseSize = 1000 // Or 1024
+    let i = Math.floor( Math.log(size) / Math.log(baseSize) );
+    return (size / Math.pow(baseSize, i)).toFixed(2) * 1 + ['o', 'Ko', 'Mo', 'Go', 'To'][i];
+};
+
+let NodeaForms = (_ => {
 	const defaults = {
 		handleSubmit,
 		handleSuccess,
@@ -192,8 +269,8 @@ var NodeaForms = (_ => {
 					if (val !== null && val.length)
 						return;
 					return [_ => {
-						const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
-						form.append(input);
+						// const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
+						// form.append(input);
 					}];
 				}
 			},
@@ -328,11 +405,39 @@ var NodeaForms = (_ => {
 			decimal: {
 				selector: "input[data-custom-type='decimal']",
 				initializer: (element) => {
-					const decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					let decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					if(element.data('precision')) {
+						let precision = element.data('precision').split(',')[0];
+						const round = element.data('precision').split(',')[1] ? element.data('precision').split(',')[1] : 0;
+						precision = parseInt(precision) - parseInt(round);
+						// Precision is total number of digit (including after comma)
+						// Round is number of digit after the comma
+						// So the precision before the comma is precision - round
+						decimalRegx = new RegExp("^-?[0-9]{1,"+precision+"}([\.\,][0-9]{0,"+round+"})?$");
+					}
 					element.on('keyup', function() {
 						while ($(this).val() != "" && $(this).val() != "-" && !decimalRegx.test($(this).val()))
 							$(this).val($(this).val().substring(0, $(this).val().length - 1));
 						$(this).val($(this).val().replace(',', '.'));
+					});
+				}
+			},
+			currency: {
+				selector: "input[data-type='currency']",
+				initializer: (element) => {
+					let decimalRegx = new RegExp("^-?[0-9]+([\.\,][0-9]*)?$");
+					if(element.data('precision')) {
+						let precision = element.data('precision').split(',')[0];
+						const round = element.data('precision').split(',')[1] ? element.data('precision').split(',')[1] : 0;
+						precision = parseInt(precision) - parseInt(round);
+						// Precision is total number of digit (including after comma)
+						// Round is number of digit after the comma
+						// So the precision before the comma is precision - round
+						decimalRegx = new RegExp("^-?[0-9]{1,"+precision+"}([\.\,][0-9]{0,"+round+"})?$");
+					}
+					element.on('keyup', function() {
+						while ($(this).val() != "" && $(this).val() != "-" && !decimalRegx.test($(this).val()))
+							$(this).val($(this).val().substring(0, $(this).val().length - 1));
 					});
 				}
 			},
@@ -345,7 +450,9 @@ var NodeaForms = (_ => {
 				},
 				validator: (element, form) => {
 					if (element.val().length > 0 && !element.inputmask("isComplete")) {
-						element.css("border", "1px solid red").parent().after("<span style='color: red;'>Le champ est incomplet.</span>");
+						if(!element.parent().parent().find('.field-mail-error').length){
+							element.css("border", "1px solid red").parent().after("<span class='field-mail-error' style='color: red;'>Le champ est incomplet.</span>");
+						}
 						return false;
 					} else
 						element.css("border", "1px solid black").parent().find('span').remove();
@@ -411,6 +518,11 @@ var NodeaForms = (_ => {
 				selector: ".timepicker",
 				initializer: (element) => {
 					element.datetimepicker({
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						},
 						format: 'HH:mm'
 					});
 				}
@@ -418,10 +530,12 @@ var NodeaForms = (_ => {
 			datepicker: {
 				selector: '.datepicker',
 				initializer: (element) => {
-					let pickerOpts, mask;
+					let pickerOpts = {};
+					let mask;
 					if (lang_user == 'fr-FR') {
 						pickerOpts = {
-							format: "DD/MM/YYYY"
+							format: "DD/MM/YYYY",
+							useCurrent: false // Disable filling date on opening picker
 						};
 						mask = {
 							inputFormat: "dd/mm/yyyy",
@@ -430,7 +544,8 @@ var NodeaForms = (_ => {
 						};
 					} else {
 						pickerOpts = {
-							format: "YYYY-MM-DD"
+							format: "YYYY-MM-DD",
+							useCurrent: false
 						};
 						mask = {
 							inputFormat: "yyyy-mm-dd",
@@ -440,7 +555,14 @@ var NodeaForms = (_ => {
 					}
 
 					// Init
-					element.datetimepicker(pickerOpts);
+					element.datetimepicker({
+						...pickerOpts,
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						}
+					});
 					element.inputmask(mask);
 
 					// Default date
@@ -468,31 +590,30 @@ var NodeaForms = (_ => {
 			datetimepicker: {
 				selector: '.datetimepicker',
 				initializer: (element) => {
-					let pickerOpts, mask;
+					let pickerOpts = {};
+					let mask;
 					if (lang_user == 'fr-FR') {
 						pickerOpts = {
 							format: "DD/MM/YYYY HH:mm",
 							sideBySide: true
-						};
-						mask = {
-							inputFormat: "dd/mm/yyyy h2:mm",
-							alias: 'datetime',
-							placeholder: "jj/mm/aaaa hh:mm",
 						};
 					} else {
 						pickerOpts = {
 							format: "YYYY-MM-DD HH:mm",
 							sideBySide: true
 						};
-						mask = {
-							inputFormat: "yyyy-mm-dd h2:mm",
-							alias: 'datetime',
-							placeholder: "yyyy-mm-dd hh:mm",
-						};
 					}
+
 					// Init
-					element.datetimepicker(pickerOpts);
-					element.inputmask(mask);
+					element.datetimepicker({
+						...pickerOpts,
+						toolbarPlacement: 'bottom',
+						showClear: true,
+						icons: {
+							clear: 'fas fa-trash'
+						}
+					});
+
 					// Default date
 					if (element.attr("data-today") == 1)
 						element.datetimepicker("defaultDate", moment());
@@ -621,34 +742,6 @@ var NodeaForms = (_ => {
 					}
 				}
 			},
-			currency: {
-				selector: "input[data-type='currency']",
-				initializer: (element) => {
-					var val = element.val();
-					//Fix display maskMoney bug with number and with zero
-					if (val || val != '') {
-						var partsOfVal = val.split('.');
-						if (partsOfVal[1] && (partsOfVal[1].length < maskMoneyPrecision)) {
-							for (var i = partsOfVal[1].length; i < maskMoneyPrecision; i++)
-								val += '0';
-						}
-					}
-					element.val(val);
-					element.maskMoney({
-						thousands: ' ',
-						decimal: '.',
-						allowZero: true,
-						suffix: '',
-						precision: maskMoneyPrecision
-					}).maskMoney('mask');
-				},
-				validator: (element, form) => {
-					//replace number of zero by maskMoneyPrecision value, default 2
-					return [_ => {
-						element.val(element.val().replace(/ /g, '').replace(',00', ''));
-					}]
-				}
-			},
 			url: {
 				selector: "input[type='url']",
 				initializer: (element) => {
@@ -729,8 +822,8 @@ var NodeaForms = (_ => {
 						}
 						// Size of file
 						const file = files[0];
-						if (file.size > 5000000) { // 5mb
-							toastr.error("File too big. 10MB maximum");
+						if (file.size > NodeaSizeFileLimit) {
+							toastr.error(`File too big. ${humanReadableFileSize(NodeaSizeFileLimit)} maximum`);
 							input[0].value = null;
 							return;
 						}
@@ -743,12 +836,7 @@ var NodeaForms = (_ => {
 							}
 
 						// Selected file display
-						const size = file.size < 1000 ?
-							file.size + 'o' :
-							file.size < 1000000 ?
-							Math.floor(file.size / 1000) + 'ko' :
-							Math.floor(file.size / 1000000) + 'mo';
-						const fileIcon = `<div class="dropzonefile">${file.name} - ${size}&nbsp<i class="remove-file fa fa-times" style='color: red;'></i></div>`;
+						const fileIcon = `<div class="dropzonefile">${file.name} - ${humanReadableFileSize(file.size)}&nbsp<i class="remove-file fa fa-times" style='color: red;'></i></div>`;
 						dropzone.html(fileIcon)
 					});
 				},
@@ -758,104 +846,37 @@ var NodeaForms = (_ => {
 						return false
 				}
 			},
-			address: {
+			address_form: {
 				selector: ".address_component",
 				initializer: (element) => {
-				    const addressConf = {
-				        url: "https://api-adresse.data.gouv.fr/search/",
-				        query_parm: 'q',
-				        type: 'get', // HTTP request type
-				        addresses: 'features', // objet which contain list of address, if equal '.' whe take response as list,
-				        address_fields: 'properties', // objet name which contain attributes or '.' ,
-				        autocomplete_field: 'label', // field of properties, we use this field to select proposition. We can use ',' as separator to display in autocomplete more than one field value,
-				        enable: true // If  enable, do query and get data, else data should be to set manually by user
-				    };
-				    const fieldsToShow = addressConf.autocomplete_field.split(',');
-				    let searchResult;
 
-				    // Uppercase address field inputs
-				    element.find(".address_field").keyup(function() {
-				    	$(this).val($(this).val().toUpperCase());
-				    });
-				    element.find(".clear-address-search").click(function() {
-				    	console.log($(".address_component input[name!=address_id]"));
-				    	element.find("input[name!=address_id]").val("");
-				    	return false;
-				    });
+					// Init search input autocompletion
+					if(!jQueryUILoad) {
+						$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
+						jQueryUILoad = loadScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js').catch(err => {
+							console.error(err);
+						})
+					}
+					jQueryUILoad.then(_ => initAddressSearchInput(element.find('.address_search_input')));
 
-				    function initSearchInput(searchInput) {
-				    	searchInput.autocomplete({
-				    		minLength: 1,
-				    		source: function (req, res) {
-				                const val = searchInput.val();
-				                const data = {limit: 10, [addressConf.query_parm]: val};
-				                $.ajax({
-				                    url: addressConf.url,
-				                    type: addressConf.type,
-				                    data: data,
-				                    dataType: 'json',
-				                    success: function (data) {
-				                        searchResult = addressConf.addresses !== '.' ? data[addressConf.addresses] : data;
-				                        res($.map(searchResult, function (_address) {
-				                            const objet = addressConf.address_fields !== '.' ? _address[addressConf.address_fields] : _address;
-				                            const toReturn = fieldsToShow.map(field => objet[field]).join(' ');
-				                            return toReturn;
-				                        }));
-				                    }
-				                });
-				            },
-				            select: function (e, ui) {
-				                searchResult.forEach(function (_) {
-				                    const _address = addressConf.address_fields !== '.' ? _[addressConf.address_fields] : _;
-				                    const toReturn = fieldsToShow.map(field => _address[field]).join(' ');
-				                    if (ui.item.value == toReturn) {
-				                        for (var key in _address) {
-				                            if (key != 'label' && _address[key] != '') //to prevent default value replacement
-				                                element.find('input[field=' + key + ']').val((_address[key] + '').toUpperCase());
-				                        }
-				                        /** Set Lat and Long value **/
-				                        element.find('input[name=f_address_lat]').val(_.geometry.coordinates[1]);
-				                        element.find('input[name=f_address_lon]').val(_.geometry.coordinates[0]);
-				                        if ((!_address.street || typeof _address.street === "undefined") && _address.name)
-				                            element.find("#f_address_street").val(_address.name);
-				                    }
-				                });
-				            }
-				    	});
-				    }
-				    // Autocomplete address search input
-				    element.find(".address_search_input").each(function() {
-				    	const searchInput = $(this);
-				    	if (!searchInput.autocomplete) {
-							$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/AdminLTE/plugins/jquery-ui/jquery-ui.min.css') );
-				    		$.getScript('/AdminLTE/plugins/jquery-ui/jquery-ui.min.js', function() {
-				    			initSearchInput(searchInput);
-				    		});
-				    		return;
-				    	}
-				    	initSearchInput(searchInput);
-				    });
-				    // Address info modal
-				    element.find(".info_address_map").click(function(e) {
-				    	e.preventDefault();
-				    	$.ajax({
-				    		url: '/address_settings/info_address_maps_ajax',
-				    		success: data => doModal("Information", data.message),
-	            			error: console.error
-				    	});
-				    	return false;
-				    });
+					element.find('input').each(function() {
+						$(this).on('keyup', function() {
+							rebuildAddressLabel(element);
+						})
+					});
 
-				    // Map initialization
-				    if (element.find('.f_address_enableMaps').length && element.find('.f_address_enableMaps:eq(0)').val() === "true") {
-				    	initMap(element.find('.address_map'), {
-				    		lat: element.find('.f_address_lat').val(),
-				    		lon: element.find('.f_address_lon').val(),
-				    		navigation: element.find('.f_address_navigation').val() === "true",
-				    		zoomBar: element.find('.f_address_zoomBar').val() === "true",
-				    		mousePosition: element.find('.f_address_mousePosition').val() === "true"
-				    	});
-				    }
+					// Map initialization
+					if(element.find('.address_component_map').length != 0) {
+						if(!openLayerLoad) {
+							openLayerLoad = loadScript('/js/plugins/ol/ol.js').catch(err => {
+								console.error(err);
+							})
+						}
+						openLayerLoad.then(_ => initMap(element.find('.address_component_map'), {
+							lat: element.find('input[name="f_lat"]').val(),
+							lon: element.find('input[name="f_lon"]').val()
+						}));
+					}
 				}
 			},
 			status: {

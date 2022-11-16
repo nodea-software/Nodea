@@ -1,14 +1,14 @@
 <table id="table_e_page" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn">
     <thead class="main">
         <tr class="fields">
-            <th data-type="ordering">
+            <!-- <th data-type="ordering">
                 <i class="fa fa-arrow-down"></i>&nbsp;<i class="fa fa-arrow-up"></i>
-            </th>
+            </th> -->
             <th data-field="f_order" data-col="f_order" data-type="integer" data-default-order="ASC">
                 {#__ key="entity.e_page.f_order"/}
             </th>
-            <th data-field="f_titre" data-col="f_titre" data-type="string">
-                {#__ key="entity.e_page.f_titre"/}
+            <th data-field="f_title" data-col="f_title" data-type="string">
+                {#__ key="entity.e_page.f_title"/}
             </th>
             <th data-field="f_type" data-col="f_type" data-type="enum">
                 {#__ key="entity.e_page.f_type"/}
@@ -50,13 +50,13 @@
     </thead>
     <thead class="filters">
         <tr class="fields">
-            <th data-type="ordering">
-            </th>
+            <!-- <th data-type="ordering">
+            </th> -->
             <th data-field="f_order" data-col="f_order" data-type="integer">
                 {#__ key="entity.e_page.f_order"/}
             </th>
-            <th data-field="f_titre" data-col="f_titre" data-type="string">
-                {#__ key="entity.e_page.f_titre"/}
+            <th data-field="f_title" data-col="f_title" data-type="string">
+                {#__ key="entity.e_page.f_title"/}
             </th>
             <th data-field="f_type" data-col="f_type" data-type="enum">
                 {#__ key="entity.e_page.f_type"/}

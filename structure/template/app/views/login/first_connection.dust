@@ -16,6 +16,7 @@
 
 	<form id="first_connection" action="/first_connection" method="post">
 		<input type="hidden" name="token" value="{token}">
+		<label for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" value="{login}" required>
 			<div class="input-group-append">
@@ -24,6 +25,7 @@
 				</div>
 			</div>
 		</div>
+		<label for="password">{#__ key="login.password"/}</label>
 		<div class="input-group mb-3">
 			<input type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
 			<div class="input-group-append">
@@ -32,6 +34,7 @@
 				</div>
 			</div>
 		</div>
+		<label for="confirm_password">{#__ key="login.confirm_password"/}</label>
 		<div class="input-group mb-3">
 			<input type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" required>
 			<div class="input-group-append">
@@ -53,7 +56,7 @@
 {<custom_js}
 	<script type="text/javascript">
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotValid"/}';
-		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
 		var globalConfEnv = '{config.env}';
 
 		$(document).ready(function(){
@@ -106,9 +109,7 @@
 				}
 
 				if (globalConfEnv != 'develop' && !isValidPassword($("#password").val(), $("#confirm_password").val())) {
-					if($('.body.bg-red').length != 0)
-						$('.body.bg-red').remove();
-					$('.body.bg-white').after("<div class='body bg-red text-center'><i class='fa fa-exclamation-circle'></i>&nbsp;&nbsp;" + notMatchPasswordText + "</div>");
+					$('#error-box').addClass('bg-danger').html("<i class='fa fa-exclamation-circle'></i><br>" + notMatchPasswordText).show();
 					return false;
 				}
 

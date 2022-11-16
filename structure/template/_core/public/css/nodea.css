@@ -14,9 +14,11 @@
 	border-radius: 3px;
 	cursor: pointer;
 }
+
 .nodea-dropzone.dragover {
 	background-color: rgba(0, 0, 0, .3);
 }
+
 .dropzonefile {
 	padding: 10px 20px 10px 20px;
 	height: 50px;
@@ -39,7 +41,6 @@
 }
 
 .dataTables_filter {
-	display: inline-block;
 	float: right;
 }
 
@@ -49,6 +50,19 @@ input[type=color]:hover,
 .insert:hover,
 table.dataTable > tbody > tr:hover {
 	cursor: pointer;
+}
+
+#columnSelector {
+	max-height:400px;
+	width: 350px;
+	overflow:auto;
+	position:absolute;
+	background: white;
+	border: 1px solid grey;
+	border-radius:10px;
+	padding:20px;
+	z-index:999999;
+	top:40px;
 }
 
 label.no-weight {
@@ -143,4 +157,37 @@ label.required:after {
 
 .custom-control.custom-switch .custom-control-label{
 	cursor: pointer;
+}
+
+.inline-help {
+	color: #1085EE;
+	margin-left: 5px;
+}
+
+.address_component {
+	padding: 15px;
+	border: 1px solid lightgray;
+	border-radius: 10px;
+	margin-bottom: 15px;
+}
+
+.address_component_map {
+	height: 300px;
+}
+
+.badge {
+	color: #FFF;
+	padding: .2em .45em !important;
+	font-size: 90% !important;
+}
+
+.badge-version {
+	color: #000;
+}
+
+.form-title {
+	border: 1px solid var(--theme-primary);
+	background-color: #f9fafc;
+	border-radius: 8px;
+	padding-top: 6px;
 }

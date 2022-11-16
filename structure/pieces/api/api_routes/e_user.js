@@ -1,6 +1,6 @@
 const attributes = require('@app/models/attributes/e_user');
 const options = require('@app/models/options/e_user');
-
+const middlewares = require('@core/helpers/middlewares');
 const ApiEntity = require('@core/abstract_routes/api_entity');
 
 // TODO: Change publicAttributes to privateAttributes
@@ -61,12 +61,24 @@ class ApiE_user extends ApiEntity {
 
 	get middlewares() {
 		return {
-			find:[],
-			findOne:[],
-			findAssociation:[],
-			create:[],
-			update:[],
-			destroy:[]
+			find:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			findOne:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			findAssociation:[
+				middlewares.apiActionAccess(this.entity, "read")
+			],
+			create:[
+				middlewares.apiActionAccess(this.entity, "create")
+			],
+			update:[
+				middlewares.apiActionAccess(this.entity, "update")
+			],
+			destroy:[
+				middlewares.apiActionAccess(this.entity, "delete")
+			]
 		}
 	}
 }

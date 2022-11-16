@@ -73,7 +73,7 @@ function findAll(entityName, attributes, options) {
 		const attrDef = attributes[attribute];
 		response[entity][0][attribute] = attrDef.type || 'STRING';
 	}
-	routeDescriptor.response = JSON.stringify(response, null, 4);
+	routeDescriptor.response = JSON.stringify(response, null, '\t');
 
 	return routeDescriptor;
 }
@@ -120,7 +120,7 @@ function findOne(entityName, attributes, options) {
 		const attrDef = attributes[attribute];
 		response[entity][attribute] = attrDef.type || 'STRING';
 	}
-	routeDescriptor.response = JSON.stringify(response, null, 4);
+	routeDescriptor.response = JSON.stringify(response, null, '\t');
 
 	return routeDescriptor;
 }
@@ -169,7 +169,7 @@ function findAssociation(entityName, attributes, options) {
 		limit: 'INTEGER',
 		offset: 'INTEGER',
 		totalCount: 'INTEGER'
-	}, null, 4);
+	}, null, '\t');
 
 	return routeDescriptor;
 }
@@ -217,7 +217,7 @@ function create(entityName, attributes, options) {
 		});
 	}
 
-	routeDescriptor.response = JSON.stringify(routeDescriptor.response, null, 4);
+	routeDescriptor.response = JSON.stringify(routeDescriptor.response, null, '\t');
 
 	return routeDescriptor;
 }
@@ -271,7 +271,7 @@ function update(entityName, attributes, options) {
 		});
 	}
 
-	routeDescriptor.response = JSON.stringify(routeDescriptor.response, null, 4);
+	routeDescriptor.response = JSON.stringify(routeDescriptor.response, null, '\t');
 
 	return routeDescriptor;
 }

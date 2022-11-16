@@ -1,10 +1,9 @@
 const Entity = require('@core/abstract_routes/entity');
 const middlewares = require('@core/helpers/middlewares');
-
+const fs = require('fs-extra');
 const options = require('@app/models/options/e_translation');
 const attributes = require('@app/models/attributes/e_translation');
 const helpers = require('@core/helpers');
-const models = require('@app/models')
 
 class Translation extends Entity {
 	constructor() {
@@ -49,9 +48,7 @@ class Translation extends Entity {
 				// ifFromAssociation: async(data) => {},
 				beforeRender: (data) => {
 					data.languages = [];
-					fs.readdirSync(__appPath + '/locales').filter(file => {
-						return (file.indexOf('.') !== 0) && (file.slice(-5) === '.json') && file != 'enum_radio.json';
-					}).forEach(file => {
+					fs.readdirSync(__appPath + '/locales').filter(file => file.indexOf('.') !== 0 && file.slice(-5) === '.json' && file != 'enum_radio.json').forEach(file => {
 						data.languages.push(file.substring(0, file.length - 5));
 					});
 				}

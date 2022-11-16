@@ -62,7 +62,7 @@ class E_status extends Entity {
 	}
 
 	diagram() {
-		this.router.get('/diagram', middlewares.actionAccess("status", "read"), this.asyncRoute(async (data) => {
+		this.router.get('/diagram', middlewares.actionAccess("status", "read"), this.asyncRoute((data) => {
 			data.res.success(_ => data.res.render('e_status/diagram', {statuses: helpers.status.entityStatusFieldList()}));
 		}));
 	}
@@ -117,20 +117,28 @@ class E_status extends Entity {
 		this.router.post('/remove_children_diagram', middlewares.actionAccess("status", "update"), this.asyncRoute(async (data) => {
 			const status = await models.E_status.findOne({
 				where: { id: data.req.body.id }
-			})
+			});
+
 			if (!status)
 				return data.res.error(_ => data.res.sendStatus(500));
 
-			// Looking for r_children association through database table
-			const throughTable = options.filter(x => x.target == 'e_status' && x.as == 'r_children')[0].through;
-			const query = models.sequelize.options.dialect == 'postgres'
-				? `DELETE FROM "${throughTable}" WHERE fk_id_parent_status = '?' OR fk_id_child_status = '?';`
-				: `DELETE FROM ${throughTable} WHERE fk_id_parent_status = ? || fk_id_child_status = ?;`
+			// Remove only the specified child from the parent
+			if(data.req.body.child) {
+				await status.removeR_children(data.req.body.child);
+			} else {
+				// Remove all relation about the given status ID
+				// Looking for r_children association through database table
+				const throughTable = options.filter(x => x.target == 'e_status' && x.as == 'r_children')[0].through;
+				const query = models.sequelize.options.dialect == 'postgres'
+					? `DELETE FROM "${throughTable}" WHERE fk_id_parent_status = '?' OR fk_id_child_status = '?';`
+					: `DELETE FROM ${throughTable} WHERE fk_id_parent_status = ? || fk_id_child_status = ?;`
 
-			await models.sequelize.query(query, {
-				replacements: [status.id, status.id],
-				type: models.sequelize.QueryTypes.DELETE
-			})
+				await models.sequelize.query(query, {
+					replacements: [status.id, status.id],
+					type: models.sequelize.QueryTypes.DELETE
+				})
+			}
+
 			data.res.success(_ => data.res.sendStatus(200));
 		}));
 	}
@@ -207,6 +215,8 @@ class E_status extends Entity {
 					const [entity, field] = req.body.entityStatus.split('.');
 					createObject.f_entity = entity;
 					createObject.f_field = field;
+					// * Auto calculate text color
+					createObject.f_text_color = helpers.status.getTextColor(createObject.f_color);
 				},
 				beforeRedirect: async({req, createObject, createdRow, transaction}) => {
 					if (createObject.f_default && createObject.f_default == 'true') {

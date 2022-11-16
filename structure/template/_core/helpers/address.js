@@ -1,46 +1,54 @@
 const fs = require('fs-extra');
-
-const models = require('@app/models');
-const entity_helper = require('./entity');
-const model_builder = require('./model_builder');
 const language = require('./language');
+const address_fields = ['f_label', 'f_number', 'f_street_1', 'f_street_2', 'f_postal_code', 'f_city', 'f_country', 'f_lat', 'f_lon'];
 
 module.exports = {
-	setAddressIfComponentExists: async function(entityObject, options, body, transaction) {
-		const option = entity_helper.findInclude(options, 'as', "r_address");
-		if (!option || option.targetType != "component")
-			return;
-
-		const componentAttributes = require('@app/models/attributes/' + option.target + '.json'); // eslint-disable-line
-		const componentOptions = require('@app/models/options/' + option.target + '.json'); // eslint-disable-line
-		const [objectToCreate] = model_builder.parseBody(option.target, componentAttributes, componentOptions, body);
-		const componentModelName = option.target.capitalizeFirstLetter();
-		const e_created = await models[componentModelName].create(objectToCreate, {
-			transaction
-		});
-		const func = 'set' + option.as.capitalizeFirstLetter();
-		await entityObject[func](e_created, {
-			transaction
-		});
-	},
-	updateAddressIfComponentExists: async function(entityObject, options, body, transaction) {
-		if (!entityObject.fk_id_address)
-			return this.setAddressIfComponentExists(entityObject, options, body, transaction);
-
-		const option = entity_helper.findInclude(options, 'as', "r_address");
-		if (option && option.targetType === "component" && body.address_id) {
-			const componentAttributes = require('@app/models/attributes/' + option.target + '.json'); // eslint-disable-line
-			const componentOptions = require('@app/models/options/' + option.target + '.json'); // eslint-disable-line
-			const [objectToCreate] = model_builder.parseBody(option.target, componentAttributes, componentOptions, body || {});
-			const componentModelName = option.target.capitalizeFirstLetter();
-			await models[componentModelName].update(objectToCreate, {
-				where: {
-					id: body.address_id
-				}
-			}, {
+	createAddress: async function({body, user, query}, entityObject, relations, transaction) {
+		const address_relations = relations.filter(x => x.component == 'address');
+		const promises = [];
+		for (const relation of address_relations) {
+			const create_obj = {};
+			for (const idx in address_fields) {
+				const field = address_fields[idx];
+				create_obj[field] = body[`${relation.as}.${field}`]
+			}
+			const func = 'create' + relation.as.capitalizeFirstLetter();
+			promises.push(entityObject[func](create_obj, {
+				upperEntity: query && query.associationSource ? query.associationSource : null,
+				entitySourceID: entityObject.id,
+				entitySource: entityObject.constructor.getTableName(),
+				user,
 				transaction
-			});
+			}));
 		}
+		await Promise.all(promises);
+	},
+	updateAddress: async function({body, user, query}, entityObject, relations, transaction) {
+		const address_relations = relations.filter(x => x.component == 'address');
+		const promises = [];
+		for (const relation of address_relations) {
+			promises.push((async _ => {
+
+				const address = await entityObject['get' + relation.as.capitalizeFirstLetter()]();
+				if(!address)
+					return await this.createAddress({body, user}, entityObject, relations, transaction);
+
+				const update_obj = {};
+				for (const idx in address_fields) {
+					const field = address_fields[idx];
+					update_obj[field] = body[`${relation.as}.${field}`]
+				}
+
+				await address.update(update_obj, {
+					upperEntity: query && query.associationSource ? query.associationSource : null,
+					entitySourceID: entityObject.id,
+					entitySource: entityObject.constructor.getTableName(),
+					user,
+					transaction
+				});
+			})());
+		}
+		await Promise.all(promises);
 	},
 	buildComponentAddressConfig: lang => {
 		const result = [];

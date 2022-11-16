@@ -68,6 +68,7 @@ class CoreAccessSettings extends Route {
 						"administration.menu." + values.modules[i].entities[j].name
 					];
 
+					values.modules[i].entities[j].tradKeyEntity = values.modules[i].entities[j].name;
 					for (let k = 0; k < possibleTradKeys.length; k++) {
 						if (language(data.req.session.lang_user).__(possibleTradKeys[k]) != possibleTradKeys[k]){
 							values.modules[i].entities[j].tradKeyEntity = possibleTradKeys[k];
@@ -97,6 +98,7 @@ class CoreAccessSettings extends Route {
 		this.router.get('/show_role', ...this.middlewares.show_role, this.asyncRoute(async (data) => {
 			const values = await access.getGroupRoleList();
 			data.allRoles = values.roles;
+			data.colspan = data.allRoles.length + 1;
 
 			if (await this.getHook('show_role', 'start', data) === false)
 				return;
@@ -115,6 +117,7 @@ class CoreAccessSettings extends Route {
 						"administration.menu." + values.modules[i].entities[j].name
 					];
 
+					values.modules[i].entities[j].tradKeyEntity = values.modules[i].entities[j].name;
 					for (let k = 0; k < possibleTradKeys.length; k++) {
 						if (language(data.req.session.lang_user).__(possibleTradKeys[k]) != possibleTradKeys[k]){
 							values.modules[i].entities[j].tradKeyEntity = possibleTradKeys[k];
@@ -151,7 +154,7 @@ class CoreAccessSettings extends Route {
 			const applicationConfigPath = __configPath+'/application.json';
 			const applicationConfig = JSON.parse(fs.readFileSync(applicationConfigPath, 'utf8'));
 			applicationConfig.api_enabled = enable == 'true';
-			fs.writeFileSync(applicationConfigPath, JSON.stringify(applicationConfig, null, 4), 'utf8');
+			fs.writeFileSync(applicationConfigPath, JSON.stringify(applicationConfig, null, '\t'), 'utf8');
 
 			if (await this.getHook('show_role', 'beforeResponse', data) === false)
 				return;
@@ -175,12 +178,12 @@ class CoreAccessSettings extends Route {
 				if (parts[0] == 'module') {
 					if (typeof data.newModuleAccess[parts[1]] === 'undefined')
 						data.newModuleAccess[parts[1]] = [];
-					if (data.form[inputName] == 'true')
+					if (data.form[inputName] == 'on')
 						data.newModuleAccess[parts[1]].push(parts[2]);
 				} else if (parts[0] == 'entity') {
 					if (typeof data.newEntityAccess[parts[1]] === 'undefined')
 						data.newEntityAccess[parts[1]] = [];
-					if (data.form[inputName] == 'true')
+					if (data.form[inputName] == 'on')
 						data.newEntityAccess[parts[1]].push(parts[2]);
 				}
 			}
@@ -211,7 +214,7 @@ class CoreAccessSettings extends Route {
 						update: [],
 						delete: []
 					};
-				if (data.form[inputName] == 'true')
+				if (data.form[inputName] == 'on')
 					data.newActionRoles[parts[0]][parts[2]].push(parts[1]);
 			}
 

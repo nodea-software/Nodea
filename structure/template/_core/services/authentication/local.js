@@ -2,6 +2,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const models = require('@app/models');
+// Handle writing log in file connection.log
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 // Default authentication strategy : passport.authenticate('local')
 passport.use(new LocalStrategy({
@@ -22,7 +24,11 @@ passport.use(new LocalStrategy({
 	}).then(function(user) {
 
 		function accessForbidden(msg){
-			console.error('LOGIN ERROR => ' + msg);
+			// Write in file connection.log
+			const log = `LOGIN ERROR => ${msg} [login: ${login}]`;
+			writeConnectionLog(log);
+
+			console.error(log);
 			if(!req.session.loginAttempt)
 				req.session.loginAttempt = 0;
 			req.session.loginAttempt++;

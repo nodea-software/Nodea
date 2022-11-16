@@ -124,7 +124,13 @@ function addPrefix(string, instructionFunction) {
 		case 'createNewComponentContactForm':
 		case 'deleteComponentContactForm':
 		case 'addComponentFileStorage':
+		case 'addComponentAddress':
+		case 'removeComponentAddress':
 		case 'setIcon':
+		case 'enabledTracking':
+		case 'disabledTracking':
+		case 'showTracking':
+		case 'hideTracking':
 			return "e_" + string;
 		case 'createNewField':
 		case 'deleteField':
@@ -148,8 +154,6 @@ function addPrefix(string, instructionFunction) {
 		case 'createNewComponentStatus':
 		case 'deleteComponentStatus':
 			return "s_" + string;
-		case 'createNewComponentAddress':
-			return string;
 		default:
 			return "u_" + string;
 	}
@@ -212,7 +216,7 @@ module.exports = {
 			/* Clean the name of the value */
 			data.options.value = clearString(data.options.value);
 
-			if (data.function == 'createNewApplication' || data.function == 'deleteApplication') {
+			if (data.function == 'createNewApplication' || data.function == 'deleteApplication' || data.function == 'selectApplication') {
 				data.options.value = data.options.value.replace(/_/g, "-");
 				if (!validateString(data.options.value)){
 					let errorText = "Le nom d'application doit respecter les règles suivantes :\n\n";

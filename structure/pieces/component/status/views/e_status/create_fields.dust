@@ -81,7 +81,12 @@
 	{^f_entity}
 		<div data-field="f_default" class="col-xs-12 col-sm-6">
 			<div class="form-group">
-				<label for="f_default"> {#__ key="entity.e_status.f_default"/} {@inline_help field="f_default"}&nbsp;<i data-field="f_default" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label> &nbsp;
+				<label for="f_default"> {#__ key="entity.e_status.f_default"/}
+					{@inline_help field="f_default"}
+						<i data-field="f_default" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					{/inline_help}
+				</label>
+				&nbsp;
 				<br>
 				<input class="form-control input" name="f_default" type="checkbox">
 			</div>

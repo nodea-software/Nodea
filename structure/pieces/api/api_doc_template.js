@@ -28,7 +28,7 @@
  * var clientSecret = 'dexXLYNwdhezlxk';
  *
  * // Base64 encoding
- * var auth = 'Basic ' + new Buffer(clientKey + ':' + clientSecret).toString('base64');
+ * var auth = 'Basic ' + new Buffer.from(clientKey + ':' + clientSecret).toString('base64');
  *
  * // API request
  * request(

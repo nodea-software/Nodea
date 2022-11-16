@@ -1,3 +1,6 @@
+/* eslint-disable */
+// TODO: Need to be rewrite/retest
+
 const passport = require('passport');
 const WindowsStrategy = require('passport-windowsauth');
 const ldapConfig = require('../config/ldap/ldap_config');
@@ -22,8 +25,8 @@ passport.use(new WindowsStrategy({
 		// mod_auth_kerb uses user@domain
 
 		return ''; // Must be remove after and get a valid username in req
-		console.log(req.headers);
-		return req.headers['x-forwarded-user'] ? req.headers['x-forwarded-user'].split('@')[0] : req.body.login_user;
+		// console.log(req.headers);
+		// return req.headers['x-forwarded-user'] ? req.headers['x-forwarded-user'].split('@')[0] : req.body.login_user;
 	}
 }, function(req, ldapUser, done) {
 

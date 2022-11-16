@@ -24,7 +24,7 @@ const mailConf = {
 				pass: ''
 			}
 		},
-		from: 'Nodea App <no-reply@odea-software.com>',
+		from: 'Nodea App <no-reply@nodea-software.com>',
 		host: 'host'
 	},
 	production: {
@@ -54,19 +54,6 @@ const mailConf = {
 		host: 'host'
 	},
 	cloud: {
-		transport: {
-			host: 'mail',
-			port: 465,
-			secure: true,
-			auth: {
-				user: '',
-				pass: ''
-			}
-		},
-		from: 'Nodea App <no-reply@nodea-software.com>',
-		host: 'host'
-	},
-	tablet: {
 		transport: {
 			host: 'mail',
 			port: 465,

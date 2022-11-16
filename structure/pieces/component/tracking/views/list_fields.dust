@@ -1,0 +1,62 @@
+<table id="table_e_traceability" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
+	<thead class="main">
+		<tr class="fields">
+			<th data-field="createdAt" data-col="createdAt" data-type="datetimeTZ">
+				{#__ key="entity.e_traceability.createdAt"/}
+			</th>
+			<th data-field="f_entity" data-col="f_entity" data-type="string">
+				{#__ key="entity.e_traceability.f_entity"/}
+			</th>
+			<th data-field="f_relation_path" data-col="f_relation_path" data-type="string">
+				{#__ key="entity.e_traceability.f_relation_path"/}
+			</th>
+			<th data-field="f_id_entity" data-col="f_id_entity" data-type="string">
+				{#__ key="entity.e_traceability.f_id_entity"/}
+			</th>
+			<th data-field="f_action" data-col="f_action" data-type="string">
+				{#__ key="entity.e_traceability.f_action"/}
+			</th>
+			<th data-field="f_before" data-col="f_before" data-type="text">
+				{#__ key="entity.e_traceability.f_before"/}
+			</th>
+			<th data-field="f_after" data-col="f_after" data-type="text">
+				{#__ key="entity.e_traceability.f_after"/}
+			</th>
+			<th data-field="r_user" data-col="r_user.f_login" data-type="string">
+				{#__ key="entity.e_traceability.r_user"/}&nbsp;-&nbsp;
+				{#__ key="entity.e_user.f_login"/}
+			</th>
+		</tr>
+	</thead>
+	<thead class="filters">
+		<tr class="fields">
+			<th data-field="createdAt" data-col="createdAt" data-type="datetimeTZ">
+				{#__ key="entity.e_traceability.createdAt"/}
+			</th>
+			<th data-field="f_entity" data-col="f_entity" data-type="string">
+				{#__ key="entity.e_traceability.f_entity"/}
+			</th>
+			<th data-field="f_relation_path" data-col="f_relation_path" data-type="string">
+				{#__ key="entity.e_traceability.f_relation_path"/}
+			</th>
+			<th data-field="f_id_entity" data-col="f_id_entity" data-type="string">
+				{#__ key="entity.e_traceability.f_id_entity"/}
+			</th>
+			<th data-field="f_action" data-col="f_action" data-type="string">
+				{#__ key="entity.e_traceability.f_action"/}
+			</th>
+			<th data-field="f_before" data-col="f_before" data-type="text">
+				{#__ key="entity.e_traceability.f_before"/}
+			</th>
+			<th data-field="f_after" data-col="f_after" data-type="text">
+				{#__ key="entity.e_traceability.f_after"/}
+			</th>
+			<th data-field="r_user" data-col="r_user.f_login" data-type="string">
+				{#__ key="entity.e_traceability.r_user"/}&nbsp;-&nbsp;
+				{#__ key="entity.e_user.f_login"/}
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>

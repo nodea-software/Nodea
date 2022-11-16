@@ -1,8 +1,10 @@
-$(document).ready(function() {
+let startPowertips = () => null;
+$(function() {
 
-	var cleanUrl = window.location.host + window.location.pathname;
+	const origin_url = window.location.pathname;
+	let show_tuto = !localStorage.getItem('nodea-powertip-disable');
 
-	if(!showtuto)
+	if(!show_tuto)
 		return;
 
 	$.fn.powerTip.defaults.placement = 'ne';
@@ -12,12 +14,13 @@ $(document).ready(function() {
 	$.fn.powerTip.defaults.closeEvents = [];
 
 	$('.powertip').each(function() {
-		var content = $(this).attr('powertip-content');
-		var order = $(this).attr('powertip-order');
+		const content = $(this).attr('powertip-content');
+		const order = $(this).attr('powertip-order');
+		let save_border_css;
 		$(this).on({
-			powerTipPreRender: function(el) {
+			powerTipPreRender: el => {
 
-				// generate some dynamic content
+				// Generate some dynamic content
 				$(this).data('powertip' , '\
 					<div style="width: 15%;float: left;">\
 						<img src="/img/mascot/body.png" alt="Nodea img" class="powertip-nodea">\
@@ -31,31 +34,37 @@ $(document).ready(function() {
 						&nbsp;|&nbsp;\
 						<a href="#" class="powertip-gotit btn btn-info" data-order="' + order + '">' + nextTutoTrad + '&nbsp;&nbsp;<i class="fas fa-caret-right"></i></a>\
 					</div>');
+			},
+			powerTipOpen: el => {
+				save_border_css = $(this).css('border')
+				$(this).css('border', '2px solid #eaeaea');
+				$(this).addClass('animate__animated animate__pulse');
+			},
+			powerTipClose: el => {
+				$(this).css('border', save_border_css);
 			}
 		});
 	});
 
-	// Only show the tip that you didn't click 'understood'
-	for (var i = 1; i <= $('.powertip').length; i++) {
-		if(localStorage.getItem('nodea-powertip-' + cleanUrl + '-' + i))
-			continue;
-		$('.powertip[powertip-order="'+ i +'"]').powerTip().powerTip('show');
-		break;
+	startPowertips = function() {
+		for (var i = 1; i <= $('.powertip').length; i++) {
+			// Only show the tip that you didn't click 'understood'
+			if(localStorage.getItem('nodea-powertip-' + origin_url + '-' + i))
+				continue;
+			$('.powertip[powertip-order="'+ i +'"]').powerTip().powerTip('show');
+			break;
+		}
 	}
 
 	$(document).on('click', '.powertip-gotit', function() {
 		$.powerTip.hide();
-		localStorage.setItem('nodea-powertip-' + cleanUrl + '-' + $(this).attr('data-order'), true);
-		var nextOrder = parseInt($(this).attr('data-order')) + 1;
+		localStorage.setItem('nodea-powertip-' + origin_url + '-' + $(this).attr('data-order'), true);
+		const nextOrder = parseInt($(this).attr('data-order')) + 1;
 		$('.powertip[powertip-order="'+ nextOrder +'"]').powerTip().powerTip('show');
 	});
 
 	$(document).on('click', '.powertip-stopit', function() {
+		localStorage.setItem('nodea-powertip-disable', true);
 		$.powerTip.hide();
-		showtuto = false;
-		$.ajax({
-			url: '/account/skiptuto',
-			method: 'GET'
-		})
 	});
 });

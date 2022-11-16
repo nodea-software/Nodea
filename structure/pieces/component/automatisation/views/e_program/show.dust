@@ -41,7 +41,6 @@
 {/header}
 
 {<content}
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
@@ -67,6 +66,36 @@
 							{>"e_program/show_fields"/}
 
 							<div class="actions">
+								{@ifTrue key=hideButton}
+									{#actionAccess entity="program" action="create"}
+									<label>{#__ key="entity.e_program.generate_zip_btns"/}</label>
+									<br>
+			                        <a href="/program/generate?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
+			                            <span>{#__ key="button.generate"/}</span>
+			                        </a>&nbsp;
+			                        <a href="/program/generate_and_replace?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
+			                            <span>
+			                                {#__ key="button.generate_replace"/}</span>
+			                        </a>&nbsp;
+			                        <a href="/program/duplicate?id={e_program.id}" class="btn btn-info">
+			                            <i class="fas fa-copy">&nbsp;&nbsp;</i>
+			                            <span>
+			                                {#__ key="button.duplicate"/}
+			                            </span>
+			                        </a>
+			                        <br>
+			                        {/actionAccess}
+					                <br><label>{#__ key="entity.e_program.generate_pages_btns"/}</label><br>
+					                {#actionAccess entity="page" action="create"}
+					                <a href="/program/generate_pages?id={e_program.id}" class="btn btn-info">
+					                    <i class="fas fa-copy">&nbsp;&nbsp;</i>
+					                    <span>{#__ key="button.generate_pages"/}</span>
+					                </a><br>
+					                <br>
+					                {/actionAccess}
+			                    {/ifTrue}
 		                        <a class="btn btn-default" href="javascript:history.back();">
 		                            <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;
 		                            {#__ key="button.return"/}
@@ -111,22 +140,6 @@
 										</a>&nbsp;
 									{/actionAccess}
 		                        {/ifTrue}
-		                        <a href="/program/generate?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.generate"/}</span>
-		                        </a>&nbsp;
-		                        <a href="/program/generate_and_replace?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-file-archive">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.generate_replace"/}</span>
-		                        </a>&nbsp;
-		                        <a href="/program/duplicate?id={e_program.id}" class="btn btn-info">
-		                            <i class="fas fa-copy">&nbsp;&nbsp;</i>
-		                            <span>
-		                                {#__ key="button.duplicate"/}
-		                            </span>
-		                        </a>
 		                    </div>
 			            </div>
 						{/e_program}
@@ -138,49 +151,13 @@
 {/content}
 
 {<custom_js}
-	<script type="text/javascript">
-		/* Static variables using dust, used in show.js */
-		var EMPTY = '{#__ key="message.empty" /}';
-		var SHOW_TEXT = '{#__ key="button.show" /}';
-		var CREATE_TEXT = '{#__ key="button.create"/}';
-		var UPDATE_TEXT = '{#__ key="button.update"/}';
-		var SAVE_TEXT = '{#__ key="button.save"/}';
-		var DELETE_TEXT = '{#__ key="button.delete"/}';
-		var CANCEL_TEXT = '{#__ key="button.cancel"/}';
-		var REMOVE_TEXT = '{#__ key="button.remove" /}';
-		var ERROR = '{#__ key="error.500.title" /}';
-		var CREATE_BUTTON = '<a href="#" data-href="" class="ajax btn btn-success"><i class="fas fa-plus">&nbsp;&nbsp;</i><span>'+CREATE_TEXT+'</span></a>';
-		var UPDATE_BUTTON = '<a style="margin-right:8px;float: left;" data-href="" href="#" class="ajax btn btn-warning"><i class="fas fa-edit">&nbsp;&nbsp;</i><span>'+UPDATE_TEXT+'</span></a>';
-		var DELETE_FORM = '<form action="" class="ajax" method="post"><button class="btn btn-danger btn-confirm"><i class="fas fa-trash">&nbsp;&nbsp;</i><span>{#__ key="button.delete" /}</span></button><input name="id" type="hidden"></form>';
-		var FIELDSET_SELECT = '<form action="" class="ajax" method="post" style="margin-bottom: 20px;"><select style="width:200px;" class="form-control regular-select" name="ids" required="" multiple=""></select><button style="margin-left:7px;" type="submit" class="btn btn-success">{#__ key="button.add"/}</button><input type="hidden" value="{custom_entity.id}" name="idEntity"></form>';
-
-		var DATALIST_BUTTONS = [];
-	</script>
-
-	<!-- DATATABLES & PLUGINS - OLD Version-->
-	<script src="/js/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="/core/bundle/nodea_datatable_js.bundle.js" type="text/javascript"></script>
 
 	<!-- DATATABLE & PLUGINS - New version  -->
 	<!-- TODO: Upgrade with updated version of /AdminLTE/plugins/datatables -->
 	{! <script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script> !}
 
-	<script src="/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-	<script src="/AdminLTE/plugins/jszip/jszip.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-	<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-
-	{! Nodea encapsulations !}
-	<script src="/core/js/nodeaTable.js?v={config.version}" type="text/javascript"></script>
 	<script src="/core/js/nodeaTabs.js?v={config.version}" type="text/javascript"></script>
-
-	{! CODEMIRROR !}
-	<script src="/AdminLTE/plugins/codemirror/codemirror.js" type="text/javascript"></script>
-	<script src="/AdminLTE/plugins/codemirror/mode/javascript/javascript.js" type="text/javascript"></script>
 
 	<script type='text/javascript'>
 		/* Datatable throw error instead of alert */
@@ -188,6 +165,7 @@
 
 		$(function() {
 			NodeaForms();
+
 			$("table:not(.no-init)").each(function() {
 				NodeaTable("#"+$(this).attr('id'));
 			});

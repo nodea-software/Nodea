@@ -46,15 +46,6 @@ const matomoApiConf = {
 		host: '',
 		site_id: -1,
 		host_matomo: ''
-	},
-	tablet: {
-		enabled: false,
-		bulk_limit: 1000,
-		bulk_timeout: 1000,
-		token_auth: '',
-		host: '',
-		site_id: -1,
-		host_matomo: ''
 	}
 }
 

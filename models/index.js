@@ -44,22 +44,28 @@ const db = {
 	$col: Op.col
 };
 
+const dialectOptions = {
+	multipleStatements: true
+};
+
+if(dbConfig.dialect == 'mariadb')
+	dialectOptions.allowPublicKeyRetrieval = true;
+
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
 	host: dbConfig.host,
 	logging: false,
 	port: dbConfig.port,
 	dialect: dbConfig.dialect,
-	dialectOptions: {
-		multipleStatements: true
-	},
+	dialectOptions,
 	define: {
-		timestamps: false
+		timestamps: true
 	},
 	charset: 'utf8',
 	collate: 'utf8_general_ci'
 })
 
 fs.readdirSync(__dirname).filter(file => file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js').forEach(function(file) {
+	// eslint-disable-next-line global-require
 	const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
 	db[model.name] = model;
 })

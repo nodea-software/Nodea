@@ -5,11 +5,11 @@
 			<input class="form-control input" id="chat" name="chat" type="hidden" value="{chat|stringify}" />
 			<div class="input-group mb-3">
 				<div class="input-group-prepend">
-					<button type="button" class="btn btn-default" id="btn-speech"><i class="fa fa-microphone fa-md"></i></button>
+					<a href="https://docs.nodea-software.com/en/user_guide/instructions" target="_blank" class="btn btn-default"><i class="fa fa-question fa-md"></i></a>
 				</div>
 				<input class="form-control powertip" powertip-content='{#__ key="powertip.preview.3" /}' powertip-order='3' id="instruction" name="instruction" type="text" autocomplete="off" autofocus="autofocus" required="required" x-webkit-speech="x-webkit-speech" placeholder='{#__ key="preview.execute"/}' />
 				<span class="input-group-append">
-					<button type="submit" class="btn btn-success" id="execute_instruction">{#__ key="button.execute"/}</button>
+					<button type="submit" class="btn btn-success" id="execute_instruction"><i class="fas fa-rocket"></i>&nbsp;&nbsp;{#__ key="button.execute"/}</button>
 				</span>
 			</div>
 		</form>
@@ -91,6 +91,10 @@
 						{:else}
 							{#__ key="entity.label"/} :<b class="sessionEntityInfo">&nbsp;{#__ key="preview.session.noEntity"/}</b>
 						{/entity.name}
+						{?app_expire}
+							<br>
+							{#__ key="preview.session.app_expire"/}&nbsp;:&nbsp;<b style="color: orange;cursor:pointer;" id="expire_app">&nbsp;{app_expire} {#__ key="preview.session.day"/}&nbsp;<i class="fas fa-question-circle"></i></b>
+						{/app_expire}
 					{/session}
 				</div>
 			</div>
@@ -112,13 +116,10 @@
 					<a class="btn btn-app" target="_blank" href="https://github.com/nodea-software/nodea/issues/new">
 						<i style='margin-top: 5px;' class="fab fa-github"></i>{#__ key="preview.issue-button"/}
 					</a>
-					{@ifTrue key=support_chat_enabled}
-						{! <div class="btn btn-app" id="message-box" title="" data-toggle="tooltip" data-original-title="Support chat">
-							<i style='margin-top: 5px;' class="fas fa-comment"></i>
-							<div class="badge badge-danger slack-message-count" style="display: none;"></div>
-							{#__ key="preview.help-button"/}
-						</div> !}
-					{/ifTrue}
+					<a class="btn btn-app" target="_blank" href="https://discord.gg/JVq6SXcjag">
+						<i style='margin-top: 5px;' class="fab fa-discord"></i>
+						{#__ key="preview.help-button"/}
+					</a>
 					<a class="btn btn-app" target="_blank" href="https://docs.nodea-software.com">
 						<i style='margin-top: 5px;' class="fas fa-book"></i>{#__ key="button.documentation"/}
 					</a>

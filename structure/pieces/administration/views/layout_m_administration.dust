@@ -5,23 +5,21 @@
 {/custom_css}
 
 {<modules}
-    <select id="module-select" class="form-control" onchange="navigate()">
-        {#moduleAccess module="home"}
-        <option data-module="m_home" value="/module/home">
-            {#__ key="module.m_home" /}
-        </option>
-        {/moduleAccess}
-        {#moduleAccess module="administration"}
-        <option data-module="m_administration" value="/module/administration" selected="">
-            {#__ key="module.m_administration" /}
-        </option>
-        {/moduleAccess}
-    </select>
+	<label for="module-select">{#__ key="module.module"/}</label>
+	<select id="module-select" class="form-control" onchange="navigate()" style="width: 100%;" tabindex="0">
+		{#moduleAccess module="home"}
+		<option data-module="m_home" value="/module/home">
+			{#__ key="module.m_home" /}
+		</option>
+		{/moduleAccess}
+		{#moduleAccess module="administration"}
+		<option data-module="m_administration" value="/module/administration" selected="">
+			{#__ key="module.m_administration" /}
+		</option>
+		{/moduleAccess}
+	</select>
 {/modules}
 
-{! {#entityAccess entity="sisi"}
-{#actionAccess entity="user" action="create"}
- !}
 {<sidebar}
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
@@ -134,13 +132,15 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    {#actionAccess entity="access_settings" action="read"}
+                    {#actionAccess entity="access_settings_role" action="read"}
                         <li class="nav-item">
                             <a href="/access_settings/show_role" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>{#__ key="entity.e_role.label_entity" /}</p>
                             </a>
                         </li>
+                    {/actionAccess}
+                    {#actionAccess entity="access_settings_group" action="read"}
                         <li class="nav-item">
                             <a href="/access_settings/show_group" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -421,13 +421,13 @@
                             {#__ key="administration.menu.access_settings_api" /}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a target=_blank href="/api_documentation" class="nav-link">
-                            <i class="fas fa-caret-right nav-icon"></i>
-                            {#__ key="administration.menu.api_documentation" /}
-                        </a>
-                    </li>
                 {/actionAccess}
+                <li class="nav-item">
+                    <a target=_blank href="/api_documentation" class="nav-link">
+                        <i class="fas fa-caret-right nav-icon"></i>
+                        {#__ key="administration.menu.api_documentation" /}
+                    </a>
+                </li>
                 {#entityAccess entity="api_credentials"}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -569,82 +569,18 @@
                 {/entityAccess}
             </ul>
         </li>
-        {@eq key=config.env value="tablet"}
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fa fa-unlink nav-icon"></i>
-                    <p>
-                        {#__ key="administration.menu.offline_mode" /}
-                    </p>
-                    <i class="right fas fa-angle-left"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                    {#entityAccess entity="synchro"}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-sync nav-icon"></i>
-                                <p>
-                                    {#__ key="synchro.title" /}
-                                </p>
-                                <i class="right fas fa-angle-left"></i>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                {@ne key=config.env value="tablet"}
-                                <li class="nav-item">
-                                    <a href="/synchronization/show" class="nav-link">
-                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
-                                        {#__ key="synchro.configure" /}
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/synchronization/list_dump" class="nav-link">
-                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
-                                        {#__ key="synchro.list" /}
-                                    </a>
-                                </li>
-                                {/ne}
-                                {@eq key=config.env value="tablet"}
-                                <li class="nav-item">
-                                    <a href="/synchronization/show" class="nav-link">
-                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
-                                        {#__ key="synchro.process.synchronize" /}
-                                    </a>
-                                </li>
-                                {/eq}
-                            </ul>
-                        </li>
-                    {/entityAccess}
-                    {#entityAccess entity="synchro_credentials"}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-key nav-icon"></i>
-                                <p>
-                                    {#__ key="entity.e_synchro_credentials.label_entity" /}
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                {#actionAccess entity="synchro_credentials" action="create"}
-                                <li class="nav-item">
-                                    <a href="/synchro_credentials/create_form" class="nav-link">
-                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
-                                        {#__ key="operation.create" /}
-                                    </a>
-                                </li>
-                                {/actionAccess}
-                                {#actionAccess entity="synchro_credentials" action="read"}
-                                <li class="nav-item">
-                                    <a href="/synchro_credentials/list" class="nav-link">
-                                        <i class="fas fa-caret-right ml-3 mr-2"></i>
-                                        {#__ key="operation.list" /}
-                                    </a>
-                                </li>
-                                {/actionAccess}
-                            </ul>
-                        </li>
-                    {/entityAccess}
-                </ul>
+		{#entityAccess entity="traceability"}
+            <li class='nav-item' data-menu="traceability">
+                {#actionAccess entity="traceability" action="read"}
+                    <a href='/traceability/list' class="nav-link">
+                        <i class="nav-icon fas fa-clipboard"></i>
+                        <p>
+                            {#__ key="entity.e_traceability.label_entity" /}
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                {/actionAccess}
             </li>
-        {/eq}
+		{/entityAccess}
     </ul>
 {/sidebar}

@@ -387,8 +387,6 @@
 		<script src="/AdminLTE/plugins/inputmask/jquery.inputmask.min.js" type="text/javascript"></script>
 		<!-- iCheck -->
 		<script src="/js/plugins/icheck/icheck.min.js" type="text/javascript"></script>
-		<!-- MaskMoney -->
-		<script src="/js/plugins/maskmoney/maskmoney.js" type="text/javascript"></script>
 		<!-- JSBarCode -->
 		<script src="/js/plugins/jsbarcode/jsbarcode.all.min.js" type="text/javascript"></script>
 		<!-- UUID V4 -->

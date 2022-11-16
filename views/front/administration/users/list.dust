@@ -1,0 +1,196 @@
+{>"main_layout"/}
+
+{<custom_css}
+	<style type="text/css">
+		.trigger-tab{
+			color: var(--nodea-black);
+		}
+
+		.trigger-tab .info-box:hover {
+			color: var(--nodea-black);
+			box-shadow: 0 0px 5px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.2);
+		}
+
+		.trigger-tab i{
+			color: #FFF;
+		}
+	</style>
+{/custom_css}
+
+{<title}
+	{#__ key="menu.home"/}<small>{#__ key="menu.module"/}</small>
+{/title}
+
+{<content}
+	<!-- Page content -->
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<div class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-12">
+						<!-- Custom Tabs -->
+						<div class="card main-card">
+							<div class="card-header d-flex p-0">
+								<h3 class="card-title p-3">
+									<img class="animate__animated" src="/img/picto/multilingue2.png" alt="Users picto">
+									{#__ key="administration.tabs.users"/}
+								</h3>
+								<ul class="nav nav-pills ml-auto p-2">
+									<li class="nav-item">
+										<a class="nav-link active" href="/administration/users">
+											{#__ key="administration.tabs.users"/}
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/administration/queue">
+											{#__ key="administration.tabs.queue"/}
+										</a>
+									</li>
+								</ul>
+							</div>
+
+							<div class="card-body">
+								<div class="row">
+									<div class="col-12">
+										<table id="table_users" class="table table-bordered">
+											<thead>
+												<tr>
+													<th>
+														ID
+													</th>
+													<th>
+														{#__ key="users.login"/}
+													</th>
+													<th>
+														{#__ key="users.created_at"/}
+													</th>
+													<th>
+														{#__ key="users.enabled"/}
+													</th>
+													<th>
+														{#__ key="users.email"/}
+													</th>
+													<th>
+														{#__ key="users.role"/}
+													</th>
+													<th>
+														{#__ key="users.applications"/}
+													</th>
+													<th colspan="4" class="text-center">
+														{#__ key="listApplication.action"/}
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+												{#users}
+													<tr>
+														<td>{id}</td>
+														<td>{login}</td>
+														<td>{createdAt|datetime}</td>
+														<td>
+															{?enabled}
+																<input type="checkbox" checked disabled>
+															{:else}
+																<input type="checkbox" disabled>
+															{/enabled}
+														</td>
+														<td>{email}</td>
+														<td>{Role.name}</td>
+														<td>
+															{#Applications}
+																<b><a href="/application/preview/{name}" target="_blank">{displayName}</a></b><br>
+															{/Applications}
+														</td>
+														<td class="text-center">
+															<a href="/administration/users/show/{id}">
+																<button class="pull-left btn btn-primary">
+																	<i class="fa fa-eye fa-md"></i>&nbsp;&nbsp;
+																	<span>{#__ key="button.show"/}</span>
+																</button>
+															</a>
+														</td>
+														<td class="text-center">
+															{@ne key=id value=1}
+																<button class='btn btn-primary reset_password'>
+																	<i class="fas fa-envelope fa-md"></i>&nbsp;&nbsp;
+																	<span>{#__ key="settings.reset_button"/}</span>
+																</button>
+															{/ne}
+														</td>
+														<td class="text-center">
+															{@ne key=id value=1}
+																<a href="/administration/users/update/{id}">
+																	<button class="pull-left btn btn-warning">
+																		<i class="fas fa-edit fa-md"></i>&nbsp;&nbsp;
+																		<span>{#__ key="button.update"/}</span>
+																	</button>
+																</a>
+															{/ne}
+														</td>
+														<td class="text-center">
+															{@ne key=id value=1}
+																<form class="pull-left" action="/administration/users/delete" method="post">
+																	<input type="hidden" name="id" value="{id}">
+																	<button class="btn btn-danger btn-confirm">
+																		<i class="fas fa-trash fa-md"></i>&nbsp;&nbsp;
+																		<span>{#__ key="button.delete"/}</span>
+																	</button>
+																</form>
+															{/ne}
+														</td>
+													</tr>
+												{/users}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+
+							<div class="card-footer">
+								<a href="/administration/users/create">
+									<button class="btn btn-success">
+										<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+										<span>{#__ key="button.create"/}</span>
+									</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script>
+		var sureResetMsg = '{#__ key="settings.sure_reset_other" /}';
+		$(document).ready(function() {
+			$(document).on("click", ".reset_password", function(){
+				if(!confirm(sureResetMsg))
+					return;
+
+				$(this).prop('disabled', true);
+
+				$.ajax({
+					url : '/administration/settings/reset_password?other=1',
+					type : 'POST',
+					data : {
+						login: $(this).parents('tr').find('td[data-field="login"]').text(),
+						email: $(this).parents('tr').find('td[data-field="email"]').text()
+					},
+					context: this,
+					success: function (success) {
+						location.reload();
+					},
+					error: function (err) {
+						console.log(err);
+						toastr.error(err.responseText || err.message || err);
+						$(this).prop('disabled', false);
+					}
+				});
+			});
+		});
+	</script>
+{/custom_js}

@@ -1,9 +1,10 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
+const setup = require('../helpers/setup');
 const iconList = require('../config/font_awesome_list.json');
 
 exports.setColumnVisibility = async (data) => {
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
+	const pathToViews = global.global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 
 	const possibilityShow = ["show", "visible"];
 	const possibilityHide = ["hide", "hidden", "non visible", "caché"];
@@ -53,7 +54,7 @@ exports.setColumnVisibility = async (data) => {
 
 // eslint-disable-next-line require-await
 exports.setLogo = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app/';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app/';
 
 	// Check if logo exist
 	if (!fs.existsSync(workspacePath + '/public/img/logo/' + data.options.value))
@@ -64,17 +65,16 @@ exports.setLogo = async (data) => {
 	for (let i = 0; i < layouts.length; i++) {
 
 		const layoutPath = workspacePath + '/views/' + layouts[i] + '.dust';
-
 		const $ = domHelper.read(layoutPath, true);
 
 		$("body link[rel='icon']").remove();
 		$("body link[rel='apple-touch-icon']").remove();
 		$("head link[rel='icon']").remove();
 		$("head link[rel='apple-touch-icon']").remove();
-		$(".app-logo").html("<a href='/'><img src='/img/logo/" + data.options.value + "' class='img-fluid' alt='App logo' ></a>");
+		$(".app-logo").html("<a href='/'><img src='/img/logo/" + data.options.value + "' class='img-fluid' alt='App logo'></a>");
 		$("head").append("<link rel=\"icon\" href='/img/logo/thumbnail/" + data.options.value + "'>");
 
-		domHelper.writeMainLayout(layoutPath, $);
+		domHelper.write(layoutPath, $, true);
 	}
 
 	return true;
@@ -83,14 +83,13 @@ exports.setLogo = async (data) => {
 // eslint-disable-next-line require-await
 exports.removeLogo = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	let message;
 	const layouts = ['login_layout', 'main_layout'];
 
 	for (let i = 0; i < layouts.length; i++) {
 
 		const layoutPath = workspacePath + '/views/' + layouts[i] + '.dust';
-
 		const $ = domHelper.read(layoutPath, true);
 
 		if($(".app-logo img").length > 0){
@@ -108,7 +107,7 @@ exports.removeLogo = async (data) => {
 			<link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">\
 			<link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">\
 			<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">\
-			<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">\
+			<link rel="icon" type="image/png" sizes="192x192" href="/img/favicons/android-icon-192x192.png">\
 			<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">\
 			<link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">\
 			<link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">');
@@ -117,7 +116,7 @@ exports.removeLogo = async (data) => {
 		else
 			message = "preview.logo.noLogo";
 
-		domHelper.writeMainLayout(layoutPath, $);
+		domHelper.write(layoutPath, $, true);
 	}
 
 	return message;
@@ -125,7 +124,7 @@ exports.removeLogo = async (data) => {
 
 exports.setLayout = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const askedLayout = data.options.value.toLowerCase().trim().replace(/ /g, "-");
 
@@ -163,7 +162,7 @@ exports.setLayout = async (data) => {
 
 exports.listLayout = (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 
 	const layoutPath = workspacePath + '/public/css/AdminLteV2/layouts';
 	const layoutsDir = fs.readdirSync(layoutPath).filter(file => file.indexOf('.') !== 0 && (file.slice(-4) === '.css' && file.slice(0, 1) !== '_'));
@@ -187,52 +186,51 @@ exports.listLayout = (data) => {
 
 exports.setTheme = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspace_path = global.global.__workspacePath + '/' + data.application.name + '/app';
+	const workspace_path_core = global.global.__workspacePath + '/' + data.application.name + '/_core';
 
-	let askedTheme = data.options.value.toLowerCase();
-	askedTheme = askedTheme.trim().replace(/ /g, "-");
+	let asked_theme = data.options.value.toLowerCase();
+	asked_theme = asked_theme.trim().replace(/ /g, "-");
 
 	function retrieveTheme(themePath) {
-		const themesDir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
-		const themeListAvailable = [];
-		themesDir.forEach(theme => {
-			themeListAvailable.push(theme);
+		const themes_dir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
+		const theme_list_available = [];
+		themes_dir.forEach(theme => {
+			theme_list_available.push(theme);
 		});
-		return themeListAvailable;
+		return theme_list_available;
 	}
 
-	const themeWorkspacePath = workspacePath + '/public/theme';
-	const themeListAvailableWorkspace = retrieveTheme(themeWorkspacePath);
+	const theme_workspace_path = workspace_path + '/public/theme';
+	const theme_list_available_workspace = retrieveTheme(theme_workspace_path);
 
 	// If not found in workspace, look for not imported theme exisiting in structure/template
-	if (themeListAvailableWorkspace.indexOf(askedTheme) == -1) {
-		const themeTemplatePath = __dirname + '/template/app/public/theme';
-		const themeListAvailableTemplate = retrieveTheme(themeTemplatePath);
+	if (theme_list_available_workspace.indexOf(asked_theme) == -1) {
+		const theme_template_path = __dirname + '/template/app/public/theme';
+		const theme_list_available_template = retrieveTheme(theme_template_path);
 
-		if (themeListAvailableTemplate.indexOf(askedTheme) == -1) {
+		if (theme_list_available_template.indexOf(asked_theme) == -1) {
 			const err = new Error('structure.ui.theme.cannotFind');
 			let msgParams = "";
-			for (let i = 0; i < themeListAvailableWorkspace.length; i++)
-				msgParams += "-  " + themeListAvailableWorkspace[i] + "<br>";
+			for (let i = 0; i < theme_list_available_workspace.length; i++)
+				msgParams += "-  " + theme_list_available_workspace[i] + "<br>";
 			err.messageParams = [msgParams];
 			throw err;
 		}
 
-		fs.copySync(themeTemplatePath + "/" + askedTheme + "/", themeWorkspacePath + "/" + askedTheme + "/");
+		fs.copySync(theme_template_path + "/" + asked_theme + "/", theme_workspace_path + "/" + asked_theme + "/");
 	}
 
-	const themeInformation = JSON.parse(fs.readFileSync(workspacePath + "/public/theme/" + askedTheme + "/infos.json"));
+	const theme_information = JSON.parse(fs.readFileSync(workspace_path + "/public/theme/" + asked_theme + "/infos.json"));
 	const promises = [];
-	const layoutToWrite = ["main_layout", "login_layout"];
+	const layout_to_write = ["main_layout", "login_layout"];
 
-	for (let i = 0; i < layoutToWrite.length; i++) {
+	for (let i = 0; i < layout_to_write.length; i++) {
 		promises.push((async() => {
-			const layoutPath = workspacePath + '/views/' + layoutToWrite[i] + '.dust';
-			const $ = await domHelper.read(layoutPath, true);
-			// const oldTheme = $("link[data-type='theme']").attr("data-theme");
-			$("link[data-type='theme']").replaceWith("<link href='/theme/" + askedTheme + "/css/style.css' rel='stylesheet' type='text/css' data-type='theme' data-theme='" + askedTheme + "'>");
+			const layout_path = workspace_path + '/views/' + layout_to_write[i] + '.dust';
+			const $ = await domHelper.read(layout_path, true);
 
-			if(themeInformation.sidebar == 'dark'){
+			if(theme_information.sidebar == 'dark'){
 				$(".main-sidebar").removeClass('sidebar-light-primary');
 				$(".main-sidebar").addClass('sidebar-dark-primary');
 			} else {
@@ -240,26 +238,40 @@ exports.setTheme = async (data) => {
 				$(".main-sidebar").addClass('sidebar-light-primary');
 			}
 
-			if (typeof themeInformation.js !== "undefined") {
-				// If the theme need js inclusion
-				for (let j = 0; j < themeInformation.js.length; j++) {
-					$("body script:last").after("<script type='text/javascript'></script>");
-					$("body script:last").attr('src', "/theme/" + askedTheme + "/js/" + themeInformation.js[j]);
-				}
-			}
-
-			domHelper.writeMainLayout(layoutPath, $);
+			domHelper.write(layout_path, $, true);
 			return;
 		})());
 	}
 
 	await Promise.all(promises);
+
+	// Update & Rebuild bundle
+	const conf_bundle = JSON.parse(fs.readFileSync(`${workspace_path_core}/public/bundle.json`, 'utf8'));
+
+	if(conf_bundle.nodea_main_css.files.find(path => path.includes(`@app/public/theme/${asked_theme}/`))){
+		return;
+	}
+
+	conf_bundle.nodea_main_css.files = conf_bundle.nodea_main_css.files.filter(path => !path.includes(`@app/public/theme/${data.application.currentTheme}/css/style.css`));
+	conf_bundle.nodea_main_css.files.push(`@app/public/theme/${asked_theme}/css/style.css`);
+
+	// Change metadata
+	data.application.currentTheme = asked_theme;
+	data.application.save();
+
+	fs.writeFileSync(`${workspace_path_core}/public/bundle.json`, JSON.stringify(conf_bundle, null, '\t'));
+
+	await setup.setupTemplateBundle(false, 'nodea_main_css', workspace_path);
+	if (theme_information.js.length) {
+		await setup.setupTemplateBundle(false, 'nodea_main_js', workspace_path);
+	}
+
 	return;
 }
 
 exports.listTheme = (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const themePath = workspacePath + '/public/theme';
 	const themesDir = fs.readdirSync(themePath).filter(folder => folder.indexOf('.') == -1);
 
@@ -280,7 +292,7 @@ exports.listTheme = (data) => {
 }
 
 exports.setIcon = async(data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.global.__workspacePath + '/' + data.application.name + '/app';
 	const layout_filename = 'layout_' + data.module_name + '.dust';
 	const entityWithouPrefix = data.entity_name.substring(2);
 
@@ -322,7 +334,7 @@ exports.setIcon = async(data) => {
 
 exports.addTitle = async (data) => {
 
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
+	const pathToViews = global.global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
 	const viewsToProcess = ["create_fields", "update_fields", "show_fields"];
 	const processPromises = [];
 
@@ -351,7 +363,7 @@ exports.addTitle = async (data) => {
 }
 
 exports.removeTitle = async (data) => {
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity.name;
 	const viewsToProcess = ["create_fields", "update_fields", "show_fields"];
 	const processPromises = [];
 	let titleFound = false;
@@ -378,7 +390,7 @@ exports.removeTitle = async (data) => {
 }
 
 exports.createWidget = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 	const layout_filename = 'layout_' + data.np_module.name + '.dust';
 
 	// Get entity's icon
@@ -389,7 +401,7 @@ exports.createWidget = async (data) => {
 
 	// Add widget to module's layout
 	$ = await domHelper.read(layout_view_filename);
-	const $2 = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $2 = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	let widgetElemId = data.widgetType + '_' + data.entity.name + '_widget';
 
@@ -415,7 +427,7 @@ exports.createWidget = async (data) => {
 }
 
 exports.createWidgetPiechart = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	if (!data.field) {
 		// TODO: Refactor to remove `definitlyNotFound`
@@ -441,11 +453,11 @@ exports.createWidgetPiechart = async (data) => {
 			throw err;
 		}
 	}
-console.log(data.field);
+
 	// Add widget to module's layout
 	const layoutFile = workspacePath + '/views/modules/' + data.np_module.name + '.dust';
 	const $ = await domHelper.read(layoutFile);
-	const $2 = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $2 = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	// Widget box title traduction
 	$2(".box-title").html(`<!--{#__ key="defaults.widgets.piechart.distribution" /}-->&nbsp;<!--{#__ key="entity.${data.entity.name}.label_entity" /}-->&nbsp;-&nbsp;<!--{#__ key="entity.${data.entity.name}.${data.field.name}" /}-->`);
@@ -474,7 +486,7 @@ console.log(data.field);
 
 exports.createWidgetLastRecords = async (data) => {
 
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Look for related to fields in entity's options
 	const definitlyNotFound = [];
@@ -506,7 +518,7 @@ exports.createWidgetLastRecords = async (data) => {
 
 	const layoutFile = workspacePath + '/views/modules/' + data.np_module.name + '.dust';
 	const $ = await domHelper.read(layoutFile);
-	const $template = await domHelper.read(__piecesPath + '/views/widget/' + data.widgetType + '.dust');
+	const $template = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	const widgetElemId = data.widgetType + '_' + data.entity.name + '_widget';
 	let newHtml = "";
@@ -549,7 +561,7 @@ exports.createWidgetLastRecords = async (data) => {
 }
 
 exports.deleteWidget = async (data) => {
-	const workspacePath = __workspacePath + '/' + data.application.name + '/app';
+	const workspacePath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Delete from view
 	const $ = await domHelper.read(workspacePath + '/views/modules/' + data.np_module.name + '.dust');

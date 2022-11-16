@@ -18,25 +18,34 @@ class Login extends CoreLogin {
 				middlewares.loginAccess
 			],
 			loginPOST: [
-				auth.isLoggedIn
+				auth.isLoggedIn,
+				// Trace login, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware
 			],
 			refresh_login_captcha: [],
 			first_connectionGET: [
 				middlewares.loginAccess
 			],
 			first_connectionPOST: [
-				middlewares.loginAccess
+				middlewares.loginAccess,
+				// Trace first connection, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware
 			],
 			reset_passwordGET: [
 				middlewares.loginAccess
 			],
 			reset_passwordPOST: [
-				middlewares.loginAccess
+				middlewares.loginAccess,
+				// Trace reset password, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware
 			],
 			reset_password_token: [
 				middlewares.loginAccess
 			],
-			logout: []
+			logout: [
+				// Trace logout, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware
+			]
 		}
 	}
 }

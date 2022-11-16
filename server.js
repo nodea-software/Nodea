@@ -4,12 +4,14 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const CronJob = require('cron').CronJob;
 
-const globalConf = require('./config/global');
+const global_config = require('./config/global');
 const dbConfig = require('./config/database');
 
 global.__piecesPath = __dirname + '/structure/pieces';
 global.__workspacePath = __dirname + '/workspace';
+global.app_queue = [];
 
 let SessionStore, pg;
 // MySql
@@ -34,9 +36,7 @@ const ansiToHtml = new AnsiToHTML();
 const moment = require('moment');
 
 const models = require('./models/');
-
-// Passport for configuration
-require('./utils/authStrategies');
+const setupHelper = require('./helpers/setup');
 const dustHelpers = require('./utils/dust')
 
 const language = require('./services/language');
@@ -52,7 +52,7 @@ const allLogStream = fs.createWriteStream(path.join(__dirname, 'all.log'), {
 app.use(morgan('dev', {
 	skip: function(req) {
 		// Remove spamming useless logs
-		const skipArray = ["/update_logs", "/get_pourcent_generation", "/status", "/completion", "/watch", "/"];
+		const skipArray = ["/update_logs", "/get_pourcent_generation", "/waiting", "/get_generation_queue", "/get_queue", "/script_status", "/completion", "/watch", "/"];
 		let currentURL = req.originalUrl;
 		if (currentURL.indexOf("?") != -1) {
 			// Remove params from URL
@@ -64,7 +64,7 @@ app.use(morgan('dev', {
 	},
 	stream: split().on('data', function(line) {
 		if (allLogStream.bytesWritten < 5000) {
-			if(globalConf.env != "develop"){
+			if(global_config.env != "develop"){
 				allLogStream.write(moment().tz('Europe/Paris').format("MM-DD HH:mm:ss") + ": " + ansiToHtml.toHtml(line) + "\n");
 				process.stdout.write(moment().tz('Europe/Paris').format("MM-DD HH:mm:ss") + " " + line + "\n");
 			} else {
@@ -159,11 +159,12 @@ if(dbConfig.dialect == "postgres"){
 		tableName: 'sessions'
 	});
 }
+
 app.use(session({
 	store: sessionStore,
 	cookie: {
 		sameSite: 'lax',
-		secure: globalConf.protocol == 'https',
+		secure: global_config.protocol == 'https',
 		maxAge: 60000 * 60 * 24 // 1 day
 	},
 	key: 'nodea_cookie',
@@ -178,7 +179,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Locals ======================================================================
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
 	// If not a person (healthcheck service or other spamming services)
 	if(typeof req.session.passport === "undefined" && Object.keys(req.headers).length == 0){return res.sendStatus(200);}
 
@@ -199,10 +200,13 @@ app.use(function(req, res, next) {
 	dustHelpers.locals(res.locals, req, language(lang))
 	res.locals.user_login = req.user ? req.user.login : false;
 	res.locals.user_lang = lang;
-	res.locals.globalConf = globalConf;
+	res.locals.show_demo_popup = req.session ? req.session.show_demo_popup : null;
+	res.locals.global_config = global_config;
 	// Snow and christmas ambiance
 	if(moment().format('MM') == '12')
 		res.locals.noel = true;
+	else if(moment().format('MM-DD') == '10-31')
+		res.locals.spooky = true;
 
 	// Filters
 	dustHelpers.filters(dust, lang);
@@ -229,10 +233,6 @@ app.use((req, res, next) => {
 			req.session.toastr = [];
 		}
 		locals.dark_theme = req.session.dark_theme ? req.session.dark_theme : false;
-		locals.support_chat_enabled = globalConf.support_chat_enabled;
-		if(typeof req.session.showtuto === 'undefined')
-			req.session.showtuto = true;
-		locals.showtuto = req.session.showtuto ? 'true' : 'false';
 		render.call(res, view, locals, cb);
 	};
 	next();
@@ -251,47 +251,44 @@ app.use((req, res) => {
 models.sequelize.sync({
 	logging: false,
 	hooks: false
-}).then(_ => {
-	models.User.findAll().then(users => {
-		if (!users || users.length == 0) {
-			models.Role.create({
-				id: 1,
-				name: 'admin',
-				version: 1
-			}).then(_ => {
-				models.Role.create({
-					id: 2,
-					name: 'user',
-					version: 1
-				}).then(_ => {
-					models.User.create({
-						id: 1,
-						enabled: 0,
-						email: globalConf.env == 'studio' ? globalConf.sub_domain + '-admin@nodea-software.com' : 'admin@local.fr',
-						firstname: "Admin",
-						lastname: "Nodea",
-						login: "admin",
-						password: null,
-						phone: null,
-						version: 1
-					}).then(user => {
-						user.setRole(1);
-					})
-				})
-			})
-		}
-	});
+}).then(async _ => {
 
-	if (globalConf.protocol == 'https') {
-		const server = https.createServer(globalConf.ssl, app);
-		server.listen(globalConf.port);
-		console.log("Started https on " + globalConf.port);
+	await setupHelper.setupAdmin();
+	await setupHelper.setupWorkspaceNodeModules();
+	await setupHelper.setupTemplateBundle(true);
+
+	if (global_config.protocol == 'https') {
+		const server = https.createServer(global_config.ssl, app);
+		server.listen(global_config.port);
+		console.log("✅ Started https on " + global_config.port);
 	} else {
-		app.listen(globalConf.port);
-		console.log("Started on " + globalConf.port);
+		app.listen(global_config.port);
+		console.log("✅ Started on " + global_config.port);
 	}
+
+	if(global_config.demo_mode) {
+		// Cleaning app older than 7 days in demo mode
+		new CronJob('0 0 * * * *', function() {
+			try {
+				// eslint-disable-next-line global-require
+				require('./services/cron/clean_demo.js')();
+			} catch(err) {
+				console.error(err);
+			}
+		}, null, true, 'Europe/Paris');
+	}
+
+	// Clean queue list if older than 10 minutes
+	new CronJob('0 * * * * *', function() {
+		try {
+			// eslint-disable-next-line global-require
+			require('./services/cron/clean_queue.js')();
+		} catch(err) {
+			console.error(err);
+		}
+	}, null, true, 'Europe/Paris');
 }).catch(err => {
-	console.log("ERROR - SYNC");
+	console.log("❌ ERROR - SYNC");
 	console.error(err);
 });
 

@@ -13,9 +13,13 @@ module.exports = {
 
 		// Translate functions
 		locals.__ = function(ch, con, bo, params) {
+			if(!params.key || params.key == '' || typeof params.key !== 'string')
+				return '';
 			return ch.write(language.__(params.key).replace(/'/g, "&apos;"));
 		}
 		locals.M_ = function(ch, con, bo, params) {
+			if(!params.key || params.key == '' || typeof params.key !== 'string')
+				return '';
 			return ch.write(language.M_(params.key).replace(/'/g, "&apos;"));
 		}
 
@@ -187,6 +191,12 @@ module.exports = {
 		dust.helpers.contextUpperDump = function(chunk, context) {
 			const results = diveContext(context);
 			chunk = chunk.write(JSON.stringify(results));
+		}
+
+		dust.helpers.getFromContext = function(chunk, context, bodies, params) {
+			if(!context || !context.stack || !context.stack.head || !context.stack.head[params.key])
+				return false;
+			chunk.write(JSON.stringify(context.stack.head[params.key]));
 		}
 
 		// Default inline help helper return false, helpers override on route call in @core/render.js

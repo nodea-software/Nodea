@@ -4,7 +4,6 @@ const moment = require("moment");
 const language = require('./language');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio');
-const globalConfig = require('@config/global');
 
 const models = require('@app/models');
 
@@ -117,13 +116,13 @@ module.exports = {
 		const lang = options.lang || 'fr-FR';
 
 		const defaultProcessors = {
-			enum: (entityName, entity, attribute, attributeDef) => {
+			enum: (entityName, entity, attribute) => {
 				entity[attribute] = {
 					value: entity[attribute],
 					translation: enums_radios.translateFieldValue(entityName, attribute, entity[attribute], lang)
 				};
 			},
-			boolean: (entityName, entity, attribute, attributeDef) => {
+			boolean: (entityName, entity, attribute) => {
 				let boolTrad;
 				if (lang == 'fr-FR')
 					boolTrad = entity[attribute] == true ? 'Oui' : 'Non';
@@ -134,7 +133,7 @@ module.exports = {
 					translation: boolTrad
 				}
 			},
-			file: (entityName, entity, attribute, attributeDef) => {
+			file: (entityName, entity, attribute) => {
 				entity[attribute] = file_helper.originalFilename(entity[attribute]);
 			},
 			picture: (...args) => {
@@ -216,7 +215,10 @@ module.exports = {
 		// Split SQL request if too many inclusion
 		const includePromises = [], includes = forceOptions, includeMaxlength = 5;
 		for (let i = 0; i < options.length; i++)
-			if (options[i].structureType == 'relatedTo' || options[i].structureType == 'relatedToMultiple' || options[i].structureType == 'relatedToMultipleCheckbox') {
+			if (options[i].structureType == 'relatedTo' ||
+				options[i].structureType == 'relatedToMultiple' ||
+				options[i].structureType == 'relatedToMultipleCheckbox' ||
+				options[i].component == 'address') {
 				const opt = {
 					model: models[options[i].target.capitalizeFirstLetter()],
 					as: options[i].as
@@ -427,17 +429,6 @@ module.exports = {
 									continue;
 							}
 			}
-		}
-	},
-	synchro: {
-		writeJournal: function (line) {
-			if (globalConfig.env != "tablet")
-				return;
-			const journal = JSON.parse(fs.readFileSync(__appPath + '/sync/journal.json', 'utf8'));
-			if (!Array.isArray(journal.transactions))
-				journal.transactions = [];
-			journal.transactions.push(line);
-			fs.writeFileSync(__appPath + '/sync/journal.json', JSON.stringify(journal, null, 4), 'utf8');
 		}
 	}
 };

@@ -2,22 +2,21 @@
 <hr>
 <div class="row">
 	<div class="col-12">
-		<form action="/application/initiate" method="POST">
+		<form action="/build/application" method="POST">
 			<p><h4>{#__ key="build.generate.title"/}</h4></p>
 			<p>{#__ key="build.generate.subtitle"/}</p>
 
-			<div class="form-group" id="select_application_form">
-				<label for="select-application">{#M_ key="application.label"/}</label>
-				<input class="form-control input applicationInput" id="application" name="application" type="text" />
-				<br><br>
-				<button class="generate-button btn btn-primary" id="step2Discover1" type="submit">
+			<div class="form-group">
+				<label for="application">{#M_ key="application.label"/}</label>
+				<input class="form-control input" name="application" type="text" required>
+				<br>
+				<button class="btn btn-primary" type="submit">
 					<i class="fa fa-cog fa-md">&nbsp;&nbsp;</i>{#__ key="button.create"/}
 				</button>
-
-				<div id="app-progress-bar" style="display: none;">
-					<div class="progress">
-						<div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-						</div>
+			</div>
+			<div id="app-progress-bar" style="display: none;">
+				<div class="progress">
+					<div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
 					</div>
 				</div>
 			</div>

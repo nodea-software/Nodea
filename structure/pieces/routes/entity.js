@@ -16,7 +16,7 @@ class MODEL_NAME extends Entity {
 		return {
 			list: {
 				// start: async(data) => {},
-				// beforeRender: async(data) => {},
+				// beforeRender: async(data) => {}
 			},
 			datalist: {
 				// start: async(data) => {},
@@ -28,7 +28,7 @@ class MODEL_NAME extends Entity {
 				// start: async (data) => {},
 				// beforeDatatableQuery: async (data) => {},
 				// afterDatatableQuery: async (data) => {},
-				// beforeResponse: async (data) => {},
+				// beforeResponse: async (data) => {}
 			},
 			show: {
 				// start: async (data) => {},
@@ -44,6 +44,7 @@ class MODEL_NAME extends Entity {
 			create: {
 				// start: async (data) => {},
 				// beforeCreateQuery: async(data) => {},
+				// beforeInitalStatus: async(data) => {},
 				// beforeRedirect: async(data) => {}
 			},
 			update_form: {
@@ -61,7 +62,7 @@ class MODEL_NAME extends Entity {
 				// beforeValidityCheck: (data) => {},
 				// afterValidityCheck: (data) => {},
 				// beforeDataQuery: (data) => {},
-				// beforeRender: (data) => {},
+				// beforeRender: (data) => {}
 			},
 			set_status: {
 				// start: async (data) => {},
@@ -72,7 +73,7 @@ class MODEL_NAME extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
-				// beforeQuery: async (data) => {}
+				// beforeQuery: async (data) => {},
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {

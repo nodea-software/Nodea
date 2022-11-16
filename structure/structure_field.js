@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const dataHelper = require("../utils/data_helper");
 const fieldHelper = require("../helpers/field");
@@ -65,12 +65,11 @@ exports.setupField = async (data) => {
 	else if (typeof toSyncObject[entity_name].attributes === "undefined")
 		toSyncObject[entity_name].attributes = {};
 
-	let typeForModel = "STRING";
+	let sql_type = "STRING", type_parameter = null;
 	switch (field_type) {
 		case "password":
 		case "color":
 		case "url":
-		case "decimal":
 		case "email":
 		case "phone":
 		case "fax":
@@ -78,47 +77,52 @@ exports.setupField = async (data) => {
 		case "picture":
 		case "qrcode":
 		case "barcode":
-			typeForModel = "STRING";
+			sql_type = "STRING";
 			break;
 		case "number":
-			typeForModel = "INTEGER";
+			sql_type = "INTEGER";
 			break;
 		case "big number":
-			typeForModel = "BIGINT";
+			sql_type = "BIGINT";
+			break;
+		case "decimal":
+			sql_type = "DECIMAL";
+			type_parameter = "14,4";
 			break;
 		case "currency":
-			typeForModel = "DOUBLE";
+			sql_type = "DECIMAL";
+			type_parameter = "10,2";
 			break;
 		case "date":
 		case "datetime":
-			typeForModel = "DATE";
+			sql_type = "DATE";
 			break;
 		case "time":
-			typeForModel = "TIME";
+			sql_type = "TIME";
 			break;
 		case "boolean":
-			typeForModel = "BOOLEAN";
+			sql_type = "BOOLEAN";
 			break;
 		case "radio":
 		case "enum":
-			typeForModel = "ENUM";
+			sql_type = "ENUM";
 			break;
 		case "text":
 		case "regular text":
-			typeForModel = "TEXT";
+			sql_type = "TEXT";
 			break;
 		default:
-			typeForModel = "STRING";
+			sql_type = "STRING";
 			break;
 	}
 
 	// Default value managment
 	if (typeof options.defaultValue !== "undefined" && options.defaultValue != null) {
-		if (typeForModel == "STRING" || typeForModel == "TEXT" || typeForModel == "ENUM")
+		if (sql_type == "STRING" || sql_type == "TEXT" || sql_type == "ENUM")
 			defaultValueForOption = options.defaultValue;
-		else if (typeForModel == "INTEGER" && !isNaN(options.defaultValue))
+		else if (sql_type == "INTEGER" && !isNaN(options.defaultValue))
 			defaultValueForOption = options.defaultValue;
-		else if (typeForModel == "BOOLEAN") {
+		else if (sql_type == "BOOLEAN") {
 			if (["true", "vrai", "1", "checked", "coché", "à coché"].indexOf(defaultValue.toLowerCase()) != -1)
 				defaultValueForOption = true;
 			else if (["false", "faux", "0", "unchecked", "non coché", "à non coché"].indexOf(defaultValue.toLowerCase()) != -1)
@@ -136,16 +140,16 @@ exports.setupField = async (data) => {
 			cleanEnumValues[i] = dataHelper.clearString(field_values[i]);
 
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanEnumValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 	} else if (field_type == "radio") {
 		// Remove all special caractere for all enum values
@@ -156,13 +160,13 @@ exports.setupField = async (data) => {
 			cleanRadioValues[i] = dataHelper.clearString(field_values[i]);
 
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
 			"defaultValue": defaultValueForOption
@@ -170,30 +174,35 @@ exports.setupField = async (data) => {
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type
 		}
 	} else {
 		attributesObject[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
-			"type": typeForModel,
+			"type": sql_type,
 			"nodeaType": field_type,
 			"defaultValue": defaultValueForOption
 		}
 	}
 
+	if(type_parameter)
+		attributesObject[field_name].type_parameter = type_parameter;
+
 	// Add default "validate" property to true, setting to false will disable sequelize's validation on the field
 	attributesObject[field_name].validate = true;
-	fs.writeFileSync(attributesFileName, JSON.stringify(attributesObject, null, 4));
-	fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, 4));
+	// We allow null by default for all attributes
+	attributesObject[field_name].allowNull = true;
+	fs.writeFileSync(attributesFileName, JSON.stringify(attributesObject, null, '\t'));
+	fs.writeFileSync(toSyncFileName, JSON.stringify(toSyncObject, null, '\t'));
 
 	// Translation for enum and radio values
 	if (field_type == "enum") {
@@ -214,7 +223,7 @@ exports.setupField = async (data) => {
 		}
 		enumData[entity_name] = json;
 		// Write Enum file
-		fs.writeFileSync(fileEnum, JSON.stringify(enumData, null, 4));
+		fs.writeFileSync(fileEnum, JSON.stringify(enumData, null, '\t'));
 	}
 
 	// Translation for radio values
@@ -236,7 +245,7 @@ exports.setupField = async (data) => {
 		radioData[entity_name] = json;
 
 		// Write Enum file
-		fs.writeFileSync(fileRadio, JSON.stringify(radioData, null, 4));
+		fs.writeFileSync(fileRadio, JSON.stringify(radioData, null, '\t'));
 	}
 
 	/* ----------------- 4 - Add the fields in all the views  ----------------- */
@@ -268,6 +277,7 @@ exports.setupField = async (data) => {
 	filePromises.push(fieldHelper.updateListFile(fileBase, "list_fields", field_html.headers));
 
 	await Promise.all(filePromises);
+
 	// Field application locales
 	await translateHelper.writeLocales(data.application.name, "field", entity_name, [field_name, data.options.showValue], data.googleTranslate);
 
@@ -288,7 +298,7 @@ exports.setRequiredAttribute = async (data) => {
 	else
 		throw new Error('structure.field.attributes.notUnderstand');
 
-	const pathToViews = __workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
+	const pathToViews = global.__workspacePath + '/' + data.application.name + '/app/views/' + data.entity_name;
 
 	// Update create_fields.dust file
 	let $ = await domHelper.read(pathToViews + '/create_fields.dust');
@@ -307,7 +317,7 @@ exports.setRequiredAttribute = async (data) => {
 	if(data.structureType == "relatedToMultipleCheckbox"){
 		$("*[data-field='" + data.options.value + "']").find('.relatedtomany-checkbox').data('required', set);
 	} else {
-		$("*[data-field='" + data.options.value + "']").find('input').prop('required', set);
+		$("*[data-field='" + data.options.value + "']").find('input').not("[type='hidden']").prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('textarea').prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('select').prop('required', set);
 	}
@@ -336,25 +346,28 @@ exports.setRequiredAttribute = async (data) => {
 	const attributesObj = JSON.parse(fs.readFileSync(pathToAttributesJson, "utf8"));
 
 	if (attributesObj[data.options.value]) {
-		// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
-		// In script you can set required a field in user, role or group but it crash the user admin autogeneration
-		// because the required field is not given during the creation
-		if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
-			attributesObj[data.options.value].allowNull = set;
+
 		// Alter column to set default value in DB if models already exist
 		const jsonPath = __dirname + '/../workspace/' + data.application.name + '/app/models/toSync.json';
 		const toSync = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 		if (typeof toSync.queries === "undefined")
 			toSync.queries = [];
 
-		let defaultValue = null;
 		const tableName = data.entity_name;
 		let length = "";
 		if (data.sqlDataType == "varchar")
 			length = "(" + data.sqlDataTypeLength + ")";
 
+		let defaultValue = null;
 		// Set required
 		if (set) {
+
+			// TODO: Handle allowNull: false field in user, role, group to avoid error during autogeneration
+			// In script you can set required a field in user, role or group but it crash the user admin autogeneration
+			// because the required field is not given during the creation
+			if (data.entity_name != "e_user" && data.entity_name != "e_role" && data.entity_name != "e_group")
+				attributesObj[data.options.value].allowNull = false;
+
 			switch (attributesObj[data.options.value].type) {
 				case "TEXT":
 					defaultValue = "";
@@ -382,8 +395,7 @@ exports.setRequiredAttribute = async (data) => {
 					break;
 			}
 
-			if(defaultValue)
-				attributesObj[data.options.value].defaultValue = defaultValue;
+			attributesObj[data.options.value].defaultValue = defaultValue;
 
 			if (data.sqlDataType && (data.dialect == "mysql" || data.dialect == "mariadb")) {
 				// Update all NULL value before set not null
@@ -413,8 +425,8 @@ exports.setRequiredAttribute = async (data) => {
 				toSync.queries.push('ALTER TABLE "' + tableName + '" ALTER COLUMN "' + data.options.value + '" DROP NOT NULL');
 			}
 		}
-		fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, 4));
-		fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, 4));
+		fs.writeFileSync(jsonPath, JSON.stringify(toSync, null, '\t'));
+		fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, '\t'));
 	} else {
 		// If not in attributes, maybe in options
 		const pathToOptionJson = __dirname + '/../workspace/' + data.application.name + '/app/models/options/' + data.entity_name + ".json";
@@ -425,7 +437,7 @@ exports.setRequiredAttribute = async (data) => {
 				optionsObj[i].allowNull = set;
 
 		// Save option
-		fs.writeFileSync(pathToOptionJson, JSON.stringify(optionsObj, null, 4));
+		fs.writeFileSync(pathToOptionJson, JSON.stringify(optionsObj, null, '\t'));
 	}
 
 	return;
@@ -446,14 +458,14 @@ exports.setUniqueField = (data) => {
 		throw new Error('structure.field.attributes.notUnderstand');
 
 	// Update the Sequelize attributes.json to set unique
-	const pathToAttributesJson = __workspacePath + '/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
+	const pathToAttributesJson = global.__workspacePath + '/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
 	const attributesContent = fs.readFileSync(pathToAttributesJson);
 	const attributesObj = JSON.parse(attributesContent);
 
 	// If the current field is an fk field then we won't find it in attributes.json
 	if (typeof attributesObj[data.options.value] !== "undefined")
 		attributesObj[data.options.value].unique = set;
-	fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, 4));
+	fs.writeFileSync(pathToAttributesJson, JSON.stringify(attributesObj, null, '\t'));
 
 	return;
 }
@@ -528,10 +540,10 @@ exports.setupRelatedToField = async (data) => {
 			<label for="${alias}">
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%"></select>
+			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;"></select>
 		</div>
 	</div>`;
 
@@ -546,10 +558,10 @@ exports.setupRelatedToField = async (data) => {
 			<label for="${alias}">
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<!--{#${alias}}-->
 					<option value="{id}" selected>${usingOption.join(' - ')}</option>
 				<!--{/${alias}}-->
@@ -576,18 +588,19 @@ exports.setupRelatedToField = async (data) => {
 			<label for='${alias}'>
 				<!--{#__ key="entity.${source}.${alias}" /}-->&nbsp;
 				<!--{@inline_help field="${alias}"}-->
-					<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				<!--{/inline_help}-->
 			</label>
-			<input class='form-control input' name='${alias}' value='${value}' placeholder="{#__ key='entity.${source}.${alias}' /}" type='text' readOnly />
+			<input class='form-control input' name='${alias}' value='${value}' placeholder=__key=entity.${source}.${alias} type='text' readOnly />
 		</div>
 	</div>`;
 
 	file = fileBase + '/show_fields.dust';
-	const $ = await domHelper.read(file);
-	$("#fields").append(showField);
-
-	domHelper.write(file, $)
+	if(fs.existsSync(file)){
+		const $ = await domHelper.read(file);
+		$("#fields").append(showField);
+		domHelper.write(file, $)
+	}
 
 	/* ------------- Add new FIELD in list <thead> ------------- */
 	for (let i = 0; i < usingField.length; i++) {
@@ -626,7 +639,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		else if (DUST_FILTERS.includes(usingField[i].type))
 			usingOption.push('{' + usingField[i].value + '|' + usingField[i].type + '}');
 		else
-			usingOption.push('{' + usingField[i].value + '|h}');
+			usingOption.push('{' + usingField[i].value + '}');
 	}
 
 	// FIELD WRAPPER
@@ -637,7 +650,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 					<label for="f_${urlAs}">
 						<!--{#__ key="entity.${source}.${alias}" /}-->
 						<!--{@inline_help field="${alias}"}-->
-							<i data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+							<i data-entity="${source}" data-field="${alias}" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 						<!--{/inline_help}-->
 					</label>
 					${wrapped}
@@ -663,7 +676,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		createField = wrapField(`
-			<select multiple="multiple" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple="multiple" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 			</select>
 		`);
 	fieldHelper.updateFile(fileBase, 'create_fields', createField);
@@ -684,7 +697,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		updateField = wrapField(`
-			<select multiple="" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple="" class="ajax form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<option value="">{#__ key="select.default" /}</option>
 				<!--{#${alias}}-->
 					<option value="{id}" selected>${usingOption.join(' - ')}</option>
@@ -709,7 +722,7 @@ exports.setupRelatedToMultipleField = async (data) => {
 		`);
 	else
 		showField = wrapField(`
-			<select multiple disabled readonly class="form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" width="100%">
+			<select multiple disabled readonly class="form-control" name="${alias}" data-source="${urlTarget}" data-using="${usingList.join(',')}" style="width: 100%;">
 				<!--{#${alias}}-->
 					<option value="${usingOption.join(' - ')}" selected>${usingOption.join(' - ')}</option>
 				<!--{/${alias}}-->
@@ -779,7 +792,11 @@ exports.deleteField = async (data) => {
 	for (let i = 0; i < deletedOptionsTarget.length; i++) {
 		autoGenerateFound = false;
 		targetJsonPath = workspacePath + '/app/models/options/' + deletedOptionsTarget[i].target + '.json';
-		targetOption = JSON.parse(fs.readFileSync(targetJsonPath));
+		// If same entity then use the already handle option object
+		if(deletedOptionsTarget[i].target == data.entity.name)
+			targetOption = dataToWrite;
+		else
+			targetOption = JSON.parse(fs.readFileSync(targetJsonPath));
 		for (let j = 0; j < targetOption.length; j++) {
 			if(targetOption[j].structureType == "auto_generate" && targetOption[j].foreignKey == deletedOptionsTarget[i].foreignKey){
 				targetOption.splice(j, 1);
@@ -787,11 +804,11 @@ exports.deleteField = async (data) => {
 			}
 		}
 		if(autoGenerateFound)
-			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, 4), "utf8");
+			fs.writeFileSync(targetJsonPath, JSON.stringify(targetOption, null, '\t'), "utf8");
 	}
 
 	// Write back either options.json or attributes.json file
-	fs.writeFileSync(jsonPath, JSON.stringify(dataToWrite, null, 4), "utf8");
+	fs.writeFileSync(jsonPath, JSON.stringify(dataToWrite, null, '\t'), "utf8");
 
 	// Remove field from create/update/show views files
 	const viewsPath = workspacePath + '/app/views/' + data.entity.name + '/';
@@ -877,7 +894,7 @@ exports.deleteField = async (data) => {
 			}
 		}
 		if (toSave)
-			fs.writeFileSync(optionsPath + file, JSON.stringify(currentOption, null, 4), "utf8");
+			fs.writeFileSync(optionsPath + file, JSON.stringify(currentOption, null, '\t'), "utf8");
 	});
 
 	// Wait for all promises execution
@@ -890,7 +907,7 @@ exports.deleteField = async (data) => {
 	if (typeof enumJson[data.entity.name] !== "undefined") {
 		if (typeof enumJson[data.entity.name][info.fieldToDrop] !== "undefined") {
 			delete enumJson[data.entity.name][info.fieldToDrop];
-			fs.writeFileSync(enumsPath, JSON.stringify(enumJson, null, 4));
+			fs.writeFileSync(enumsPath, JSON.stringify(enumJson, null, '\t'));
 		}
 	}
 

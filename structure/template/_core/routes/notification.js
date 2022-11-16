@@ -64,6 +64,8 @@ class CoreNotification extends Route {
 				return data.res.error(_ => data.res.render('common/error', {error: 401}));
 
 			data.redirect = data.notification.f_url != "#" ? data.notification.f_url : data.req.headers.referer;
+			if(!data.redirect || typeof data.redirect === 'undefined')
+				data.redirect = '/';
 
 			data.user = await models.E_user.findByPk(data.userId);
 			await data.user.removeR_notification(data.notification.id);

@@ -15,6 +15,7 @@
 	<div id="error-box"></div>
 
 	<form action="/login?r={redirect}" method="post">
+		<label for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
 			<div class="input-group-append">
@@ -23,6 +24,7 @@
 				</div>
 			</div>
 		</div>
+		<label for="password">{#__ key="login.password"/}</label>
 		<div class="input-group mb-3">
 			<input type="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
 			<div class="input-group-append">
@@ -71,10 +73,10 @@
 	<hr>
 
 	<p class="mb-1">
-		<a href="/reset_password">{#__ key="login.reset_password.title"/}</a>
+		<a href="/reset_password"><i class="fa fa-unlock">&nbsp;</i>{#__ key="login.reset_password.title"/}</a>
 	</p>
 	<p class="mb-1">
-		<a href="/first_connection">{#__ key="login.first_connection.title"/}</a>
+		<a href="/first_connection"><i class="fa fa-sign-in-alt">&nbsp;</i>{#__ key="login.first_connection.title"/}</a>
 	</p>
 {/content}
 

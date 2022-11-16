@@ -3,16 +3,24 @@
 if [[ "$NODEA_ENV" == "studio" ]]; then
 
 	# Set Git user and email
-	git config --global user.name "$HOSTNAME"
+	git config --global user.name "$SUB_DOMAIN.$DOMAIN_STUDIO"
 	git config --global user.email "$SUB_DOMAIN@$DOMAIN_STUDIO"
 
 	# Write SSH Config file
+	if [ ! -d "/root/.ssh" ]; then
+		mkdir /root/.ssh
+	fi
+
+	if [ ! "/root/.ssh/config" ]; then
+		touch /root/.ssh/config
+	fi
+
 	printf "Host gitlab.%s\n	Port 2222\n	StrictHostKeyChecking no\n" "$DOMAIN_STUDIO" > /root/.ssh/config
 	eval "$(ssh-agent -s)"
 fi
 
-# Install generator and application node_modules
-chmod +x install_modules.sh
-./install_modules.sh
+# Install generator node_modules
+npm install
 
+# Generator server launch
 node server.js

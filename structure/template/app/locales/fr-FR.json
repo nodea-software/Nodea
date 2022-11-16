@@ -1,7 +1,7 @@
 {
 	"app": {
 		"name": "Application",
-        "version": "version"
+		"version": "version"
 	},
 	"notification": {
 		"deleteAll": "Supprimer toutes les notifications",
@@ -56,53 +56,55 @@
 		"error4": "Votre ancien mot de passe n'est pas valide.",
 		"success": "Votre profil a bien été mis à jour."
 	},
-    "automation": {
-        "add_action": "Ajouter une action",
-        "toggle_dropdown": "Toggle Dropdown",
-        "script_menu_input": "Saisir un champ",
-        "script_menu_select": "Choisir une valeur dans une liste déroulante",
-        "script_menu_checkbox": "Cocher une case à cocher",
-        "script_menu_radio": "Activer un bouton radio",
-        "script_menu_submit": "Soumettre un formulaire",
-        "script_menu_read_text": "Lire un texte",
-        "script_menu_read_field": "Lire un champ",
-        "script_menu_click_element": "Cliquer sur un élément",
-        "script_menu_find_element": "Trouver un élément",
-        "script_menu_keydown_enter": "Appuyer sur la touche Entrée",
-        "script_menu_keydown_tab": "Appuyer sur la touche Tab",
-        "script_menu_keydown_backspace": "Appuyer sur la touche Backspace",
-        "script_menu_keydown_esc": "Appuyer sur la touche Echappement (Esc)",
-        "script_menu_keydown_any": "Appuyer sur une touche normale",
-        "script_menu_open_tab": "Ouvrir un nouvel onglet",
-        "script_menu_change_tab": "Changer d'onglet",
-        "script_menu_open_url": "Naviguer vers une URL",
-        "script_menu_error": "Interompre le programme en erreur",
-        "sequence_menu_test": "Effectuer un test conditionnel",
-        "sequence_menu_download": "Télécharger un document",
-        "sequence_menu_upload": "Uploader un document",
-        "sequence_menu_mapping": "Transformer une valeur suivant une table de paramétrage",
-        "sequence_menu_update_entity": "Mettre à jour une entité serveur",
-        "sequence_menu_encrypt": "Encrypter une variable",
-        "sequence_menu_decrypt": "Décrypter une variable",
-        "sequence_menu_mouse_move": "Déplacer la souris à une position donnée",
-        "sequence_menu_mouse_click": "Cliquer",
-        "sequence_menu_mouse_right_click": "Cliquer avec le bouton droit",
-        "sequence_menu_mouse_double_click": "Double-cliquer",
-        "sequence_menu_type_text": "Saisir du texte",
-        "sequence_menu_next_step": "Déclencher une étape",
-        "sequence_menu_error": "Interompre le programme en erreur",
-        "add_variable": "Ajouter une variable",
-        "script_menu_step_index": "Index de l'étape",
-        "script_menu_step_serial_number": "Numéro d'ordre de l'étape",
-        "script_menu_env_variable": "Variable d'environnement (flux de données)",
-        "script_menu_session_variable": "Variable de session",
-        "sequence_menu_step_index": "Index de l'étape",
-        "sequence_menu_step_serial_number": "Numéro d'ordre de l'étape",
-        "sequence_menu_env_variable": "Variable d'environnement (flux de données)",
-        "sequence_menu_session_variable": "Variable de session",
-        "zip_created_replaced": "Le zip a été généré et le fichier programme remplacé",
-        "duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme."
-    },
+	"automation": {
+		"add_action": "Ajouter une action",
+		"toggle_dropdown": "Toggle Dropdown",
+		"script_menu_input": "Saisir un champ",
+		"script_menu_select": "Choisir une valeur dans une liste déroulante",
+		"script_menu_checkbox": "Cocher une case à cocher",
+		"script_menu_radio": "Activer un bouton radio",
+		"script_menu_submit": "Soumettre un formulaire",
+		"script_menu_read_text": "Lire un texte",
+		"script_menu_read_field": "Lire un champ",
+		"script_menu_click_element": "Cliquer sur un élément",
+		"script_menu_find_element": "Trouver un élément",
+		"script_menu_keydown_enter": "Appuyer sur la touche Entrée",
+		"script_menu_keydown_tab": "Appuyer sur la touche Tab",
+		"script_menu_keydown_backspace": "Appuyer sur la touche Backspace",
+		"script_menu_keydown_esc": "Appuyer sur la touche Echappement (Esc)",
+		"script_menu_keydown_any": "Appuyer sur une touche normale",
+		"script_menu_open_tab": "Ouvrir un nouvel onglet",
+		"script_menu_change_tab": "Changer d'onglet",
+		"script_menu_open_url": "Naviguer vers une URL",
+		"script_menu_error": "Interompre le programme en erreur",
+		"sequence_menu_test": "Effectuer un test conditionnel",
+		"sequence_menu_download": "Télécharger un document",
+		"sequence_menu_upload": "Uploader un document",
+		"sequence_menu_mapping": "Transformer une valeur suivant une table de paramétrage",
+		"sequence_menu_update_entity": "Mettre à jour une entité serveur",
+		"sequence_menu_encrypt": "Encrypter une variable",
+		"sequence_menu_decrypt": "Décrypter une variable",
+		"sequence_menu_mouse_move": "Déplacer la souris à une position donnée",
+		"sequence_menu_mouse_click": "Cliquer",
+		"sequence_menu_mouse_right_click": "Cliquer avec le bouton droit",
+		"sequence_menu_mouse_double_click": "Double-cliquer",
+		"sequence_menu_type_text": "Saisir du texte",
+		"sequence_menu_next_step": "Déclencher une étape",
+		"sequence_menu_error": "Interompre le programme en erreur",
+		"add_variable": "Ajouter une variable",
+		"script_menu_step_index": "Index de l'étape",
+		"script_menu_step_serial_number": "Numéro d'ordre de l'étape",
+		"script_menu_env_variable": "Variable d'environnement (flux de données)",
+		"script_menu_session_variable": "Variable de session",
+		"sequence_menu_step_index": "Index de l'étape",
+		"sequence_menu_step_serial_number": "Numéro d'ordre de l'étape",
+		"sequence_menu_env_variable": "Variable d'environnement (flux de données)",
+		"sequence_menu_session_variable": "Variable de session",
+		"zip_created_replaced": "Le zip a été généré et le fichier programme remplacé",
+		"duplication_success": "Succès de la duplication. Vous êtes sur le nouveau programme.",
+		"no_zip_for_pages": "Pas de fichier programme",
+		"pages_generated": "Pages générées"
+	},
 	"navbar": {
 		"about": "A propos",
 		"support": "Support"
@@ -129,10 +131,11 @@
 			"offline_mode": "Mode hors ligne",
 			"access_settings_api": "Accès à l'API",
 			"access_tool": "Fichier configuration des accès",
-            "access_settings_group": "Gestion des accès par groupe",
-            "access_settings_role": "Gestion des actions par rôle",
-            "api_documentation": "Documentation de l'API",
-            "db_tool": "Outil BDD"
+			"access_settings_group": "Gestion des accès par groupe",
+			"access_settings_role": "Gestion des actions par rôle",
+			"api_documentation": "Documentation de l'API",
+			"db_tool": "Outil BDD",
+			"traceability": "Traçabilité"
 		},
 		"access_settings": {
 			"moduleList": "Modules",
@@ -180,7 +183,7 @@
 			"resend_email": "Renvoyer un email de première connexion",
 			"resend_email_success": "Le mail a bien été envoyé",
 			"cannot_modify_admin": "Vous ne pouvez pas modifier le compte Administrateur de l'application.",
-            "cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application."
+			"cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application."
 		}
 	},
 	"button": {
@@ -206,8 +209,9 @@
 		"return": "Retour",
 		"delete_confirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement ?",
 		"loading": "Chargement...",
-        "generate_replace": "Générer et remplacer",
-        "duplicate": "Dupliquer"
+		"generate_replace": "Générer et remplacer",
+		"generate_pages": "Générer les pages à partir du zip",
+		"duplicate": "Dupliquer"
 	},
 	"operation": {
 		"show": "Afficher",
@@ -234,21 +238,6 @@
 		"relatedtomanycheckbox_required": "Un champ nécessite d'avoir au moins une case cochée."
 	},
 	"entity": {},
-	"synchro": {
-		"title": "Synchronisation",
-		"configure": "Configurer données de chargement",
-		"list": "Lister les synchronisations",
-		"config": {
-			"title": "Configuration"
-		},
-		"process": {
-			"title": "Synchronisation",
-			"synchronize": "Synchroniser",
-			"dumped": "Données de chargement généré",
-			"no_credentials": "Aucun identifiant synchro trouvé",
-			"connection_failed": "Impossible de se connecter a l'API"
-		}
-	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Des fichiers sont en cours de téléchargement, merci de bien vouloir patienter.",
@@ -268,10 +257,10 @@
 		},
 		"document_template": {
 			"template_example_dust": "Exemple de template dust",
-            "format_pairs": {
-                "dust_pdf": "Template Dust vers document PDF",
-                "docx_docx": "Template Word vers document Word"
-            },
+			"format_pairs": {
+				"dust_pdf": "Template Dust vers document PDF",
+				"docx_docx": "Template Word vers document Word"
+			},
 			"help": {
 				"menu": "Aide Modèle Document",
 				"description": "<p style='text-align:justify;'> Les modèles de document sont utilisables dans l'onglet où est positionné le composant <b>Modèle de document</b> de chaque entité.\nLors de la création de votre modèle, vous devez inclure aux endroits désirés les variables listées ci-dessous, elles seront remplacées à la volée par les données de l'entité au moment où vous cliquerez sur le bouton 'Générer'.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Pour utiliser la date de création ou de modification de chaque enregistrement veuillez utiliser:<br>\n- <b>{createdAt}</b> pour la date de création <br>\n- <b>{updatedAt}</b> pour la date de modification.\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<p>NB: Selectionnez une entité dans la liste ci-dessous pour découvrir les données disponibles et l'usage des variables.</p>\n",
@@ -295,14 +284,34 @@
 				"variables": "Variables globales",
 				"description": "Ces variables commencent par un <b> g_ </b> et sont accessibles dans toutes les entités."
 			},
-            "images_ressources": {
-                "label": "Ressources image",
-                "description": "<p>Ces variables commencent par un <b> img_ </b> et sont accessibles dans toutes les entités.</p>\n<p>Elles permettent d'inclure les ressources images que vous avez crée dans l'administration. Utilisez le champ <b> code </b> de votre Ressource image dans votre template pour qu'il soit remplacé par le buffer de l'image en base64.</p>\n",
-                "example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"data:image/*;base64,<b>{img_logo}</b>\"</p>"
-            }
+			"images_ressources": {
+				"label": "Ressources image",
+				"description": "<p>Ces variables commencent par un <b> img_ </b> et sont accessibles dans toutes les entités.</p>\n<p>Elles permettent d'inclure les ressources images que vous avez crée dans l'administration. Utilisez le champ <b> code </b> de votre Ressource image dans votre template pour qu'il soit remplacé par le buffer de l'image en base64.</p>\n",
+				"example": "<p>Exemple :<br>Pour inclure une Image ressource avec pour code <b>{img_logo}</b> dans un template Dust, il faut fournir le buffer à un élement img html : src=\"<b>{img_logo}</b>\"</p>"
+			}
 		},
 		"status": {
-			"diagram": "Diagramme"
+			"diagram": "Diagramme",
+			"add_status": "Ajouter un statut"
+		},
+		"address": {
+			"search": "Recherchez et selectionnez votre adresse",
+			"label_component": "Configuration adresse",
+			"position": "Position de la carte",
+			"top": "Au dessus",
+			"right": "A droite",
+			"bottom": "En dessous",
+			"left": "A gauche",
+			"distance": "Afficher la distance",
+			"settings": "Configurer",
+			"enableMaps": "Activer la carte",
+			"entity": "Entité",
+			"zoomBar": "Afficher panneau de zoom",
+			"navigation": "Activer la navigation",
+			"mousePosition": "Afficher les coordonnées de la souris",
+			"addressNotValid": "Adresse non valide",
+			"addressNotFound": "Adresse introuvable",
+			"inline_help": "Pour avoir une carte valide, veuillez utiliser le champ ci-dessous pour saisir l'adresse"
 		}
 	},
 	"component": {},
@@ -343,5 +352,43 @@
 		"goBackText": "Revenir en arrière",
 		"home": "Accueil",
 		"valueTooLong": "La valeur renseignée dépasse la longueur maximum autorisée(>30)."
+	},
+	"datatable": {
+		"processing": "Traitement en cours...",
+		"search": "Rechercher&nbsp;:",
+		"lengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
+		"info": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+		"infoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+		"infoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+		"infoPostFix": "",
+		"loadingRecords": "Chargement en cours...",
+		"zeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
+		"emptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+		"reset_filter": "Réinitialiser les filtres",
+		"scroll_right": "Défilement à droite",
+		"download_file": "Télécharger le fichier",
+		"close": "Fermer",
+		"paginate": {
+			"first": "Premier",
+			"previous": "Pr&eacute;c&eacute;dent",
+			"next": "Suivant",
+			"last": "Dernier"
+		},
+		"aria": {
+			"sortAscending": ": activer pour trier la colonne par ordre croissant",
+			"sortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+		},
+		"choose_columns": "Choix Colonnes",
+		"check": "Cocher Tout",
+		"uncheck": "Décocher Tout",
+		"apply": "Appliquer",
+		"display": "Afficher",
+		"boolean_filter": {
+			"null": "Non renseigné",
+			"checked": "Coché",
+			"unchecked": "Décoché",
+			"all": "Tout"
+		},
+		"min_one_column_display": "Vous devez laisser au moins une colonne affichée."
 	}
 }

@@ -19,8 +19,17 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	}
 
 	if (speWhere)
-		for (const prop of Reflect.ownKeys(speWhere)) // Reflect.onwKeys fetch and concat ownProperty and ownSymbol
-			queryObject.where[prop] = speWhere[prop];
+		for (const prop of Reflect.ownKeys(speWhere)){
+			try {
+				if(Array.isArray(queryObject.where[prop]))
+					queryObject.where[prop] = queryObject.where[prop] ? [...queryObject.where[prop], ...speWhere[prop]] : speWhere[prop];
+				else
+					queryObject.where[prop] = queryObject.where[prop] ? {...queryObject.where[prop], ...speWhere[prop]} : speWhere[prop];
+			} catch(err) {
+				console.error(err);
+				queryObject.where[prop] = speWhere[prop];
+			}
+		}
 
 	// TODO: handle attributes
 	// queryObject.attributes = attributes;
@@ -42,7 +51,19 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	queryObject.include = model_builder.getIncludeFromFields(models, entityName, toInclude);
 
 	// Execute query with filters and get total count
-	const result = await models[modelName].findAndCountAll(queryObject);
+	let result;
+	try {
+		result = await models[modelName].findAndCountAll(queryObject);
+	} catch(err) {
+		console.error('DATALIST ERROR, TRYING WITH SUBQUERY PARAM');
+		console.error(err.message);
+
+		queryObject.subQuery = true;
+		if(queryObject.order.length && queryObject.order.length > 0)
+			queryObject.order = [];
+		result = await models[modelName].findAndCountAll(queryObject);
+	}
+
 	const lightRows = result.rows.map(elem => elem.get({plain: true}));
 
 	return {
@@ -61,9 +82,17 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	const include = {
 		model: models[subentityModel],
 		as: subentityAlias,
-		order: order,
 		include: model_builder.getIncludeFromFields(models, subentityName, toInclude) // Get sequelize include object
 	}
+
+	// Rework order for include, only handle order format like: [['id', 'desc']]
+	if(order && typeof order[0][0] == 'string' && typeof order[0][1] == 'string')
+		order = [[{model: models[subentityModel], as: subentityAlias}, ...order[0]]];
+	else {
+		// TODO: Handle order for relation field in subdatalist, format like: [ [ Literal { val: 'r_relation.id' }, 'desc' ] ]
+		order = null;
+	}
+
 	if (search[searchTerm].length > 0)
 		include.where = search;
 
@@ -74,10 +103,34 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 
 	include.required = false;
 
-	const entity = await models[modelName].findOne({
-		where: { id: parseInt(sourceId) },
-		include: include
-	});
+	// Magically fix a lot of problem, to remove if any problem on datalist filter, pagination, etc
+	include.separate = false;
+
+	let entity;
+	try {
+		entity = await models[modelName].findOne({
+			where: {
+				id: parseInt(sourceId)
+			},
+			include: include,
+			order: order
+		});
+	} catch(err) {
+		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);
+
+		// Desactivate it only if error talk about it
+		if(err.message && err.message.includes('separate'))
+			include.separate = false;
+		// TODO: Order on include sometime do not work because Sequelize decide to do 2 request with the first one without include
+		// Try with order in include
+		include.order = [[order[0][1], order[0][2]]];
+		entity = await models[modelName].findOne({
+			where: {
+				id: parseInt(sourceId)
+			},
+			include: include
+		});
+	}
 
 	if (!entity['count' + subentityAlias.capitalizeFirstLetter()])
 		throw new Error('count' + subentityAlias.capitalizeFirstLetter() + 'is undefined');

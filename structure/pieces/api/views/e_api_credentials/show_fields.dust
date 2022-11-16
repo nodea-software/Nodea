@@ -1,19 +1,34 @@
 <div id="fields" class="row">
 	<div data-field="f_client_name" class="col-12">
 		<div class="form-group">
-			<label for="f_client_name"> {#__ key="entity.e_api_credentials.f_client_name"/} {@inline_help field="f_client_name"}&nbsp;<i data-field="f_client_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
+			<label for="f_client_name">
+				{#__ key="entity.e_api_credentials.f_client_name"/}
+				{@inline_help field="f_client_name"}
+					<i data-entity="e_api_credentials" data-field="f_client_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
 			<input class="form-control" placeholder='{#__ key="entity.e_api_credentials.f_client_name" /}' name="f_client_name" value="{f_client_name}" type="text" readonly="">
 		</div>
 	</div>
 	<div data-field="f_client_key" class="col-12">
 		<div class="form-group">
-			<label for="f_client_key"> {#__ key="entity.e_api_credentials.f_client_key"/} {@inline_help field="f_client_key"}&nbsp;<i data-field="f_client_key" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
+			<label for="f_client_key">
+				{#__ key="entity.e_api_credentials.f_client_key"/}
+				{@inline_help field="f_client_key"}
+					<i data-entity="e_api_credentials" data-field="f_client_key" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
 			<input class="form-control" placeholder='{#__ key="entity.e_api_credentials.f_client_key" /}' name="f_client_key" value="{f_client_key}" type="text" readonly="">
 		</div>
 	</div>
 	<div data-field="f_client_secret" class="col-12">
 		<div class="form-group">
-			<label for="f_client_secret"> {#__ key="entity.e_api_credentials.f_client_secret"/} {@inline_help field="f_client_secret"}&nbsp;<i data-field="f_client_secret" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
+			<label for="f_client_secret">
+				{#__ key="entity.e_api_credentials.f_client_secret"/}
+				{@inline_help field="f_client_secret"}
+					<i data-entity="e_api_credentials" data-field="f_client_secret" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
 			<input class="form-control" placeholder='{#__ key="entity.e_api_credentials.f_client_secret" /}' name="f_client_secret" value="{f_client_secret}" type="text" readonly="">
 		</div>
 	</div>
@@ -22,7 +37,7 @@
 			<label for="f_role">
 				{#__ key="entity.e_api_credentials.r_role" /}
 				{@inline_help field="r_role"}
-				<i data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				<i data-entity="e_api_credentials" data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				{/inline_help}
 			</label>
 			<select multiple="" disabled="" readonly="" class="form-control" name="r_role" data-source="role" data-using="f_label">
@@ -37,7 +52,7 @@
 			<label for="f_group">
 				{#__ key="entity.e_api_credentials.r_group" /}
 				{@inline_help field="r_group"}
-				<i data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				<i data-entity="e_api_credentials" data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
 				{/inline_help}
 			</label>
 			<select multiple="" disabled="" readonly="" class="form-control" name="r_group" data-source="group" data-using="f_label">

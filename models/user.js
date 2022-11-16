@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
 		token_password_reset: DataTypes.STRING,
 		token_first_connection: DataTypes.STRING, // In case of signup
 		repo_access_token: DataTypes.STRING, // Access token for git commands with code platform
+		nb_instruction: DataTypes.INTEGER,
 		version: DataTypes.INTEGER
 	}, {
 		tableName: "user",

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr-FR">
 	<head>
 		<meta charset="UTF-8">
 		<title>{#__ key="app.name"/}</title>
@@ -46,7 +46,10 @@
 		{+custom_css /}
 
 		{! Give the user_lang the client !}
-		<script type="text/javascript">var user_lang = '{user_lang}';</script>
+		<script type="text/javascript">
+			let user_lang = '{user_lang}';
+			let nodea_demo_mode = '{global_config.demo_mode}';
+		</script>
 	</head>
 	<body class="hold-transition layout-top-nav">
 		<div class="wrapper">
@@ -93,15 +96,21 @@
 								<a href="#" class="nav-link">{#__ key="menu.deploy"/}</a>
 							</li>
 							<li id="configure-dropdown-nav" class="nav-item dropdown">
-								<a id="configure-dropdown" href="/configure" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.configure"/}</a>
+								<a id="configure-dropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.configure"/}</a>
 								<ul aria-labelledby="configure-dropdown" class="dropdown-menu border-0 shadow">
 									<li><a href="/configure/account" class="dropdown-item">{#__ key="configure.tabs.account"/}</a></li>
 									<li><a href="/configure/settings" class="dropdown-item">{#__ key="configure.tabs.settings"/}</a></li>
-									{#isAdmin}
-										<li><a href="/configure/users" class="dropdown-item">{#__ key="configure.tabs.users"/}</a></li>
-									{/isAdmin}
 								</ul>
 							</li>
+							{#isAdmin}
+								<li id="administration-dropdown-nav" class="nav-item dropdown">
+									<a id="administration-dropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{#__ key="menu.administration"/}</a>
+									<ul aria-labelledby="administration-dropdown" class="dropdown-menu border-0 shadow">
+										<li><a href="/administration/users" class="dropdown-item">{#__ key="administration.tabs.users"/}</a></li>
+										<li><a href="/administration/queue" class="dropdown-item">{#__ key="administration.tabs.queue"/}</a></li>
+									</ul>
+								</li>
+							{/isAdmin}
 						</ul>
 
 						<!-- SEARCH FORM -->
@@ -125,24 +134,38 @@
 							</a>
 						</li>
 					</ul> !}
+					{?global_config.demo_mode}
+						<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
+							<a href="https://nodea-software.com/signup" target="_blank" id="demo_signup_btn" class="badge badge-success animate__animated animate__pulse">
+								<i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}
+							</a>
+						</ul>
+					{/global_config.demo_mode}
 					<ul class="order-1 order-md-3 navbar-nav ml-auto connectedas-label">
-						{#__ key="users.connected_as"/}&nbsp;<a href="/configure/account"><b>{user_login}</b></a>
+						{#__ key="users.connected_as"/}&nbsp;<a href="/configure/account"><b>
+							{?global_config.demo_mode}
+								Demo
+							{:else}
+								{user_login}
+							{/global_config.demo_mode}
+						</b></a>
 					</ul>
 					<ul class="order-1 order-md-3 navbar-nav ml-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="#" data-toggle="modal" data-target="#bugFix">
+							<a href="#" class="nav-link" data-toggle="modal" data-target="#bugFix" style="cursor: pointer;">
 								<i class="fas fa-bug"></i>
 							</a>
 						</li>
 					</ul>
-					<ul class="order-1 order-md-3 navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="/logout">
-								<i class="fas fa-sign-out-alt"></i>
-							</a>
-						</li>
-					</ul>
-
+					{^global_config.demo_mode}
+						<ul class="order-1 order-md-3 navbar-nav ml-auto">
+							<li class="nav-item">
+								<a class="nav-link" href="/logout">
+									<i class="fas fa-sign-out-alt"></i>
+								</a>
+							</li>
+						</ul>
+					{/global_config.demo_mode}
 				</div>
 			</nav>
 
@@ -161,14 +184,14 @@
 						{?version}
 							Nodea GPL V3 | {version}
 						{:else}
-							{?globalConf.version}
-								Nodea GPL V3 | {globalConf.version}
-							{/globalConf.version}
+							{?global_config.version}
+								Nodea GPL V3 | {global_config.version}
+							{/global_config.version}
 						{/version}
 					</div>
 
 					<!-- Default to the left -->
-					<strong>Copyright &copy; 2020-2021 <a href="https://www.nodea-software.com">Nodea Software</a>.</strong> All rights reserved.
+					<strong>Copyright &copy; 2021-2022 <a href="https://www.nodea-software.com">Nodea Software</a>.</strong> All rights reserved.
 				</footer>
 			{/no_footer}
 		</div>
@@ -192,6 +215,87 @@
 			</div>
 		</div>
 
+		{?global_config.demo_mode}
+			<div class='modal fade' id='demo_welcome' tabindex='-1' role='dialog' aria-labelledby='demo_welcome' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="demo_welcome_title">{#__ key="demo.modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.modal.text1"/} <b>Nodea</b> !<br><br>
+							{#__ key="demo.modal.text2"/}
+							<br><br>
+							{#__ key="demo.modal.text3"/}
+							<br><br>
+							{#__ key="demo.modal.text4"/}
+							<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Documentation&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.modal.text5"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Discord&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">{#__ key="button.start"/} !</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='modal fade' id='expire_app_modal' tabindex='-1' role='dialog' aria-labelledby='expire_app_modal' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="expire_app_title">{#__ key="demo.expire_modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.expire_modal.text1"/}<br><br>
+							{#__ key="demo.expire_modal.text2"/}<br><br>
+							{#__ key="demo.expire_modal.text3"/}<br><br>
+
+						</div>
+						<div class="modal-footer">
+							<a href="https://nodea-software.com/signup" target="_blank" class="btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='modal fade' id='demo_instructions_modal' tabindex='-1' role='dialog' aria-labelledby='demo_instructions_modal' aria-hidden='true'>
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="demo_instructions_modal_title">{#__ key="demo.instructions_modal.title"/}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<img class="img-fluid" src="/img/logo/logo_nodea_color_demo.png" alt="Nodea Logo"/>
+							{#__ key="demo.instructions_modal.text1"/}&nbsp;<b><span id="nb_instructions_count_modal"></span></b>&nbsp;{#__ key="demo.instructions_modal.text2"/}&nbsp;&nbsp;<i class="far fa-thumbs-up"></i><br><br>
+							{#__ key="demo.instructions_modal.text3"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Documentation&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.instructions_modal.text4"/}<br>
+							<a href='https://discord.gg/JVq6SXcjag'>Nodea Software Discord&nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+							<br><br>
+							{#__ key="demo.instructions_modal.text5"/}<br><br>
+
+						</div>
+						<div class="modal-footer">
+							<a href="https://nodea-software.com/signup" target="_blank" class="btn btn-success"><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;{#__ key="demo.signup_head"/}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/global_config.demo_mode}
+
 		<!-- jQuery -->
 		<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
 		<!-- Bootstrap 4 -->
@@ -203,14 +307,31 @@
 		<!-- Powertip -->
 		<script src="/js/plugins/powertip/jquery.powertip.min.js" type="text/javascript"></script>
 		<script>
-			var showtuto = '{showtuto}';
-			if(!showtuto || showtuto == '')
-				showtuto = 'true';
-			showtuto = showtuto == 'true';
-			var stopTutoTrad = '{#__ key="powertip.stop"/}';
-			var nextTutoTrad = '{#__ key="powertip.next"/}';
+			const stopTutoTrad = '{#__ key="powertip.stop"/}';
+			const nextTutoTrad = '{#__ key="powertip.next"/}';
 		</script>
 		<script src="/js/Nodea/powertip.js" type="text/javascript"></script>
+		{?global_config.demo_mode}
+			{?show_demo_popup}
+				<script>
+					$(function() {
+						$('#demo_welcome').modal();
+						$('#demo_welcome').find('.btn.btn-primary').on('click', function() {
+							startPowertips();
+							$.ajax('/account/disabled_demo_popup');
+						});
+					});
+				</script>
+			{:else}
+				<script>
+					$(function(){startPowertips();});
+				</script>
+			{/show_demo_popup}
+		{:else}
+			<script>
+				$(function(){startPowertips();});
+			</script>
+		{/global_config.demo_mode}
 
 		<script>
 			var toastrArray = [];
@@ -224,8 +345,9 @@
 			</script>
 		{/toastr}
 		<script>
-			var CONFIRM_TEXT = '{#__ key="button.confirm"/}';
-			$(document).ready(function() {
+			let CONFIRM_TEXT = '{#__ key="button.confirm"/}';
+			const QUEUE_TEXT = '{#__ key="demo.oups_queue" /}';
+			$(function() {
 				try {
 					toastr.options = {
 						"closeButton": false,

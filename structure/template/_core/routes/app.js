@@ -3,6 +3,8 @@ const access = require('@core/helpers/access');
 const file_helper = require('@core/helpers/file');
 const enums_radios = require('@core/utils/enum_radio.js');
 const models = require('@app/models');
+const language = require('@core/helpers/language');
+const appConf = require('@config/application.json');
 
 const Route = require('@core/abstract_routes/route');
 
@@ -19,6 +21,7 @@ class CoreApp extends Route {
 			'change_language',
 			'get_file',
 			'download',
+			'translate',
 			...additionalRoutes
 		];
 		super(registeredRoutes)
@@ -217,6 +220,11 @@ class CoreApp extends Route {
 		this.router.post('/change_language', ...this.middlewares.change_language, (req, res) => {
 			req.session.lang_user = req.body.lang;
 			res.locals.lang_user = req.body.lang;
+
+			// Write current lang in application.json
+			appConf.lang = req.body.lang;
+			fs.writeFileSync(`${__configPath}/application.json`, JSON.stringify(appConf, null, '\t'));
+
 			res.json({
 				success: true
 			});
@@ -263,6 +271,12 @@ class CoreApp extends Route {
 				if (err)
 					console.error(err);
 			}));
+		}));
+	}
+
+	translate() {
+		this.router.post('/translate', ...this.middlewares.translate, this.asyncRoute(async (data) => {
+			data.res.success(_ => data.res.send(language(data.req.body.lang).__(data.req.body.key, data.req.body.params)));
 		}));
 	}
 }

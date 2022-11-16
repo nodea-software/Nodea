@@ -3,10 +3,7 @@ const fs = require('fs-extra');
 const models = require('../models/');
 const multer = require('multer');
 const Jimp = require('jimp');
-const math = require('math');
-const unzip = require('unzip-stream');
-const JSZip = require('jszip');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 // Config
 const globalConf = require('../config/global.js');
@@ -14,139 +11,28 @@ const globalConf = require('../config/global.js');
 // Services
 const process_manager = require('../services/process_manager.js');
 const {process_server_per_app} = process_manager;
-const session_manager = require('../services/session.js');
-const designer = require('../services/designer.js');
+const session_manager = require('../helpers/preview_session.js');
+
 const parser = require('../services/bot.js');
 const studio_manager = require('../services/studio_manager');
 
+// Helpers
+const app_helper = require('../helpers/application');
+
 // Utils
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
+const bot = require('../helpers/bot');
 const helpers = require('../utils/helpers');
 const dataHelper = require('../utils/data_helper');
 const gitHelper = require('../utils/git_helper');
 
 const metadata = require('../database/metadata')();
-const structure_application = require('../structure/structure_application');
-const pourcent_generation = {};
 const appProcessing = {};
-
-// Exclude from Editor
-const excludeFolder = ["node_modules", "sql", "services", "upload", ".git"];
-const excludeFile = [".git_keep", "database.js", "global.js", "icon_list.json", "webdav.js", "package-lock.json", "jsdoc.conf.json", ".eslintignore", ".eslintrc.json"];
 
 // No git commit for these instructions
 const noGitFunctions = ['restart', 'gitPush', 'gitPull', 'installNodePackage'];
 
-// Exclude from UI Editor
-const excludeUIEditor = ['e_role', 'e_group', 'e_api_credentials', 'e_synchronization', 'e_synchro_credentials', 'e_translation', 'e_media', 'e_action', 'e_robot', 'e_task', 'e_documents_task', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_execution', 'e_process', 'e_program', 'e_page', 'e_notification', 'e_inline_help', 'e_user_guide', 'e_document_template', 'e_image_ressources'];
-
-const mandatoryInstructions = require('../structure/mandatory_instructions');
-
-function initPreviewData(appName, data){
-	// Editor
-	const workspacePath = __dirname + "/../workspace/" + appName + "/";
-	const folder = helpers.readdirSyncRecursive(workspacePath, excludeFolder, excludeFile);
-	/* Sort folder first, file after */
-	data.workspaceFolder = helpers.sortEditorFolder(folder);
-
-	const application = metadata.getApplication(appName);
-	const {modules} = application;
-
-	// UI designer entity list
-	data.entities = [];
-	for (let i = 0; i < modules.length; i++)
-		for (let j = 0; j < modules[i].entities.length; j++)
-			if(!excludeUIEditor.includes(modules[i].entities[j].name) && !modules[i].entities[j].name.includes('_history_'))
-				data.entities.push(modules[i].entities[j]);
-
-	function sortEntities(entities, idx) {
-		if (entities.length == 0 || !entities[idx+1])
-			return entities;
-		if (entities[idx].name > entities[idx+1].name) {
-			const swap = entities[idx];
-			entities[idx] = entities[idx+1];
-			entities[idx+1] = swap;
-			return sortEntities(entities, idx == 0 ? 0 : idx-1);
-		}
-		return sortEntities(entities, idx+1);
-	}
-	data.entities = sortEntities(data.entities, 0);
-	return data;
-}
-
-function setChat(req, app_name, userID, user, content, params, isError){
-	// Init if necessary
-	if(!req.session.nodea_chats)
-		req.session.nodea_chats = {};
-	if(!req.session.nodea_chats[app_name])
-		req.session.nodea_chats[app_name] = {};
-	if(!req.session.nodea_chats[app_name][userID])
-		req.session.nodea_chats[app_name][userID] = {items: []};
-
-	// Add chat
-	if(content != "chat.welcome" || req.session.nodea_chats[app_name][userID].items.length < 1)
-		req.session.nodea_chats[app_name][userID].items.push({
-			user: user,
-			dateEmission: moment().tz('Europe/Paris').format("DD MMM HH:mm"),
-			content: content,
-			params: params || [],
-			isError: isError || false
-		});
-}
-
-async function execute(req, instruction, __, data = {}, saveMetadata = true) {
-	// Lower the first word for the basic parser json
-	instruction = dataHelper.prepareInstruction(instruction);
-
-	// Instruction to be executed
-	data = {
-		...data,
-		...parser.parse(instruction)
-	};
-
-	// Rework the data to get value for the code / url / show
-	data = dataHelper.reworkData(data);
-
-	if (typeof data.error !== 'undefined')
-		throw data.error;
-
-	data.app_name = req.session.app_name;
-	data.module_name = req.session.module_name;
-	data.entity_name = req.session.entity_name;
-	data.googleTranslate = req.session.toTranslate || false;
-	data.lang_user = req.session.lang_user;
-	data.currentUser = req.session.passport.user;
-	data.code_platform = req.session.code_platform;
-	data.isGeneration = true;
-
-	if(data.function != 'createNewApplication' && data.function != 'deleteApplication')
-		data.application = metadata.getApplication(data.app_name);
-
-	let info;
-	try {
-		info = await designer[data.function](data);
-	} catch (err) {
-		console.error('Error on function: ' + data.function + '(Instruction: ' + instruction + ')');
-		console.error(err);
-		throw __(err.message ? err.message : err, err.messageParams || []);
-	}
-
-	if(data.function == 'deleteApplication' && req.session.nodea_chats && req.session.nodea_chats[data.options.value])
-		req.session.nodea_chats[data.options.value] = {}
-
-	const newData = session_manager.setSession(data.function, req, info, data);
-
-	// Save metadata
-	if(data.application && data.function != 'deleteApplication' && saveMetadata)
-		data.application.save();
-
-	newData.message = info.message;
-	newData.messageParams = info.messageParams;
-	newData.restartServer = typeof info.restartServer === 'undefined';
-	return newData;
-}
-
-router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) => {
+router.get('/preview/:app_name', middlewares.hasAccessApplication, (req, res) => {
 
 	const appName = req.params.app_name;
 
@@ -173,16 +59,19 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 		return res.redirect('/module/home');
 	}
 
-	setChat(req, appName, currentUserID, "Nodea", "chat.welcome", []);
+	app_helper.setChat(req, appName, currentUserID, "Nodea", "chat.welcome", []);
 
 	models.Application.findOne({where: {name: appName}}).then(db_app => {
 
-		const port = math.add(9000, db_app.id);
+		const port = 9000 + parseInt(db_app.id);
 
 		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
 			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
 
-		data.session = session_manager.getSession(req)
+		data.session = session_manager.getSession(req);
+
+		if(globalConf.demo_mode)
+			data.session.app_expire = dayjs(db_app.createdAt).diff(dayjs(), 'day') + 7;
 
 		const initialTimestamp = new Date().getTime();
 		let iframe_url = globalConf.protocol + '://';
@@ -195,7 +84,7 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 		else
 			iframe_url += globalConf.host + ":" + port + "/app/status";
 
-		data = initPreviewData(appName, data);
+		data = app_helper.initPreviewData(appName, data);
 		data.chat = req.session.nodea_chats[appName][currentUserID];
 
 		// Check server has started every 50 ms
@@ -224,19 +113,19 @@ router.get('/preview/:app_name', block_access.hasAccessApplication, (req, res) =
 				lastError = lastError.split("Cannot find module")[1].replace(/'/g, "").trim();
 				chatParams = [lastError, lastError];
 			}
-			setChat(req, appName, currentUserID, "Nodea", chatKey, chatParams, true);
+			app_helper.setChat(req, appName, currentUserID, "Nodea", chatKey, chatParams, true);
 			data.iframe_url = -1;
 			res.render('front/preview/main', data);
 		});
 	}).catch(err => {
-		data = initPreviewData(appName, data);
+		data = app_helper.initPreviewData(appName, data);
 		data.code = 500;
 		console.error(err);
 		res.render('common/error', data);
 	});
 });
 
-router.post('/preview', block_access.hasAccessApplication, (req, res) => {
+router.post('/preview', middlewares.hasAccessApplication, (req, res) => {
 
 	const appName = req.session.app_name;
 	/* Lower the first word for the basic parser json */
@@ -249,8 +138,15 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 
 	(async () => {
 
+		// Update nb_instruction count of the user
+		const user = await models.User.findByPk(currentUserID);
+		data.nb_instruction = user.nb_instruction ? ++user.nb_instruction : 1
+		user.update({
+			nb_instruction: data.nb_instruction
+		});
+
 		const db_app = await models.Application.findOne({where: {name: appName}});
-		const port = math.add(9000, db_app.id);
+		const port = 9000 + parseInt(db_app.id);
 
 		const {protocol} = globalConf;
 		const {host} = globalConf;
@@ -260,7 +156,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		data.iframe_url = process_manager.childUrl(req, db_app.id);
 
 		/* Add instruction in chat */
-		setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
+		app_helper.setChat(req, appName, currentUserID, req.session.passport.user.login, instruction, []);
 
 		if(appProcessing[appName])
 			throw new Error('structure.global.error.alreadyInProcess');
@@ -269,10 +165,8 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		if(parser.parse(instruction).function == 'createNewApplication')
 			throw new Error('preview.no_create_app');
 
-		const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
-
 		// Executing instruction
-		data = await execute(req, instruction, __, data);
+		data = await bot.execute(req, instruction, data);
 
 		let appBaseUrl = protocol + '://' + host + ":" + port;
 		if(globalConf.env == 'studio')
@@ -292,6 +186,14 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 			fs.writeFileSync(historyScriptPath, historyScript);
 		}
 
+		// On select application in preview, redirect on good application
+		if (data.function == 'selectApplication') {
+			data.toRedirect = true;
+			data.url = `/application/preview/${data.options.value}`;
+			app_helper.setChat(req, data.options.value, currentUserID, "Nodea", data.message, data.messageParams);
+			return data;
+		}
+
 		if (data.function == "deleteApplication") {
 			// Kill server
 			if(process_server_per_app[appName])
@@ -304,7 +206,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		}
 
 		// Generator answer
-		setChat(req, appName, currentUserID, "Nodea", data.message, data.messageParams);
+		app_helper.setChat(req, appName, currentUserID, "Nodea", data.message, data.messageParams);
 
 		// If we stop the server manually we loose some stored data, so we just need to redirect.
 		if(typeof process_server_per_app[appName] === "undefined"){
@@ -323,7 +225,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		}
 
 		data.session = session_manager.getSession(req);
-		data = initPreviewData(appName, data);
+		data = app_helper.initPreviewData(appName, data);
 		data.chat = req.session.nodea_chats[appName][currentUserID];
 
 		// Let's do git init or commit depending the situation
@@ -338,6 +240,9 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 
 		// Error handling code goes here
 		console.error(err);
+
+		// const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
+		// err = __(err.message ? err.message : err, err.messageParams || []);
 
 		// Server timed out handling
 		if(err.message == 'preview.server_timeout') {
@@ -354,9 +259,9 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 				chatParams = [lastError, lastError];
 			}
 			data.iframe_url = -1;
-			setChat(req, appName, currentUserID, "Nodea", chatKey, chatParams, true);
+			app_helper.setChat(req, appName, currentUserID, "Nodea", chatKey, chatParams, true);
 		} else
-			setChat(req, appName, currentUserID, "Nodea", err.message ? err.message : err, err.messageParams, true);
+			app_helper.setChat(req, appName, currentUserID, "Nodea", err.message ? err.message : err, err.messageParams, true);
 
 		/* Save ERROR an instruction history in the history script in workspace folder */
 		if (data.function != 'restart') {
@@ -367,7 +272,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 		}
 
 		// Load session values
-		data = initPreviewData(appName, data);
+		data = app_helper.initPreviewData(appName, data);
 		data.session = session_manager.getSession(req);
 		data.chat = req.session.nodea_chats[appName][currentUserID];
 
@@ -379,7 +284,7 @@ router.post('/preview', block_access.hasAccessApplication, (req, res) => {
 	});
 });
 
-router.post('/set_logo', block_access.hasAccessApplication, (req, res) => {
+router.post('/set_logo', middlewares.hasAccessApplication, (req, res) => {
 	multer().single('file')(req, res, err => {
 		if (err) {
 			console.error(err);
@@ -398,7 +303,7 @@ router.post('/set_logo', block_access.hasAccessApplication, (req, res) => {
 			}
 		};
 
-		const basePath = __workspacePath + "/" + req.body.appName + "/app/public/img/logo/";
+		const basePath = global.__workspacePath + "/" + req.body.appName + "/app/public/img/logo/";
 		fs.mkdirs(basePath, err => {
 			if (err) {
 				console.error(err);
@@ -434,228 +339,12 @@ router.post('/set_logo', block_access.hasAccessApplication, (req, res) => {
 	});
 });
 
-router.post('/delete', block_access.hasAccessApplication, (req, res) => {
-	const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
-	execute(req, "delete application " + req.body.app_name, __).then(_ => {
-		res.status(200).send(true);
+router.post('/delete', middlewares.hasAccessApplication, (req, res) => {
+	bot.execute(req, "delete application " + req.body.app_display_name).then(_ => {
+		res.status(200).send(true)
 	}).catch(err => {
 		console.error(err);
 		res.status(500).send(err);
-	});
-});
-
-// Simple application creation
-router.post('/initiate', block_access.isLoggedIn, (req, res) => {
-
-	// Increase default timeout to 2min for app generation
-	req.setTimeout(60000 * 2);
-
-	pourcent_generation[req.session.passport.user.id] = 1;
-	if (req.body.application == "") {
-		req.session.toastr = [{
-			message: "Missing application name.",
-			level: "error"
-		}];
-		return res.redirect('/module/home');
-	}
-
-	const instructions = [
-		"create application " + req.body.application,
-		...mandatoryInstructions
-	];
-
-	// Set default theme if different than blue-light
-	if(typeof req.session.defaultTheme !== "undefined" && req.session.defaultTheme != "blue-light")
-		instructions.push("set theme "+req.session.defaultTheme);
-
-	// Set home module selected
-	instructions.push("select module home");
-
-	// Needed for translation purpose
-	const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
-
-	(async () => {
-		for (let i = 0; i < instructions.length; i++) {
-			await execute(req, instructions[i], __, {}, false); // eslint-disable-line
-			pourcent_generation[req.session.passport.user.id] = i == 0 ? 1 : Math.floor(i * 100 / instructions.length);
-		}
-		metadata.getApplication(req.session.app_name).save();
-		await structure_application.initializeApplication(metadata.getApplication(req.session.app_name));
-
-		res.redirect('/application/preview/' + req.session.app_name);
-
-	})().catch(err => {
-		console.error(err);
-
-		// Delete application
-		execute(req, `delete application ${req.body.application}`, __, {}, false).finally(_ => {
-			req.session.toastr = [{
-				message: err,
-				level: "error"
-			}];
-			return res.redirect('/build#_generate');
-		});
-	});
-});
-
-router.get('/get_pourcent_generation', (req, res) => {
-	res.json({
-		pourcent: pourcent_generation[req.session.passport.user.id]
-	});
-});
-
-router.post('/import', block_access.isLoggedIn, (req, res) => {
-	multer().fields([{
-		name: 'zipfile',
-		maxCount: 1
-	}, {
-		name: 'sqlfile',
-		maxCount: 1
-	}])(req, res, err => {
-		if (err)
-			console.error(err);
-
-		let infoText = '';
-
-		(async() => {
-			const {__} = require("../services/language")(req.session.lang_user); // eslint-disable-line
-
-			// Generate standard app
-			const data = await execute(req, "add application " + req.body.appName, __);
-			const workspacePath = __dirname + '/../workspace/' + data.options.value;
-			const oldMetadataObj = JSON.parse(fs.readFileSync(workspacePath + '/config/metadata.json', 'utf8'));
-
-			// Delete generated workspace folder
-			helpers.rmdirSyncRecursive(workspacePath);
-			fs.mkdirsSync(workspacePath);
-
-			const tmpArchiveFilename = 'import_archive_' + new Date().getTime() + '.zip';
-
-			// Write zip file to system
-			fs.writeFileSync(__dirname + '/../workspace/' + tmpArchiveFilename, req.files['zipfile'][0].buffer);
-			// Extract zip file content
-			await new Promise((resolve, reject) => {
-				fs.createReadStream(__dirname + '/../workspace/' + tmpArchiveFilename)
-					.pipe(unzip.Extract({path: workspacePath}))
-					.on('close', resolve).on('error', reject);
-			});
-			// Delete temporary zip file
-			fs.unlinkSync(__dirname + '/../workspace/' + tmpArchiveFilename);
-			// Remove copied .git
-			helpers.rmdirSyncRecursive(workspacePath + '/.git');
-
-			let oldAppName = false, oldAppDisplayName = false;
-			let metadataContent = fs.readFileSync(workspacePath + '/config/metadata.json', 'utf8');
-			let metadataContentObj = JSON.parse(metadataContent);
-
-			oldAppName = Object.keys(metadataContentObj)[0];
-			if (!oldAppName) {
-				infoText += '- Unable to find metadata.json in .zip.<br>';
-				return null;
-			}
-
-			oldAppDisplayName = metadataContentObj[oldAppName].displayName;
-			const appNameRegex = new RegExp(oldAppName, 'g');
-			const appDisplayNameRegex = new RegExp(oldAppDisplayName, 'g');
-
-			// Need to modify so file content to change appName in it
-			metadataContent = metadataContent.replace(appNameRegex, data.options.value);
-			metadataContent = metadataContent.replace(appDisplayNameRegex, data.options.showValue);
-
-			// Update variable
-			metadataContentObj = JSON.parse(metadataContent);
-
-			// Replace repo URL in metadata.json
-			metadataContentObj[data.options.value].repoID = oldMetadataObj[data.options.value].repoID;
-			metadataContentObj[data.options.value].codePlatformRepoHTTP = oldMetadataObj[data.options.value].codePlatformRepoHTTP;
-			metadataContentObj[data.options.value].codePlatformRepoSSH = oldMetadataObj[data.options.value].codePlatformRepoSSH;
-
-			fs.writeFileSync(workspacePath + '/config/metadata.json', JSON.stringify(metadataContentObj, null, 4));
-
-			// Replace ap name in config/database.js
-			let databaseConfig = fs.readFileSync(workspacePath + '/config/database.js', 'utf8');
-			databaseConfig = databaseConfig.replace(appNameRegex, data.options.value);
-			fs.writeFileSync(workspacePath + '/config/database.js', databaseConfig);
-
-			infoText += '- The application is ready to be launched.<br>';
-
-			await helpers.exec('npm install', ['module-alias'], workspacePath);
-
-			// Executing SQL file if exist
-			if(typeof req.files['sqlfile'] === 'undefined')
-				return data.options.value;
-
-			// Saving tmp sql file
-			const sqlFilePath = __dirname + '/../sql/' + req.files['sqlfile'][0].originalname;
-			fs.writeFileSync(sqlFilePath, req.files['sqlfile'][0].buffer);
-
-			// Getting workspace DB conf
-			const dbConfig = require(workspacePath + '/config/database'); // eslint-disable-line
-
-			try {
-				await helpers.exec('mysql', [
-					"-u",
-					dbConfig.user,
-					"-p" + dbConfig.password,
-					dbConfig.database,
-					"-h" + dbConfig.host,
-					"--default-character-set=utf8",
-					"<",
-					sqlFilePath
-				]);
-				infoText += '- The SQL file has been successfully executed.<br>';
-			} catch(err) {
-				console.error('Error while executing SQL file in the application.');
-				console.error(err);
-				infoText += '- An error while executing SQL file in the application:<br>';
-				infoText += err;
-			}
-
-			// Delete tmp sql file
-			fs.unlinkSync(sqlFilePath);
-
-			return data.options.value;
-		})().then(appName => {
-			res.status(200).send({
-				infoText: infoText,
-				appName: appName
-			});
-		}).catch(err => {
-			console.error(err);
-			infoText += '- An error occured during the process:<br>';
-			infoText += err;
-			res.status(500).send({
-				infoText: infoText
-			});
-		});
-	});
-});
-
-router.get('/export/:app_name', block_access.hasAccessApplication, (req, res) => {
-	// We know what directory we want
-	const workspacePath = __dirname + '/../workspace/' + req.params.app_name;
-
-	const zip = new JSZip();
-	const excludedFiles = ['/config/access.json', '/node_modules/'];
-	helpers.buildZipFromDirectory(workspacePath, zip, workspacePath, excludedFiles);
-
-	// Generate zip file content
-	zip.generateAsync({
-		type: 'nodebuffer',
-		comment: 'ser-web-manangement',
-		compression: "DEFLATE",
-		compressionOptions: {
-			level: 9
-		}
-	}).then(zipContent => {
-
-		// Create zip file
-		fs.writeFileSync(workspacePath + '.zip', zipContent);
-		res.download(workspacePath + '.zip', req.params.app_name + '.zip', err => {
-			if(err)
-				console.error(err);
-			fs.unlinkSync(workspacePath + '.zip')
-		});
 	});
 });
 

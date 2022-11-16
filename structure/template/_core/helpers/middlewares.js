@@ -1,5 +1,6 @@
 const models = require('@app/models');
 const access = require('@core/helpers/access');
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 const upload = require('multer');
 const multer = upload();
@@ -58,12 +59,12 @@ exports.moduleAccess = function(moduleName) {
 	}
 }
 
-exports.entityAccess = function(entityName) {
-	return function(req, res, next) {
+function entityAccess(entityName) {
+	return function (req, res, next) {
 		// In case of browser console request or other specific request (like healthcheck or other), user may not be defined
-		if(!req.user)
+		if (!req.user)
 			return res.redirect('/');
-		if(req.originalUrl == '/user/settings') {
+		if (req.originalUrl == '/user/settings') {
 			// Exception for /user/settings, only logged access is required
 			return next()
 		} else if (req.originalUrl == `/${entityName}/search`) {
@@ -83,9 +84,10 @@ exports.entityAccess = function(entityName) {
 		return res.redirect('/');
 	}
 }
+exports.entityAccess = entityAccess;
 
-exports.actionAccess = function(entityName, action) {
-	return function(req, res, next) {
+function actionAccess(entityName, action) {
+	return function (req, res, next) {
 		const userRoles = req.user.r_role;
 		if (userRoles && userRoles.length > 0 && access.actionAccess(userRoles, entityName, action))
 			return next();
@@ -96,13 +98,24 @@ exports.actionAccess = function(entityName, action) {
 		return res.redirect('/');
 	}
 }
+exports.actionAccess = actionAccess;
 
-exports.apiAuthentication = function(req, res, next) {
+// API Access
+exports.apiAuthentication = function (req, res, next) {
 	const token = req.query.token;
 
 	models.E_api_credentials.findOne({
-		where: { f_token: token }
-	}).then(function(credentialsObj) {
+		where: {
+			f_token: token
+		},
+		include: [{
+			model: models.E_group,
+			as: 'r_group'
+		}, {
+			model: models.E_role,
+			as: 'r_role'
+		}]
+	}).then(credentialsObj => {
 		if (!credentialsObj)
 			return res.status(401).end('Bad Bearer Token');
 
@@ -111,8 +124,39 @@ exports.apiAuthentication = function(req, res, next) {
 			return res.status(403).json('Bearer Token expired');
 
 		req.apiCredentials = credentialsObj;
+		req.user = {
+			f_login: credentialsObj.f_client_name
+		};
 		next();
 	});
+}
+
+exports.apiEntityAccess = function (entityName) {
+	return function (req, res, next) {
+
+		const userGroups = req.apiCredentials.r_group;
+		if (userGroups.length > 0 && access.entityAccess(userGroups, entityName))
+			return next();
+
+		res.status(403).json({
+			level: 'error',
+			message: "You are not allowed to access entity " + entityName
+		});
+	}
+}
+
+exports.apiActionAccess = function (entityName, action) {
+	return function (req, res, next) {
+		const userRoles = req.apiCredentials.r_role;
+
+		if (access.actionAccess(userRoles, entityName, action))
+			return next();
+
+		res.status(403).json({
+			level: 'error',
+			message: "This action is not authorized on entity " + entityName
+		});
+	}
 }
 
 exports.statusGroupAccess = function(req, res, next) {
@@ -163,4 +207,23 @@ exports.disableRoute = ({res}) => {
 	res.render('common/error', {
 		error: 404
 	})
+}
+
+// Middleware for writing log in file connection.log
+exports.connectionLogMiddleware = (req, res, next) => {
+	let currentURL = req.originalUrl.substring(1);
+	if (currentURL.includes('?')) {
+		// Remove params from URL
+		currentURL = currentURL.split('?')[0];
+	}
+
+	const msg = {
+		login: `LOGIN [ID: ${req.user ? req.user.id : ''}]`,
+		first_connection: `FIRST CONNECTION [LOGIN: ${req.body ? req.body.login : ''}]`,
+		reset_password: `RESET PASSWORD [ID: ${req.user ? req.user.id : ''}]`,
+		logout: `LOGOUT [ID: ${req.user ? req.user.id : ''}]`,
+	}
+
+	writeConnectionLog(msg[currentURL]);
+	next();
 }

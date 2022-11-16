@@ -146,12 +146,15 @@ class CoreParamEntity extends CoreEntity {
 				}
 			}
 
-			this.helpers.address.updateAddressIfComponentExists(data.updateRow, this.options, data.req.body);
+			this.helpers.address.updateAddress(data.req, data.updateRow, this.options, data.transaction);
 
 			data.updateObject.version = data.updateRow.version;
 			if(typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
 				data.updateObject.version = 0;
 			data.updateObject.version++;
+
+			if (await this.getHook('update', 'beforeUpdate', data) === false)
+				return;
 
 			await data.updateRow.update(data.updateObject, {user: data.req.user, transaction: data.transaction});
 
@@ -167,7 +170,8 @@ class CoreParamEntity extends CoreEntity {
 				level: "success"
 			}];
 
-			await this.getHook('update', 'beforeRedirect', data);
+			if (await this.getHook('update', 'beforeRedirect', data) === false)
+				return;
 
 			data.res.success(_ => data.res.redirect(data.redirect));
 		}));

@@ -10,15 +10,15 @@
             <input readonly="" class="form-control input" placeholder='{#__ key="entity.e_page.f_order" /}' name="f_order" value="{maxOrder}" type="number" max="2147483648">
         </div>
     </div>
-    <div data-field="f_titre" class="col-12">
+    <div data-field="f_title" class="col-12">
         <div class="form-group">
-            <label for="f_titre" class="required">
-                {#__ key="entity.e_page.f_titre"/}&nbsp;
-                {@inline_help field="f_titre"}
-                <i data-field="f_titre" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
+            <label for="f_title" class="required">
+                {#__ key="entity.e_page.f_title"/}&nbsp;
+                {@inline_help field="f_title"}
+                <i data-field="f_title" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_titre" /}' name="f_titre" value="" type="text" maxlength="255" required="">
+            <input class="form-control input" placeholder='{#__ key="entity.e_page.f_title" /}' name="f_title" value="" type="text" maxlength="255" required="">
         </div>
     </div>
     <div data-field="f_delay" class="col-6">
@@ -106,7 +106,6 @@
             </div>
         </div>
     </div>
-
     <div class="col-4">
         <div class="card">
             <div class="card-header with-border">
@@ -155,7 +154,6 @@
             </div>
         </div>
     </div>
-
     <div class="col-4">
         <div class="card">
             <div class="card-header with-border">
@@ -197,7 +195,6 @@
             </div>
         </div>
     </div>
-
     <div data-field="f_type" class="col-12">
         <div class="form-group">
             <label for="f_type">
@@ -206,7 +203,7 @@
                 <i data-field="f_type" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
-            <select class="form-control select" name="f_type" width="100%">
+            <select class="form-control select" name="f_type" style="width: 100%;">
                 <option value="">
                     {#__ key="select.default" /}
                 </option>
@@ -220,7 +217,6 @@
             </select>
         </div>
     </div>
-
     <div data-field="f_script" class="col-3" style="display: none;">
         <div id="btn-script">
             <div class="btn-group">
@@ -283,40 +279,6 @@
             </div>
         </div>
     </div>
-
-    <div class="col-3">
-        <div id="btn-variables-script">
-            <div class="btn-group insert-mosaic">
-                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
-                </button>
-                <div class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" onclick="add_script_variable('step_index');">{#__ key="automation.script_menu_step_index"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('step_serial_number');">{#__ key="automation.script_menu_step_serial_number"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('env');">{#__ key="automation.script_menu_env_variable"/}</a>
-                    <a class="dropdown-item" onclick="add_script_variable('session');">{#__ key="automation.script_menu_session_variable"/}</a>
-                </div>
-            </div>
-        </div>
-        <div id="btn-variables-sequence" style="display: none;">
-            <div class="btn-group insert-mosaic">
-                <button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" onclick="add_sequence_variable('step_index');">{#__ key="automation.sequence_menu_step_index"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('step_serial_number');">{#__ key="automation.sequence_menu_step_serial_number"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('env');">{#__ key="automation.sequence_menu_env_variable"/}</a>
-                    <a class="dropdown-item" onclick="add_sequence_variable('session');">{#__ key="automation.sequence_menu_session_variable"/}</a>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <br>
     <div class="col-12">
         <div class="form-group">
             <label for="f_script">
@@ -325,62 +287,38 @@
                 <i data-field="f_script" class="inline-help fa fa-info-circle" style="color: #1085EE;"></i>
                 {/inline_help}
             </label>
+			<div id="btn-variables-script">
+				<div class="btn-group insert-mosaic">
+					<button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+					</button>
+					<div class="dropdown-menu" role="menu">
+						<a class="dropdown-item" onclick="add_script_variable('step_index');">{#__ key="automation.script_menu_step_index"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('step_serial_number');">{#__ key="automation.script_menu_step_serial_number"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('env');">{#__ key="automation.script_menu_env_variable"/}</a>
+						<a class="dropdown-item" onclick="add_script_variable('session');">{#__ key="automation.script_menu_session_variable"/}</a>
+					</div>
+				</div>
+			</div>
+			<div id="btn-variables-sequence" style="display: none;">
+				<div class="btn-group insert-mosaic">
+					<button type="button" class="btn btn-default">{#__ key="automation.add_variable"/}</button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">{#__ key="automation.toggle_dropdown"/}</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<a class="dropdown-item" onclick="add_sequence_variable('step_index');">{#__ key="automation.sequence_menu_step_index"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('step_serial_number');">{#__ key="automation.sequence_menu_step_serial_number"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('env');">{#__ key="automation.sequence_menu_env_variable"/}</a>
+						<a class="dropdown-item" onclick="add_sequence_variable('session');">{#__ key="automation.sequence_menu_session_variable"/}</a>
+					</ul>
+				</div>
+			</div>
+			<br>
             <textarea class="form-control textarea regular-textarea" placeholder='{#__ key="entity.e_page.f_script" /}' name="f_script" id="f_script_textareaid" type="text">{f_script|s}</textarea>
         </div>
     </div>
-
-    <script type="text/javascript">
-        var currentMirror = null;
-
-        $(function() {
-
-            var mirrorOptions = {
-                mode: 'javascript',
-                theme: 'darcula',
-                lineNumbers: true,
-                indentUnit: 4,
-                indentWithTabs: true,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                showTrailingSpace: true,
-                autoCloseTags: true,
-                foldGutter: true,
-            };
-            $("select[name=f_type]").change(function() {
-                var selectedVal = $(this).find("option:selected").val();
-                if (selectedVal != "") {
-                    $("div[data-field=f_script]").show();
-                    var textArea = $("textarea[name=f_script]");
-                    $(".CodeMirror").remove();
-                    if (selectedVal == 'script') {
-                        textArea.text("(_ => {\n\t\n})();");
-                        currentMirror = CodeMirror.fromTextArea(textArea[0], mirrorOptions);
-                        currentMirror.setSize(null, 500);
-                        $("#btn-script").show();
-                        $("#btn-variables-script").show();
-                        $("#btn-sequence").hide();
-                        $("#btn-variables-sequence").hide();
-                    } else if (selectedVal == 'sequence') {
-                        textArea.text("module.exports = {\n\texecute: async utils => {\n\t\n\t}\n}");
-                        currentMirror = CodeMirror.fromTextArea(textArea[0], mirrorOptions);
-                        currentMirror.setSize(null, 500);
-                        $("#btn-script").hide();
-                        $("#btn-variables-script").hide();
-                        $("#btn-sequence").show();
-                        $("#btn-variables-sequence").show();
-                    }
-                }
-            });
-            setTimeout(function() {
-                $("select[name=f_type]").change();
-            }, 500);
-
-            $("div[data-field=f_script]").parents('form').submit(function() {
-                currentMirror.toTextArea();
-            });
-
-        });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify.min.js"></script>
-    <script src="/core/js/coding_buttons.js" type="text/javascript"></script>
 </div>

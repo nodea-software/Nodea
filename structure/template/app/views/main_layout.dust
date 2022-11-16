@@ -1,29 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="{lang_user}">
 	<head>
 		<meta charset="UTF-8">
 		<title>{#__ key="app.name"/}&nbsp;|&nbsp;{#__ key="module.home"/}</title>
-		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-		<!-- Font Awesome Icons -->
-		<link href="/AdminLTE/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" >
-		{! Toastr !}
-		<link href="/AdminLTE/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css">
-		{! Select2 !}
-		<link href="/AdminLTE/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css">
-		{! Select2 BS4 Theme !}
-		<link href="/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" type="text/css">
-		{! Summernote !}
-		<link href="/AdminLTE/plugins/summernote/summernote-bs4.min.css" rel="stylesheet" type="text/css">
-		{! iCheck !}
-		<link href="/js/plugins/icheck/css/flat/blue.css" rel="stylesheet" type="text/css">
-		{! Date | Datetime | Time picker !}
-		<link href="/js/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
-		{! Theme style !}
-		<link href="/AdminLTE/dist/css/adminlte.min.css" rel="stylesheet" type="text/css">
-		{! Nodea style !}
-		<link href="/core/css/nodea.css" type="text/css" rel="stylesheet">
-		{! Theme !}
-		<link href='/theme/nodea/css/style.css' rel='stylesheet' type='text/css' data-type="theme" data-theme="nodea">
+		<meta content="width=device-width, initial-scale=1, maximum-scale=5" name="viewport">
+		{! Nodea Main Bundle !}
+		<link href="/core/bundle/nodea_main_css.bundle.css?v={config.version}-{config.build}" rel="stylesheet">
+		{! {>"bundle/nodea_main_css"/} !}
 		{! Favicon !}
 		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicons/apple-icon-60x60.png">
@@ -34,7 +17,7 @@
 		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicons/apple-icon-144x144.png">
 		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicons/apple-icon-152x152.png">
 		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-icon-180x180.png">
-		<link rel="icon" type="image/png" sizes="192x192"  href="/img/favicons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicons/android-icon-192x192.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicons/favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicons/favicon-16x16.png">
@@ -45,14 +28,15 @@
 		{+custom_css /}
 		{! Get useful global variable !}
 		<script>
-			var lang_user = "{lang_user}";
-			var id_user = "{session.passport.user.id}";
-			var SELECT_DEFAULT_TEXT = '{#__ key="select.default" /}';
-			var WAIT_UPLOAD_TEXT = '{#__ key="global_component.local_file_storage.wait_upload" /}';
-			var REQUIRED_FILE_TEXT = '{#__ key="global_component.local_file_storage.required_file" /}';
-			var REQUIRED_RELATEDTOMANYCHECKBOX = '{#__ key="message.relatedtomanycheckbox_required" /}';
-			var DEL_CONFIRM_TEXT = '{#__ key="button.delete_confirm"/}';
-			var LOADING_TEXT = '{#__ key="button.loading"/}';
+			let lang_user = "{lang_user}";
+			const locales = {@getFromContext key="locales" /};
+			const id_user = "{session.passport.user.id}";
+			const SELECT_DEFAULT_TEXT = locales.select.default;
+			const WAIT_UPLOAD_TEXT = locales.global_component.local_file_storage.wait_upload;
+			const REQUIRED_FILE_TEXT = locales.global_component.local_file_storage.required_file;
+			const REQUIRED_RELATEDTOMANYCHECKBOX = locales.message.relatedtomanycheckbox_required;
+			const DEL_CONFIRM_TEXT = locales.button.delete_confirm;
+			const LOADING_TEXT = locales.button.loading;
 		</script>
 	</head>
 	<body class="hold-transition sidebar-mini layout-fixed">
@@ -78,7 +62,7 @@
 					{! Version !}
 					<li class="nav-item">
 						<a class="nav-link" href="#">
-							<span class="badge badge-warning navbar-badge" style="margin-top: 5px;">
+							<span class="badge badge-warning navbar-badge badge-version" style="margin-top: 3px;">
 								{#__ key="app.version"/}&nbsp;{config.version}
 							</span>
 						</a>
@@ -135,14 +119,9 @@
 							</li>
 							<li class="user-body">
 								<div class="row">
-									<div class="col-6 text-center">
+									<div class="col-12 text-center">
 										<a target="_blank" href="https://www.nodea-software.com">
 											{#__ key="navbar.about"/}
-										</a>
-									</div>
-									<div class="col-6 text-center">
-										<a target="_blank" href="https://www.nodea-software.com#contact">
-											{#__ key="navbar.support"/}
 										</a>
 									</div>
 								</div>
@@ -198,55 +177,7 @@
 			</div>
 		</div>
 
-		{! INLINE HELP MODAL !}
-		<div id="inlineHelp" class="modal fade" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title"></h4>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
-						<button id="prevHelp" type="button" class="btn btn-primary">{#__ key="button.previous" /}</button>
-						<button id="nextHelp" type="button" class="btn btn-primary">{#__ key="button.next" /}</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		{! STATUS COMMENT MODAL !}
-		<div id="statusComment" class="modal fade" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<form class="no-init" method="post">
-						<div class="modal-header">
-							<h4 class="modal-title">{#__ key="entity.e_status.modal_title" /}</h4>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<textarea name="comment"></textarea>
-							<input type="hidden" name="parentName">
-							<input type="hidden" name="parentId">
-							<input type="hidden" name="field">
-							<input type="hidden" name="statusId">
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">{#__ key="button.close" /}</button>
-							<button type="submit" class="btn btn-primary">
-							<i class="fas fa-save">&nbsp;&nbsp;</i>
-							{#__ key="button.save" /}
-							</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+		{>"modal"/}
 
 		{! Component chat div !}
 		{#config.socket.chat}
@@ -254,55 +185,9 @@
 		{/config.socket.chat}
 
 		{! --- JS --- !}
-
-		<!-- jQuery -->
-		<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
-		<!-- Bootstrap 4 -->
-		<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-		<!-- AdminLTE App -->
-		<script src="/AdminLTE/dist/js/adminlte.min.js" type="text/javascript"></script>
-		<!-- Moment js -->
-		<script src="/AdminLTE/plugins/moment/moment.min.js"></script>
-		{@eq key=lang_user value="fr-FR"}
-			<script src="/AdminLTE/plugins/moment/locale/fr.js"></script>
-		{/eq}
-		<!-- Toastr -->
-		<script src="/AdminLTE/plugins/toastr/toastr.min.js" type="text/javascript"></script>
-		<!-- Select2 -->
-		<script src="/AdminLTE/plugins/select2/js/select2.min.js" type="text/javascript"></script>
-		<!-- Summernote -->
-		<script src="/AdminLTE/plugins/summernote/summernote.min.js" type="text/javascript"></script>
-		{! <script src='/AdminLTE/js/plugins/summernote/plugin/stt/stt.js' type="text/javascript"></script> !}
-		<!-- Input Mask -->
-		<script src="/AdminLTE/plugins/inputmask/jquery.inputmask.min.js" type="text/javascript"></script>
-		<!-- iCheck -->
-		<script src="/js/plugins/icheck/icheck.min.js" type="text/javascript"></script>
-		<!-- MaskMoney -->
-		<script src="/js/plugins/maskmoney/maskmoney.js" type="text/javascript"></script>
-		<!-- JSBarCode -->
-		<script src="/js/plugins/jsbarcode/jsbarcode.all.min.js" type="text/javascript"></script>
-		<!-- QR CODE -->
-		<script src="/js/plugins/qrcode/qrcode.min.js" type="text/javascript"></script>
-		<!-- UUID V4 -->
-		<script src="/js/plugins/uuid/uuid.min.js?v={config.version}" type="text/javascript"></script>
-		<!-- Date | Datetime | Time picker -->
-		<!-- https://www.jqueryscript.net/time-clock/Date-Time-Picker-Bootstrap-4.html -->
-		<script src="/js/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-
-		{! Global vars !}
-		<script type="text/javascript">
-			const toastrArray = [];
-			const ERROR_MSG = '{#__ key="error.500.title" /}';
-		</script>
-		{! Toastr handling - TODO To move !}
-		{#toastr}
-			<script type="text/javascript">
-				toastrArray.push({
-					message: '{#__ key=message/}',
-					level: "{level}"
-				});
-			</script>
-		{/toastr}
+		{! Nodea Main Bundle !}
+		<script src="/core/bundle/nodea_main_js.bundle.js?v={config.version}-{config.build}" type="text/javascript"></script>
+		{! {>"bundle/nodea_main_js"/} !}
 
 		{! SocketIO !}
 		{#config.socket.enabled}
@@ -313,31 +198,37 @@
 
 			{! Notification init !}
 			{#config.socket.notification}
-				<script src="/core/js/component/notification.js?v={config.version}" type="text/javascript"></script>
+				<script src="/core/js/component/notification.js?v={config.version}-{config.build}" type="text/javascript"></script>
 			{/config.socket.notification}
 
 			{! Component chat init !}
 			{#config.socket.chat}
-				<script src="/core/js/component/chat.js?v={config.version}" type="text/javascript"></script>
+				<script src="/core/js/component/chat.js?v={config.version}-{config.build}" type="text/javascript"></script>
 			{/config.socket.chat}
-
 		{/config.socket.enabled}
 
-		{! Nodea init !}
-		<script src="/core/js/nodeaForms.js?v={config.version}" type='text/javascript'></script>
+		{! Global vars !}
 		<script type="text/javascript">
-			NodeaForms.elements.select.initializer($("#module-select"));
-		</script>
-		{! HTML encode / decode functions !}
-		<script src="/core/js/html_encode_decode.js?v={config.version}" type='text/javascript'></script>
-		{! Nodea App !}
-		<script src="/core/js/nodea.js?v={config.version}" type='text/javascript'></script>
-		<script type="text/javascript">
-			Nodea();
+			const toastrArray = [];
+			const ERROR_MSG = '{#__ key="error.500.title" /}';
 		</script>
 
-		{! Nodea Tables !}
-		<script src="/core/js/nodeaTable.js" type="text/javascript"></script>
+		{! Toastr handling - TODO To move !}
+		{#toastr}
+			<script type="text/javascript">
+				toastrArray.push({
+					message: '{#__ key=message/}',
+					level: "{level}"
+				});
+			</script>
+		{/toastr}
+
+		{! Nodea init !}
+		<script type="text/javascript">
+			NodeaSizeFileLimit = '{sizeFileLimit}';
+			NodeaForms.elements.select.initializer($("#module-select"));
+			Nodea();
+		</script>
 
 		{+custom_js /}
 	</body>

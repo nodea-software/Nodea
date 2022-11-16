@@ -2,11 +2,36 @@ const fs = require('fs-extra');
 
 const models = require('@app/models');
 
-let LOAD_ACCESS_FILE = true;
+let LOAD_ACCESS_FILE = true, ACCESS;
 function reloadAccess(reload = true) {
 	LOAD_ACCESS_FILE = reload;
 }
-exports.reloadAccess = reloadAccess
+exports.reloadAccess = reloadAccess;
+
+function getAccess() {
+	if (LOAD_ACCESS_FILE || !ACCESS) {
+		try {
+			ACCESS = JSON.parse(fs.readFileSync(__configPath + '/access.json', 'utf8'));
+		} catch (e) {
+			console.error(e);
+			return {};
+		}
+		LOAD_ACCESS_FILE = false;
+	}
+	return ACCESS;
+}
+
+function isInBothArray(stringArray, objectArray) {
+	if (stringArray.length == 0)
+		return false;
+
+	for (let j = 0; j < objectArray.length; j++)
+		for (let i = 0; i < stringArray.length; i++)
+			if (stringArray[i] == objectArray[j].f_label)
+				return true;
+
+	return false;
+}
 
 // Get workspace modules and entities list
 // Also get workspace's groups and roles
@@ -41,6 +66,8 @@ exports.setGroupAccess = function(modules, entities) {
 		// Set new groups to module if needed
 		if (typeof modules[accessModule] !== 'undefined')
 			access[accessModule].groups = modules[accessModule];
+		else
+			access[accessModule].groups = [];
 
 		// Loop through access.json entities
 		for (let i = 0; i < access[accessModule].entities.length; i++) {
@@ -48,11 +75,13 @@ exports.setGroupAccess = function(modules, entities) {
 			// Set new groups to entity if needed
 			if (typeof entities[entity.name] !== 'undefined')
 				access[accessModule].entities[i].groups = entities[entity.name];
+			else
+				access[accessModule].entities[i].groups = [];
 		}
 	}
 
 	// Write back new data to file
-	fs.writeFileSync(accessFileName, JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(accessFileName, JSON.stringify(access, null, '\t'), 'utf8');
 
 	reloadAccess();
 	return 1;
@@ -66,48 +95,25 @@ exports.setRoleAccess = function(entities) {
 		for (let i = 0; i < access[accessModule].entities.length; i++) {
 			if (typeof entities[access[accessModule].entities[i].name] !== 'undefined')
 				access[accessModule].entities[i].actions = entities[access[accessModule].entities[i].name];
+			else {
+				// Not in body, mean that every case is uncheck
+				access[accessModule].entities[i].actions = {
+					read: [],
+					create: [],
+					update: [],
+					delete: []
+				}
+			}
 		}
 	}
 
 	// Write back new data to file
-	fs.writeFileSync(accessFileName, JSON.stringify(access, null, 4), 'utf8');
+	fs.writeFileSync(accessFileName, JSON.stringify(access, null, '\t'), 'utf8');
 
 	reloadAccess();
 	return 1;
 }
 
-let ACCESS;
-function getAccess() {
-	if (LOAD_ACCESS_FILE || !ACCESS) {
-		try {
-			ACCESS = JSON.parse(fs.readFileSync(__configPath + '/access.json', 'utf8'));
-		} catch (e) {
-			console.error(e);
-			return {};
-		}
-		LOAD_ACCESS_FILE = false;
-	}
-	return ACCESS;
-}
-
-function isInBothArray(stringArray, objectArray) {
-	if (stringArray.length == 0)
-		return false;
-	let allowedCount = 0;
-	for (let j = 0; j < objectArray.length; j++) {
-		let isAllowed = true;
-		for (let i = 0; i < stringArray.length; i++) {
-			if (stringArray[i] == objectArray[j].f_label)
-				isAllowed = false;
-		}
-		if (isAllowed == true)
-			allowedCount++;
-	}
-
-	if (allowedCount > 0)
-		return false
-	return true;
-}
 // Check if user's group have access to module
 exports.moduleAccess = function (userGroups, moduleName) {
 	try {
@@ -181,13 +187,33 @@ exports.accessFileManagment = function() {
 		throw new Error("Missing access.json and access.lock.json file.")
 
 	// Generate access.json file
-	if (!fs.existsSync(__configPath + '/access.json'))
+	if (!fs.existsSync(__configPath + '/access.json')) {
 		fs.copySync(__configPath + '/access.lock.json', __configPath + '/access.json');
 
+		// By default fill with admin access for all
+		const access = JSON.parse(fs.readFileSync(__configPath + '/access.json'));
+		for (const nodea_module in access) {
+			access[nodea_module].groups = ['admin'];
+			// Loop on entities to add missing ones
+			const accessEntities = access[nodea_module].entities;
+			for (let i = 0; i < accessEntities.length; i++) {
+				accessEntities[i].groups = ['admin'];
+				accessEntities[i].actions = {
+					read: ['admin'],
+					create: ['admin'],
+					update: ['admin'],
+					delete: ['admin']
+				}
+			}
+		}
+		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
+	}
+
 	// Generate access.lock.json file
-	if (!fs.existsSync(__configPath + '/access.lock.json'))
+	if (!fs.existsSync(__configPath + '/access.lock.json')) {
+		// Generate access.json from access.lock.json
 		fs.copySync(__configPath + '/access.json', __configPath + '/access.lock.json');
-	else {
+	} else {
 		// access.lock.json exist, check if new keys to add in access.json
 		const access = JSON.parse(fs.readFileSync(__configPath + '/access.json'))
 		const accessLock = JSON.parse(fs.readFileSync(__configPath + '/access.lock.json'))
@@ -266,6 +292,6 @@ exports.accessFileManagment = function() {
 		}
 
 		// Write access.json with new entries
-		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, 4), "utf8");
+		fs.writeFileSync(__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
 	}
 }

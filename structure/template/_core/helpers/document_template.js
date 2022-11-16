@@ -1,7 +1,7 @@
 const moment = require('moment');
 const fs = require('fs-extra');
 const dust = require('dustjs-linkedin');
-const pdf = require('html-pdf');
+const puppeteer = require('puppeteer');
 const JSZip = require('jszip');
 const Docxtemplater = require('docxtemplater');
 const decompress = require('decompress');
@@ -115,8 +115,10 @@ async function docxToDocx({templateData, filePath}){
 	};
 }
 
+/* eslint-disable */
 function docxToPdf({templateData, filePath, req}){}
 function dustToDocx({templateData, filePath, req}){}
+/* eslint-enable */
 
 async function dustToPdf({templateData, filePath, req}){
 	templateData.staticImagePath = __appPath + '/public/img';
@@ -127,55 +129,66 @@ async function dustToPdf({templateData, filePath, req}){
 	const simpleGridCss = fs.readFileSync(__appPath + '/public/css/plugins/simple-grid/simple-grid.min.css', 'utf8');
 	dustSrc = dustSrc.replace("<!-- INSERT SIMPLE GRID HERE - DO NOT REMOVE -->", "<style>" + simpleGridCss + "</style>");
 	dust.insertLocalsFn(templateData ? templateData : {}, req);
-	return await new Promise((resolve, reject) => {
+
+	const tmpFileName = __dirname + '/../' + new Date().getTime() + '' + Math.floor(Math.random() * Math.floor(100)) + '.pdf';
+
+	const html = await new Promise((resolve, reject) => {
 		dust.renderSource(dustSrc, templateData, function(err, html) {
 			if (err)
 				return reject(err);
-
-			const tmpFileName = __dirname + '/../' + new Date().getTime() + '' + Math.floor(Math.random() * Math.floor(100)) + '.pdf';
-
-			const headerStartIdx = html.indexOf('<!--HEADER-->');
-			const headerEndIdx = html.indexOf('<!--HEADER-->', headerStartIdx + '<!--HEADER-->'.length) + '<!--HEADER-->'.length;
-			const header = headerStartIdx >= 0 ? html.substring(headerStartIdx, headerEndIdx) : null;
-
-			const footerStartIdx = html.indexOf('<!--FOOTER-->');
-			const footerEndIdx = html.indexOf('<!--FOOTER-->', footerStartIdx + '<!--FOOTER-->'.length) + '<!--FOOTER-->'.length;
-			const footer = html.substring(footerStartIdx, footerEndIdx);
-
-			html = html.replace(header, '');
-			html = html.replace(footer, '');
-
-			html = html.replace(/\*\*page\*\*/g, '{{page}}');
-			html = html.replace(/\*\*pages\*\*/g, '{{pages}}');
-
-			const optionsPDF = {
-				orientation: "portrait",
-				format: "A4",
-				border: {
-					top: "10px",
-					right: "15px",
-					bottom: "10px",
-					left: "15px"
-				}
-			}
-
-			if(!header)
-				optionsPDF.header = header;
-
-			pdf.create(html, optionsPDF).toFile(tmpFileName, err => {
-				if (err)
-					return reject(err);
-
-				const fileContent = fs.readFileSync(tmpFileName);
-				fs.unlinkSync(tmpFileName);
-				resolve({
-					buffer: fileContent,
-					contentType: "application/pdf",
-					ext: '.pdf'
-				});
-			});
+			resolve(html);
 		});
-	})
+	});
+
+	// https://pptr.dev/next/api
+	const browser = await puppeteer.launch({headless: true});
+	const page = await browser.newPage();
+	await page.setContent(html);
+	// https://pptr.dev/api/puppeteer.pdfoptions
+	let format = 'A4', landscape = false, displayHeaderFooter = true, margin = ['50px', '50px', '20px', '20px'], headerTemplate = '', footerTemplate = '';
+	try {
+		format = await page.$eval("pdfconf", el => el.getAttribute("data-format"));
+		landscape = await page.$eval("pdfconf", el => el.getAttribute("data-landscape"));
+		landscape = landscape == '1';
+		margin = await page.$eval("pdfconf", el => el.getAttribute("data-pdf-margin"));
+		if(margin)
+			margin = margin.split(',');
+
+		headerTemplate = await page.$eval('#header', el => el.innerHTML);
+		footerTemplate = await page.$eval('#footer', el => el.innerHTML);
+		await page.$eval('#header', el => el.remove());
+		await page.$eval('#footer', el => el.remove());
+	} catch(err) {
+		console.error(err.message);
+	}
+
+	if(headerTemplate == '' && footerTemplate == '')
+		displayHeaderFooter = false;
+
+	await page.pdf({
+		path: tmpFileName,
+		format,
+		landscape,
+		displayHeaderFooter,
+		headerTemplate: headerTemplate,
+		footerTemplate: footerTemplate,
+		margin: {
+			top: margin[0],
+			bottom: margin[1],
+			right: margin[2],
+			left: margin[3]
+		}
+	});
+	await browser.close();
+
+	const fileContent = fs.readFileSync(tmpFileName);
+	fs.unlinkSync(tmpFileName);
+
+	return {
+		buffer: fileContent,
+		contentType: "application/pdf",
+		ext: '.pdf'
+	};
 }
 
 function getGlobalVariables() {

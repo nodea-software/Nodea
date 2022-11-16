@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const domHelper = require('../utils/jsDomHelper');
+const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
 const dataHelper = require('../utils/data_helper');
 
@@ -13,15 +13,15 @@ exports.setupModule = async (data) => {
 	const url_name_module = data.options.urlValue;
 
 	// Read routes/app.js file
-	let module_template = fs.readFileSync(__piecesPath + '/routes/module.js', 'utf8');
+	let module_template = fs.readFileSync(global.__piecesPath + '/routes/module.js', 'utf8');
 
 	module_template = module_template.replace(/MODULE_NAME/g, url_name_module.charAt(0).toUpperCase() + url_name_module.toLowerCase().slice(1));
 	module_template = module_template.replace(/MODULE_URL/g, url_name_module);
 
-	fs.writeFileSync(`${__workspacePath}/${appName}/app/routes/${url_name_module}.js`, module_template, 'utf8');
+	fs.writeFileSync(`${global.__workspacePath}/${appName}/app/routes/${url_name_module}.js`, module_template, 'utf8');
 
 	// Create views/modules/m_module.dust file
-	const fileToCreate = `${__workspacePath}/${appName}/app/views/modules/${name_module.toLowerCase()}.dust`
+	const fileToCreate = `${global.__workspacePath}/${appName}/app/views/modules/${name_module.toLowerCase()}.dust`
 
 	fs.copySync(__dirname + '/pieces/views/modules/custom_module.dust', fileToCreate);
 
@@ -32,7 +32,7 @@ exports.setupModule = async (data) => {
 	let resultDust = dataDust.replace(/custom_module/g, name_module.toLowerCase());
 	if (name_module.toLowerCase() != "m_home") {
 		const moduleAriane = "\
-			<li class='active'>\
+			<li class='breadcrumb-item active'>\
 				{#__ key=\"module." + name_module.toLowerCase() + "\"/}\n\
 			</li>";
 		resultDust = resultDust.replace(/<!-- NEW MODULE -->/g, moduleAriane);
@@ -44,8 +44,8 @@ exports.setupModule = async (data) => {
 	await translateHelper.writeLocales(appName, "module", name_module, show_name_module, data.googleTranslate)
 
 	// Create module's layout file
-	const layout_module = `${__workspacePath}/${appName}/app/views/layout_${name_module.toLowerCase()}.dust`;
-	fs.copySync(__piecesPath + '/views/layout_custom_module.dust', layout_module);
+	const layout_module = `${global.__workspacePath}/${appName}/app/views/layout_${name_module.toLowerCase()}.dust`;
+	fs.copySync(global.__piecesPath + '/views/layout_custom_module.dust', layout_module);
 
 	// Loop over module list to add new module's <option> tag in all modules <select> tags
 	const promises = [];
@@ -53,7 +53,7 @@ exports.setupModule = async (data) => {
 
 	for (let i = 0; i < modules.length; i++) {
 		promises.push((async () => {
-			const fileName = __workspacePath + '/' + appName + '/app/views/layout_' + modules[i].name + '.dust';
+			const fileName = global.__workspacePath + '/' + appName + '/app/views/layout_' + modules[i].name + '.dust';
 			const $ = await domHelper.read(fileName);
 			$("#module-select").empty();
 			let option = "\n";
@@ -73,19 +73,22 @@ exports.setupModule = async (data) => {
 	await Promise.all(promises);
 
 	// Access settings handling
-	const accessPath = __workspacePath + '/' + appName + '/config/access.json';
-	const accessLockPath = __workspacePath + '/' + appName + '/config/access.lock.json';
+	const accessPath = global.__workspacePath + '/' + appName + '/config/access.json';
 	const accessObject = JSON.parse(fs.readFileSync(accessPath, 'utf8'));
 	accessObject[url_name_module.toLowerCase()] = {groups: ["admin"], entities: []};
-	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, 4), "utf8");
-	fs.writeFileSync(accessLockPath, JSON.stringify(accessObject, null, 4), "utf8");
+	fs.writeFileSync(accessPath, JSON.stringify(accessObject, null, '\t'), "utf8");
+	// Access lock handling
+	const accessLockPath = global.__workspacePath + '/' + appName + '/config/access.lock.json';
+	const accessLockObject = JSON.parse(fs.readFileSync(accessLockPath, 'utf8'));
+	accessLockObject[url_name_module.toLowerCase()] = {groups: [], entities: []};
+	fs.writeFileSync(accessLockPath, JSON.stringify(accessLockObject, null, '\t'), "utf8");
 
 	return true;
 };
 
 exports.deleteModule = async (data) => {
 	const moduleFilename = 'layout_' + data.np_module.name + '.dust';
-	const appPath = __workspacePath + '/' + data.application.name + '/app';
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
 
 	// Remove layout
 	fs.unlinkSync(appPath + '/views/' + moduleFilename);
@@ -97,14 +100,19 @@ exports.deleteModule = async (data) => {
 	fs.writeFileSync(appPath + '/routes/app.js', defaultRouteContent);
 
 	// Clean up access config
-	const access = JSON.parse(fs.readFileSync(__workspacePath + '/' + data.application.name + '/config/access.json', 'utf8'));
+	const access = JSON.parse(fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/config/access.json', 'utf8'));
 	for (const np_module in access) {
 		if (np_module == data.np_module.name.substring(2))
 			delete access[np_module];
 	}
+	fs.writeFileSync(global.__workspacePath + '/' + data.application.name + '/config/access.json', JSON.stringify(access, null, '\t'));
 
-	fs.writeFileSync(__workspacePath + '/' + data.application.name + '/config/access.json', JSON.stringify(access, null, 4));
-	fs.writeFileSync(__workspacePath + '/' + data.application.name + '/config/access.lock.json', JSON.stringify(access, null, 4));
+	const accessLock = JSON.parse(fs.readFileSync(global.__workspacePath + '/' + data.application.name + '/config/access.lock.json', 'utf8'));
+	for (const np_module in accessLock) {
+		if (np_module == data.np_module.name.substring(2))
+			delete accessLock[np_module];
+	}
+	fs.writeFileSync(global.__workspacePath + '/' + data.application.name + '/config/access.lock.json', JSON.stringify(accessLock, null, '\t'));
 
 	const layoutFiles = fs.readdirSync(appPath + '/views/').filter(file => file.indexOf('.') !== 0 && file.indexOf('layout_') === 0);
 

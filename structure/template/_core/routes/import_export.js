@@ -5,10 +5,9 @@ const exec = require('child_process');
 const dbConfig = require('@config/database');
 const globalConf = require('@config/global');
 const Route = require("@core/abstract_routes/route");
-
 const models = require('@app/models/');
-
 const file_helper = require('@core/helpers/file');
+const access_helper = require('@core/helpers/access');
 
 class CoreImportExport extends Route {
 
@@ -42,7 +41,12 @@ class CoreImportExport extends Route {
 				// Get primary tables
 				const entityName = file.substring(0, file.length - 5);
 				const modelName = entityName.charAt(0).toUpperCase() + entityName.slice(1);
-				const tableName = models[modelName].getTableName();
+				let tableName;
+				try {
+					tableName = models[modelName].getTableName();
+				} catch(err) {
+					console.error(err);
+				}
 				const entityObject = {
 					tradKey: 'entity.' + entityName + '.label_entity',
 					tableName: tableName
@@ -89,13 +93,18 @@ class CoreImportExport extends Route {
 					message: 'administration.import_export.db.no_choice',
 					level: "error"
 				}];
-				return res.redirect("/import_export/db_show")
+				return res.redirect("/import_export/db_show");
 			}
 
 			const cmd = "mysqldump";
 			let cmdArgs = [
 				"--default-character-set=utf8",
 				"--add-drop-table",
+				"--no-tablespaces",
+				"--complete-insert",
+				"--column-statistics=0",
+				"--port",
+				dbConfig.port,
 				"-u",
 				dbConfig.user,
 				"-p" + dbConfig.password,
@@ -123,7 +132,8 @@ class CoreImportExport extends Route {
 						// Child Success output
 						childProcess.stdout.on('data', stdout => {
 							fileStream.write(stdout);
-						})
+						});
+
 						// Child Error output
 						childProcess.stderr.on('data', stderr => {
 							// Avoid reject if only warning
@@ -134,7 +144,7 @@ class CoreImportExport extends Route {
 							fileStream.end();
 							childProcess.kill();
 							reject(stderr);
-						})
+						});
 
 						// Child error
 						childProcess.on('error', err => {
@@ -142,17 +152,18 @@ class CoreImportExport extends Route {
 							childProcess.kill();
 							console.error(err);
 							reject(err);
-						})
+						});
+
 						// Child close
 						childProcess.on('close', _ => {
 							fileStream.end();
 							resolve();
-						})
-					})
-				})
+						});
+					});
+				});
 			}
 
-			const dumpName = 'dump_db_data_' + moment().format("YYYYMMDD-HHmmss") + '.sql';
+			const dumpName = 'dump_' + dbConfig.database + '_' + moment().format("YYYYMMDD-HHmmss") + '.sql';
 			const dumpPath = __dirname + '/../../' + dumpName;
 
 			fullStdoutToFile(cmd, cmdArgs, dumpPath).then(_ => {
@@ -291,6 +302,7 @@ class CoreImportExport extends Route {
 				message: "settings.tool_success",
 				level: "success"
 			});
+			access_helper.reloadAccess();
 			return data.res.success(_ => data.res.redirect("/import_export/access_show"));
 		}));
 	}

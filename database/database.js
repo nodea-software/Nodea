@@ -10,7 +10,7 @@ function pushToSyncQuery(app, query) {
 		if (!toSync.queries)
 			toSync.queries = [];
 		toSync.queries.push(query);
-		fs.writeFileSync('workspace/' + app.name + '/app/models/toSync.json', JSON.stringify(toSync, null, 4), 'utf8');
+		fs.writeFileSync('workspace/' + app.name + '/app/models/toSync.json', JSON.stringify(toSync, null, '\t'), 'utf8');
 	} catch (e) {
 		console.log(e);
 		return false;
@@ -104,8 +104,9 @@ exports.getDatabaseSQLType = async(params) => {
 }
 
 exports.retrieveWorkspaceHasManyData = async (data, entity, foreignKey) => {
+	delete require.cache[require.resolve(global.__workspacePath + '/' + data.application.name + '/config/database')];
 	// eslint-disable-next-line global-require
-	const dbConf = require(__workspacePath + '/' + data.application.name + '/config/database');
+	const dbConf = require(global.__workspacePath + '/' + data.application.name + '/config/database');
 	let conn;
 	if(['mysql', 'mariadb'].includes(dbConf.dialect)) {
 		conn = await mysql.createConnection({

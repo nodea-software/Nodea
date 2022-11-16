@@ -158,8 +158,8 @@
 
 			var formatWithoutHours = format.split(" ")[0];
 			var currentDate = moment($("input[name='f_start_date']").val(), format).format(formatWithoutHours);
-			$("input[name='f_start_date']").val(currentDate + "00:00").prop('readonly', true);
-			$("input[name='f_end_date']").val(currentDate + "23:59").prop('readonly', true);
+			$("input[name='f_start_date']").val(currentDate + " 00:00").prop('readonly', true);
+			$("input[name='f_end_date']").val(currentDate + " 23:59").prop('readonly', true);
 		});
 
 		$(document).on('ifUnchecked', 'input[name="f_all_day"]', function(e){

@@ -1,0 +1,45 @@
+default:
+  image: node:fermium
+  services:
+    - mysql
+
+variables:
+  MYSQL_ROOT_PASSWORD: __PWD__
+  MYSQL_USER: __USER__
+  MYSQL_PASSWORD: __PWD__
+  MYSQL_DATABASE: __DATABASE__
+  APP_DB_USER: __USER__
+  APP_DB_PWD: __PWD__
+  APP_DB_NAME: __DATABASE__
+  APP_DB_IP: mysql
+  APP_DB_DIALECT: mysql
+
+stages:
+  - build
+  - test
+
+node_modules:
+  stage: build
+  script:
+    - npm i --no-optional
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - node_modules/
+
+eslint:
+  image: node:fermium
+  stage: test
+  script:
+    - npm run lint
+  dependencies:
+    - node_modules
+
+jest:
+  image: node:fermium
+  stage: test
+  script:
+    - npm run test
+  dependencies:
+    - node_modules

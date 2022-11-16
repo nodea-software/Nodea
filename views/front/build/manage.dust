@@ -14,6 +14,7 @@
 						<th>{#__ key="listApplication.id"/}</th>
 						<th>{#__ key="listApplication.name"/}</th>
 						<th>URL</th>
+						<th>{#__ key="listApplication.createdAt"/}</th>
 						<th>{#__ key="listApplication.createdBy"/}</th>
 						<th colspan="5" class="text-center">{#__ key="listApplication.action"/}</th>
 					</tr>
@@ -23,8 +24,9 @@
 						<tr>
 							<td>{id}</td>
 							<td>{displayName}</td>
-							<td><a href='{dataValues.url}' target='_blank'>{dataValues.url}</a></td>
-							<td>{dataValues.createdBy}</td>
+							<td><a href='{url}' target='_blank'>{url}</a></td>
+							<td>{createdAt|datetime}</td>
+							<td>{createdBy}</td>
 							<td class="text-center">
 								<a class="btn btn-info" href="/application/preview/{name}">
 									<i class="fa fa-desktop fa-md"></i>&nbsp;&nbsp;
@@ -32,20 +34,38 @@
 								</a>
 							</td>
 							<td class="text-center">
-								<a class="btn btn-primary export-btn" href="/application/export/{name}">
+								{?global_config.demo_mode}
+									<a class="btn btn-primary" href="#" style="cursor: not-allowed;">
+								{:else}
+									<a class="btn btn-primary export-btn" href="/build/export/{name}">
+								{/global_config.demo_mode}
 									<i class="fa fa-download fa-md"></i>&nbsp;&nbsp;
 									<span>{#__ key="button.export"/}</span>
-								</a>
+								</a><br>
+								{?global_config.demo_mode}
+									<small><b>{#__ key="demo.not_available"/}</b></small>
+								{/global_config.demo_mode}
 							</td>
+							{?global_config.demo_mode}
+							<td class="text-center">
+								<button type="button" class="btn btn-warning" style="cursor: not-allowed;">
+									<i class="fab fa-gitlab"></i>&nbsp;&nbsp;
+									<span>{#__ key="button.clone"/}</span>
+								</button><br>
+								{?global_config.demo_mode}
+									<small><b>{#__ key="demo.not_available"/}</b></small>
+								{/global_config.demo_mode}
+							</td>
+							{/global_config.demo_mode}
 							{?code_platform_user}
-								{?dataValues.repo_url}
+								{?repo_url}
 									<td class="text-center">
-										<button type="button" data-repourl="{dataValues.repo_url}" data-reposshurl="{dataValues.repo_ssh_url}" class="btn btn-warning code-platform-button" data-toggle="modal" data-target="#gitlabModal">
+										<button type="button" data-repourl="{repo_url}" data-reposshurl="{repo_ssh_url}" class="btn btn-warning code-platform-button" data-toggle="modal" data-target="#gitlabModal">
 											<i class="fab fa-gitlab"></i>&nbsp;&nbsp;
 											<span>{#__ key="button.clone"/}</span>
 										</button>
 									</td>
-								{/dataValues.repo_url}
+								{/repo_url}
 							{/code_platform_user}
 							<td class="text-center">
 								<button type='button' class="btn btn-danger deleteAppForm" data-name='{displayName}' data-codename='{name}' data-id='{id}'>
@@ -73,7 +93,7 @@
 				</div>
 				<div class="modal-body text-center">
 					{#__ key="listApplication.gitlab.text1" /}<br><br>
-					<i>HTTP:<br><b>git clone <span id="code_platform_repo_url"></span></b></i><br>
+					<i>HTTP:<br><b>git clone <span id="code_platform_repo_url"></span></b></i><br><br>
 					<i>SSH:<br><b>git clone <span id="code_platform_repo_ssh_url"></span></b></i><br><br>
 					{#__ key="listApplication.gitlab.text2" /}<br><br>
 					<i><b>{code_platform_user.name}</b></i><br><br>

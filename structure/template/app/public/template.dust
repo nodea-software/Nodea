@@ -19,24 +19,24 @@
 			input[type=checkbox] + label {display: block;margin: 0.2em;cursor: pointer;padding: 0.2em;}input[type=checkbox] {display: none;}input[type=checkbox] + label:before {content: "\2714";border: 0.1em solid #000;border-radius: 0.2em;display: inline-block;width: 1em;height: 1em;padding-left: 0.2em;padding-bottom: 0.3em;margin-right: 0.2em;vertical-align: bottom;color: transparent;transition: .2s;}input[type=checkbox] + label:active:before {transform: scale(0);}input[type=checkbox]:checked + label:before {background-color: #3c8dbc;border-color: #3c8dbc;color: #fff;}input[type=checkbox]:disabled + label:before {transform: scale(1);border-color: #aaa;}input[type=checkbox]:checked:disabled + label:before {transform: scale(1);background-color: #bfb;border-color: #bfb;}
 		</style>
 		{! See simplegrid documentation on => https://simplegrid.io/ !}
-		{! See html-pdf documentation on => https://www.npmjs.com/package/html-pdf !}
+		{! See puppeteer documentation on => // https://pptr.dev/next/api !}
 	</head>
+	{! https://pptr.dev/api/puppeteer.paperformat !}
+	{! margin order: top,bottom,right,left !}
+	<pdfconf data-format="A4" data-landscape="0" data-pdf-margin="50,50,20,20"></pdfconf>
 	<body>
 
-		<div class="row" id="pageHeader-first">
-			<div class="col-12-sm" style='text-align: center;'>
-				Page Header Content 1
-			</div>
-		</div>
-		<div class="row" id="pageHeader-2">
-			<div class="col-12-sm" style='text-align: center;'>
-				Page Header Content 2
+		{! CSS Directly on HTML element for header and footer !}
+		{! https://pptr.dev/api/puppeteer.pdfoptions.headertemplate/ !}
+		<div id="header">
+			<div style='width: 100%;font-size: 8px;text-align: center;'>
+				<span class="title"></span>
 			</div>
 		</div>
 
 		{! Page 1 !}
 		<div class='row'>
-			<div class="col-12-sm">
+			<div class="col-6">
 				VARCHAR -> {f_name}<br>
 				NUMBER -> {f_number}<br>
 				BIG NUMBER -> {f_big_number}<br>
@@ -50,6 +50,8 @@
 				<input type='checkbox' value='f_boolean' {?f_boolean}checked{/f_boolean}>
 		 		<label for='f_boolean'>f_boolean</label>
 		 		<br>
+			</div>
+			<div class="col-6">
 				EMAIL -> {f_email}<br>
 				TEL -> {f_tel}<br>
 				FAX -> {f_fax}<br>
@@ -70,7 +72,7 @@
 
 		{! Page 2 !}
 		<div class='row new-page'>
-			<div class="col-12-sm">
+			<div class="col-6">
 				VARCHAR2 -> {f_name}<br>
 				NUMBER2 -> {f_number}<br>
 				BIG NUMBER2 -> {f_big_number}<br>
@@ -84,6 +86,8 @@
 				<input type='checkbox' value='f_boolean' {?f_boolean}checked{/f_boolean}>
 		 		<label for='f_boolean'>f_boolean</label>
 		 		<br>
+			</div>
+			<div class="col-6">
 				EMAIL2 -> {f_email}<br>
 				TEL2 -> {f_tel}<br>
 				FAX2 -> {f_fax}<br>
@@ -102,26 +106,15 @@
 			</div>
 		</div>
 
-		<div class="row" id="pageFooter-first">
-			<div class="col-2-sm">
-				Footer 1
+		{! CSS Directly on HTML element for header and footer !}
+		<div id="footer">
+			<div style='width: 50%;font-size: 8px;margin-left: 5px;'>
+				<span class="date"></span>
 			</div>
-			<div class="col-8-sm" style='text-align: center;'>
-				06 66 66 66 66
-			</div>
-			<div class="col-2-sm">
-				**page** / **pages**
-			</div>
-		</div>
-		<div class="row" id="pageFooter-2">
-			<div class="col-2-sm">
-				Footer 2
-			</div>
-			<div class="col-8-sm" style='text-align: center;'>
-				06 66 66 66 66
-			</div>
-			<div class="col-2-sm">
-				**page** / **pages**
+			<div style='width: 50%;font-size: 8px;margin-right: 5px;'>
+				<div style='float:right;'>
+					<span class="pageNumber"></span>/<span class="totalPages"></span>
+				</div>
 			</div>
 		</div>
 	</body>

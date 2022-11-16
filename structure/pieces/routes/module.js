@@ -14,6 +14,12 @@ class MODULE_NAME extends CoreModule {
 		];
 		super("MODULE_NAME", registeredRoutes);
 	}
+
+	// main() {
+	// 	this.router.get(`/${this.moduleName}`, this.asyncRoute(async(data) => {
+	// 		data.res.success(_ => data.res.render(`modules/m_${this.moduleName}`));
+	// 	}));
+	// }
 }
 
 module.exports = MODULE_NAME;

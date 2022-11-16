@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const block_access = require('../utils/block_access');
+const middlewares = require('../helpers/middlewares');
 const code_platform = require('../config/code_platform.js');
 const models = require('../models/');
 
-router.get('/', block_access.isLoggedIn, (req, res) => {
+router.get('/', middlewares.isLoggedIn, (req, res) => {
 	const data = {};
 	data.user = req.session.passport.user;
 	models.Role.findByPk(data.user.id_role).then(userRole => {
@@ -19,8 +19,8 @@ router.get('/', block_access.isLoggedIn, (req, res) => {
 	});
 });
 
-router.get('/skiptuto', block_access.isLoggedIn, (req, res) => {
-	req.session.showtuto = false;
+router.get('/disabled_demo_popup', middlewares.isLoggedIn, (req, res) => {
+	req.session.show_demo_popup = false;
 	res.status(200).send(true);
 });
 

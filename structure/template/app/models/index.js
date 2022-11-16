@@ -53,11 +53,26 @@ if (dbConfig.dialect == 'sqlite')
 else
 	sequelizeOptions = {
 		host: dbConfig.host,
-		logging: false,
+		benchmark: true,
+		logging: function (query, execution_time, infos) {
+			try {
+				let table = infos.model ? infos.model.getTableName() : infos.tableNames ? infos.tableNames.join('-') : null;
+				if (!table && query.includes('FROM')) {
+					table = query.split('FROM')[1].trim();
+					table = table.split(' ')[0];
+				}
+				// Query execution time >= 500ms
+				if (execution_time >= 500)
+					console.warn(`Query time ${execution_time}ms -> ${table} - ${infos.type}`);
+			} catch (err) {
+				console.error(err);
+			}
+		},
 		port: dbConfig.port,
 		dialect: dbConfig.dialect,
 		dialectOptions: {
-			multipleStatements: true
+			multipleStatements: true,
+			decimalNumbers: true // Avoid converting decimal to string when retrieving data from DB
 		},
 		define: {
 			timestamps: false
