@@ -980,11 +980,13 @@ exports.showTracking = async (data) => {
 	const fileSource = `${workspacePath}/app/views/${entityName}/show_fields.dust`;
 	// New entry for source relation view
 	const newLi = '\
-	<li class="nav-item">\n\
-		<a id="r_traceability-click" data-toggle="pill" href="#r_traceability" class="nav-link" role="tab" aria-controls="r_traceability" aria-selected="false">\n\
-			<!--{#__ key="entity.e_traceability.label_entity" /}-->\n\
-		</a>\n\
-	</li>';
+	<!--{#entityAccess entity="traceability"}-->\
+		<li class="nav-item">\n\
+			<a id="r_traceability-click" data-toggle="pill" href="#r_traceability" class="nav-link" role="tab" aria-controls="r_traceability" aria-selected="false">\n\
+				<!--{#__ key="entity.e_traceability.label_entity" /}-->\n\
+			</a>\n\
+		</li>\
+	<!--{/entityAccess}-->';
 
 	const trackingListPath = `${global.__piecesPath}/component/tracking/views/list_fields.dust`;
 	let newTabContent = fs.readFileSync(trackingListPath, 'utf8');
@@ -1155,9 +1157,27 @@ exports.initTracking = (application) => {
 		updatedAt: "Date de modification"
 	}
 
+	const translateKeyEN = {
+		label_entity: 'Traceability',
+		plural_entity: 'Traceability',
+		f_relation_path: 'Relational path',
+		f_entity: 'Entity',
+		f_id_entity: 'ID Entity',
+		f_before: 'Before',
+		f_after: 'After',
+		r_user: 'User',
+		createdAt: "Creation date",
+		updatedAt: "Modification date"
+	}
+
 	for (const key in translateKey) {
 		const element = translateKey[key];
 		translateHelper.updateLocales(application.name, 'fr-FR', ['entity', 'e_traceability', key], element);
+	}
+
+	for (const key in translateKeyEN) {
+		const element = translateKeyEN[key];
+		translateHelper.updateLocales(application.name, 'en-EN', ['entity', 'e_traceability', key], element);
 	}
 
 	return true;
