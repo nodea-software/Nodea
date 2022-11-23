@@ -104,7 +104,8 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	include.required = false;
 
 	// Magically fix a lot of problem, to remove if any problem on datalist filter, pagination, etc
-	include.separate = false;
+	include.separate = true;
+	include.order = [[order[0][1], order[0][2]]];
 
 	let entity;
 	try {
@@ -113,7 +114,6 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 				id: parseInt(sourceId)
 			},
 			include: include,
-			order: order
 		});
 	} catch(err) {
 		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);
@@ -122,13 +122,17 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 		if(err.message && err.message.includes('separate'))
 			include.separate = false;
 		// TODO: Order on include sometime do not work because Sequelize decide to do 2 request with the first one without include
-		// Try with order in include
-		include.order = [[order[0][1], order[0][2]]];
+
 		entity = await models[modelName].findOne({
 			where: {
 				id: parseInt(sourceId)
 			},
-			include: include
+		});
+		entity[subentityAlias] = await entity[`get${subentityAlias.capitalizeFirstLetter()}`]({
+			where: include.where,
+			limit: include.limit,
+			offset: include.offset,
+			order: include.order
 		});
 	}
 
@@ -140,6 +144,7 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 		entity.attributes = [];
 
 	const count = await entity['count' + subentityAlias.capitalizeFirstLetter()]({where: include.where, include: include.include});
+
 	return {
 		recordsTotal: count,
 		recordsFiltered: count,
