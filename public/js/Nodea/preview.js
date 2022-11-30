@@ -285,7 +285,7 @@ $(function() {
 			localStorage.setItem("nodea_given_instruction_history_" + appName, JSON.stringify(instructionHistory));
 		}
 
-		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText + "...");
+		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText);
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
 
