@@ -1,5 +1,6 @@
 const models = require('@app/models');
 const model_builder = require('./model_builder');
+const fs = require('fs-extra');
 
 async function getDatalistData(modelName, params, order, start, length, search, searchTerm, speWhere, toInclude) {
 	// If request come from widget lastrecord, then default query order is ID DESC
@@ -77,7 +78,7 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	const sourceId = params.sourceId;
 	const subentityAlias = params.subentityAlias, subentityName = params.subentityModel;
 	const subentityModel = params.subentityModel.capitalizeFirstLetter();
-	const doPagination = params.paginate;
+	const isNotManyToManyAssociation = params.paginate;
 
 	const include = {
 		model: models[subentityModel],
@@ -86,8 +87,12 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	}
 
 	// Rework order for include, only handle order format like: [['id', 'desc']]
-	if(order && typeof order[0][0] == 'string' && typeof order[0][1] == 'string')
-		order = [[{model: models[subentityModel], as: subentityAlias}, ...order[0]]];
+	if(order && typeof order[0][0] == 'string' && typeof order[0][1] == 'string'){
+		if (isNotManyToManyAssociation)
+			order = [[{model: models[subentityModel], as: subentityAlias}, ...order[0]]];
+		else
+			order = [[...order[0]]];
+	}
 	else {
 		// TODO: Handle order for relation field in subdatalist, format like: [ [ Literal { val: 'r_relation.id' }, 'desc' ] ]
 		order = null;
@@ -96,25 +101,59 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	if (search[searchTerm].length > 0)
 		include.where = search;
 
-	if (doPagination == "true") {
+	if (isNotManyToManyAssociation) {
 		include.limit = length;
 		include.offset = start;
+	} else {
+		// Need to find other side relation because we are not going to include subdatalist data
+		// We are going to query directly subdatalist and include main entity
+		const mainRelationFile = JSON.parse(fs.readFileSync(__dirname + '/../../app/models/options/' + modelName.toLowerCase() + '.json'));
+		const troughTable = mainRelationFile.find(x => x.as == subentityAlias).through;
+		const subentityRelationFile = JSON.parse(fs.readFileSync(__dirname + '/../../app/models/options/' + subentityName + '.json'));
+		const mainRelation = subentityRelationFile.find(x => x.through == troughTable);
+
+		include.limit = length;
+		include.offset = start;
+
+		include.include.push({
+			model: models[modelName],
+			as: mainRelation.as,
+			where: {
+				id: parseInt(sourceId)
+			},
+			required: true
+		});
 	}
 
 	include.required = false;
 
-	// Magically fix a lot of problem, to remove if any problem on datalist filter, pagination, etc
-	include.separate = true;
-	include.order = [[order[0][1], order[0][2]]];
-
-	let entity;
+	let entity = {}, count;
 	try {
-		entity = await models[modelName].findOne({
-			where: {
-				id: parseInt(sourceId)
-			},
-			include: include,
-		});
+		if (isNotManyToManyAssociation) {
+			include.separate = true;
+			include.order = order;
+			entity = await models[modelName].findOne({
+				where: {
+					id: parseInt(sourceId)
+				},
+				include: include,
+				logging: console.log
+			});
+		} else {
+			include.separate = false;
+			entity[subentityAlias] = await models[subentityModel].findAll({
+				where: include.where,
+				include: include.include,
+				limit: include.limit,
+				offset: include.offset,
+				order: order
+			});
+			count = await models[subentityModel].count({
+				where: include.where,
+				include: include.include
+			});
+			console.log(count);
+		}
 	} catch(err) {
 		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);
 
@@ -122,28 +161,28 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 		if(err.message && err.message.includes('separate'))
 			include.separate = false;
 		// TODO: Order on include sometime do not work because Sequelize decide to do 2 request with the first one without include
-
+		// Try with order in include
+		include.order = [[order[0][1], order[0][2]]];
 		entity = await models[modelName].findOne({
 			where: {
 				id: parseInt(sourceId)
 			},
-		});
-		entity[subentityAlias] = await entity[`get${subentityAlias.capitalizeFirstLetter()}`]({
-			where: include.where,
-			limit: include.limit,
-			offset: include.offset,
-			order: include.order
+			include: include
 		});
 	}
 
-	if (!entity['count' + subentityAlias.capitalizeFirstLetter()])
-		throw new Error('count' + subentityAlias.capitalizeFirstLetter() + 'is undefined');
+	if (isNotManyToManyAssociation && !entity['count' + subentityAlias.capitalizeFirstLetter()])
+		throw new Error('count' + subentityAlias.capitalizeFirstLetter() + ' is undefined');
 
 	// Remove attributes to avoid nonaggregated column error on count with includes
 	for (const entity of include.include)
 		entity.attributes = [];
 
-	const count = await entity['count' + subentityAlias.capitalizeFirstLetter()]({where: include.where, include: include.include});
+	if (isNotManyToManyAssociation)
+		count = await entity['count' + subentityAlias.capitalizeFirstLetter()]({
+			where: include.where,
+			include: include.include
+		});
 
 	return {
 		recordsTotal: count,

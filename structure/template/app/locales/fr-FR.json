@@ -166,6 +166,7 @@
 				"import_title": "Import",
 				"export_action": "Exporter",
 				"all_db": "Toute la base de donnée",
+				"data_only": "Exporter uniquement les données",
 				"import_action": "Importer",
 				"import_file": "Fichier SQL",
 				"import_success": "L'import a bien été effectué.",

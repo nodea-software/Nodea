@@ -179,7 +179,7 @@
 	"administration": {
 		"tabs": {
 			"users": "Utilisateurs",
-			"queue": "Gestion de queue"
+			"queue": "File d'attente"
 		},
 		"queue": {
 			"list": "Generation en cours"

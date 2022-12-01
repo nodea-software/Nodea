@@ -246,6 +246,12 @@ class CoreEntity extends Route {
 					...data.req.query
 				};
 
+				// Verify is has_many is not actually a belongsToMany tabs, if true then we need to handle pagination differently
+				if(data.tableInfo.paginate === 'true')
+					data.tableInfo.paginate = !this.options.find(x => x.as == data.tableInfo.subentityAlias).through;
+				else
+					data.tableInfo.paginate = false;
+
 				/**
 				 * Called at route start
 				 * @function Core#CoreEntity#subdatalist#start

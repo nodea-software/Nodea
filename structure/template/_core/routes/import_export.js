@@ -112,6 +112,9 @@ class CoreImportExport extends Route {
 				"-h" + dbConfig.host,
 			];
 
+			if(req.body.data_only == "true")
+				cmdArgs.push("--no-create-info");
+
 			// Export selected tables
 			if (cmdArgs.length && req.body.all_db == "false") {
 				cmdArgs.push("--tables");
@@ -210,6 +213,8 @@ class CoreImportExport extends Route {
 				dbConfig.database,
 				"-h" + dbConfig.host,
 				"--default-character-set=utf8",
+				"--port",
+				dbConfig.port,
 				"<",
 				filePath
 			];

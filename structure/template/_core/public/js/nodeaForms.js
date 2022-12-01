@@ -677,7 +677,7 @@ let NodeaForms = (_ => {
 								});
 								jq_element.parent().remove();
 							} catch (e) {
-								console.error(e);
+								console.error('BARCODE ERROR:', id, barcodeType, e);
 								jq_element.parent().parent().find('br').remove();
 								jq_element.parent().parent().find('#' + id).remove();
 							}
