@@ -152,7 +152,6 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 				where: include.where,
 				include: include.include
 			});
-			console.log(count);
 		}
 	} catch(err) {
 		console.warn('SQL ERROR ON SUBDATALIST ->', err.message);

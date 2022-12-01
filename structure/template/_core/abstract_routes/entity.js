@@ -300,7 +300,11 @@ class CoreEntity extends Route {
 				if (await this.getHook('subdatalist', 'afterDatatableQuery', data) === false)
 					return;
 
-				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.req.query.subentityModel, this.attributes, this.options, data.rawData, data.req.session.lang_user);
+				// eslint-disable-next-line global-require
+				const subEntityAttributes = require('@app/models/attributes/' + data.tableInfo.subentityModel.toLowerCase());
+				// eslint-disable-next-line global-require
+				const subEntityRelations = require('@app/models/options/' + data.tableInfo.subentityModel.toLowerCase());
+				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.tableInfo.subentityModel, subEntityAttributes, subEntityRelations, data.rawData, data.req.session.lang_user);
 
 				/**
 				 * Called before json response
