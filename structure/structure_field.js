@@ -163,13 +163,13 @@ exports.setupField = async (data) => {
 			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
