@@ -373,8 +373,11 @@ exports.setRequiredAttribute = async (data) => {
 					defaultValue = "";
 					break;
 				case "STRING":
-				case "ENUM":
 					defaultValue = "";
+					break;
+				case "ENUM":
+					// Set the first value of enum as default value
+					defaultValue = attributesObj[data.options.value].values[0];
 					break;
 				case "INTEGER":
 				case "BIGINT":

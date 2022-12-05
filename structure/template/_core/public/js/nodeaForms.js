@@ -268,10 +268,11 @@ let NodeaForms = (_ => {
 					const val = element.val();
 					if (val !== null && val.length)
 						return;
-					return [_ => {
-						// const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
-						// form.append(input);
-					}];
+						return [_ => {
+							// Necessary to push empty value in update, without it set the value to null in update is impossible
+							const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
+							form.append(input);
+						}];
 				}
 			},
 			select: {
@@ -676,7 +677,7 @@ let NodeaForms = (_ => {
 								});
 								jq_element.parent().remove();
 							} catch (e) {
-								console.error(e);
+								console.error('BARCODE ERROR:', id, barcodeType, e);
 								jq_element.parent().parent().find('br').remove();
 								jq_element.parent().parent().find('#' + id).remove();
 							}

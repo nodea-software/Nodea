@@ -948,6 +948,7 @@ async function belongsToMany(data, optionObj, setupFunction, exportsContext) {
 		toSync: false,
 		type: data.targetType,
 		usingField: data.options.usingField || undefined,
+		auto_generate: true
 	};
 
 	structure_entity.setupAssociation(associationOptionOne);
@@ -963,7 +964,7 @@ async function belongsToMany(data, optionObj, setupFunction, exportsContext) {
 		through: through,
 		toSync: false,
 		type: data.targetType,
-		usingField: optionObj.usingField || undefined,
+		usingField: optionObj.usingField || undefined
 	};
 
 	structure_entity.setupAssociation(associationOptionTwo);
@@ -1300,6 +1301,23 @@ exports.createNewHasManyPreset = async (data) => {
 
 	// Create the belongsTo link between source and target
 	structure_entity.setupAssociation(associationOption);
+
+	const revertOption = {
+		application: data.application,
+		source: data.options.target,
+		target: data.options.source,
+		foreignKey: data.options.foreignKey,
+		as: data.options.as,
+		showAs: data.options.showAs,
+		relation: "belongsToMany",
+		through: data.options.through,
+		toSync: toSync,
+		usingField: data.options.usingField || undefined,
+		type: "auto_generate"
+	};
+
+	// Create the belongsTo link between source and target
+	structure_entity.setupAssociation(revertOption);
 
 	// Add the assocation field in create_fields/update_fields. Adding a tab in the show
 	await structure_entity.setupHasManyPresetTab(data);

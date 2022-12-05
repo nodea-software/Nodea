@@ -130,6 +130,9 @@ exports.setupAssociation = (data) => {
 	if (typeof data.loadOnStart !== "undefined" && data.loadOnStart)
 		baseOptions.loadOnStart = true;
 
+	if(data.auto_generate)
+		baseOptions.auto_generate = true;
+
 	optionsObject.push(baseOptions);
 
 	if (toSync) {
@@ -621,10 +624,13 @@ exports.deleteTab = async (data) => {
 	let targetOption, autoGenerateFound, targetJsonPath;
 	for (let i = 0; i < deletedOptionsTarget.length; i++) {
 		autoGenerateFound = false;
-		targetJsonPath = workspacePath + '/app/models/options/' + deletedOptionsTarget[i] + '.json'
+		targetJsonPath = workspacePath + '/app/models/options/' + deletedOptionsTarget[i] + '.json';
 		targetOption = JSON.parse(fs.readFileSync(targetJsonPath));
 		for (let j = 0; j < targetOption.length; j++) {
-			if(targetOption[j].structureType == "auto_generate" && targetOption[j].foreignKey == option.foreignKey){
+			if((targetOption[j].structureType == "auto_generate" ||
+				targetOption[j].auto_generate) &&
+				(targetOption[j].foreignKey == option.foreignKey ||
+				targetOption[j].through == option.through)){
 				targetOption.splice(j, 1);
 				autoGenerateFound = true;
 			}

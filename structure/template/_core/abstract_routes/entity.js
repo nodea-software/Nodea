@@ -246,6 +246,12 @@ class CoreEntity extends Route {
 					...data.req.query
 				};
 
+				// Verify is has_many is not actually a belongsToMany tabs, if true then we need to handle pagination differently
+				if(data.tableInfo.paginate === 'true')
+					data.tableInfo.paginate = !this.options.find(x => x.as == data.tableInfo.subentityAlias).through;
+				else
+					data.tableInfo.paginate = false;
+
 				/**
 				 * Called at route start
 				 * @function Core#CoreEntity#subdatalist#start
@@ -294,7 +300,11 @@ class CoreEntity extends Route {
 				if (await this.getHook('subdatalist', 'afterDatatableQuery', data) === false)
 					return;
 
-				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.req.query.subentityModel, this.attributes, this.options, data.rawData, data.req.session.lang_user);
+				// eslint-disable-next-line global-require
+				const subEntityAttributes = require('@app/models/attributes/' + data.tableInfo.subentityModel.toLowerCase());
+				// eslint-disable-next-line global-require
+				const subEntityRelations = require('@app/models/options/' + data.tableInfo.subentityModel.toLowerCase());
+				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.tableInfo.subentityModel, subEntityAttributes, subEntityRelations, data.rawData, data.req.session.lang_user);
 
 				/**
 				 * Called before json response

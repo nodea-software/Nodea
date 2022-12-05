@@ -1,10 +1,13 @@
 $(function() {
 	const tab = NodeaTabs.current.tab;
 	const tableId = tab.find('table').attr('id');
+	const newTableID = tableId + '_' + tab.attr('data-asso-alias');
+    // Update tableID with association alias to avoid element ID conflict on multiple tabs
+    tab.find('table').attr('id', newTableID);
 	const fieldsetSelect = tab.find('select.fieldset-select');
 	NodeaForms.elements.ajax_select.initializer(fieldsetSelect);
 
-    NodeaTable('#' + tableId, {
+    NodeaTable('#' + newTableID, {
     	hide: ['update'],
     	columns: {
     		update: {
@@ -42,7 +45,7 @@ $(function() {
     			// Clean select2
     			fieldsetSelect.val('').trigger('change');
     			// Reload datatable
-    			$('#' + tableId).DataTable().ajax.reload();
+    			$('#' + newTableID).DataTable().ajax.reload();
     		},
     		error: function(err) {
     			console.error(err);
