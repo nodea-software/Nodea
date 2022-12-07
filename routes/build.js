@@ -191,7 +191,10 @@ router.post('/application', middlewares.isLoggedIn, (req, res) => {
 		if(global.app_queue.indexOf(req.body.application) != -1)
 			global.app_queue.splice(global.app_queue.indexOf(req.body.application), 1);
 
-		res.redirect('/application/preview/' + req.session.app_name);
+		if(req.query.ajax)
+			res.status(200).send('/application/preview/' + req.session.app_name);
+		else
+			res.redirect('/application/preview/' + req.session.app_name);
 	})().catch(err => {
 		console.error(err);
 
@@ -222,7 +225,7 @@ router.post('/application', middlewares.isLoggedIn, (req, res) => {
 
 router.get('/get_pourcent_generation', (req, res) => {
 	res.json({
-		pourcent: pourcent_generation[req.session.passport.user.id]
+		pourcent: pourcent_generation[req.session?.passport?.user.id]
 	});
 });
 
