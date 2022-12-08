@@ -62,7 +62,9 @@ module.exports = (dust) => (req, res, next) => {
 				return;
 
 			// Load inline-help when rendering create, update or show page
-			const entityName = view.split('/')[0];
+			let entityName = view.split('/')[0];
+			// For handle ajax form in sub entity
+			entityName = entityName === 'overlay' ? req.query.associationSource : entityName;
 			const helps = await getInlineHelp(entityName);
 
 			if(helps.length > 0)
