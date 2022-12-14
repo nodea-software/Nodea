@@ -186,7 +186,7 @@ $(function() {
 			}, 500);
 
 			var side_menu_html = generateSidebarEditor(workspaceFolder);
-			$("#codemirror-menu ul#editor-menu").append(side_menu_html);
+			$("#codemirror-menu ul#editor-menu").empty().append(side_menu_html)
 		}
 	});
 

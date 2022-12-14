@@ -43,8 +43,8 @@
 				TEXT -> {f_text|s}<br>
 				REGULAR TEXT -> {f_regular_text}<br>
 				DECIMAL -> {f_decimal}<br>
-				DATE -> {f_date}<br>
-				DATETIME -> {f_datetime}<br>
+				DATE -> {f_date.value} -> {f_date.converted}<br>
+				DATETIME -> {f_datetime.value} -> {f_datetime.converted}<br>
 				TIME -> {f_time}<br>
 				BOOLEAN -> {f_boolean} -> {f_boolean_translation} ->
 				<input type='checkbox' value='f_boolean' {?f_boolean}checked{/f_boolean}>
@@ -57,16 +57,25 @@
 				FAX -> {f_fax}<br>
 				MONEY -> {f_money}<br>
 				EURO -> {f_euro}<br>
-				QRCODE -> {f_qrcode}<br>
+				QRCODE ->
+				{?f_qrcode}
+					{f_qrcode.value}:<br>
+					<img src="{f_qrcode.buffer}" height="150" width="150">
+				{/f_qrcode}
+				<br>
 				EAN -> {f_ean8}<br>
 				CODE39 -> {f_code39}<br>
 				URL -> {f_url}<br>
 				PASSWORD -> {f_password}<br>
 				COLOR -> {f_color}<br>
 				FILE -> {f_localfile|filename}<br>
-				IMAGE -> {?f_image}<img src="{f_image}" height="150" width="150">{/f_image}<br>
-				ENUM -> {f_enum} -> {f_enum_translation}<br>
-				RADIO -> {f_radio} -> {f_radio_translation}
+				IMAGE ->
+				{?f_image}
+					{f_image.value}:<br>
+					<img src="data:image/*;base64,{f_image.buffer}" height="150" width="150">
+				{/f_image}<br>
+				ENUM -> {f_enum.value} -> {f_enum.translation}<br>
+				RADIO -> {f_radio.value} -> {f_radio.translation}
 			</div>
 		</div>
 

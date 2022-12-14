@@ -1,5 +1,7 @@
 const fs = require('fs-extra');
 const moment = require("moment");
+const qrcode = require("yaqrcode");
+const dayjs = require('dayjs');
 
 const language = require('./language');
 const file_helper = require('@core/helpers/file');
@@ -116,6 +118,24 @@ module.exports = {
 		const lang = options.lang || 'fr-FR';
 
 		const defaultProcessors = {
+			date: (entityName, entity, attribute) => {
+				const format = lang == 'fr-FR' ? 'DD/MM/YYYY' : 'YYYY-MM-DD';
+				entity.set(attribute, {
+					value: entity[attribute],
+					converted: dayjs(entity[attribute]).format(format)
+				}, {
+					raw: true // Model instance is waiting for date on this field, need to force raw true to convert to object
+				});
+			},
+			datetime: (entityName, entity, attribute) => {
+				const format = lang == 'fr-FR' ? 'DD/MM/YYYY HH:mm' : 'YYYY-MM-DD HH:mm';
+				entity.set(attribute, {
+					value: entity[attribute],
+					converted: dayjs(entity[attribute]).format(format)
+				}, {
+					raw: true // Model instance is waiting for date on this field, need to force raw true to convert to object
+				});
+			},
 			enum: (entityName, entity, attribute) => {
 				entity[attribute] = {
 					value: entity[attribute],
@@ -136,8 +156,14 @@ module.exports = {
 			file: (entityName, entity, attribute) => {
 				entity[attribute] = file_helper.originalFilename(entity[attribute]);
 			},
-			picture: (...args) => {
-				defaultProcessors.file(...args);
+			picture: async (entityName, entity) => {
+				await this.getPicturesBuffers(entity, entityName);
+			},
+			qrcode: (entityName, entity, attribute) => {
+				entity[attribute] = {
+					value: entity[attribute],
+					buffer: qrcode(entity[attribute])
+				}
 			}
 		}
 
@@ -160,8 +186,10 @@ module.exports = {
 				continue;
 
 			const processor = typeof options[nodeaType] === 'function' ? options[nodeaType] : defaultProcessors[nodeaType];
-			if (processor)
-				processor(entityName, entity, attribute, attributeDef);
+			if (processor){
+				// eslint-disable-next-line no-await-in-loop
+				await processor(entityName, entity, attribute, attributeDef);
+			}
 		}
 
 		const childrenPromises = [];
