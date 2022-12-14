@@ -1,4 +1,4 @@
-<table id="table_e_user" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
+<table id="table_e_user" data-entity="e_user" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
 	<thead class="main">
 		<tr class="fields">
 			{#actionAccess entity="user" action="read"}
