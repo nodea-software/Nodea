@@ -145,9 +145,14 @@ async function dustToPdf({templateData, filePath, req}){
 	const page = await browser.newPage();
 	await page.setContent(html);
 	// https://pptr.dev/api/puppeteer.pdfoptions
-	let format = 'A4', landscape = false, displayHeaderFooter = true, margin = ['50px', '50px', '20px', '20px'], headerTemplate = '', footerTemplate = '';
+	let format = 'A4', landscape = false, displayHeaderFooter = true, margin = ['50px', '50px', '20px', '20px'], headerTemplate = '', footerTemplate = '', width = null, height = null;
 	try {
 		format = await page.$eval("pdfconf", el => el.getAttribute("data-format"));
+		if(format.includes(',')){
+			width = format.split(',')[0];
+			height = format.split(',')[1];
+			format = null;
+		}
 		landscape = await page.$eval("pdfconf", el => el.getAttribute("data-landscape"));
 		landscape = landscape == '1';
 		margin = await page.$eval("pdfconf", el => el.getAttribute("data-pdf-margin"));
@@ -167,6 +172,8 @@ async function dustToPdf({templateData, filePath, req}){
 
 	await page.pdf({
 		path: tmpFileName,
+		height,
+		width,
 		format,
 		landscape,
 		displayHeaderFooter,

@@ -23,6 +23,7 @@
 	</head>
 	{! https://pptr.dev/api/puppeteer.paperformat !}
 	{! margin order: top,bottom,right,left !}
+	{! You can pass custom format: width,height | For example data-format="200,200" !}
 	<pdfconf data-format="A4" data-landscape="0" data-pdf-margin="50,50,20,20"></pdfconf>
 	<body>
 
