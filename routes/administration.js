@@ -221,7 +221,7 @@ router.post('/users/assign', middlewares.isAdmin, (req, res) => {
 			throw new Error("This Nodea user is not activated yet.");
 
 		// Add user to code plateform project too
-		if(code_platform.config.enabled){
+		if(code_platform && code_platform.config && code_platform.config.enabled){
 			if(!Array.isArray(appID))
 				appID = [appID];
 
@@ -247,7 +247,7 @@ router.post('/users/assign', middlewares.isAdmin, (req, res) => {
 			message: "L'application a bien été ajoutée !",
 			level: 'success'
 		}];
-		res.redirect('/administration/users/show/' + userID + "#_applications");
+		res.redirect('/administration/users/show/' + userID + "#applications");
 	}).catch(err => {
 		console.error(err);
 		req.session.toastr = [{
@@ -280,7 +280,7 @@ router.post('/users/remove_access', middlewares.isAdmin, (req, res) => {
 			}
 
 		// Remove code platform access
-		if(code_platform.config.enabled) {
+		if(code_platform && code_platform.config && code_platform.config.enabled){
 			const application = await models.Application.findByPk(appID);
 			const code_platform_user = await code_platform.getUser(user);
 			if(!code_platform_user)
@@ -303,7 +303,7 @@ router.post('/users/remove_access', middlewares.isAdmin, (req, res) => {
 			message: "L'accès à application a bien été retiré !",
 			level: 'success'
 		}];
-		res.redirect('/administration/users/show/' + userID + "#_applications");
+		res.redirect('/administration/users/show/' + userID + "#applications");
 	}).catch(err => {
 		console.error(err);
 		req.session.toastr = [{
