@@ -32,14 +32,14 @@
             <div class="nodea-dropzone">
                 {#f_file}
                     <div class="dropzonefile">
-                        {.}&nbsp;<i class="remove-file fa fa-times" style="color: red;"></i>
+                        {.|filename}&nbsp;<i class="remove-file fa fa-times" style="color: red;"></i>
                     </div>
                 {:else}
                     {#__ key="message.insert_file" /}
                 {/f_file}
             </div>
-            <input type="file" name="f_file" value="{f_file}" style="display: none;" required>
-            <input type="hidden" name="f_file_modified" value="false">
+            <input type="file" name="f_file" value="{f_file}" style="display: none;">
+            <input type="hidden" name="f_file_modified" value="false" required>
         </div>
     </div>
     <div data-field="f_entity" class="col-12">

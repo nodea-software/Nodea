@@ -8,6 +8,8 @@ const appConf = require('@config/application');
 const helpers = require('@core/helpers');
 const middlewares = helpers.middlewares;
 
+const models = require('@app/models');
+
 function getLabelFromFormatCode(code) {
 	const format = appConf.document_template.format_pairs.filter(f => f.code == code)
 	return format[0] && format[0].label || code;
@@ -102,9 +104,37 @@ class DocumentTemplate extends CoreDocumentTemplate {
 			search: {
 				// start: async (data) => {},
 				beforeQuery: (data) => {
+					const group_ids = data.req.user.r_group.map(x => x.id);
+					const role_ids = data.req.user.r_role.map(x => x.id);
+
+					data.query.limit = null;
+					data.query.offset = null;
+
 					data.query.where = {
-						f_entity: data.req.body.attrData.entity
+						[models.$or]: [{
+							...data.query.where,
+							f_entity: data.req.body.attrData.entity,
+							'$r_group.id$': {
+								[models.$in]: group_ids
+							}
+						}, {
+							...data.query.where,
+							f_entity: data.req.body.attrData.entity,
+							'$r_role.id$': {
+								[models.$in]: role_ids
+							}
+						}]
 					}
+
+					data.query.include = [{
+						attributes: ['id'],
+						model: models.E_group,
+						as: 'r_group'
+					}, {
+						attributes: ['id'],
+						model: models.E_role,
+						as: 'r_role'
+					}];
 				}
 				// beforeResponse: async (data) => {}
 			},

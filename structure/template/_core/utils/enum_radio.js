@@ -12,7 +12,7 @@ exports.translateFieldValue = function(entity, field, value, lang) {
 	return value;
 }
 
-exports.translated = function (entity, lang, options) {
+exports.translated = function (entity, lang = 'en-EN', options) {
 	const data = {[entity]: {}};
 	for (const fieldName in locales[entity]) {
 		data[entity][fieldName] = [];

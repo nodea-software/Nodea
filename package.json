@@ -11,7 +11,8 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "node ./server",
-		"lint": "reset;eslint ./;"
+		"lint": "reset;eslint ./;",
+		"clean_bundle": "rm -r ./structure/template/_core/public/bundle;rm -r ./structure/template/_core/views/bundle"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.12.13",
