@@ -5,7 +5,7 @@ LABEL maintainer.name="Nodea" maintainer.email="contact@nodea-software.com"
 RUN rm -rf node_modules/ && rm -rf workspace/
 
 # Update package and install needed module
-RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano && apt-get -y install git && apt-get -y install python3 && apt-get install libnss3 libxss1 libasound2 libatk-bridge2.0-0 libgtk-3-0 libgbm-dev
+RUN apt-get update && apt-get -qq -y install pdftk && apt-get -y install nano && apt-get -y install git && apt-get install apt-get install mariadb-client-10.5 && apt-get -y install python3 && apt-get install libnss3 libxss1 libasound2 libatk-bridge2.0-0 libgtk-3-0 libgbm-dev
 
 # Main folder
 RUN mkdir /nodea
