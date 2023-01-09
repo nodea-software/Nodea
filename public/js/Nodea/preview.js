@@ -65,7 +65,6 @@ $(function() {
 		$.ajax({
 			url: '/ui_editor/getPage/' + entity + '/' + page,
 			success: function(pageHtml) {
-				console.log(pageHtml);
 				$("#ui_editor").html(pageHtml);
 				// Remove mainControls who are not removed by modifying html
 				$(".ge-mainControls").remove();
