@@ -14,10 +14,16 @@ function applyToAllEntity(currentHtml, notPage, entity, appName) {
 		const pageUri = global.__workspacePath + '/' + appName + '/app/views/' + entity + '/' + pageFiles[i];
 		const $ = domHelper.read(pageUri); // eslint-disable-line
 		const saveField = {};
+		const saveAddress = {};
 
 		// Save current state of fields in the current working page
 		$("div[data-field]").each(function() {
 			saveField[$(this).attr("data-field")] = $(this)[0].innerHTML;
+		});
+
+		// Save component address
+		$("div.address_component").each(function() {
+			saveAddress[$(this).attr("data-as")] = $(this)[0].innerHTML;
 		});
 
 		// Loop on source entity fields
@@ -30,9 +36,13 @@ function applyToAllEntity(currentHtml, notPage, entity, appName) {
 			saveField[currentHtml(this).attr("data-field")] = true;
 		});
 
+		currentHtml("div.address_component").each(function() {
+			currentHtml(this).html(saveAddress[currentHtml(this).attr("data-as")]);
+		});
+
 		// Missing fields from the source that we'll append in col-xs-12
 		for (const field in saveField) {
-			if (saveField[field] != true) {
+			if (saveField[field] !== true) {
 				let newDiv = "<div data-field='" + field + "' class='col-12'>";
 				newDiv += saveField[field];
 				newDiv += "</div>";
@@ -45,6 +55,8 @@ function applyToAllEntity(currentHtml, notPage, entity, appName) {
 		for (let i = 0; i < currentHtml("body").children('.row').length; i++)
 			if (currentHtml("body").children('.row').eq(i).html() != "")
 				packedRow += currentHtml("body").children('.row').eq(i).html();
+
+		// console.log(packedRow);
 
 		domHelper.insertHtml(pageUri, "#fields", packedRow); // eslint-disable-line
 	}
