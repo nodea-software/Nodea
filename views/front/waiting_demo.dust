@@ -7,7 +7,7 @@
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="/AdminLTE/plugins/fontawesome-free/css/all.min.css">
 	{! Animated CSS !}
-	<link href="/css/animate.min.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="/css/animate.min.css" type="text/css">
 	<!-- Theme style -->
 	<link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.min.css">
 	<!-- Nodea style -->
@@ -69,15 +69,38 @@
 			stroke-linecap: round;
 		}
 		.ldBar path.baseline {
-			stroke-width: 14;
+			stroke-width: 1;
 			stroke: #f1f2f3;
 			stroke-linecap: round;
 			filter:url(#custom-shadow);
 		}
+		.btn {
+			border-radius: 15px;
+			padding: 15px;
+			padding-left: 25px;
+			padding-right: 25px;
+		}
 	</style>
 </head>
 <body class="hold-transition login-page">
-	<div class="header-content">
+
+	<div class="waiting-content">
+		<div class="header-center">
+			<div class="col-12 first-title text-center" style='margin-top: 250px;'>
+				<img id="pulse-newmips" alt="Nodea Logo" src="/img/logo/transparent_white.png"/>
+			</div>
+			<br>
+			<div class="col-12 first-title text-center">
+				<h1>{#__ key="demo.ready" /}</h1>
+			</div>
+			<br><hr><br>
+			<div class="col-12 text-center">
+				<button class="btn btn-default" id="trigger-go">{#__ key="demo.go" /}</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="header-content" style="display: none;">
 		<div class="header-center">
 			<div class="col-12 first-title text-center" style='margin-top: 250px;'>
 				<img class="animate__animated animate__pulse animate__infinite" id="pulse-newmips" alt="Nodea Logo" src="/img/logo/transparent_white.png"/>
@@ -96,9 +119,7 @@
 			<div id="oups_queue" class="col-12 second-title text-center animate__animated animate__fadeIn" style="display: none;">
 				<h2>{#__ key="demo.oups_queue" /}</h2>
 			</div>
-			<br>
-			<hr>
-			<br>
+			<br><hr><br>
 			<div class="col-12 text-center">
 				<div class="ldBar" id='loading-bar' data-value="0" data-preset="circle">
 				</div>
@@ -106,9 +127,9 @@
 		</div>
 	</div>
 
-	<form action="/build/application" method="POST" style="display: none;">
+	<!-- <form action="/build/application" method="POST" style="display: none;">
 		<input name="application" type="hidden" value="{app_name}" />
-	</form>
+	</form> -->
 
 	<!-- jQuery -->
 	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
@@ -123,9 +144,8 @@
 		const app_name = '{app_name}';
 		let queue_text = $('#oups_queue').html();
 		const messageStayOnPage = '#{#__ key="deploy_content.stayonpage" /}';
+		let redirect = null;
 		$(function() {
-			$('#loading-bar').css('width', '10%').css('height', '10%');
-
 			function randomIntFromInterval(min, max) {
 				return Math.floor(Math.random() * (max - min + 1) + min);
 			}
@@ -148,6 +168,17 @@
 								setTimeout(_ => {
 									getPourcent();
 								}, 1000);
+							} else if(data.pourcent >= 99) {
+								console.log('DONE');
+								const redirectTimeOut = function(){
+									console.log('LALA');
+									if(redirect) {
+										window.location.replace(redirect);
+									} else {
+										setTimeout(redirectTimeOut, 2000);
+									}
+								};
+								setTimeout(redirectTimeOut, 2000);
 							}
 						}
 					},
@@ -172,7 +203,17 @@
 						}
 
 						/* Start generation */
-						$('form[action="/build/application"]').trigger('submit');
+						$.ajax({
+							url : '/build/application?ajax=true',
+							type : 'POST',
+							data: {
+								application: app_name
+							},
+							success: function (data) {
+								redirect = data;
+							}
+						});
+
 						$('#oups_queue').hide();
 						$('#please_wait').show();
 						getPourcent();
@@ -184,12 +225,17 @@
 			}
 
 			$(window).bind('beforeunload', function(){
-				return messageStayOnPage;
+				if(!redirect)
+					return messageStayOnPage;
 			});
 
-			setTimeout(_ => {
-				getCurrentGeneration();
-			}, random_wait);
+			$(document).on('click', '#trigger-go', function(){
+				$('.waiting-content').hide();
+				$('.header-content').show();
+				setTimeout(_ => {
+					getCurrentGeneration();
+				}, random_wait);
+			});
 		});
 	</script>
 </html>

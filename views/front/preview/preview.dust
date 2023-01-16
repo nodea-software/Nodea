@@ -5,7 +5,7 @@
 			<input class="form-control input" id="chat" name="chat" type="hidden" value="{chat|stringify}" />
 			<div class="input-group mb-3">
 				<div class="input-group-prepend">
-					<a href="https://docs.nodea-software.com/en/user_guide/instructions" target="_blank" class="btn btn-default"><i class="fa fa-question fa-md"></i></a>
+					<a href="https://docs.nodea-software.com/en/3-1/instructions" target="_blank" class="btn btn-default"><i class="fa fa-question fa-md"></i></a>
 				</div>
 				<input class="form-control powertip" powertip-content='{#__ key="powertip.preview.3" /}' powertip-order='3' id="instruction" name="instruction" type="text" autocomplete="off" autofocus="autofocus" required="required" x-webkit-speech="x-webkit-speech" placeholder='{#__ key="preview.execute"/}' />
 				<span class="input-group-append">

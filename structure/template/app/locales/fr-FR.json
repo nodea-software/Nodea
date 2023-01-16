@@ -166,6 +166,7 @@
 				"import_title": "Import",
 				"export_action": "Exporter",
 				"all_db": "Toute la base de donnée",
+				"data_only": "Exporter uniquement les données",
 				"import_action": "Importer",
 				"import_file": "Fichier SQL",
 				"import_success": "L'import a bien été effectué.",
@@ -263,7 +264,7 @@
 			},
 			"help": {
 				"menu": "Aide Modèle Document",
-				"description": "<p style='text-align:justify;'> Les modèles de document sont utilisables dans l'onglet où est positionné le composant <b>Modèle de document</b> de chaque entité.\nLors de la création de votre modèle, vous devez inclure aux endroits désirés les variables listées ci-dessous, elles seront remplacées à la volée par les données de l'entité au moment où vous cliquerez sur le bouton 'Générer'.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Pour utiliser la date de création ou de modification de chaque enregistrement veuillez utiliser:<br>\n- <b>{createdAt}</b> pour la date de création <br>\n- <b>{updatedAt}</b> pour la date de modification.\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<p>NB: Selectionnez une entité dans la liste ci-dessous pour découvrir les données disponibles et l'usage des variables.</p>\n",
+				"description": "<p style='text-align:justify;'> Les modèles de document sont utilisables dans l'onglet où est positionné le composant <b>Modèle de document</b> de chaque entité.\nLors de la création de votre modèle, vous devez inclure aux endroits désirés les variables listées ci-dessous, elles seront remplacées à la volée par les données de l'entité au moment où vous cliquerez sur le bouton 'Générer'.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Pour utiliser la date de création ou de modification de chaque enregistrement veuillez utiliser:<br>\n- <b>{createdAt}</b> pour la date de création <br>\n- <b>{updatedAt}</b> pour la date de modification.\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n- {variable.value} pour avoir accès à la valeur non traduite du champs<br>\n- {variable.translation} pour avoir accès à la traduction du champs\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type date<br>\n- {variable.value} pour avoir accès à la valeur non formaté du champs<br>\n- {variable.converted} pour avoir accès à la valeur formaté du champs\n</h5><p>NB: Selectionnez une entité dans la liste ci-dessous pour découvrir les données disponibles et l'usage des variables.</p>\n",
 				"pageTitle": "Alimenter un modèle de document",
 				"entityInformations": "Informations concernant l'entité",
 				"entityTableRow1": "Entité",

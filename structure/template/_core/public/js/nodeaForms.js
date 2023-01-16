@@ -268,10 +268,11 @@ let NodeaForms = (_ => {
 					const val = element.val();
 					if (val !== null && val.length)
 						return;
-					return [_ => {
-						// const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
-						// form.append(input);
-					}];
+						return [_ => {
+							// Necessary to push empty value in update, without it set the value to null in update is impossible
+							const input = $(`<input type="hidden" name="${element.attr('name')}" value="">`);
+							form.append(input);
+						}];
 				}
 			},
 			select: {
@@ -676,7 +677,7 @@ let NodeaForms = (_ => {
 								});
 								jq_element.parent().remove();
 							} catch (e) {
-								console.error(e);
+								console.error('BARCODE ERROR:', id, barcodeType, e);
 								jq_element.parent().parent().find('br').remove();
 								jq_element.parent().parent().find('#' + id).remove();
 							}
@@ -841,9 +842,15 @@ let NodeaForms = (_ => {
 					});
 				},
 				validator: (element, form) => {
-					const input = element.find("input[type=file]");
-					if (input.prop('required') === true && !input.val())
-						return false
+					const input = element.parent().find("input[type=file]");
+					const label = element.parent().find("label[for='"+input.attr('name')+"']");
+					const hasDropzoneFile = element.find('.dropzonefile').length == 1;
+					// For update form we cannot set required the type file input (cannot prefilled input file for security reasons)
+					// So we check only the required class on label instead
+					if ((input.prop('required') === true || label.hasClass('required')) && !input.val() && !hasDropzoneFile){
+						toastr.error(locales.global_component.local_file_storage.required_file);
+						return false;
+					}
 				}
 			},
 			address_form: {

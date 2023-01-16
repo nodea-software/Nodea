@@ -4,9 +4,14 @@ const bot = require('../../helpers/bot');
 
 module.exports = async () => {
 	try {
-		const applications = await models.Application.findAll();
+		const applications = await models.Application.findAll({
+			include: {
+				model: models.User,
+				as: 'users'
+			}
+		});
 		const now = dayjs();
-		const app_to_delete = applications.filter(x => now.diff(x.createdAt, 'day') >= 7);
+		const app_to_delete = applications.filter(x => now.diff(x.createdAt, 'minutes') >= 7);
 		const promises = [];
 		for (let i = 0; i < app_to_delete.length; i++){
 			promises.push((async () => {
@@ -14,7 +19,9 @@ module.exports = async () => {
 				await bot.execute({
 					session: {
 						passport: {
-							user: {}
+							user: {
+								id: app_to_delete[i].users[0].id
+							}
 						}
 					}
 				}, "delete application " + app_to_delete[i].displayName, __);

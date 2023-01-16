@@ -166,6 +166,7 @@
 				"import_title": "Import",
 				"export_action": "Export",
 				"all_db": "Full database",
+				"data_only": "Export only data",
 				"import_action": "Import",
 				"import_file": "SQL file",
 				"import_success": "Import success",
@@ -263,7 +264,7 @@
 			},
 			"help": {
 				"menu": "Document Template Help",
-				"description": "<p style='text-align:justify;'>\nDocument templates can be used in the corresponding tab of any entity with the component <b>Document template</b>.\nWhen creating your template, you must include the variables listed below where you want them to appear, they'll be replaced on the spot when you click on the 'Generate' button.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; To use createdAt and updatedAt of each entity please add:<br>\n<b>{createdAt}</b> for the date of creation<br>\n<b>{updatedAt}</b> for the date of update<br>\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n{variable.value} to acces the untranslated value of field<br>\n{variable.translation} to acces the translated value\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n{variable.value} to acces the untranslated value<br>\n{variable.translation} to acces the translated value<br>\n</h5>\n<p>Select an entity in the dropdown to discover available variables and how to use them.</p>\n",
+				"description": "<p style='text-align:justify;'>\nDocument templates can be used in the corresponding tab of any entity with the component <b>Document template</b>.\nWhen creating your template, you must include the variables listed below where you want them to appear, they'll be replaced on the spot when you click on the 'Generate' button.\n</p>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; To use createdAt and updatedAt of each entity please add:<br>\n<b>{createdAt}</b> for the date of creation<br>\n<b>{updatedAt}</b> for the date of update<br>\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type boolean<br>\n{variable.value} to acces the untranslated value of field<br>\n{variable.translation} to acces the translated value\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type enum<br>\n{variable.value} to acces the untranslated value<br>\n{variable.translation} to acces the translated value<br>\n</h5>\n<h5><i class='fa fa-info-circle text-blue'></i>&nbsp; Type date<br>\n{variable.value} to access the unformated value<br>\n{variable.converted} to access the formated value<br>\n</h5>\n<p>Select an entity in the dropdown to discover available variables and how to use them.</p>\n",
 				"pageTitle": "Building document templates",
 				"entityInformations": "Entity informations",
 				"entityTableRow1": "Entity",

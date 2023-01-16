@@ -163,13 +163,13 @@ exports.setupField = async (data) => {
 			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 		toSyncObject[entity_name].attributes[field_name] = {
 			"type": sql_type,
 			"values": cleanRadioValues,
 			"nodeaType": "enum",
-			"defaultValue": defaultValueForOption
+			"defaultValue": defaultValueForOption ? dataHelper.clearString(defaultValueForOption) : defaultValueForOption
 		};
 	} else if (["text", "texte", "regular text", "texte standard"].indexOf(field_type) != -1) {
 		// No DB default value for type text, mysql do not handling it.
@@ -286,6 +286,10 @@ exports.setupField = async (data) => {
 
 exports.setRequiredAttribute = async (data) => {
 
+	// Update the Sequelize attributes.json to set allowNull
+	const pathToAttributesJson = __dirname + '/../workspace/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
+	const attributesObj = JSON.parse(fs.readFileSync(pathToAttributesJson, "utf8"));
+
 	const possibilityRequired = ["mandatory", "required", "obligatoire"];
 	const possibilityOptionnal = ["optionnel", "non-obligatoire", "optional"];
 
@@ -333,17 +337,14 @@ exports.setRequiredAttribute = async (data) => {
 
 	if(data.structureType == "relatedToMultipleCheckbox"){
 		$("*[data-field='" + data.options.value + "']").find('.relatedtomany-checkbox').data('required', set);
-	} else {
+	} else if(!attributesObj[data.options.value] || attributesObj[data.options.value].nodeaType != 'file') {
+		// Do not set require input[type=file] in update, it is not possible to prefilled input type file for security reasons
 		$("*[data-field='" + data.options.value + "']").find('input').prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('textarea').prop('required', set);
 		$("*[data-field='" + data.options.value + "']").find('select').prop('required', set);
 	}
 
 	domHelper.write(pathToViews + '/update_fields.dust', $);
-
-	// Update the Sequelize attributes.json to set allowNull
-	const pathToAttributesJson = __dirname + '/../workspace/' + data.application.name + '/app/models/attributes/' + data.entity_name + ".json";
-	const attributesObj = JSON.parse(fs.readFileSync(pathToAttributesJson, "utf8"));
 
 	if (attributesObj[data.options.value]) {
 
@@ -373,8 +374,11 @@ exports.setRequiredAttribute = async (data) => {
 					defaultValue = "";
 					break;
 				case "STRING":
-				case "ENUM":
 					defaultValue = "";
+					break;
+				case "ENUM":
+					// Set the first value of enum as default value
+					defaultValue = attributesObj[data.options.value].values[0];
 					break;
 				case "INTEGER":
 				case "BIGINT":

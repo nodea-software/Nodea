@@ -65,7 +65,6 @@ $(function() {
 		$.ajax({
 			url: '/ui_editor/getPage/' + entity + '/' + page,
 			success: function(pageHtml) {
-				console.log(pageHtml);
 				$("#ui_editor").html(pageHtml);
 				// Remove mainControls who are not removed by modifying html
 				$(".ge-mainControls").remove();
@@ -186,7 +185,7 @@ $(function() {
 			}, 500);
 
 			var side_menu_html = generateSidebarEditor(workspaceFolder);
-			$("#codemirror-menu ul#editor-menu").append(side_menu_html);
+			$("#codemirror-menu ul#editor-menu").empty().append(side_menu_html)
 		}
 	});
 
@@ -285,7 +284,7 @@ $(function() {
 			localStorage.setItem("nodea_given_instruction_history_" + appName, JSON.stringify(instructionHistory));
 		}
 
-		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText + "...");
+		$("#execute_instruction").html("<i class='fas fa-spinner fa-spin'></i>&nbsp;&nbsp;" + loadingButtonText);
 		$("#execute_instruction").prop("disabled", true);
 		$("#loadingIframe").show();
 

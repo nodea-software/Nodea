@@ -7,6 +7,7 @@ const parser = require('../services/bot.js');
 const mandatoryInstructions = require('../structure/mandatory_instructions');
 const structure_application = require('../structure/structure_application');
 const bot = require('../helpers/bot');
+const instruction_helper = require('../utils/data_helper');
 
 function scriptGeneratingEnd(path, user_id, script_infos, script_processing, resolve = false) {
 	// Delete instructions file
@@ -99,6 +100,7 @@ exports.executeFile = (req, user_id, __, script_infos, script_processing) => new
 			// Get the wanted function given by the bot to do some checks
 			let parserResult;
 			try {
+				line = instruction_helper.prepareInstruction(line);
 				parserResult = parser.parse(line);
 				lineIdx++;
 			} catch (err) {

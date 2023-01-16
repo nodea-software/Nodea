@@ -31,4 +31,9 @@ $(function() {
 			});
 		};
 	});
+
+	/* Reload tabs for refresh data on tabs click */
+	$(document).on('click', '#r_traceability-click', function () {
+		datatable.ajax.reload();
+	});
 });
