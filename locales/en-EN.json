@@ -626,6 +626,8 @@
 		"hello_there": "Hello there, welcome to Nodea! We will generate your application in a few moments 👍",
 		"please_wait": "It won't take long, really not long, usually no more than 30 seconds!",
 		"oups_queue": "Oops there are already curious people in front of you! Don't worry you are %cptth in the queue.",
+		"ready": "Ready ?",
+		"go": "Let's go !",
 		"modal": {
 			"title": "Nodea demo mode",
 			"text1": "Welcome on the generator",

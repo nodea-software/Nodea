@@ -151,6 +151,8 @@ class CoreDocumentTemplate extends CoreEntity {
 				include
 			}) || {};
 
+			if (await this.getHook('generate', 'beforePostProcessEntityData', data) === false)
+				return;
 			await this.helpers.entity.postProcessEntityData(data.templateData);
 
 			// Global data

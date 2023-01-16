@@ -179,7 +179,7 @@
 	"administration": {
 		"tabs": {
 			"users": "Utilisateurs",
-			"queue": "Gestion de queue"
+			"queue": "File d'attente"
 		},
 		"queue": {
 			"list": "Generation en cours"
@@ -626,6 +626,8 @@
 		"hello_there": "Bonjour, bienvenue sur Nodea ! Nous allons générer votre application dans quelques instants 👍",
 		"please_wait": "Cela ne prendra pas longtemps, vraiment pas longtemps, en général moins d'une minute !",
 		"oups_queue": "Oups il y a déjà des curieux devant vous ! Pas de soucis vous êtes %cptème dans la file d'attente.",
+		"ready": "Prêt ?",
+		"go": "C'est parti !",
 		"modal": {
 			"title": "Mode démo de Nodea",
 			"text1": "Bienvenue sur le générateur",

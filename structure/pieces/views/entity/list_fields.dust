@@ -1,4 +1,4 @@
-<table id="table_custom_entity" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
+<table id="table_custom_entity" data-entity="custom_entity" data-url="{tableUrl}" class="dataTable table table-bordered table-striped animated fadeIn" style="display: none;">
 	<thead class="main">
 		<tr class='fields'>
 			{#actionAccess entity="custom_url_entity" action="read"}

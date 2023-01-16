@@ -98,6 +98,8 @@ function prepareInstruction(instruction) {
 
 	// Trim and remove double spaces or more inside the intruction
 	instruction = instruction.trim();
+	// Replace weird space caracter with normal space
+	instruction = instruction.replace(/ /g, ' ');
 	instruction = instruction.replace(/[ \t]{2,}/g, ' ');
 
 	return instruction;

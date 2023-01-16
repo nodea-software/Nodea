@@ -68,8 +68,8 @@
 										<div class="col-12">
 											<br>
 											<form action="/import_export/db_export" method="POST" id="export_form">
-												<input type="checkbox" name="all_db" />&nbsp;&nbsp;{#__ key="administration.import_export.db.all_db" /}<br>
-												<br>
+												<input type="checkbox" name="data_only" />&nbsp;&nbsp;{#__ key="administration.import_export.db.data_only" /}<br><br>
+												<input type="checkbox" name="all_db" />&nbsp;&nbsp;{#__ key="administration.import_export.db.all_db" /}<br><br>
 												<span id="checkbox-entities" style="margin-bottom: 15px;">
 													{#entities}
 														<input type="checkbox" name="{tableName}" />&nbsp;&nbsp;{#__ key=tradKey /}&nbsp;<b>({tableName})</b><br>

@@ -635,7 +635,7 @@ let NodeaTable = (function() {
 	    	columns = [],
 	    	columnDefs = [],
 	    	defaultOrder = params.defaultOrder ? params.defaultOrder : {idx: -1, direction: 'desc'},
-	    	entity = tableID.split("#table_")[1];
+	    	entity = $(tableID).data('entity') ? $(tableID).data('entity') : tableID.split("#table_")[1];
 
 	    // Adds a delay before filter execution. Saves it on execution
     	function executeFilter(colIdx, value = '', type = 'string', force = false) {

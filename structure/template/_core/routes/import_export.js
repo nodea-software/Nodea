@@ -85,7 +85,7 @@ class CoreImportExport extends Route {
 
 			const tables = [];
 			for (const prop in req.body)
-				if (prop != "all_db" && req.body[prop] == "true")
+				if (prop != "all_db" && prop != "data_only" && req.body[prop] == "true")
 					tables.push(prop);
 
 			if (tables.length == 0 && req.body.all_db == "false") {
@@ -102,7 +102,7 @@ class CoreImportExport extends Route {
 				"--add-drop-table",
 				"--no-tablespaces",
 				"--complete-insert",
-				"--column-statistics=0",
+				// "--column-statistics=0",
 				"--port",
 				dbConfig.port,
 				"-u",
@@ -111,6 +111,9 @@ class CoreImportExport extends Route {
 				dbConfig.database,
 				"-h" + dbConfig.host,
 			];
+
+			if(req.body.data_only == "true")
+				cmdArgs.push("--no-create-info");
 
 			// Export selected tables
 			if (cmdArgs.length && req.body.all_db == "false") {
@@ -210,6 +213,8 @@ class CoreImportExport extends Route {
 				dbConfig.database,
 				"-h" + dbConfig.host,
 				"--default-character-set=utf8",
+				"--port",
+				dbConfig.port,
 				"<",
 				filePath
 			];

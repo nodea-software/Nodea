@@ -6,6 +6,8 @@
 
 /* Script generation */
 $(function() {
+	$("#addScriptInput").val('');
+
 	function getScriptStatus() {
 		$.ajax({
 			url: '/build/script_status',
@@ -52,6 +54,7 @@ $(function() {
 					} else {
 						// Wait 2 sec before let user click again on button
 						setTimeout(function () {
+							$("#addScriptInput").val('');
 							$("#scriptSubmit").prop('disabled', false);
 							$("#scriptSubmit").fadeIn();
 						}, 2000);
@@ -190,7 +193,7 @@ $(function() {
 
 	$(document).on('click', '.use-last-script', function(){
 		$("#createScriptTextarea").val(lastWrittenScript[$(this).attr('data-index')].content)
-	})
+	});
 
 	$(document).on('submit', '#instructionsScript', function() {
 		$("#goTo").hide();
