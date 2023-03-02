@@ -136,8 +136,7 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 				where: {
 					id: parseInt(sourceId)
 				},
-				include: include,
-				logging: console.log
+				include: include
 			});
 		} else {
 			include.separate = false;

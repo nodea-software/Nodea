@@ -31,6 +31,11 @@
 		.dataTables_filter {
 			float: right;
 		}
+
+		.doc_iframe {
+			width: 100%;
+			height: 400px;
+		}
 	</style>
 {/custom_css}
 
@@ -49,6 +54,7 @@
 								<ul class="nav nav-pills ml-auto p-3 powertip" powertip-content='{#__ key="powertip.develop.2" /}' powertip-order='2'>
 									<span style="margin-top: 7px;"><b>Application:</b>&nbsp;&nbsp;</span>
 									<select id="develop_current_app" class="select2" style='width:200px;'>
+										<option value="" selected></option>
 										{#allApps}
 											{@eq key=currentApp value=name}
 												<option value="{name}" selected>{displayName}</option>
@@ -241,8 +247,9 @@
 	<!-- Nodea -->
 	<script src="/js/Nodea/tab_redirection.js" menu='develop' type="text/javascript"></script>
 	<script type="text/javascript">
-		var projectID = "{projectID}";
-		var CREATE_ISSUE_SUCCESS = '{#__ key="develop.issue_create" /}';
+		const projectID = "{projectID}";
+		const currentApp = "{currentApp}";
+		const CREATE_ISSUE_SUCCESS = '{#__ key="develop.issue_create" /}';
 	</script>
 	<script src="/js/Nodea/develop.js" menu='develop' type="text/javascript"></script>
 {/custom_js}

@@ -14,7 +14,6 @@ const {process_server_per_app} = process_manager;
 const session_manager = require('../helpers/preview_session.js');
 
 const parser = require('../services/bot.js');
-const studio_manager = require('../services/studio_manager');
 
 // Helpers
 const app_helper = require('../helpers/application');
@@ -35,12 +34,6 @@ const noGitFunctions = ['restart', 'gitPush', 'gitPull', 'installNodePackage'];
 router.get('/preview/:app_name', middlewares.hasAccessApplication, (req, res) => {
 
 	const appName = req.params.app_name;
-
-	// Application starting timeout
-	let timeoutServer = 30000;
-	if(typeof req.query.timeout !== "undefined")
-		timeoutServer = req.query.timeout;
-
 	const currentUserID = req.session.passport.user.id;
 
 	req.session.app_name = appName;
@@ -63,34 +56,16 @@ router.get('/preview/:app_name', middlewares.hasAccessApplication, (req, res) =>
 
 	models.Application.findOne({where: {name: appName}}).then(db_app => {
 
-		const port = 9000 + parseInt(db_app.id);
-
-		if (process_server_per_app[appName] == null || typeof process_server_per_app[appName] === "undefined")
-			process_server_per_app[appName] = process_manager.launchChildProcess(req.sessionID, appName, port);
-
 		data.session = session_manager.getSession(req);
 
 		if(globalConf.demo_mode)
 			data.session.app_expire = dayjs(db_app.createdAt).diff(dayjs(), 'day') + 7;
 
-		const initialTimestamp = new Date().getTime();
-		let iframe_url = globalConf.protocol + '://';
-
-		if (globalConf.env == 'studio'){
-			iframe_url = 'https://' + globalConf.sub_domain + '-' + data.application.name.substring(2) + "." + globalConf.dns + '/app/status';
-			// Checking .toml file existence, creating it if necessary
-			studio_manager.createApplicationDns(appName.substring(2), db_app.id)
-		}
-		else
-			iframe_url += globalConf.host + ":" + port + "/app/status";
-
 		data = app_helper.initPreviewData(appName, data);
 		data.chat = req.session.nodea_chats[appName][currentUserID];
 
-		// Check server has started every 50 ms
-		console.log('Starting server...');
-		process_manager.checkServer(iframe_url, initialTimestamp, timeoutServer).then(_ => {
-			data.iframe_url = iframe_url.split("/app/status")[0] + "/module/home";
+		app_helper.launchApplication(req.session.app_name, db_app, req.sessionID, req.query.timeout).then(iframe_url => {
+			data.iframe_url = iframe_url;
 			// Let's do git init or commit if needed
 			gitHelper.doGit(data).then(_ => {
 				res.render('front/preview/main', data);

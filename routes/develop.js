@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const middlewares = require('../helpers/middlewares');
+const app_helpers = require('../helpers/application');
 const helper = require('../utils/data_helper');
 const models = require('../models/');
 const code_platform = require('../services/code_platform');
@@ -35,6 +36,10 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 			}
 		}
 
+		// Get current db_app and launch the process / Needed to access the documentation part
+		const db_app = applications.find(x => x.name == req.session.app_name);
+		const iframe_url = await app_helpers.launchApplication(req.session.app_name, db_app, req.sessionID);
+
 		// Get all user for current app
 		const appUsers = await models.User.findAll({
 			include: [{
@@ -49,6 +54,8 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 		// Code platform disabled
 		if (!code_platform.config.enabled)
 			return {
+				...app_helpers.checkJSDOC(req.session.app_name), // Check is JSDOC is already generated
+				iframe_url,
 				currentApp: req.session.app_name,
 				allApps: applications
 			}
@@ -64,6 +71,7 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 		const lastCommits = projectCommits.filter((x, idx) => idx < 10);
 
 		return {
+			iframe_url,
 			projectID: metadataApp.repoID,
 			currentApp: req.session.app_name,
 			currentRepoUrl: metadataApp.codePlatformRepoHTTP.replace('.git', ''),
@@ -75,6 +83,7 @@ router.get('/', middlewares.hasAccessApplication, (req, res) => {
 			lastCommits: lastCommits
 		}
 	})().then(data => {
+		console.log(data);
 		res.render('front/develop/main', data);
 	}).catch(err => {
 		console.error(err);
@@ -163,5 +172,14 @@ router.post('/new-tag', middlewares.hasAccessApplication, (req, res) => {
 		res.status(500).send(err);
 	})
 });
+
+router.post('/check-js-doc', middlewares.hasAccessApplication, (req, res) => {
+	
+});
+
+router.post('/generate-js-doc', middlewares.hasAccessApplication, (req, res) => {
+	
+});
+
 
 module.exports = router;

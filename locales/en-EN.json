@@ -138,6 +138,11 @@
 			"state": "State",
 			"access": "See"
 		},
+		"documentation": {
+			"access_jsdoc_core": "Access JSDOC Core",
+			"access_jsdoc_app": "Access JSDOC App",
+			"access_api_doc": "Access API Documentation"
+		},
 		"see_commit": "Show this commit",
 		"issue_create": "The task was successfully created!"
 	},

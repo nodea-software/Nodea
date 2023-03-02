@@ -1,14 +1,14 @@
-$(document).ready(function() {
+$(function() {
 	$('.select2').select2();
 	$(document).on('change', 'select#develop_current_app', function() {
 		window.location.href = '/develop?app_name=' + $(this).val();
 	});
 
 	if(!projectID) {
-		$('.tab-content').find('button').each(function(){
+		$('.tab-content').find('#home, #backlog, #mytasks, #versioning').find('button').each(function(){
 			$(this).prop('disabled', true);
 		});
-		$('.tab-content').find('a').each(function(){
+		$('.tab-content').find('#home, #backlog, #mytasks, #versioning').find('a').each(function(){
 			$(this).attr('href', '#');
 			$(this).hide();
 		});
@@ -174,4 +174,9 @@ $(document).ready(function() {
 
 	$("table#issues").DataTable(dataTableOpt);
 	$("table#mytasks").DataTable(dataTableOpt);
+
+	// Documentation tab, check if core and app documentation are already generated
+	$('a.nav-link[href="#documentation"]').on('click', function() {
+		console.log(currentApp);
+	});
 })

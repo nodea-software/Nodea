@@ -32,7 +32,9 @@ router.get('/users', middlewares.isAdmin, (req, res) => {
 		res.render(redirect, {
 			users: users
 		});
-	})
+	}).catch(err => {
+		console.error(err);
+	});
 });
 
 router.get('/users/show/:id', middlewares.isAdmin, (req, res) => {
