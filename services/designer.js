@@ -1879,8 +1879,7 @@ exports.removeComponentAddress = async (data) => {
 
 	// If specific name was given by instruction
 	const instruction_value = data.is_default_name ?
-		'Address ' + data.entity.displayName :
-		'Address ' + data.entity.displayName + ' ' + data.options.showValue;
+		'Address ' + data.entity.displayName : data.options.showValue;
 
 	// Regenerate data.options with the 'new' instruction value
 	const {options} = dataHelper.reworkData({
