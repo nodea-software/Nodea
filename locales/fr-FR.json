@@ -138,6 +138,11 @@
 			"state": "Statut",
 			"access": "Voir"
 		},
+		"documentation": {
+			"access_jsdoc_core": "Acceder à la JSDOC du Core",
+			"access_jsdoc_app": "Acceder à la JSDOC de l'App",
+			"access_api_doc": "Acceder à la documentation de l'API"
+		},
 		"see_commit": "Voir ce commit",
 		"issue_create": "La tâche a bien été crée !"
 	},

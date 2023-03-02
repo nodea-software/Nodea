@@ -36,6 +36,11 @@ app.use(helmet(helmet_conf));
 // Set up public files access (js/css...)
 app.use(express.static(__appPath + '/public'));
 app.use('/core', express.static(__corePath + '/public'));
+
+// JSDOC access
+app.use('/docs_core', express.static(__dirname + '/docs_core'));
+app.use('/docs_app', express.static(__dirname + '/docs_app'));
+
 // Public files bundler
 const bundler = require('@core/tools/bundler');
 
