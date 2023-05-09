@@ -266,11 +266,11 @@ module.exports = {
 					if (clearDefaultValue != "") {
 						str += "<span class='radio-group' data-radio='" + field + "'>\n";
 						str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-						str += "		<label class='no-weight'>";
+						str += "		<label for=\"" + field + ".{.value}\" class='no-weight'>";
 						str += "		<!--{@eq key=\"" + clearDefaultValue + "\" value=\"{.value}\" }-->\n";
-						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "			<input name='" + field + "' id='" + field + ".{.value}' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		<!--{:else}-->\n";
-						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "			<input name='" + field + "' id='" + field + ".{.value}' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		<!--{/eq}-->\n";
 						str += "		</label>";
 						str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
@@ -278,8 +278,8 @@ module.exports = {
 					} else {
 						str += "<span class='radio-group' data-radio='" + field + "'>\n";
 						str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-						str += "		<label class='no-weight'>\n";
-						str += "			<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+						str += "		<label for=\"" + field + ".{.value}\" class='no-weight'>\n";
+						str += "			<input name='" + field + "' id='" + field + ".{.value}' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 						str += "		</label>";
 						str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
 						str += "<span>\n";
@@ -287,11 +287,11 @@ module.exports = {
 				} else if (file == "show") {
 					str += "<span class='radio-group' data-radio='" + field + "'>\n";
 					str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-					str += "		<label class='no-weight'>";
+					str += "		<label for=\"" + field + ".{.value}\" class='no-weight'>";
 					str += "		<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-					str += "			<input name='" + entity + "." + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "			<input name='" + entity + "." + field + "' id='" + field + ".{.value}' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "		<!--{:else}-->\n";
-					str += "			<input name='" + entity + "." + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "			<input name='" + entity + "." + field + "' id='" + field + ".{.value}' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "		<!--{/eq}-->\n";
 					str += "		</label>";
 					str += "	<!--{/enum_radio." + entity + "." + field + "}-->\n";
@@ -299,11 +299,11 @@ module.exports = {
 				} else {
 					str += "<span class='radio-group' data-radio='" + field + "'>\n";
 					str += "	<!--{#enum_radio." + entity + "." + field + "}-->&nbsp;\n<br>\n";
-					str += "	<label class='no-weight'>";
+					str += "	<label for=\"" + field + ".{.value}\" class='no-weight'>";
 					str += "	<!--{@eq key=" + value2 + " value=\"{.value}\" }-->\n";
-					str += "		<input name='" + field + "' id='" + field + "' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "		<input name='" + field + "' id='" + field + ".{.value}' value='{.value}' checked type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "	<!--{:else}-->\n";
-					str += "		<input name='" + field + "' id='" + field + "' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
+					str += "		<input name='" + field + "' id='" + field + ".{.value}' value='{.value}' type='radio' " + disabled + "/>&nbsp;{.translation}\n";
 					str += "	<!--{/eq}-->\n";
 					str += "	</label>";
 					str += "<!--{/enum_radio." + entity + "." + field + "}-->\n";

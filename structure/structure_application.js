@@ -2,6 +2,7 @@ const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
 const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
+const utils = require('../utils/helpers');
 const mysql = require('promise-mysql');
 const {Client} = require('pg');
 
@@ -71,12 +72,14 @@ exports.setupApplication = async (data) => {
 			port: dbConf.port
 		});
 	} else if(dbConf.dialect == 'postgres') {
+
 		db_requests = [
 			"CREATE DATABASE \"np_" + appName + "\" ENCODING 'UTF8';",
-			"CREATE USER \"np_" + appName + "\" WITH PASSWORD '" + db_pwd + "';",
+			"CREATE USER \"np_" + appName + "\" WITH ENCRYPTED PASSWORD '" + db_pwd + "';",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO \"np_" + appName + "\";",
 			"GRANT ALL PRIVILEGES ON DATABASE \"np_" + appName + "\" TO " + dbConf.user + ";"
 		];
+
 		conn = new Client({
 			host: dbConf.host,
 			user: dbConf.user,
@@ -526,8 +529,11 @@ exports.deleteApplication = async(data) => {
 			conn.connect();
 			db_requests = [
 				"REVOKE CONNECT ON DATABASE \"np_" + app_name + "\" FROM public;",
-				"SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();",
-				"DROP DATABASE \"np_" + app_name + "\";",
+				// "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'np_" + app_name + "';",
+				// "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();",
+				// "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'np_" + app_name + "' AND pid <> pg_backend_pid();",
+				// "DROP DATABASE np_" + app_name + " WITH (FORCE);",
+				// "ALTER DATABASE \"np_" + app_name + "\" RENAME TO \"" + app_name + "_old_" + utils.randomString(10) + "\";",
 				"DROP USER IF EXISTS \"np_" + app_name + "@127.0.0.1\";",
 				"DROP USER IF EXISTS \"np_" + app_name + "@" + dbConf.host + "\";",
 				"DROP USER IF EXISTS \"np_" + app_name + "@%\";"
@@ -536,6 +542,7 @@ exports.deleteApplication = async(data) => {
 
 		for (let i = 0; i < db_requests.length; i++) {
 			const request = db_requests[i];
+			console.log(request);
 			try {
 				await conn.query(request); // eslint-disable-line
 			} catch(err) {

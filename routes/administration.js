@@ -5,7 +5,7 @@ const metadata = require('../database/metadata')();
 const global_conf = require('../config/global');
 const models = require('../models/');
 const mailer = require('../utils/mailer');
-const code_platform = require('../config/code_platform.js');
+const code_platform = require('../services/code_platform');
 
 /* Queue */
 router.get('/queue', middlewares.isAdmin, (req, res) => {

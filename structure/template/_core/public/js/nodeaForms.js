@@ -194,7 +194,7 @@ function initMap(mapElement, options) {
 
 function initAddressSearchInput(input) {
 	input.autocomplete({
-		minLength: 1,
+		minLength: 3,
 		source: function (req, res) {
 			$.ajax({
 				url: 'https://api-adresse.data.gouv.fr/search/',

@@ -206,6 +206,8 @@ exports.createNewApplication = async (data) => {
 // Declare this function not directly within exports to be able to use it from deleteApplicationRecursive()
 exports.deleteApplication = async (data) => {
 
+	console.log('DELETE APP 1');
+
 	// Load app before deleting it
 	try {
 		data.application = metadata.getApplication(data.options.value);
@@ -238,6 +240,8 @@ exports.deleteApplication = async (data) => {
 			}]
 		});
 
+		console.log('DELETE APP 2');
+
 		if(!hasAccess)
 			throw new Error("You do not have access to this application, you cannot delete it.");
 
@@ -246,13 +250,17 @@ exports.deleteApplication = async (data) => {
 				name: data.options.value
 			}
 		});
+
+		console.log('DELETE APP 3');
 	} else {
 		console.error('Application to delete do not exist in database, trying deleting it after all...')
 	}
 
 	try {
 		await structure_application.deleteApplication(data);
+		console.log('DELETE APP 4');
 		metadata.deleteApplication(data.options.value);
+		console.log('DELETE APP 5');
 	} catch(err) {
 		console.error(err);
 	}
