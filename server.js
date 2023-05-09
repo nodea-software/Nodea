@@ -148,7 +148,7 @@ if(dbConfig.dialect == "postgres"){
 		client.query('SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_catalog = \''+options.database+'\' AND table_name = \'sessions\');', (err, res) => {
 			if (err) {console.error(err.stack)} else if(!res.rows[0].exists) {
 				// Postgres sessions table do not exist, creating it...
-				client.query(fs.readFileSync(__dirname + "/sql/sessions-for-postgres.sql", "utf8"), err => {
+				client.query(fs.readFileSync(__dirname + "/../sql/sessions-for-postgres.sql", "utf8"), err => {
 					if (err) {console.error(err)} else {console.log("Postgres sessions table created !");}
 				});
 			}

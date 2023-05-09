@@ -5,6 +5,8 @@ CREATE DATABASE nodea
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
+CREATE USER IF NOT EXISTS 'np_a_msm'@'localhost' IDENTIFIED BY 'np_a_msm';
+
 CREATE USER IF NOT EXISTS 'nodea'@'localhost' IDENTIFIED BY 'N0d3@_S0ftw@re';
 CREATE USER IF NOT EXISTS 'nodea'@'127.0.0.1' IDENTIFIED BY 'N0d3@_S0ftw@re';
 CREATE USER IF NOT EXISTS 'nodea'@'%' IDENTIFIED BY 'N0d3@_S0ftw@re';
