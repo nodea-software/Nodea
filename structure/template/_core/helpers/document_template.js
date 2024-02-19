@@ -4,6 +4,7 @@ const dust = require('dustjs-linkedin');
 const puppeteer = require('puppeteer');
 const JSZip = require('jszip');
 const Docxtemplater = require('docxtemplater');
+const expressionParser = require('docxtemplater/expressions.js');
 const decompress = require('decompress');
 
 function extractFieldsWithContext(string) {
@@ -97,7 +98,8 @@ async function docxToDocx({templateData, filePath}){
 			if (parts.length)
 				return getValue(parts, templateData, scope);
 			return "";
-		}
+		},
+		parser: expressionParser
 	};
 	doc.setOptions(templateOptions);
 	doc.loadZip(zip);
