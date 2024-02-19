@@ -323,7 +323,11 @@ var Nodea = (enables = {}) => {
 		// Change default class for default button DataTable
 		if($.fn.dataTable && $.fn.dataTable.Buttons){
 			$.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-primary';
-		}
+        }
 
+        // Auto focus on search field
+        $(document).on('select2:open', () => {
+			document.querySelector('.select2-container--open .select2-search__field').focus();
+		});
     });
 }
