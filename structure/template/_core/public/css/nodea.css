@@ -191,3 +191,7 @@ label.required:after {
 	border-radius: 8px;
 	padding-top: 6px;
 }
+
+.status {
+	margin-top: 5px;
+}
