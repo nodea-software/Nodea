@@ -10,7 +10,6 @@ module.exports = (req, res, next) => {
 				if (toast.message && toast.message == "administration.access_settings.no_access_role")
 					return res.status(403).send({refresh: true});
 			}
-			req.session.toastr = [];
 			return res.sendStatus(200);
 		}
 		redirect.call(res, view);
