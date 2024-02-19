@@ -594,10 +594,10 @@ class CoreEntity extends Route {
 				});
 
 				data.redirect = '/' + this.entity + '/show?id=' + data.createdRow.id;
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.create.success',
 					level: "success"
-				}];
+				});
 
 				// If created from an association, register created row on source entity
 				if (typeof data.req.query.associationFlag !== 'undefined' && data.req.query.associationFlag !== "") {
@@ -725,10 +725,10 @@ class CoreEntity extends Route {
 				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 				if (!data[this.e_entity])
 					return data.res.error(_ => {
-						data.req.session.toastr = [{
+						data.req.session.toastr.push({
 							level: 'error',
 							message: 'error.404.title'
-						}];
+						});
 						data.res.render('common/404', {
 							message: 'Entity row not found'
 						});
@@ -909,10 +909,10 @@ class CoreEntity extends Route {
 				if (typeof data.req.query.associationFlag !== 'undefined')
 					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
 
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.update.success',
 					level: "success"
-				}];
+				});
 
 				/**
 				 * Called before redirecting to data.redirect
@@ -1118,10 +1118,10 @@ class CoreEntity extends Route {
 					}
 				});
 				if (!data.entity) {
-					data.req.session.toastr = [{
+					data.req.session.toastr.push({
 						level: 'error',
 						message: 'error.404.title'
-					}];
+					});
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1145,10 +1145,10 @@ class CoreEntity extends Route {
 
 				const currentStatusId = data.entity['fk_id_status_' + data.statusName];
 				if (data.isAllowed === false && await this.helpers.status.isAllowed(currentStatusId, data.idNewStatus) === false) {
-					data.req.session.toastr = [{
+					data.req.session.toastr.push({
 						level: 'error',
 						message: 'component.status.error.illegal_status'
-					}];
+					});
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1461,10 +1461,10 @@ class CoreEntity extends Route {
 					transaction: data.transaction
 				});
 
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.delete.success',
 					level: "success"
-				}];
+				});
 
 				data.redirect = '/' + this.entity + '/list';
 				if (typeof data.req.query.associationFlag !== 'undefined')
