@@ -32,8 +32,7 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 			}
 		}
 
-	// TODO: handle attributes
-	// queryObject.attributes = attributes;
+	queryObject.attributes = Object.keys(models[modelName].rawAttributes);
 
 	// If postgres, then we have to parse all value to text, postgres cannot compare varchar with integer for example
 	if (models.sequelize.options.dialect == "postgres" && typeof queryObject.where !== "undefined")
@@ -56,6 +55,24 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	// `model_builder.getIncludeFromFields()` transform this array into a squelize include object
 	const entityName = `e_${modelName.substring(2)}`;
 	queryObject.include = model_builder.getIncludeFromFields(models, entityName, toInclude);
+
+	// handle many to many relation for user's roles and groups in datalist
+	queryObject.distinct = true;
+	if (modelName === 'E_user') {
+		for (const include of queryObject.include) {
+			if (include.model == 'E_group' || include.model == 'E_role') {
+				include.attribute = ['f_label']
+			}
+		}
+
+		queryObject.includeIgnoreAttributes = false;
+		queryObject.attributes.push(
+			[models.sequelize.literal("string_agg(distinct r_role.f_label, '-')"), `r_role.f_label`],
+			[models.sequelize.literal("string_agg(distinct r_group.f_label, '-')"), `r_group.f_label`]
+		);
+
+		queryObject.group = ['E_user.id'];
+	}
 
 	// Execute query with filters and get total count
 	let result;
