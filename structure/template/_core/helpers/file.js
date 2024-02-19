@@ -32,6 +32,7 @@ function createPathAndName(baseFolder, filename) {
 	const date = moment();
 	const year = date.year(), month = date.month(), day = date.date();
 
+	filename = Buffer.from(filename, 'latin1').toString('utf8').replace(/\s/g, '_');
 	const newFilename = `${uuid}-${filename}`;
 	const filePath = `${baseFolder}/${year}/${month}/${day}/`;
 	return [filePath, newFilename];
