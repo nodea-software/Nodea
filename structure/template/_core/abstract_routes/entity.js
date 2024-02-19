@@ -682,11 +682,12 @@ class CoreEntity extends Route {
 				 * @param {object} data.createdRow - Created instance in database
 				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 * @param {object} data.ajaxData - Ajax data to send at response
 				 */
 				if (await this.getHook('create', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		};
 	}
@@ -925,11 +926,12 @@ class CoreEntity extends Route {
 				 * @param {string} data.redirect - String URL for ending redirection
 				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-				 */
+				 * @param {object} data.ajaxData - Ajax data to send at response
+				*/
 				if (await this.getHook('update', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		}
 	}
@@ -1214,11 +1216,12 @@ class CoreEntity extends Route {
 				 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
 				 * @param {object} data.entity - Entity on which status is to be set, with its current status included
 				 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
-				 */
+				 * @param {object} data.ajaxData - Ajax data to send at response
+				*/
 				if (await this.getHook('set_status', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		}
 	}
