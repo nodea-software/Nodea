@@ -37,13 +37,19 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 
 	// If postgres, then we have to parse all value to text, postgres cannot compare varchar with integer for example
 	if (models.sequelize.options.dialect == "postgres" && typeof queryObject.where !== "undefined")
-		for (const item in queryObject.where[searchTerm]) {
-			const currentItem = queryObject.where[searchTerm][item];
-			const attribute = Object.keys(currentItem)[0];
-			// Don't convert boolean to text, postgres need real boolean in order to work correctly
-			if(typeof currentItem[attribute] !== 'boolean')
-				currentItem[attribute] = models.sequelize.where(models.sequelize.cast(models.sequelize.col(modelName + '.' + attribute), 'text'), currentItem[attribute])
+	for (const item in queryObject.where[searchTerm]) {
+		const currentItem = queryObject.where[searchTerm][item];
+		const [attribute] = Object.keys(currentItem);
+		let cast = models.sequelize.cast(models.sequelize.col(modelName+'.'+attribute), 'text');
+		// Remove modelName to avoid missing from clause entry for table error for include fields
+		if(cast.val.col.includes("$")) {
+			cast = models.sequelize.cast(models.sequelize.col(attribute), 'text');
+			cast.val.col = cast.val.col.substring(1, cast.val.col.length-1);
 		}
+		// Don't convert boolean to text, postgres need real boolean in order to work correctly
+		if(typeof currentItem[attribute] !== 'boolean')
+			currentItem[attribute] = models.sequelize.where(cast, currentItem[attribute]);
+	}
 
 	// Build include from field array
 	// At the moment queryObject.include = [ 'id', 'r_user.f_nom', 'r_user.r_parent.f_email']
