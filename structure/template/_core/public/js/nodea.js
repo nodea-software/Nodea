@@ -139,23 +139,25 @@ var Nodea = (enables = {}) => {
 
         // Avoid double clicking on dynamic button
         if (enables.blockDoubleClick !== false) {
-            var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-            if (!isChrome)
-                $(document).on("click", ".btn.btn-primary, .btn.btn-default, .btn.btn-info, .btn.btn-warning, .btn.btn-danger, .btn.btn-success", function () {
-                    var context = this;
-                    $(this).prop("disabled", true);
-                    $(this).css("cursor", "wait");
-                    var tmpText = $(this).html();
-                    if (!/Edge/.test(navigator.userAgent) && !isChrome)
-                        $(this).html("<i class='fa fa-spinner fa-spin'></i>");
+            $(document).on("click", "button[type='submit']", function (e) {
+                const $btn = $(this);
+                const $form = $btn.closest("form");
+                const btn_text = $(this).html();
+
+                if ($form.data('submitted') === true) {
+                    e.preventDefault();
+                } else {
+                    $form.data('submitted', true);
+                    $btn.html("<i class='fa fa-spinner fa-spin'></i>");
+
                     setTimeout(function () {
-                        $(context).prop("disabled", false);
-                        $(context).css("cursor", "pointer");
-                        if (!/Edge/.test(navigator.userAgent) && !isChrome)
-                            $(context).html(tmpText);
+                        $form.data('submitted', false);
+                        $btn.html(btn_text);
                     }, 1000);
-                    return true;
-                });
+                }
+
+                return true;
+            });
         }
 
         // Inline Help
