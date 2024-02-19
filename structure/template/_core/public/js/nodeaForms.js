@@ -250,6 +250,10 @@ function humanReadableFileSize(size) {
     return (size / Math.pow(baseSize, i)).toFixed(2) * 1 + ['o', 'Ko', 'Mo', 'Go', 'To'][i];
 };
 
+function getValidMessage(context, selector){
+	return context.parent().siblings(selector)[0];
+}
+
 let NodeaForms = (_ => {
 	const defaults = {
 		handleSubmit,
@@ -476,6 +480,67 @@ let NodeaForms = (_ => {
 						return false;
 					} else
 						element.css("border-color", "#d2d6de").parents('.form-group').find('span').remove();
+				}
+			},
+			phone_indic: {
+				selector: "input[type='tel_indic']",
+				initializer: (element) => {
+					let selectedCountries = [];
+					if (element.hasClass('national')) {
+						selectedCountries.push('fr', 'pf', 'gf', 'gp', 'gy', 'mq', 're', 'bl', 'pm', 'yt', 'mf', 'wf', 'nc')
+					}
+					/* Input type tel - Use module intl-tel-input */
+					$(element).each(function () {
+						let iti = window.intlTelInput(this, {
+							initialCountry: 'fr',
+							nationalMode: false,
+							autoHideDialCode: true,
+							utilsScript: '/js/intlTelInput-utils.js',
+							separateDialCode: true,
+							onlyCountries: selectedCountries
+						});
+						$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`)
+
+						/* Code for validation tel number */
+						const that = $(this);
+
+						// here, the index maps to the error code returned from getValidationError - see readme
+						let errorMap = ["Numéro invalide", "Code pays invalide", "Trop court", "Trop long", "Numéro invalide"];
+
+						let reset = function () {
+							if (this.classList) {
+								this.classList.remove("error");
+							}
+							if (getValidMessage(that, ".error-msg")) {
+								getValidMessage(that, ".error-msg").innerHTML = "";
+								getValidMessage(that, ".error-msg").classList.add("hide");
+								getValidMessage(that, ".valid-msg").classList.add("hide");
+							}
+						};
+
+						// on blur: validate
+						this.addEventListener('blur', function () {
+							reset();
+							if (this.value.trim()) {
+								if (iti.isValidNumber()) {
+									getValidMessage(that, ".valid-msg").classList.remove("hide");
+								} else {
+									this.classList.add("error");
+									let errorCode = iti.getValidationError();
+									if (getValidMessage(that, ".error-msg")) {
+										errorCode = errorCode === -99 ? 0 : errorCode;
+										getValidMessage(that, ".error-msg").innerHTML = errorMap[errorCode];
+										getValidMessage(that, ".error-msg").classList.remove("hide");
+									}
+								}
+								$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`)
+							}
+						});
+
+						// on keyup / change flag: reset
+						this.addEventListener('change', reset);
+						this.addEventListener('keyup', reset);
+					});
 				}
 			},
 			picture: {
