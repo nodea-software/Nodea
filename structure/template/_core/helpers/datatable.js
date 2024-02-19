@@ -179,7 +179,8 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	if (isNotManyToManyAssociation)
 		count = await entity['count' + subentityAlias.capitalizeFirstLetter()]({
 			where: include.where,
-			include: include.include
+			include: include.include,
+			includeIgnoreAttributes: false
 		});
 
 	return {
