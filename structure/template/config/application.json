@@ -41,5 +41,15 @@
 	},
 	"dropzoneInfo": {
 		"sizeFileLimit": 50000000
+	},
+	"timepicker": {
+		"defaultDate": {
+			"dateFormat": "YYYY-MM-DD 00:00"
+		}
+	},
+	"datepicker": {
+		"defaultDate": {
+			"dateFormat": "YYYY-MM-DD"
+		}
 	}
 }

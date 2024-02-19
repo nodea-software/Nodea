@@ -524,7 +524,8 @@ let NodeaForms = (_ => {
 						icons: {
 							clear: 'fas fa-trash'
 						},
-						format: 'HH:mm'
+						format: 'HH:mm',
+						defaultDate: moment().format(TIMEPICKER_FORMAT)
 					});
 				}
 			},
