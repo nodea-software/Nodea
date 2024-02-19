@@ -98,7 +98,7 @@ class CoreLogin extends Route {
 					where: {
 						f_login: login,
 						f_enabled: {
-							[models.$or]: [null, 0]
+							[models.$or]: [null, false]
 						}
 					},
 					include: [{
