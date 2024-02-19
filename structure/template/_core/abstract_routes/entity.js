@@ -373,12 +373,13 @@ class CoreEntity extends Route {
 				 * @param {string} data.renderFile - Dust file to render
 				 * @param {number} data.idEntity - Id of entity to show
 				 * @param {boolean} data.hideButton - Wether to hide buttons or not
+				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
 				if (await this.getHook('show', 'beforeEntityQuery', data) === false)
 					return;
 
 				// TODO: use data.entityData instead of data[this.e_entity] to normalize content of data object between entities
-				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
+				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 
 				/**
 				 * Called after querying data of entity to show
@@ -715,11 +716,12 @@ class CoreEntity extends Route {
 				 * @param {number} data.idEntity - Id of entity to update
 				 * @param {object} data.enum_radio - Entity enum fields translations
 				 * @param {string} data.renderFile - Dust file to render
+				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
 				if (await this.getHook('update_form', 'start', data) === false)
 					return;
 
-				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
+				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 				if (!data[this.e_entity])
 					return data.res.error(_ => {
 						data.req.session.toastr = [{
