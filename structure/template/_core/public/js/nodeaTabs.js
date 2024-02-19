@@ -95,6 +95,11 @@ $(function() {
                     tab.find(".ajax-overlay").slideDown();
                 },
                 error: function (...all) {
+                    if(all[0] && all[0].responseJSON && all[0].responseJSON.refresh){
+						return location.reload();
+					}
+
+					toastr.error(all[0].responseText);
                     console.error(all);
                 }
             });
