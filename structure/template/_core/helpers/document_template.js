@@ -3,8 +3,6 @@ const fs = require('fs-extra');
 const dust = require('dustjs-linkedin');
 const puppeteer = require('puppeteer');
 const JSZip = require('jszip');
-const Docxtemplater = require('docxtemplater');
-const expressionParser = require('docxtemplater/expressions.js');
 const decompress = require('decompress');
 
 function extractFieldsWithContext(string) {
