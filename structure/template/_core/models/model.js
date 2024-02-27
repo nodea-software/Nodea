@@ -30,6 +30,8 @@ class CoreModel {
 	setClassMethods(sequelizeModel) {
 		// Override to provide class methods
 		// Ex: sequelizeModel.classMethod = function() {}
+		sequelizeModel.getAttributes = () => this.attributes;
+		sequelizeModel.getRelations = () => this.relations;
 	}
 
 }
