@@ -32,47 +32,27 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 			}
 		}
 
-	queryObject.attributes = Object.keys(models[modelName].rawAttributes);
-
 	// If postgres, then we have to parse all value to text, postgres cannot compare varchar with integer for example
 	if (models.sequelize.options.dialect == "postgres" && typeof queryObject.where !== "undefined")
-	for (const item in queryObject.where[searchTerm]) {
-		const currentItem = queryObject.where[searchTerm][item];
-		const [attribute] = Object.keys(currentItem);
-		let cast = models.sequelize.cast(models.sequelize.col(modelName+'.'+attribute), 'text');
-		// Remove modelName to avoid missing from clause entry for table error for include fields
-		if(cast.val.col.includes("$")) {
-			cast = models.sequelize.cast(models.sequelize.col(attribute), 'text');
-			cast.val.col = cast.val.col.substring(1, cast.val.col.length-1);
+		for (const item in queryObject.where[searchTerm]) {
+			const currentItem = queryObject.where[searchTerm][item];
+			const [attribute] = Object.keys(currentItem);
+			let cast = models.sequelize.cast(models.sequelize.col(modelName + '.' + attribute), 'text');
+			// Remove modelName to avoid missing from clause entry for table error for include fields
+			if (cast.val.col.includes("$")) {
+				cast = models.sequelize.cast(models.sequelize.col(attribute), 'text');
+				cast.val.col = cast.val.col.substring(1, cast.val.col.length - 1);
+			}
+			// Don't convert boolean to text, postgres need real boolean in order to work correctly
+			if (typeof currentItem[attribute] !== 'boolean')
+				currentItem[attribute] = models.sequelize.where(cast, currentItem[attribute]);
 		}
-		// Don't convert boolean to text, postgres need real boolean in order to work correctly
-		if(typeof currentItem[attribute] !== 'boolean')
-			currentItem[attribute] = models.sequelize.where(cast, currentItem[attribute]);
-	}
 
 	// Build include from field array
 	// At the moment queryObject.include = [ 'id', 'r_user.f_nom', 'r_user.r_parent.f_email']
 	// `model_builder.getIncludeFromFields()` transform this array into a squelize include object
 	const entityName = `e_${modelName.substring(2)}`;
 	queryObject.include = model_builder.getIncludeFromFields(models, entityName, toInclude);
-
-	// handle many to many relation for user's roles and groups in datalist
-	queryObject.distinct = true;
-	if (modelName === 'E_user') {
-		for (const include of queryObject.include) {
-			if (include.model == 'E_group' || include.model == 'E_role') {
-				include.attribute = ['f_label']
-			}
-		}
-
-		queryObject.includeIgnoreAttributes = false;
-		queryObject.attributes.push(
-			[models.sequelize.literal("string_agg(distinct r_role.f_label, '-')"), `r_role.f_label`],
-			[models.sequelize.literal("string_agg(distinct r_group.f_label, '-')"), `r_group.f_label`]
-		);
-
-		queryObject.group = ['E_user.id'];
-	}
 
 	// Execute query with filters and get total count
 	let result;
