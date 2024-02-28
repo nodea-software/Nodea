@@ -872,7 +872,6 @@ exports.deleteField = async (data) => {
 					continue;
 
 				for (let k = 0; k < fieldsFiles.length; k++) {
-					console.log(fieldsFiles[k])
 					// Clean file
 					let content = fs.readFileSync(otherViewsPath + currentEntity + '/' + fieldsFiles[k] + '.dust', "utf8")
 					content = content.replace(new RegExp(currentOption[i].as + "." + field, "g"), currentOption[i].as + ".id");
@@ -882,19 +881,12 @@ exports.deleteField = async (data) => {
 					promises.push((async () => {
 						const dustPath = otherViewsPath + currentEntity + '/' + fieldsFiles[k] + '.dust';
 						const $ = await domHelper.read(dustPath);
-						const el =
-							$("select[name='" + currentOption[i].as + "'][data-source='" + currentOption[i].target.substring(2) + "']").length ?
-								$("select[name='" + currentOption[i].as + "'][data-source='" + currentOption[i].target.substring(2) + "']") :
-								$("th[data-col^='r_" + currentOption[i].as + "']");
+						const el = $("select[name='" + currentOption[i].as + "'][data-source='" + currentOption[i].target.substring(2) + "']");
 
-						console.log(el)
 						if (el.length == 0)
 							return;
 
 						const using = el.attr("data-using").split(",");
-
-						console.log(using)
-						console.log(using.length)
 
 						if (using.indexOf(field) == -1)
 							return;
