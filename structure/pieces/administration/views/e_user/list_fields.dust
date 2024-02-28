@@ -16,10 +16,10 @@
 			<th data-field="f_email" data-col="f_email" data-type="email">
 				{#__ key="entity.e_user.f_email"/}
 			</th>
-			<th data-field="r_role.f_label" data-col="r_role.f_label" data-type="string">
+			<th data-field="r_role" data-col="r_role" data-type="string" data-using="f_label">
 				{#__ key="entity.e_role.label_entity"/}
 			</th>
-			<th data-field="r_group.f_label" data-col="r_group.f_label" data-type="string">
+			<th data-field="r_group" data-col="r_group" data-type="string" data-using="f_label">
 				{#__ key="entity.e_group.label_entity"/}
 			</th>
 			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
@@ -44,10 +44,10 @@
 			<th data-field="f_email" data-col="f_email" data-type="email">
 				{#__ key="entity.e_user.f_email"/}
 			</th>
-			<th data-field="r_role.f_label" data-col="r_role.f_label" data-type="string">
+			<th data-field="r_role" data-col="r_role" data-type="string" data-using="f_label">
 				{#__ key="entity.e_role.label_entity"/}
 			</th>
-			<th data-field="r_group.f_label" data-col="r_group.f_label" data-type="string">
+			<th data-field="r_group" data-col="r_group" data-type="string" data-using="f_label">
 				{#__ key="entity.e_group.label_entity"/}
 			</th>
 			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
