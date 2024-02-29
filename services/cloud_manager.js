@@ -430,16 +430,6 @@ exports.deploy = async (data) => {
 
 	console.log("STARTING DEPLOY");
 
-	// If local/develop environnement, then just give the generated application url
-	if (globalConf.env != 'studio' || globalConf.demo_mode) {
-		const port = 9000 + parseInt(data.appID);
-		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
-		return {
-			message: "botresponse.applicationavailable",
-			messageParams: [url, url]
-		};
-	}
-
 	const appName = data.application.name;
 	const workspacePath = __dirname + '/../workspace/' + appName;
 
@@ -456,13 +446,29 @@ exports.deploy = async (data) => {
 	// Workspace database dialect
 	data.appDialect = require(workspacePath + '/config/database').dialect; // eslint-disable-line
 
-	// Create toSyncProd.lock file
+	// Create toSyncProd.lock.json file
+
+	var toSyncProdLock = {deployments: []};
 	if (fs.existsSync(workspacePath + '/app/models/toSyncProd.lock.json'))
-		fs.unlinkSync(workspacePath + '/app/models/toSyncProd.lock.json');
-	fs.copySync(workspacePath + '/app/models/toSyncProd.json', workspacePath + '/app/models/toSyncProd.lock.json');
+		toSyncProdLock= JSON.parse(fs.readFileSync(workspacePath + '/app/models/toSyncProd.lock.json'));
+
+	const toSyncProd = JSON.parse(fs.readFileSync(workspacePath + '/app/models/toSyncProd.json'));
+	toSyncProdLock.deployments.push({version: deployVersion, queries: toSyncProd.queries});
+
+	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.lock.json', JSON.stringify(toSyncProdLock, null, '\t'), 'utf8');
 
 	// Clear toSyncProd (not locked) file
 	fs.writeFileSync(workspacePath + '/app/models/toSyncProd.json', JSON.stringify({queries: []}, null, '\t'), 'utf8');
+
+	// If local/develop environnement, then give the generated application url
+	if (globalConf.env != 'studio' || globalConf.demo_mode) {
+		const port = 9000 + parseInt(data.appID);
+		const url = globalConf.protocol + "://" + globalConf.host + ":" + port;
+		return {
+			message: "botresponse.applicationavailable",
+			messageParams: [url, url]
+		};
+	}
 
 	// Push on git before deploy
 	await gitHelper.gitCommit(data);
