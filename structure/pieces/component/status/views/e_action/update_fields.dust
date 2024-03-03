@@ -7,10 +7,11 @@
                 <i data-field="r_media" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
                 {/inline_help}
             </label>
-            <select class="ajax form-control" data-statustarget="{status_target}" name="r_media" data-source="media" data-using="f_name" width="100%">
+            <select class="ajax form-control" data-statustarget="{status_target}" name="r_media" data-source="media" data-using="f_name,f_type" width="100%">
                 {#r_media}
                 <option value="{id}" selected="">
-                    {f_name|h}
+                    {f_name|h} -
+					{f_type.translation}
                 </option>
                 {/r_media}
             </select>

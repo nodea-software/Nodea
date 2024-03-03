@@ -92,6 +92,7 @@ module.exports = {
 		// Create history record for this status field
 		const createObject = {
 			f_comment: optionnals.comment || "",
+			fk_id_reason: optionnals.reasonID || "",
 			fk_id_user_modified_by: userID
 		};
 

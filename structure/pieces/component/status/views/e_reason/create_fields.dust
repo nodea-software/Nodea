@@ -1,0 +1,32 @@
+<div id="fields" class="row">
+	<div data-field="f_name" class="col-xs-12 col-sm-12">
+		<div class="form-group">
+			<label for="f_name" class="required"> {#__ key="entity.e_reason.f_name"/} {@inline_help field="f_name"}&nbsp;<i data-field="f_name" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>{/inline_help} </label>
+			<input class="form-control input" required placeholder='{#__ key="entity.e_reason.f_name" /}' name="f_name" value="" type="text">
+		</div>
+	</div>
+	<div data-field="f_enabled" class="col-xs-12 col-sm-1">
+		<div class="form-group">
+			<label for="f_enabled">
+				{#__ key="entity.e_reason.f_enabled"/}&nbsp;
+				{@inline_help field="f_enabled"}
+				<i data-field="f_enabled" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			&nbsp;
+			<br>
+			<input class="form-control input" name="f_enabled" type="checkbox" checked>
+		</div>
+	</div>
+	<div data-field="f_order" class="col-xs-12 col-sm-1">
+		<div class="form-group">
+			<label for="f_order">
+				{#__ key="entity.e_reason.f_order"/}
+				{@inline_help field="f_order"}
+					&nbsp;<i data-field="f_order" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<input required class="form-control input" placeholder='{#__ key="entity.e_reason.f_order" /}' name="f_order" value="{max}" type="number">
+		</div>
+	</div>
+</div>
