@@ -20,17 +20,10 @@
             </a>
         </li>
         {/entityAccess}
-        {#entityAccess entity="11_history_s_status"}
+        {#entityAccess entity="reason"}
         <li class="nav-item">
-            <a data-tabtype="hasMany" id="r_11_history_s_status-click" href="#r_11_history_s_status" class="nav-link" data-toggle="pill" role="tab" aria-controls="r_11_history_s_status" aria-selected="false">
-                {#__ key="entity.e_status.r_11_history_s_status" /}
-            </a>
-        </li>
-        {/entityAccess}
-        {#entityAccess entity="12_history_s_status"}
-        <li class="nav-item">
-            <a data-tabtype="hasMany" id="r_12_history_s_status-click" href="#r_12_history_s_status" class="nav-link" data-toggle="pill" role="tab" aria-controls="r_12_history_s_status" aria-selected="false">
-                {#__ key="entity.e_status.r_12_history_s_status" /}
+            <a id="r_reasons-click" class="nav-link" data-toggle="pill" href="#r_reasons" role="tab" aria-controls="r_reasons" aria-selected="false" data-tabtype="hasMany">
+                {#__ key="entity.e_status.r_reasons" /}
             </a>
         </li>
         {/entityAccess}
@@ -155,6 +148,21 @@
                         {/ifTrue}
                     </div>
                 </div>
+                <div data-field="f_reason" class="col-6">
+                    <div class="form-group">
+                        <label for="f_reason">
+                            {#__ key="entity.e_status.f_reason"/}
+                            {@inline_help field="f_reason"}&nbsp;<i data-field="f_reason" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+                            {/inline_help}
+                        </label>&nbsp;
+                        <br>
+                        {@ifTrue key=f_reason}
+                        <input class="form-control input" name="f_reason" value="{f_reason}" type="checkbox" checked="" disabled="">
+                        {:else}
+                        <input class="form-control input" name="f_reason" value="{f_reason}" type="checkbox" disabled="">
+                        {/ifTrue}
+                    </div>
+                </div>
                 <div data-field="f_default" class="col-6">
                     <div class="form-group">
                         <label for="f_default">
@@ -187,24 +195,13 @@
         <div class="ajax-tab tab-pane fade show" id="r_children" role="tabpanel" aria-labelledby="r_children-tab" data-asso-foreignkey="fk_id_status_children" data-asso-flag="{id}" data-asso-alias="r_children" data-asso-source="e_status" data-asso-url="status">
             <div class="ajax-content sub-tab-table"></div>
         </div>
-
         <div class="ajax-tab tab-pane fade show" id="r_actions" role="tabpanel" aria-labelledby="r_actions-tab" data-asso-foreignkey="fk_id_status_actions" data-asso-flag="{id}" data-asso-alias="r_actions" data-asso-source="e_status" data-asso-url="status" data-tabtype="hasMany">
             <div class="ajax-content sub-tab-table"></div>
         </div>
-        {^hideTab}
-        {#entityAccess entity="11_history_s_status"}
-        <div id="r_11_history_s_status" class="ajax-tab tab-pane fade show" role="tabpanel" aria-labelledby="r_11_history_s_status-tab" data-tabtype="hasMany" data-asso-alias="r_11_history_s_status" data-asso-foreignkey="fk_id_status" data-asso-flag="{id}" data-asso-source="e_status" data-asso-url="status">
+        <div class="ajax-tab tab-pane fade show" id="r_reasons" role="tabpanel" aria-labelledby="r_reasons-tab" data-asso-foreignkey="fk_id_status_reasons" data-asso-flag="{id}" data-asso-alias="r_reasons" data-asso-source="e_status" data-asso-url="status" data-tabtype="hasMany">
             <div class="ajax-content sub-tab-table"></div>
         </div>
-        {/entityAccess}
-        {/hideTab}
-        {^hideTab}
-        {#entityAccess entity="12_history_s_status"}
-        <div id="r_12_history_s_status" class="ajax-tab tab-pane fade show" role="tabpanel" aria-labelledby="r_12_history_s_status-tab" data-tabtype="hasMany" data-asso-alias="r_12_history_s_status" data-asso-foreignkey="fk_id_status" data-asso-flag="{id}" data-asso-source="e_status" data-asso-url="status">
-            <div class="ajax-content sub-tab-table"></div>
-        </div>
-        {/entityAccess}
-        {/hideTab}
+
         {^hideTab}
         {#entityAccess entity="11_history_s_status"}
         <div id="r_11_history_s_status" class="ajax-tab tab-pane fade show" role="tabpanel" aria-labelledby="r_11_history_s_status-tab" data-tabtype="hasMany" data-asso-alias="r_11_history_s_status" data-asso-foreignkey="fk_id_status" data-asso-flag="{id}" data-asso-source="e_status" data-asso-url="status">

@@ -256,9 +256,10 @@ async function initializeWorkflow(application) {
 	fs.copySync(statusPiecesPath + '/models/e_status.js', workspacePath + '/app/models/e_status.js');
 
 	// Copy views pieces
-	const toCopyViewFolders = ['e_status', 'e_media', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_translation', 'e_action'];
-	for (const folder of toCopyViewFolders)
-		fs.copySync(statusPiecesPath + '/views/' + folder, workspacePath + '/app/views/' + folder);
+//	const toCopyViewFolders = ['e_status', 'e_media', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_translation', 'e_action'];
+//	for (const folder of toCopyViewFolders)
+
+	fs.copySync(statusPiecesPath + '/views', workspacePath + '/app/views');
 
 	// Copy routes
 	fs.copySync(statusPiecesPath + '/routes/', workspacePath + '/app/routes/');
