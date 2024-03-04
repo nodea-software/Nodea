@@ -1,18 +1,18 @@
 <div id='fields' class="row">
-    <div data-field="f_enabled" class="col-12">
+    <div data-field="enabled" class="col-12">
         <div class="form-group">
-            <label for="f_enabled">
-                {#__ key="ref_entity.f_enabled"/}
+            <label for="enabled">
+                {#__ key="ref_entity.enabled"/}
             </label> &nbsp; <br>
-            <input class="form-control" name="f_enabled" id="f_enabled" type="checkbox" checked="">
+            <input class="form-control" name="enabled" id="enabled" type="checkbox" checked="">
         </div>
     </div>
-    <div data-field="f_order" class="col-12">
+    <div data-field="order" class="col-12">
         <div class="form-group">
-            <label for="f_order">
-                {#__ key="ref_entity.f_order"/}
+            <label for="order">
+                {#__ key="ref_entity.order"/}
             </label>
-			<input class="form-control" placeholder='{#__ key="ref_entity.f_order"/}' name="f_order" id="f_order" value="0" type="number" min="0" max="2147483648">
+			<input class="form-control" placeholder='{#__ key="ref_entity.order"/}' name="order" id="order" value="{max}" type="number" min="0" max="2147483648">
         </div>
     </div>
 </div>

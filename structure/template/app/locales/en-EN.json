@@ -240,8 +240,8 @@
 	},
 	"entity": {},
 	"ref_entity": {
-		"f_enabled": "Enabled",
-		"f_order": "Order"
+		"enabled": "Enabled",
+		"order": "Order"
 	},
 	"global_component": {
 		"local_file_storage": {

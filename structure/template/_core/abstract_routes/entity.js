@@ -1272,17 +1272,6 @@ class CoreEntity extends Route {
 
 				data.query.where = this.helpers.entity.search.generateWhere(data.search, data.searchField);
 
-				if(this.attributes.f_enabled) {
-					data.query.where = {
-						...data.query.where,
-						f_enabled: true
-					};
-				}
-
-				if(this.attributes.f_order) {
-					data.query.order = [['f_order', 'ASC']];
-				}
-
 				/**
 				 * Before the Sequelize query, usefull to customize default query behaviour
 				 * @function CoreEntity#search#beforeQuery

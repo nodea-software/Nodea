@@ -240,8 +240,8 @@
 	},
 	"entity": {},
 	"ref_entity": {
-		"f_enabled": "Actif",
-		"f_order": "Ordre"
+		"enabled": "Actif",
+		"order": "Ordre"
 	},
 	"global_component": {
 		"local_file_storage": {
@@ -332,7 +332,10 @@
 				"distribution": "Répartition"
 			}
 		},
-		"createdAt": "Date de création"
+		"createdBy": "Créé par",
+		"createdAt": "Date de création",
+		"updatedBy": "Modifié par",
+		"updatedAt": "Date de modification"
 	},
 	"error": {
 		"validation": {

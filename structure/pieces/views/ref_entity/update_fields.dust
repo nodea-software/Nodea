@@ -1,20 +1,20 @@
 <div id='fields' class="row">
-    <div data-field="f_enabled" class="col-12">
+    <div data-field="enabled" class="col-12">
 		<div class="form-group">
-			<label for="f_enabled">
-				{#__ key="ref_entity.f_enabled"/}
+			<label for="enabled">
+				{#__ key="ref_entity.enabled"/}
 			</label> &nbsp; <br>
-			{@ifTrue key=f_enabled} <input class="form-control" name="f_enabled" id="f_enabled" value="{f_enabled}" type="checkbox" checked="">
-			{:else} <input class="form-control" name="f_enabled" id="f_enabled" value="{f_enabled}" type="checkbox">
+			{@ifTrue key=enabled} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox" checked="">
+			{:else} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox">
 			{/ifTrue}
 		</div>
 	</div>
-	<div data-field="f_order" class="col-12">
+	<div data-field="order" class="col-12">
 		<div class="form-group">
-			<label for="f_order">
-				{#__ key="ref_entity.f_order"/}
+			<label for="order">
+				{#__ key="ref_entity.order"/}
 			</label>
-			<input class="form-control" placeholder='{#__ key="ref_entity.f_order" /}' name="f_order" id="f_order" value="{f_order}" type="number" min="0" max="2147483648">
+			<input class="form-control" placeholder='{#__ key="ref_entity.order" /}' name="order" id="order" value="{order}" type="number" min="0" max="2147483648">
 		</div>
 	</div>
 </div>
