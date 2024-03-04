@@ -78,6 +78,19 @@
 			<input class="form-control input" name="f_comment" type="checkbox">
 		</div>
 	</div>
+	<div data-field="f_reason" class="col-12">
+		<div class="form-group">
+			<label for="f_reason">
+				{#__ key="entity.e_status.f_reason"/}&nbsp;
+				{@inline_help field="f_reason"}
+				<i data-field="f_reason" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			&nbsp;
+			<br>
+			<input class="form-control input" name="f_reason" type="checkbox">
+		</div>
+	</div>
 	{^f_entity}
 		<div data-field="f_default" class="col-xs-12 col-sm-6">
 			<div class="form-group">
