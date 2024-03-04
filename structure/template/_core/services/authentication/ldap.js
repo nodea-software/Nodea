@@ -53,7 +53,7 @@ passport.use(new LDAPStrategy({
 			}
 
 			const userToCreate = {
-				f_enabled: 1
+				f_enabled: true
 			};
 
 			// Match LDAP information with app user column for user creation

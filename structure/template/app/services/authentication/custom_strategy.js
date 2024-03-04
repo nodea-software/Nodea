@@ -48,7 +48,7 @@ passport.use(new LocalStrategy({
 			return accessForbidden('Compte non activé - Mot de passe manquant');
 
 		// If the user is not enabled
-		if (user.f_enabled == 0 || user.f_enabled == null)
+		if (user.f_enabled == false || user.f_enabled == null)
 			return accessForbidden('Compte non activé');
 
 		// If the user is found but the password is wrong

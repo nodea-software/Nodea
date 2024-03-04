@@ -239,6 +239,10 @@
 		"relatedtomanycheckbox_required": "A field requires you to check at least one checkbox."
 	},
 	"entity": {},
+	"ref_entity": {
+		"f_enabled": "Enabled",
+		"f_order": "Order"
+	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Uploading... Please wait.",

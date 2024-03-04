@@ -239,6 +239,10 @@
 		"relatedtomanycheckbox_required": "Un champ nécessite d'avoir au moins une case cochée."
 	},
 	"entity": {},
+	"ref_entity": {
+		"f_enabled": "Actif",
+		"f_order": "Ordre"
+	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Des fichiers sont en cours de téléchargement, merci de bien vouloir patienter.",

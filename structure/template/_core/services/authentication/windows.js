@@ -69,7 +69,7 @@ passport.use(new WindowsStrategy({
 			}
 
 			let userToCreate = {
-				f_enabled: 1
+				f_enabled: true
 			};
 
 			for (let item in ldapConfig.userAuth.ldapAttributesEqAppAttributes) {
