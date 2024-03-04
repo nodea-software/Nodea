@@ -219,14 +219,14 @@ exports.setupEntity = async (data) => {
 	};
 
 	if (data.options.isRefEntity) {
-		baseAttributes.f_enabled = {
+		baseAttributes.enabled = {
 			"type": "BOOLEAN",
 			"nodeaType": "boolean",
 			"defaultValue": true,
 			"validate": true,
 			"allowNull": false
 		};
-		baseAttributes.f_order = {
+		baseAttributes.order = {
 			"type": "INTEGER",
 			"nodeaType": "number",
 			"defaultValue": 0,
@@ -255,6 +255,8 @@ exports.setupEntity = async (data) => {
 	let routeTemplate = '';
 	if(data.options.isParamEntity) {
 		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/param_entity.js', 'utf8');
+	} else if(data.options.isRefEntity) {
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/ref_entity.js', 'utf8');
 	} else {
 		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/entity.js', 'utf8');
 	}

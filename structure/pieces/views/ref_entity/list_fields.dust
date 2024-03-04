@@ -13,11 +13,11 @@
 			<th data-field="id" data-col="id">
 				{#__ key="entity.custom_entity.id_entity"/}&nbsp;{#__ key="entity.custom_entity.label_entity"/}
 			</th>
-			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
-				{#__ key="ref_entity.f_enabled"/}
+			<th data-field="enabled" data-col="enabled" data-type="boolean">
+				{#__ key="ref_entity.enabled"/}
 			</th>
-			<th data-field="f_order" data-col="f_order" data-type="number">
-				{#__ key="ref_entity.f_order"/}
+			<th data-field="order" data-col="order" data-type="number">
+				{#__ key="ref_entity.order"/}
 			</th>
 		</tr>
 	</thead>
@@ -35,11 +35,11 @@
 			<th data-field="id" data-col="id">
 				{#__ key="entity.custom_entity.id_entity"/}&nbsp;{#__ key="entity.custom_entity.label_entity"/}
 			</th>
-			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
-				{#__ key="ref_entity.f_enabled"/}
+			<th data-field="enabled" data-col="enabled" data-type="boolean">
+				{#__ key="ref_entity.enabled"/}
 			</th>
-			<th data-field="f_order" data-col="f_order" data-type="number">
-				{#__ key="ref_entity.f_order"/}
+			<th data-field="order" data-col="order" data-type="number">
+				{#__ key="ref_entity.order"/}
 			</th>
 		</tr>
 	</thead>

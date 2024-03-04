@@ -1,20 +1,43 @@
 <div id='fields' class="row">
-    <div data-field="f_enabled" class="col-12">
+    <div data-field="enabled" class="col-12">
 		<div class="form-group">
-			<label for="f_enabled">
-				{#__ key="ref_entity.f_enabled"/}
+			<label for="enabled">
+				{#__ key="ref_entity.enabled"/}
 			</label> &nbsp; <br>
-			{@ifTrue key=f_enabled} <input class="form-control" name="f_enabled" id="f_enabled" value="{f_enabled}" type="checkbox" checked="" disabled="">
-			{:else} <input class="form-control" name="f_enabled" id="f_enabled" value="{f_enabled}" type="checkbox" disabled="">
+			{@ifTrue key=enabled} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox" checked="" disabled="">
+			{:else} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox" disabled="">
 			{/ifTrue}
 		</div>
 	</div>
-	<div data-field="f_order" class="col-12">
+	<div data-field="order" class="col-12">
 		<div class="form-group">
-			<label for="f_order">
-				{#__ key="ref_entity.f_order"/}
+			<label for="order">
+				{#__ key="ref_entity.order"/}
 			</label>
-			<input class="form-control" placeholder='{#__ key="ref_entity.f_order" /}' name="f_order" id="f_order" value="{f_order}" type="number" min="0" max="2147483648" readonly="">
+			<input class="form-control" placeholder='{#__ key="ref_entity.order" /}' name="order" id="order" value="{order}" type="number" min="0" max="2147483648" readonly="">
+		</div>
+	</div>
+	<div data-field="updatedBy" class="col-12">
+		<div class="form-group">
+			<label for="updatedBy">
+				{#__ key="defaults.updatedBy"/}
+			</label>
+			<input class="form-control" placeholder='{#__ key="defaults.updatedBy" /}' name="updatedBy" id="updatedBy" value="{updatedBy}" type="string" readonly="">
+		</div>
+	</div>
+	<div data-field="updatedAt" class="col-12">
+		<div class="form-group">
+			<label for="updatedAt">
+				{#__ key="defaults.updatedAt"/}
+			</label>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text">
+						<i class="fa fa-calendar"></i>
+					</span>
+				</div>
+				<input class="form-control" placeholder='{#__ key="defaults.updatedAt" /}' name="updatedAt" id="updatedAt" value="{updatedAt|date}" type="text" readonly="">
+			</div>
 		</div>
 	</div>
 </div>
