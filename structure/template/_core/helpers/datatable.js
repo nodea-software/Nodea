@@ -202,7 +202,9 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 //  - speInclude - optional: ['r_inclusion.r_specific.id',] - array of field path used to build query's include
 //  - speWhere - optional: {id: 1, property: 'value'}
 module.exports = async (modelName, params, speInclude, speWhere, isSubdatalist = false) => {
-	const entityOptions = models[modelName].getRelations();
+	const entityOptions = !isSubdatalist ?
+		models[modelName].getRelations() :
+		models[params.subentityModel.capitalizeFirstLetter()].getRelations();
 	const start = params.start ? parseInt(params.start) : 1;
 	const length = params.length ? parseInt(params.length) : 10;
 
