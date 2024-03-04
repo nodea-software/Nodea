@@ -243,6 +243,18 @@ exports.createNewParamEntity = result => {
 	return bot_helper.checkAndCreateAttr("createNewEntity", options, value);
 };
 
+exports.createNewRefEntity = result => {
+
+	const value = result[1];
+	const options = {
+		value: value,
+		isRefEntity: true,
+		processValue: true
+	};
+
+	return bot_helper.checkAndCreateAttr("createNewEntity", options, value);
+};
+
 exports.createNewField = result => {
 
 	// Field name has not been defined
@@ -1282,6 +1294,16 @@ const bot_instructions = {
 		"ajouter entité de paramètre (.*)",
 		"ajouter une entité de paramètre (.*)",
 		"ajouter l'entité de paramètre (.*)"
+	],
+	"createNewRefEntity": [
+		"create ref entity (.*)",
+		"add ref entity (.*)",
+		"créer entité de référence (.*)",
+		"créer une entité de référence (.*)",
+		"créer l'entité de référence (.*)",
+		"ajouter entité de référence (.*)",
+		"ajouter une entité de référence (.*)",
+		"ajouter l'entité de référence (.*)"
 	],
 	"createNewFieldWithTypeEnum": [
 		"create field (.*) with type enum and values (.*)",

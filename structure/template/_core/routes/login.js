@@ -121,7 +121,7 @@ class CoreLogin extends Route {
 
 				await user.update({
 					f_password: hashedPassword,
-					f_enabled: 1
+					f_enabled: true
 				})
 
 				return user;
@@ -245,7 +245,7 @@ class CoreLogin extends Route {
 				user.update({
 					f_password: null,
 					f_token_password_reset: null,
-					f_enabled: 0
+					f_enabled: false
 				}).then(_ => {
 					req.session.toastr = [{
 						message: "login.reset_password.success",

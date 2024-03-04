@@ -383,7 +383,7 @@ exports.createNewEntity = async (data) => {
 	}
 
 	data.np_module = data.application.getModule(data.module_name, true);
-	const entity = data.np_module.addEntity(data.options.value, data.options.showValue, data.options.isParamEntity);
+	const entity = data.np_module.addEntity(data.options.value, data.options.showValue, data.options.isParamEntity, data.options.isRefEntity);
 
 	await structure_entity.setupEntity(data);
 

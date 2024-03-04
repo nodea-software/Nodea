@@ -84,7 +84,7 @@ function getParams(code) {
 				f_login: 'admin',
 				f_email: 'admin@local.fr',
 				f_password: null,
-				f_enabled: 0,
+				f_enabled: false,
 				version: 0
 			}, cypress)
 		]);
@@ -181,7 +181,7 @@ function getParams(code) {
 		template_promises.push((async _ => {
 			// Reset all user
 			await user.update({
-				f_enabled: 0,
+				f_enabled: false,
 				f_password: null
 			}, cypress);
 			users_fixtures[`${user.f_login}`] = {};

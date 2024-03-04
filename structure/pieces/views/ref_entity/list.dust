@@ -1,0 +1,103 @@
+{>"layout_custom_module"/}
+
+{<custom_css_2}
+	<link href='/core/bundle/nodea_datatable_css.bundle.css' rel='stylesheet' type='text/css'>
+{/custom_css_2}
+
+{<header}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0">
+                    {#__ key="module.custom_module"/}&nbsp;
+                    <small>
+                        {#__ key="module.module"/}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="/module/home">
+                            <i class="fa fa-home"></i>&nbsp;&nbsp;
+                            {#__ key="module.home"/}
+                        </a>
+                    </li>
+                    <!-- SUB MODULE - DO NOT REMOVE -->
+                    <li class="breadcrumb-item active">
+                        {#__ key="entity.custom_entity.label_entity"/}
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{/header}
+
+{<content}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">
+							{#__ key="operation.list"/}&nbsp;
+							{#__ key="entity.custom_entity.label_entity"/}
+						</h3>
+						<div class="card-tools">
+							<button type="button" class="btn btn-tool" data-card-widget="collapse">
+							<i class="fas fa-minus"></i>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<a class="btn btn-default" href="javascript:history.back();">
+							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
+						</a>&nbsp;&nbsp;
+						{#actionAccess entity="custom_url_entity" action="create"}
+							<a href="/custom_url_entity/create_form">
+								<button class="btn btn-success">
+									<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+									<span>{#__ key="button.create"/}</span>
+								</button>
+							</a>
+						{/actionAccess}
+						<br><br>
+						{>"custom_entity/list_fields"/}
+						<br>
+						<a class="btn btn-default" href="javascript:history.back();">
+							<i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{#__ key="button.return"/}
+						</a>&nbsp;&nbsp;
+						{#actionAccess entity="custom_url_entity" action="create"}
+							<a href="/custom_url_entity/create_form">
+								<button class="btn btn-success">
+									<i class="fa fa-plus fa-md">&nbsp;&nbsp;</i>
+									<span>{#__ key="button.create"/}</span>
+								</button>
+							</a>
+						{/actionAccess}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/content}
+
+{<custom_js}
+	<script src="/core/bundle/nodea_datatable_js.bundle.js" type="text/javascript"></script>
+
+	<!-- DATATABLE & PLUGINS - New version  -->
+	<!-- TODO: Upgrade with updated version of /AdminLTE/plugins/datatables -->
+	{! <script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script> !}
+
+	<!-- Nodea Table initialization  -->
+	<script>
+		/* Datatable throw error instead of alert */
+		$.fn.dataTable.ext.errMode = 'throw';
+
+		$(function() {
+			$("table:not(.no-init)").each(function() {
+				NodeaTable("#"+$(this).attr('id'));
+			});
+		});
+	</script>
+{/custom_js}
