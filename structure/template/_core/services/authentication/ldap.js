@@ -4,6 +4,7 @@ const ldapConfig = require('@config/ldap/ldap_config');
 const models = require('@app/models');
 const ldapUtils = require('@core/utils/ldap');
 const language = require('@core/helpers/language');
+const dayjs = require('dayjs');
 
 passport.use(new LDAPStrategy({
 	server: {
@@ -20,6 +21,7 @@ passport.use(new LDAPStrategy({
 	passReqToCallback: true // Allows us to pass back the entire request to the callback
 	// handleErrorsAsFailures: true
 }, (req, ldapUser, done) => {
+	const STATUS_ID_DISABLED = 3;
 
 	(async() => {
 		// Check if ldap user exists
@@ -84,6 +86,9 @@ passport.use(new LDAPStrategy({
 				throw new Error('login.ldap.access_denied');
 
 		} else {
+			// If the user status is "disabled"
+			if (user.fk_id_status_state == STATUS_ID_DISABLED)
+				throw new Error('Compte désactivé');
 
 			if (!user.f_enabled)
 				throw new Error('login.ldap.account_not_enabled');
@@ -114,6 +119,12 @@ passport.use(new LDAPStrategy({
 			} else if (user.r_group.length == 0 && user.r_role.length == 0) {
 				throw new Error('login.ldap.access_denied');
 			}
+
+			await user.update({
+				f_last_connection: dayjs()
+			}, {
+				user
+			});
 		}
 	})().then(user => done(null, user)).catch(err => {
 		console.error(err);
