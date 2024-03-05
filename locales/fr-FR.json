@@ -37,7 +37,8 @@
 		"firstname": "Prénom",
 		"remember_me": "Se souvenir de moi",
 		"submit": "Soumettre",
-		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
+		"login_fail": "Connexion impossible, merci de réessayer.",
+		"update_fail": "Modification impossible, merci de réessayer.",
 		"logout_success": "Vous avez bien été déconnecté."
 	},
 	"menu": {

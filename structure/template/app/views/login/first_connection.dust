@@ -27,7 +27,7 @@
 		</div>
 		<label for="password">{#__ key="login.password"/}</label>
 		<div class="input-group mb-3">
-			<input type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
+			<input type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
 			<div class="input-group-append">
 				<div class="input-group-text login-help" data-title='{#__ key="login.first_connection.help.password_title"/}' data-content='{#__ key="login.first_connection.help.password_content"/}'>
 					<span class="fas fa-lock"></span>
@@ -36,7 +36,7 @@
 		</div>
 		<label for="confirm_password">{#__ key="login.confirm_password"/}</label>
 		<div class="input-group mb-3">
-			<input type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" required>
+			<input type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-lock"></span>
@@ -56,7 +56,7 @@
 {<custom_js}
 	<script type="text/javascript">
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotValid"/}';
-		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
+		const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
 		var globalConfEnv = '{config.env}';
 
 		$(document).ready(function(){
@@ -69,7 +69,7 @@
 				if(globalConfEnv == 'develop')
 					return true;
 
-				if (string.length < 8)
+				if (string.length < 12)
 					return false;
 
 				if (!passwordRegex.test(string))

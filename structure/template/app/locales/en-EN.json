@@ -37,7 +37,8 @@
 		"remember_me": "Remember me",
 		"submit": "Submit",
 		"missing_infos": "Please fill all the input.",
-		"login_fail": "The login and / or password is not correct, please try again.",
+		"login_fail": "Connection fail, please try again.",
+		"update_fail": "Update fail, please try again.",
 		"not_enabled": "Your account does not seem to be activated, please complete the first connection process.",
 		"logout_success": "You have been successfully logged out."
 	},
