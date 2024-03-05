@@ -185,7 +185,11 @@
 			"resend_email": "Resend a first connection email",
 			"resend_email_success": "The email has been successfully sent.",
 			"cannot_modify_admin": "You can't modify the main admin account of the application.",
-			"cannot_delete_admin": "You can't delete the main admin account of the application."
+			"cannot_delete_admin": "You can't delete the main admin account of the application.",
+			"cannot_disable_admin": "You can't disable the main admin account of the application.",
+			"cannot_delete_user_status": "You can't delete the user's status.",
+			"last_connection": "Last connection date",
+			"status": "State"
 		}
 	},
 	"button": {

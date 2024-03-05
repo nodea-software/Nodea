@@ -218,7 +218,20 @@ class E_user extends Entity {
 				// beforeRender: (data) => {},
 			},
 			set_status: {
-				// start: async (data) => {},
+				start: (data) => {
+					if(data.idEntity == 1 && data.idNewStatus == 3) {
+						if(data.req.query.ajax) {
+							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_disable_admin')));
+						} else {
+							data.req.session.toastr = [{
+								message: 'administration.user.cannot_disable_admin',
+								level: 'error'
+							}];
+							data.res.success(_ => data.res.redirect(data.redirect));
+						}
+						return false;
+					}
+				},
 				// beforeRedirect: async(data) => {}
 			},
 			search: {
@@ -238,13 +251,12 @@ class E_user extends Entity {
 					if(data.idEntity == 1) {
 						if(data.req.query.ajax) {
 							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_admin')));
-						}
-						else {
+						} else {
 							data.req.session.toastr = [{
 								message: 'administration.user.cannot_delete_admin',
 								level: 'error'
-							}]
-							data.res.redirect('/user/list')
+							}];
+							data.res.success(_ => data.res.redirect(`/user/show?id=${data.idEntity}`));
 						}
 						return false;
 					}

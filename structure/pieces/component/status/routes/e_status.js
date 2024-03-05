@@ -323,7 +323,23 @@ class E_status extends Entity {
 				// beforeResponse: async (data) => {}
 			},
 			destroy: {
-				// start: async (data) => {},
+				start: (data) => {
+					const default_user_status_id = [1, 2, 3];
+
+					if(default_user_status_id.includes(data.idEntity)) {
+						if(data.req.query.ajax) {
+							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_user_status')));
+						}
+						else {
+							data.req.session.toastr = [{
+								message: 'administration.user.cannot_delete_user_status',
+								level: 'error'
+							}]
+							data.res.redirect('/status/list')
+						}
+						return false;
+					}
+				},
 				// beforeEntityQuery: async(data) => {},
 				// beforeDestroy: async(data) => {},
 				// beforeRedirect: async(data) => {},

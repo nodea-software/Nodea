@@ -5,8 +5,10 @@ const globalConf = require('@config/global');
 const models = require('@app/models')
 const crypto = require('crypto');
 const mailer = require('@core/services/mailer');
+const helpers = require('@core/helpers');
 const Route = require('@core/abstract_routes/route');
 const { writeConnectionLog } = require('@core/helpers/connection_log');
+const dayjs = require('dayjs');
 
 class CoreLogin extends Route {
 	constructor(additionalRoutes = []) {
@@ -87,6 +89,7 @@ class CoreLogin extends Route {
 	first_connectionPOST() {
 		this.router.post('/first_connection', ...this.middlewares.first_connectionPOST, (req, res) => {
 			const login = req.body.login;
+			const STATUS_ID_ENABLE = 2;
 			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
 
 			(async () => {
@@ -121,8 +124,13 @@ class CoreLogin extends Route {
 
 				await user.update({
 					f_password: hashedPassword,
-					f_enabled: true
-				})
+					f_enabled: true,
+					f_last_connection: dayjs()
+				}, {
+					user
+				});
+
+				await helpers.status.setStatus('e_user', user.id, 'state', STATUS_ID_ENABLE, {user});
 
 				return user;
 			})().then(user => {

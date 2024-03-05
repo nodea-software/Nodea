@@ -22,8 +22,11 @@
 			<th data-field="r_group" data-col="r_group" data-type="string" data-using="f_label">
 				{#__ key="entity.e_group.label_entity"/}
 			</th>
-			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
-				{#__ key="entity.e_user.f_enabled"/}
+			<th data-field="f_last_connection" data-col="f_last_connection" data-type="date">
+				{#__ key="administration.user.last_connection"/}
+			</th>
+			<th data-field="r_state" data-col="r_state.f_name" data-type="status">
+				{#__ key="administration.user.status"/}
 			</th>
 		</tr>
 	</thead>
@@ -50,8 +53,11 @@
 			<th data-field="r_group" data-col="r_group" data-type="string" data-using="f_label">
 				{#__ key="entity.e_group.label_entity"/}
 			</th>
-			<th data-field="f_enabled" data-col="f_enabled" data-type="boolean">
-				{#__ key="entity.e_user.f_enabled"/}
+			<th data-field="f_last_connection" data-col="f_last_connection" data-type="date">
+				{#__ key="administration.user.last_connection"/}
+			</th>
+			<th data-field="r_state" data-col="r_state.f_name" data-type="status">
+				{#__ key="administration.user.status"/}
 			</th>
 		</tr>
 	</thead>

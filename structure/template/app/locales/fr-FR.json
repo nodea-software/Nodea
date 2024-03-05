@@ -185,7 +185,11 @@
 			"resend_email": "Renvoyer un email de première connexion",
 			"resend_email_success": "Le mail a bien été envoyé",
 			"cannot_modify_admin": "Vous ne pouvez pas modifier le compte Administrateur de l'application.",
-			"cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application."
+			"cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application.",
+			"cannot_disable_admin": "Vous ne pouvez pas désactiver le compte Administrateur de l'application.",
+			"cannot_delete_user_status": "Vous ne pouvez pas supprimer les statuts de l'utilisateur.",
+			"last_connection": "Date de dernière connexion",
+			"status": "Etat"
 		}
 	},
 	"button": {
