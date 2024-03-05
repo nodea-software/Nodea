@@ -10,7 +10,9 @@ passport.use(new LocalStrategy({
 	usernameField: 'login',
 	passwordField: 'password',
 	passReqToCallback: true // Allows us to pass back the entire request to the callback
-}, function (req, login, password, done) {
+}, async function (req, login, password, done) {
+	const STATUS_ID_DISABLED = 3;
+
 	function accessForbidden(msg){
 		// Write in file connection.log
 		const log = `LOGIN ERROR => ${msg} [login: ${login}]`;
@@ -36,8 +38,8 @@ passport.use(new LocalStrategy({
 	if(typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
 		return accessForbidden("Le captcha saisi n'est pas correct.");
 
-	models.E_user.findOne({
-		where: {f_login: login},
+	const user = models.E_user.findOne({
+		where: { f_login: login },
 		include: [{
 			model: models.E_group,
 			as: 'r_group'
@@ -45,28 +47,38 @@ passport.use(new LocalStrategy({
 			model: models.E_role,
 			as: 'r_role'
 		}]
-	}).then(function(user) {
-		// If the user doesn't exist
-		if (!user)
-			return accessForbidden("Nom d'utilisateur inexistant.");
-
-		// If the user has no password
-		if (user.f_password == "" || user.f_password == null)
-			return accessForbidden('Compte non activé - Mot de passe manquant');
-
-		// If the user is not enabled
-		if (user.f_enabled == false || user.f_enabled == null)
-			return accessForbidden('Compte non activé');
-
-		// If the user is found but the password is wrong
-		if (!bcrypt.compareSync(password, user.f_password))
-			return accessForbidden('Mauvais mot de passe.');
-
-		// Access authorized
-		delete req.session.loginAttempt;
-
-		return done(null, user);
 	});
+
+	// If the user doesn't exist
+	if (!user)
+		return accessForbidden("Nom d'utilisateur inexistant.");
+
+	// If the user status is "disabled"
+	if (user.fk_id_status_state == STATUS_ID_DISABLED)
+		return accessForbidden('Compte désactivé');
+
+	// If the user has no password
+	if (user.f_password == "" || user.f_password == null)
+		return accessForbidden('Compte non activé - Mot de passe manquant');
+
+	// If the user is not enabled
+	if (user.f_enabled == false || user.f_enabled == null)
+		return accessForbidden('Compte non activé');
+
+	// If the user is found but the password is wrong
+	if (!bcrypt.compareSync(password, user.f_password))
+		return accessForbidden('Mauvais mot de passe.');
+
+	// Access authorized
+	delete req.session.loginAttempt;
+
+	await user.update({
+		f_last_connection: dayjs()
+	}, {
+		user
+	});
+
+	return done(null, user);
 }));
 
 passport.serializeUser(function(user_id, done) {
