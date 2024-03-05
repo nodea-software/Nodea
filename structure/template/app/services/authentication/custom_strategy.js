@@ -2,13 +2,39 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const models = require('@app/models');
+// Handle writing log in file connection.log
+const { writeConnectionLog } = require('@core/helpers/connection_log');
 
 // Default authentication strategy : passport.authenticate('local')
 passport.use(new LocalStrategy({
 	usernameField: 'login',
 	passwordField: 'password',
 	passReqToCallback: true // Allows us to pass back the entire request to the callback
-}, function(req, login, password, done) {
+}, function (req, login, password, done) {
+	function accessForbidden(msg){
+		// Write in file connection.log
+		const log = `LOGIN ERROR => ${msg} [login: ${login}]`;
+		writeConnectionLog(log);
+
+		console.error(log);
+		if(!req.session.loginAttempt)
+			req.session.loginAttempt = 0;
+		req.session.loginAttempt++;
+
+		req.session.toastr = [{
+			message: "login.login_fail",
+			level: 'error'
+		}];
+
+		return done(null, false);
+	}
+
+	if (password && password.length > 120)
+		return accessForbidden('Mot de passe trop long');
+
+	// Wrong captcha
+	if(typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
+		return accessForbidden("Le captcha saisi n'est pas correct.");
 
 	models.E_user.findOne({
 		where: {f_login: login},
@@ -20,25 +46,6 @@ passport.use(new LocalStrategy({
 			as: 'r_role'
 		}]
 	}).then(function(user) {
-
-		function accessForbidden(msg){
-			console.error('LOGIN ERROR => ' + msg);
-			if(!req.session.loginAttempt)
-				req.session.loginAttempt = 0;
-			req.session.loginAttempt++;
-
-			req.session.toastr = [{
-				message: "login.login_fail",
-				level: 'error'
-			}];
-
-			return done(null, false);
-		}
-
-		// Wrong captcha
-		if(typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
-			return accessForbidden("Le captcha saisi n'est pas correct.");
-
 		// If the user doesn't exist
 		if (!user)
 			return accessForbidden("Nom d'utilisateur inexistant.");

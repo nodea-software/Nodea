@@ -72,27 +72,30 @@ class E_user extends Entity {
 						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
 					else {
 						if (req.body.new_password_1 == "" && req.body.new_password_2 == "")
-							new Error("settings.error1");
-						else if (req.body.new_password_1 != req.body.new_password_2)
-							new Error("settings.error2");
-						else if (req.body.new_password_1.length < 4)
-							new Error("settings.error3");
+							throw new Error("settings.error1");
+
+						if (req.body.new_password_1 != req.body.new_password_2)
+							throw new Error("settings.error2");
+
+						if (req.body.new_password_1.length < 4)
+							throw new Error("settings.error3");
 
 						if (!await bcrypt.compare(req.body.old_password, user.f_password))
-							new Error("settings.error4");
+							throw new Error("settings.error4");
 
 						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
 					}
 				}
-			} catch(err) {
+			} catch (err) {
 				if(err.message.includes('settings.')) {
+					console.error(err.message);
 					req.session.toastr = [{
-						message: err.message,
+						message: "login.update_fail",
 						level: "error"
 					}];
 					return res.success(_ => res.redirect("/user/settings"));
 				}
-
+				console.error(err);
 				throw err;
 			}
 

@@ -87,7 +87,7 @@ class CoreLogin extends Route {
 	first_connectionPOST() {
 		this.router.post('/first_connection', ...this.middlewares.first_connectionPOST, (req, res) => {
 			const login = req.body.login;
-			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*])(?=.{8,})/);
+			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
 
 			(async () => {
 
@@ -145,7 +145,7 @@ class CoreLogin extends Route {
 				})
 			}).catch(err => {
 				writeConnectionLog(err);
-				console.error(err);
+				console.error(err.message);
 				req.session.toastr = [{
 					message: err.message,
 					level: "error"

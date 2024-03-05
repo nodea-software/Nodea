@@ -37,7 +37,8 @@
 		"remember_me": "Se souvenir de moi",
 		"submit": "Soumettre",
 		"missing_infos": "Merci de renseigner l'ensemble des champs.",
-		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
+		"login_fail": "Connexion impossible, merci de réessayer.",
+		"update_fail": "Modification impossible, merci de réessayer.",
 		"not_enabled": "Votre compte ne semble pas être activé, merci d'effectuer le processus de première connexion.",
 		"logout_success": "Vous avez bien été déconnecté."
 	},
