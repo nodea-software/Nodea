@@ -12,6 +12,10 @@ const globalConfig = require('@config/global');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const USER_ID_ADMIN = 1;
+const STATUS_ID_ENABLED = 2;
+const STATUS_ID_DISABLED = 3;
+
 class E_user extends Entity {
 	constructor() {
 		const additionalRoutes = [
@@ -185,7 +189,7 @@ class E_user extends Entity {
 			},
 			update_form: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
 							level: 'error'
@@ -199,7 +203,7 @@ class E_user extends Entity {
 			},
 			update: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
 							level: 'error'
@@ -219,7 +223,7 @@ class E_user extends Entity {
 			},
 			set_status: {
 				start: (data) => {
-					if(data.idEntity == 1 && data.idNewStatus == 3) {
+					if(data.idEntity == USER_ID_ADMIN && data.idNewStatus == STATUS_ID_DISABLED) {
 						if(data.req.query.ajax) {
 							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_disable_admin')));
 						} else {
@@ -236,6 +240,12 @@ class E_user extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
+				beforeQuery: (data) => {
+					data.query.where = {
+						...data.query.where,
+						fk_id_status_state: STATUS_ID_ENABLED
+					};
+				}
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
@@ -248,7 +258,7 @@ class E_user extends Entity {
 			},
 			destroy: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						if(data.req.query.ajax) {
 							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_admin')));
 						} else {
