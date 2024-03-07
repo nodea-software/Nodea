@@ -108,6 +108,13 @@ class Reason extends Entity {
 			search: {
 				// start: async (data) => {},
 				// beforeResponse: async (data) => {}
+				beforeQuery: async (data) => {
+					if (data.req.body.attrData.statut) {
+						data.query.where.fk_id_status_reasons = data.req.body.attrData.statut;
+						data.query.where.f_enabled = true;
+						data.query.order = [["f_order", "ASC"]];
+					}
+				},
 			},
 			fieldset_remove: {
 				// start: async (data) => {},

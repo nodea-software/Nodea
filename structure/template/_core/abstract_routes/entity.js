@@ -1198,6 +1198,7 @@ class CoreEntity extends Route {
 				await this.helpers.status.setStatus(this.e_entity, data.idEntity, data.statusName, data.idNewStatus, {
 					user: data.req.user,
 					comment: data.req.query.comment,
+					reason: data.req.query.reasonID,
 					transaction: data.transaction
 				});
 

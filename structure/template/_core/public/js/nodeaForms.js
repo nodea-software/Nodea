@@ -959,7 +959,7 @@ let NodeaForms = (_ => {
 					const isInTab = element.parents('.ajax-content').length;
 					element.click(function() {
 						// No comment expected on status
-						if (element.data('comment') != true) {
+						if (element.data('comment') != true && element.data('reason') != true ) {
 							if (isInTab) {
 								// Tab status, reloadTab on success
 								return $.ajax({
@@ -970,14 +970,20 @@ let NodeaForms = (_ => {
 							return location.href = url;
 						}
 
-						// Handle status comment
+						// Handle Modal status comment or reason select
 						const statusCommentModal = $("#statusComment");
 						const statusCommentSubmit = function(event) {
 			        		event.preventDefault();
 			        		const comment = encodeURIComponent(statusCommentModal.find('textarea[name=comment]').summernote('code'));
+							const reasonID = parseInt(statusCommentModal.find('input[name=r_reason]').val());
+							var uri = "&";
+							if (comment)
+								uri += "comment="+comment;
+							if (reasonID)
+								uri += "reasonID="+reasonID;
 			        		if (isInTab) {
 				        		$.ajax({
-				        			url: url + '?ajax=true&comment='+comment,
+				        			url: url + '?ajax=true'+uri,
 				        			success: _ => {
 				        				// Close tab
 				        				NodeaTabs.reloadTab();
@@ -989,7 +995,7 @@ let NodeaForms = (_ => {
 				        		});
 				        	}
 				        	else
-				        		location.href = url + '?comment='+comment;
+				        		location.href = url + '?' + uri;
 
 				        	// Unbind submit handler to avoid multiple bind since modal is not removed from DOM
 				        	statusCommentModal.find('form').unbind('submit', statusCommentSubmit);
