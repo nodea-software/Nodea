@@ -972,6 +972,7 @@ let NodeaForms = (_ => {
 
 						// Handle Modal status comment or reason select
 						const statusCommentModal = $("#statusComment");
+						
 						const statusCommentSubmit = function(event) {
 			        		event.preventDefault();
 			        		const comment = encodeURIComponent(statusCommentModal.find('textarea[name=comment]').summernote('code'));

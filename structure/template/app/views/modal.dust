@@ -32,7 +32,7 @@
 				<div class="modal-body">
 					<div name="with_select">
 						<p>{#__ key="entity.e_status.modal_with_select_reason" /}</p>
-						<select class="ajax form-control" name="r_reason" data-source="reason" data-using="f_name" style="width: 100%;"></select>
+						<select class="ajax form-control" name="r_reason" data-statut="" data-source="reason" data-using="f_name" style="width: 100%;"></select>
 					</div>
 					<div name="with_freecomment">
 						<p>{#__ key="entity.e_status.modal_with_select_freecomment" /}</p>
