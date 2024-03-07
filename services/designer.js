@@ -1614,6 +1614,8 @@ exports.createNewComponentStatus = async (data) => {
 		"select entity " + data.history_table_db_name,
 		"add field " + data.options.showValue + " related to Status using name",
 		"add field Comment with type text",
+		"add field Reason",
+		//"add field Reason related to Reason using name",
 		"add field Modified by related to user using login",
 		"select entity " + data.entity.name.substring(2),
 		"add field " + data.options.showValue + " related to Status using name"
