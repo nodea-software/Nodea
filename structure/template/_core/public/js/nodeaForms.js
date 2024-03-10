@@ -972,11 +972,34 @@ let NodeaForms = (_ => {
 
 						// Handle Modal status comment or reason select
 						const statusCommentModal = $("#statusComment");
+
+						// mise à jour de l'id statut pour filtrage des motifs
+
+						// Split the string by '/'
+						const parts = url.split('/');
+
+						// Get the last part of the array
+						const stat = parts[parts.length - 1];
+						console.log(parseInt(stat));
+
+						$('select[name="r_reason"]').attr('data-status', parseInt(stat));
+
+
+						if (element.data('comment') != true){
+							// il faut cacher la zone Commentaire libre
+							$('div[name="with_freecomment"]').hide();
+						}
+
+						if (element.data('reason') != true){
+							// il faut cacher le selecteur de motif
+							$('div[name="with_select_reason"]').hide();
+						}
 						
 						const statusCommentSubmit = function(event) {
 			        		event.preventDefault();
 			        		const comment = encodeURIComponent(statusCommentModal.find('textarea[name=comment]').summernote('code'));
 							const reasonID = parseInt(statusCommentModal.find('input[name=r_reason]').val());
+							
 							var uri = "&";
 							if (comment)
 								uri += "comment="+comment;
@@ -1003,6 +1026,7 @@ let NodeaForms = (_ => {
 					        return false;
 			        	}
 			        	statusCommentModal.find('form').submit(statusCommentSubmit);
+
 
 				        statusCommentModal.modal('show');
 					});
