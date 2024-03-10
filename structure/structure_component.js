@@ -522,7 +522,7 @@ exports.newStatus = async (data) => {
 	<div class="form-group">\n\
 		<!--{#' + statusAlias + '.r_children ' + source.substring(2) + 'id=id}-->\n\
 			<!--{#checkStatusPermission status=.}-->\n\
-				<a data-href="/' + source.substring(2) + '/set_status/{' + source.substring(2) + 'id}/{f_field}/{id}" data-reason="{f_reason}" data-comment="{f_comment}" class="status btn btn-info" style="margin-right: 5px;">\n\
+				<a data-href="/' + source.substring(2) + '/set_status/{' + source.substring(2) + 'id}/{f_field}/{id}" data-status={id} data-reason="{f_reason}" data-comment="{f_comment}" class="status btn btn-info" style="margin-right: 5px;">\n\
 					<!--{^f_button_label}{f_name}{:else}{f_button_label}{/f_button_label}-->\n\
 				</a>\n\
 			<!--{/checkStatusPermission}-->\n\
