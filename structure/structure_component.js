@@ -5,6 +5,7 @@ const helpers = require("../utils/helpers");
 const fieldHelper = require("../helpers/field");
 const dust_helper = require("../helpers/dust");
 const js_writer = require("../helpers/js_writer");
+const metadata = require('../database/metadata')();
 
 async function addTab(entity, file, newLi, newTabContent) {
 	const $ = await domHelper.read(file);
@@ -378,6 +379,18 @@ exports.newStatus = async (data) => {
 	const historyRegex = new RegExp("E_"+data.history_table_db_name, 'g');
 	historyModel = historyModel.replace(historyRegex, "E_"+data.history_table);
 	fs.writeFileSync(appPath + '/models/e_' + data.history_table + '.js', historyModel, 'utf8');
+
+	// Change metadata name of history table
+	const metadataApp = metadata.getApplication(data.application.name);
+	for (const module of metadataApp._modules) {
+		for (const entity of module._entities) {
+			if (entity._name === 'e_' + data.history_table_db_name) {
+				entity._name = 'e_' + data.history_table;
+				entity._displayName = data.history_table;
+			}
+		}
+	}
+	metadataApp.save();
 
 	// Add virtual status field to source entity (s_statusName)
 	const attributesObj = JSON.parse(fs.readFileSync(appPath + '/models/attributes/' + source + '.json'));
