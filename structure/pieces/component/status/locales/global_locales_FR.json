@@ -57,7 +57,9 @@
             "r_reasons": "Motifs",
             "f_reason" : "Avec sélecteur de motif",
             "as_r_children": "Statuts suivants",
-            "modal_title": "Commentaire",
+            "modal_title": "Vous vous apprêtez à changer d'état, veuillez préciser vos motivations",
+            "modal_with_select_reason": "Sélectionner un motif",
+            "modal_with_select_freecomment": "Saisissez un commentaire",
             "apply_default": "Appliquer ce statut aux entités sans statut"
         },
 		"e_group": {
