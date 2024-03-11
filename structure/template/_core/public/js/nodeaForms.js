@@ -996,11 +996,11 @@ let NodeaForms = (_ => {
 			        		const comment = encodeURIComponent(statusCommentModal.find('textarea[name=comment]').summernote('code'));
 							const reasonID = parseInt(statusCommentModal.find('select[name=r_reason]').val());
 							
-							var uri = "&";
+							var uri = "";
 							if (element.data('comment') == true)
-								uri += "comment="+comment;
+								uri += "&comment="+comment;
 							if (element.data('reason') == true)
-								uri += "reasonID="+reasonID;
+								uri += "&reasonID="+reasonID;
 			        		if (isInTab) {
 				        		$.ajax({
 				        			url: url + '?ajax=true'+uri,
