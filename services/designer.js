@@ -1614,8 +1614,6 @@ exports.createNewComponentStatus = async (data) => {
 		"select entity " + data.history_table_db_name,
 		"add field " + data.options.showValue + " related to Status using name",
 		"add field Comment with type text",
-		"add field Reason",
-		//"add field Reason related to Reason using name",
 		"add field Modified by related to user using login",
 		"select entity " + data.entity.name.substring(2),
 		"add field " + data.options.showValue + " related to Status using name"
@@ -1624,6 +1622,11 @@ exports.createNewComponentStatus = async (data) => {
 	await self.recursiveInstructionExecute(data, instructions, 0);
 
 	await structure_component.newStatus(data);
+
+	await self.recursiveInstructionExecute(data, [
+		"select entity " + data.history_table,
+		"add field Reason related to Reason using name"
+	], 0);
 
 	data.entity.addComponent(data.options.value, data.options.showValue, 'status');
 
