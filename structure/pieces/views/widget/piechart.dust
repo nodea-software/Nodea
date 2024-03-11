@@ -1,12 +1,12 @@
-<div class="box box-default">
-	<div class="box-header with-border">
-		<h3 class="box-title"></h3>
-		<div class="box-tools pull-right">
-			<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-		</div>
+<div class="card card-default">
+	<div class="card-header with-border">
+		<h3 class="card-title"></h3>
 	</div>
-	<div class="box-body">
+	<div class="card-body">
 		<em style="display: none;">{#__ key="message.empty" /}</em>
 		<canvas class="piechart"></canvas>
+		<br><a href="/ENTITY_URL_NAME/list">
+			{#__ key="defaults.widgets.stats.more_info" /}&nbsp; <i class="fas fa-arrow-circle-right"></i>
+		</a>
 	</div>
 </div>

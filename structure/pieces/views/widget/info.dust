@@ -1,11 +1,18 @@
 <div class="info-box">
+	
 	<span class="info-box-icon bg-primary">
+	<a href="/ENTITY_URL_NAME/list">
 		<i class="fa fa-envelope-o ENTITY_URL_NAME-icon"></i>
+	</a>
 	</span>
+
 	<div class="info-box-content">
+		<a href="/ENTITY_URL_NAME/list">
 		<span class="info-box-text">
 			{#__ key="entity.ENTITY_NAME.label_entity" /}
 		</span>
 		<span class="info-box-number">{ENTITY_NAME_info}</span>
+		</a>
 	</div>
+
 </div>
