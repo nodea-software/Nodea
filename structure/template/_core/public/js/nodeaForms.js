@@ -495,7 +495,7 @@ let NodeaForms = (_ => {
 							initialCountry: 'fr',
 							nationalMode: false,
 							autoHideDialCode: true,
-							utilsScript: '/js/intlTelInput-utils.js',
+							utilsScript: '/core/js/intlTelInput-utils.js',
 							separateDialCode: true,
 							onlyCountries: selectedCountries
 						});

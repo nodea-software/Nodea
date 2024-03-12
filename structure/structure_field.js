@@ -607,15 +607,25 @@ exports.setupRelatedToField = async (data) => {
 	}
 
 	/* ------------- Add new FIELD in list <thead> ------------- */
-	for (let i = 0; i < usingField.length; i++) {
-		const targetField = usingField[i].value == "id" ? "id_entity" : usingField[i].value;
+	// Do not display using field name when related to field when only one using field
+	if (usingField.length == 1){
 		const newHead = `
-		<th data-field="${alias}" data-col="${alias}.${usingField[i].value}" data-type="${usingField[i].type}">
-			<!--{#__ key="entity.${source}.${alias}"/}-->&nbsp;-&nbsp;<!--{#__ key="entity.${target}.${targetField}"/}-->
+		<th data-field="${alias}" data-col="${alias}.${usingField[0].value}" data-type="${usingField[0].type}">
+			<!--{#__ key="entity.${source}.${alias}"/}-->
 		</th>`;
-
 		fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+	} else {
+		for (let i = 0; i < usingField.length; i++) {
+			const targetField = usingField[i].value;
+			const newHead = `
+			<th data-field="${alias}" data-col="${alias}.${usingField[i].value}" data-type="${usingField[i].type}">
+				<!--{#__ key="entity.${source}.${alias}"/}-->&nbsp;-&nbsp;<!--{#__ key="entity.${target}.${targetField}"/}-->
+			</th>`;
+	
+			fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+		}
 	}
+
 
 	await translateHelper.writeLocales(data.application.name, "aliasfield", source, [alias, data.options.showAs], data.googleTranslate);
 	return;
