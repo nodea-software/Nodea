@@ -110,7 +110,7 @@ class Reason extends Entity {
 				// beforeResponse: async (data) => {}
 				beforeQuery: async (data) => {
 					data.query.where.f_enabled = true;
-					// En cours - pour le moment l'id du statut n'est pas mis sur la modale
+			
 					if (data.req.body.attrData.statusid) {
 						data.query.where.fk_id_status_reasons = data.req.body.attrData.statusid;
 						data.query.order = [["f_order", "ASC"]];
