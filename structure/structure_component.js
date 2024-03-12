@@ -501,12 +501,12 @@ exports.newStatus = async (data) => {
 		localesFR.entity['e_' + data.history_table_db_name]['as_r_history_' + data.options.urlValue] = "Historique " + data.options.showValue;
 		localesFR.entity['e_' + data.history_table_db_name]['f_comment'] = "Commentaire";
 		localesFR.entity['e_' + data.history_table_db_name]['r_modified_by'] = "Modifié par";
-		localesFR.entity['e_' + data.history_table_db_name]['r_reason'] = "Motif";
 		localesFR.entity['e_' + data.history_table_db_name]['as_r_' + data.history_table] = "Historique " + statusAliasSubstring + " " + source.substring(2);
 		localesFR.entity['e_' + data.history_table_db_name].label_entity = "Historique " + statusAliasSubstring + " " + source.substring(2);
 		// Rename traduction key to use history MODEL value, delete old traduction key
 		localesFR.entity['e_' + data.history_table] = localesFR.entity['e_' + data.history_table_db_name];
 		localesFR.entity['e_' + data.history_table_db_name] = undefined;
+
 		// Change entity's status tab name for FR (Historique instead of History)
 		localesFR.entity[source]['r_history_'+data.options.urlValue] = "Historique "+data.options.showValue;
 		fs.writeFileSync(appPath + '/locales/fr-FR.json', JSON.stringify(localesFR, null, '\t'), 'utf8');

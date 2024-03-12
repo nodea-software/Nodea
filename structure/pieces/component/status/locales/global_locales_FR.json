@@ -44,7 +44,7 @@
             "f_field": "Champ",
             "f_name": "Nom",
             "f_color": "Couleur de fond",
-            "f_text_color": "Couleur Police",
+            "f_text_color": "Couleur de police",
             "r_accepted_group": "Groupes acceptés (Aucun groupe signifie accepté pour tout le monde)",
             "f_button_label": "Libellé du bouton",
             "f_position": "Position",
@@ -226,6 +226,7 @@
             "id_entity": "ID",
             "r_state": "Etat",
             "f_comment": "Commentaire",
+            "r_reason": "Motif",
             "r_modified_by": "Modifié par",
             "as_r_history_state": "Historique Etat",
             "as_r_history_e_task_s_state": "Historique Etat tâche"

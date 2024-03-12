@@ -1595,6 +1595,8 @@ exports.createNewFieldRelatedToMultiple = async (data) => {
 exports.createNewComponentStatus = async (data) => {
 	const self = this;
 	const entity = data.application.findEntity(data.entity_name, true);
+	const appPath = global.__workspacePath + '/' + data.application.name + '/app';
+	
 	data.np_module = entity.np_module;
 	data.entity = entity.entity;
 
@@ -1627,6 +1629,10 @@ exports.createNewComponentStatus = async (data) => {
 		"select entity " + data.history_table,
 		"add field Reason related to Reason using name"
 	], 0);
+
+	const localesFR = JSON.parse(fs.readFileSync(appPath + '/locales/fr-FR.json', 'utf8'));
+	localesFR.entity['e_' + data.history_table]['r_reason'] = "Motif";
+	fs.writeFileSync(appPath + '/locales/fr-FR.json', JSON.stringify(localesFR, null, '\t'), 'utf8');
 
 	data.entity.addComponent(data.options.value, data.options.showValue, 'status');
 
