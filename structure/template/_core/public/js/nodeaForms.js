@@ -729,12 +729,12 @@ let NodeaForms = (_ => {
 					if (element.attr('show') == 'true' && element.val() != '') {
 						var jq_element = element;
 						var id = jq_element.attr('name');
-						var img = '<br><img id="' + id + '" class="img-fluid"/>';
+						var img = '<br><img id="' + id + '-barcode" class="img-fluid"/>';
 						var barcodeType = jq_element.attr('data-custom-type');
 						if (typeof barcodeType != 'undefined') {
 							jq_element.parent().after(img);
 							try {
-								JsBarcode('#' + id, jq_element.val(), {
+								JsBarcode('#' + id + '-barcode', jq_element.val(), {
 									format: barcodeType,
 									lineColor: "#000",
 									width: 2,
