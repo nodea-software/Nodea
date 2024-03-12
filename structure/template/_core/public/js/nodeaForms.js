@@ -250,10 +250,6 @@ function humanReadableFileSize(size) {
     return (size / Math.pow(baseSize, i)).toFixed(2) * 1 + ['o', 'Ko', 'Mo', 'Go', 'To'][i];
 };
 
-function getValidMessage(context, selector){
-	return context.parent().siblings(selector)[0];
-}
-
 let NodeaForms = (_ => {
 	const defaults = {
 		handleSubmit,
@@ -485,62 +481,62 @@ let NodeaForms = (_ => {
 			phone_indic: {
 				selector: "input[type='tel_indic']",
 				initializer: (element) => {
-					let selectedCountries = [];
-					if (element.hasClass('national')) {
-						selectedCountries.push('fr', 'pf', 'gf', 'gp', 'gy', 'mq', 're', 'bl', 'pm', 'yt', 'mf', 'wf', 'nc')
-					}
+					const reset = () => {
+						element.removeClass("error");
+						getValidMessage(element, ".valid-msg").hide();
+						getValidMessage(element, ".error-msg").html('');
+						getValidMessage(element, ".error-msg").hide();
+					};
+
+					const getValidMessage = (context, selector) => context.parents().siblings(selector);
+
+					const frenchPrefixes = ['fr', 'pf', 'gf', 'gp', 'gy', 'mq', 're', 'bl', 'pm', 'yt', 'mf', 'wf', 'nc'];
+					const errorMap = ["Numéro invalide", "Code pays invalide", "Trop court", "Trop long", "Numéro invalide"];
+
 					/* Input type tel - Use module intl-tel-input */
-					$(element).each(function () {
-						let iti = window.intlTelInput(this, {
-							initialCountry: 'fr',
-							nationalMode: false,
-							autoHideDialCode: true,
-							utilsScript: '/core/js/intlTelInput-utils.js',
-							separateDialCode: true,
-							onlyCountries: selectedCountries
-						});
-						$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`)
-
-						/* Code for validation tel number */
-						const that = $(this);
-
-						// here, the index maps to the error code returned from getValidationError - see readme
-						let errorMap = ["Numéro invalide", "Code pays invalide", "Trop court", "Trop long", "Numéro invalide"];
-
-						let reset = function () {
-							if (this.classList) {
-								this.classList.remove("error");
-							}
-							if (getValidMessage(that, ".error-msg")) {
-								getValidMessage(that, ".error-msg").innerHTML = "";
-								getValidMessage(that, ".error-msg").classList.add("hide");
-								getValidMessage(that, ".valid-msg").classList.add("hide");
-							}
-						};
-
-						// on blur: validate
-						this.addEventListener('blur', function () {
-							reset();
-							if (this.value.trim()) {
-								if (iti.isValidNumber()) {
-									getValidMessage(that, ".valid-msg").classList.remove("hide");
-								} else {
-									this.classList.add("error");
-									let errorCode = iti.getValidationError();
-									if (getValidMessage(that, ".error-msg")) {
-										errorCode = errorCode === -99 ? 0 : errorCode;
-										getValidMessage(that, ".error-msg").innerHTML = errorMap[errorCode];
-										getValidMessage(that, ".error-msg").classList.remove("hide");
-									}
-								}
-								$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`)
-							}
-						});
-
-						// on keyup / change flag: reset
-						this.addEventListener('change', reset);
-						this.addEventListener('keyup', reset);
+					const iti = window.intlTelInput(element[0], {
+						initialCountry: 'fr',
+						nationalMode: false,
+						autoHideDialCode: true,
+						utilsScript: '/core/js/intlTelInput-utils.js',
+						separateDialCode: true,
+						onlyCountries: element.hasClass('national') ? frenchPrefixes : []
 					});
+
+					reset();
+					$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`);
+
+					// on blur: validate
+					element.on('blur', function () {
+						$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`);
+						reset();
+
+						if (!$(this).val().trim()) {
+							return;
+						}
+
+						if (!iti.isValidNumber()) {
+							const errorCode = iti.getValidationError() === -99 ? 0 : iti.getValidationError();
+							getValidMessage($(this), ".error-msg").html(errorMap[errorCode]);
+							getValidMessage($(this), ".error-msg").show();
+							$(this).addClass("error");
+							return;
+						}
+
+						getValidMessage($(this), ".valid-msg").show();
+					});
+
+					// on keyup / change flag: reset
+					element.on('change', reset);
+					element.on('keyup', reset);
+				},
+				validator: (element, form) => {
+					if (element.hasClass("error")) {
+						$([document.documentElement, document.body]).animate({
+							scrollTop: element.offset().top
+						}, 500);
+						return false;
+					}
 				}
 			},
 			picture: {
