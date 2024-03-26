@@ -1,0 +1,20 @@
+<div id='fields' class="row">
+    <div data-field="enabled" class="col-12">
+		<div class="form-group">
+			<label for="enabled">
+				{#__ key="ref_entity.enabled"/}
+			</label> &nbsp; <br>
+			{@ifTrue key=enabled} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox" checked="">
+			{:else} <input class="form-control" name="enabled" id="enabled" value="{enabled}" type="checkbox">
+			{/ifTrue}
+		</div>
+	</div>
+	<div data-field="order" class="col-12">
+		<div class="form-group">
+			<label for="order">
+				{#__ key="ref_entity.order"/}
+			</label>
+			<input class="form-control" placeholder='{#__ key="ref_entity.order" /}' name="order" id="order" value="{order}" type="number" min="0" max="2147483648">
+		</div>
+	</div>
+</div>

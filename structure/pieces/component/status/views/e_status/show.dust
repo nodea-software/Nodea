@@ -56,11 +56,32 @@
 					</div>
 					<div class="card-body">
 						{#e_status}
-							<div class="form-group">
-								<label for="id">{#__ key="entity.e_status.id_entity"/} {#__ key="entity.e_status.label_entity"/}</label>
-								<input type="text" name="sourceId" value="{e_status.id}" disabled="" class="form-control"/>
-								<input type="text" name="sourceName" value="e_status" disabled="" class="form-control" style="display:none;" />
+							<div id="headfields" class="row">
+								<div class="col-xs-12 col-sm-1 form-group">
+									<label for="id">{#__ key="entity.e_status.id_entity"/} {#__ key="entity.e_status.label_entity"/}</label>
+									<input type="text" name="sourceId" value="{e_status.id}" disabled="" class="form-control"/>
+									<input type="text" name="sourceName" value="e_status" disabled="" class="form-control" style="display:none;" />
+								</div>
+								<div class="col-xs-12 col-sm-3 form-group">
+									<label for="f_entity">
+										{#__ key="entity.e_status.f_entity"/}
+									</label>
+									<input class="form-control input" placeholder='{#__ key="entity.e_status.f_entity" /}' name="{f_entity}" value="{#__ key=f_entity /}" type="text" readonly="">
+								</div>
+								<div class="col-xs-12 col-sm-3 form-group">
+									<label for="f_field">
+										{#__ key="entity.e_status.f_field"/}
+									</label>
+									<input class="form-control input" placeholder='{#__ key="entity.e_status.f_field" /}' name="{f_field}" value="{#__ key=f_field /}" type="text" readonly="">
+								</div>
+								<div class="col-xs-12 col-sm-5 form-group">
+									<label for="f_name">
+										{#__ key="entity.e_status.f_name"/}
+									</label>
+									<input class="form-control input" placeholder='{#__ key="entity.e_status.f_name" /}' name="f_name" value="{f_name}" type="text" readonly="">
+								</div>
 							</div>
+							
 							{>"e_status/show_fields"/}
 
 							<div class='actions'>

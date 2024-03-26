@@ -607,15 +607,25 @@ exports.setupRelatedToField = async (data) => {
 	}
 
 	/* ------------- Add new FIELD in list <thead> ------------- */
-	for (let i = 0; i < usingField.length; i++) {
-		const targetField = usingField[i].value == "id" ? "id_entity" : usingField[i].value;
+	// Do not display using field name when related to field when only one using field
+	if (usingField.length == 1){
 		const newHead = `
-		<th data-field="${alias}" data-col="${alias}.${usingField[i].value}" data-type="${usingField[i].type}">
-			<!--{#__ key="entity.${source}.${alias}"/}-->&nbsp;-&nbsp;<!--{#__ key="entity.${target}.${targetField}"/}-->
+		<th data-field="${alias}" data-col="${alias}.${usingField[0].value}" data-type="${usingField[0].type}">
+			<!--{#__ key="entity.${source}.${alias}"/}-->
 		</th>`;
-
 		fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+	} else {
+		for (let i = 0; i < usingField.length; i++) {
+			const targetField = usingField[i].value;
+			const newHead = `
+			<th data-field="${alias}" data-col="${alias}.${usingField[i].value}" data-type="${usingField[i].type}">
+				<!--{#__ key="entity.${source}.${alias}"/}-->&nbsp;-&nbsp;<!--{#__ key="entity.${target}.${targetField}"/}-->
+			</th>`;
+	
+			fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+		}
 	}
+
 
 	await translateHelper.writeLocales(data.application.name, "aliasfield", source, [alias, data.options.showAs], data.googleTranslate);
 	return;
@@ -737,6 +747,15 @@ exports.setupRelatedToMultipleField = async (data) => {
 	const $ = await domHelper.read(file);
 	$("#fields").append(showField);
 	domHelper.write(file, $);
+
+	/* ------------- Add new FIELD in list <thead> ------------- */
+	const newHead = `
+	<th data-field="${alias}" data-col="${alias}" data-type="string" data-using="${usingList.join(',')}">
+		<!--{#__ key="entity.${source}.${alias}"/}-->
+	</th>`;
+
+	fieldHelper.updateListFile(fileBase, "list_fields", newHead); // eslint-disable-line
+
 	await translateHelper.writeLocales(data.application.name, "aliasfield", source, [alias, data.options.showAs], data.googleTranslate);
 	return;
 }
@@ -833,6 +852,8 @@ exports.deleteField = async (data) => {
 		$("th[data-field='" + field + "']").remove();
 		// In case of related to
 		$("th[data-col^='r_" + field.substring(2) + ".']").remove();
+		// In case of related to multiple
+		$("th[data-col^='r_" + field.substring(2)+ "']").remove();
 		domHelper.write(viewsPath + '/list_fields.dust', $);
 	})());
 
@@ -866,11 +887,12 @@ exports.deleteField = async (data) => {
 					content = content.replace(new RegExp(currentOption[i].as + "." + field, "g"), currentOption[i].as + ".id");
 					content = content.replace(new RegExp(currentOption[i].target + "." + field, "g"), currentOption[i].target + ".id_entity");
 					fs.writeFileSync(otherViewsPath + currentEntity + '/' + fieldsFiles[k] + '.dust', content);
-					// Looking for select in create / update / show
+					// Looking for select in create / update / show or th in list
 					promises.push((async () => {
 						const dustPath = otherViewsPath + currentEntity + '/' + fieldsFiles[k] + '.dust';
 						const $ = await domHelper.read(dustPath);
 						const el = $("select[name='" + currentOption[i].as + "'][data-source='" + currentOption[i].target.substring(2) + "']");
+
 						if (el.length == 0)
 							return;
 

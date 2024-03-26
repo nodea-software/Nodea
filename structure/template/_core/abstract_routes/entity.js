@@ -373,12 +373,13 @@ class CoreEntity extends Route {
 				 * @param {string} data.renderFile - Dust file to render
 				 * @param {number} data.idEntity - Id of entity to show
 				 * @param {boolean} data.hideButton - Wether to hide buttons or not
+				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
 				if (await this.getHook('show', 'beforeEntityQuery', data) === false)
 					return;
 
 				// TODO: use data.entityData instead of data[this.e_entity] to normalize content of data object between entities
-				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
+				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 
 				/**
 				 * Called after querying data of entity to show
@@ -593,10 +594,10 @@ class CoreEntity extends Route {
 				});
 
 				data.redirect = '/' + this.entity + '/show?id=' + data.createdRow.id;
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.create.success',
 					level: "success"
-				}];
+				});
 
 				// If created from an association, register created row on source entity
 				if (typeof data.req.query.associationFlag !== 'undefined' && data.req.query.associationFlag !== "") {
@@ -681,11 +682,12 @@ class CoreEntity extends Route {
 				 * @param {object} data.createdRow - Created instance in database
 				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
+				 * @param {object} data.ajaxData - Ajax data to send at response
 				 */
 				if (await this.getHook('create', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		};
 	}
@@ -715,17 +717,18 @@ class CoreEntity extends Route {
 				 * @param {number} data.idEntity - Id of entity to update
 				 * @param {object} data.enum_radio - Entity enum fields translations
 				 * @param {string} data.renderFile - Dust file to render
+				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
 				if (await this.getHook('update_form', 'start', data) === false)
 					return;
 
-				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options);
+				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 				if (!data[this.e_entity])
 					return data.res.error(_ => {
-						data.req.session.toastr = [{
+						data.req.session.toastr.push({
 							level: 'error',
 							message: 'error.404.title'
-						}];
+						});
 						data.res.render('common/404', {
 							message: 'Entity row not found'
 						});
@@ -906,10 +909,10 @@ class CoreEntity extends Route {
 				if (typeof data.req.query.associationFlag !== 'undefined')
 					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
 
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.update.success',
 					level: "success"
-				}];
+				});
 
 				/**
 				 * Called before redirecting to data.redirect
@@ -923,11 +926,12 @@ class CoreEntity extends Route {
 				 * @param {string} data.redirect - String URL for ending redirection
 				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
-				 */
+				 * @param {object} data.ajaxData - Ajax data to send at response
+				*/
 				if (await this.getHook('update', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		}
 	}
@@ -1114,10 +1118,10 @@ class CoreEntity extends Route {
 					}
 				});
 				if (!data.entity) {
-					data.req.session.toastr = [{
+					data.req.session.toastr.push({
 						level: 'error',
 						message: 'error.404.title'
-					}];
+					});
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1141,10 +1145,10 @@ class CoreEntity extends Route {
 
 				const currentStatusId = data.entity['fk_id_status_' + data.statusName];
 				if (data.isAllowed === false && await this.helpers.status.isAllowed(currentStatusId, data.idNewStatus) === false) {
-					data.req.session.toastr = [{
+					data.req.session.toastr.push({
 						level: 'error',
 						message: 'component.status.error.illegal_status'
-					}];
+					});
 					return data.res.error(_ => data.res.redirect(data.redirect));
 				}
 
@@ -1194,6 +1198,7 @@ class CoreEntity extends Route {
 				await this.helpers.status.setStatus(this.e_entity, data.idEntity, data.statusName, data.idNewStatus, {
 					user: data.req.user,
 					comment: data.req.query.comment,
+					reasonID: data.req.query.reasonID,
 					transaction: data.transaction
 				});
 
@@ -1212,11 +1217,12 @@ class CoreEntity extends Route {
 				 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
 				 * @param {object} data.entity - Entity on which status is to be set, with its current status included
 				 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
-				 */
+				 * @param {object} data.ajaxData - Ajax data to send at response
+				*/
 				if (await this.getHook('set_status', 'beforeRedirect', data) === false)
 					return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
+				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
 			}
 		}
 	}
@@ -1261,7 +1267,8 @@ class CoreEntity extends Route {
 					attributes: data.req.body.searchField,
 					offset: data.offset,
 					limit: data.limit,
-					where: {}
+					where: {},
+					order: []
 				};
 
 				data.query.where = this.helpers.entity.search.generateWhere(data.search, data.searchField);
@@ -1456,10 +1463,10 @@ class CoreEntity extends Route {
 					transaction: data.transaction
 				});
 
-				data.req.session.toastr = [{
+				data.req.session.toastr.push({
 					message: 'message.delete.success',
 					level: "success"
-				}];
+				});
 
 				data.redirect = '/' + this.entity + '/list';
 				if (typeof data.req.query.associationFlag !== 'undefined')

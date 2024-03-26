@@ -37,6 +37,7 @@
 			const REQUIRED_RELATEDTOMANYCHECKBOX = locales.message.relatedtomanycheckbox_required;
 			const DEL_CONFIRM_TEXT = locales.button.delete_confirm;
 			const LOADING_TEXT = locales.button.loading;
+			const TIMEPICKER_FORMAT = "{timePickerDateFormat}";
 		</script>
 	</head>
 	<body class="hold-transition sidebar-mini layout-fixed">

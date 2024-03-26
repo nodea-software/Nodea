@@ -67,7 +67,7 @@ function entityAccess(entityName) {
 		if (req.originalUrl == '/user/settings') {
 			// Exception for /user/settings, only logged access is required
 			return next()
-		} else if (req.originalUrl == `/${entityName}/search`) {
+		} else if (req.originalUrl.includes(`/${entityName}/search`)) {
 			// Exception for `/search` routes. We only check for 'read' action access.
 			// Bypass module/entity access check
 			if (access.actionAccess(req.user.r_role, entityName, 'read'))

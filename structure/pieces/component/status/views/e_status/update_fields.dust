@@ -74,6 +74,20 @@
 			<input class="form-control input" name="f_comment" value="{f_comment}" type="checkbox"> {/ifTrue}
 		</div>
 	</div>
+	<div data-field="f_reason" class="col-12">
+		<div class="form-group">
+			<label for="f_reason">
+				{#__ key="entity.e_status.f_reason"/}&nbsp;
+				{@inline_help field="f_reason"}
+				<i data-field="f_reason" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			&nbsp;
+			<br> {@ifTrue key=f_reason}
+			<input class="form-control input" name="f_reason" value="{f_reason}" type="checkbox" checked=""> {:else}
+			<input class="form-control input" name="f_reason" value="{f_reason}" type="checkbox"> {/ifTrue}
+		</div>
+	</div>
 	<div data-field="f_default" class="col-12">
 		<div class="form-group">
 			<label for="f_default">

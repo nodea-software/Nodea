@@ -43,18 +43,23 @@
             "f_entity": "Entité",
             "f_field": "Champ",
             "f_name": "Nom",
-            "f_color": "Couleur",
+            "f_color": "Couleur de fond",
+            "f_text_color": "Couleur de police",
             "r_accepted_group": "Groupes acceptés (Aucun groupe signifie accepté pour tout le monde)",
             "f_button_label": "Libellé du bouton",
             "f_position": "Position",
             "f_default": "Est le statut par défaut",
-            "f_comment": "Commentaire",
-            "r_children": "Children",
-            "r_translations": "Translations",
+            "f_comment": "Avec commentaire libre",
+            "r_children": "Statut Enfants",
+            "r_translations": "Traductions",
             "r_6_history_s_state": "Historique Etat",
             "r_actions": "Actions",
+            "r_reasons": "Motifs",
+            "f_reason" : "Avec sélecteur de motif",
             "as_r_children": "Statuts suivants",
-            "modal_title": "Commentaire",
+            "modal_title": "Vous vous apprêtez à changer d'état, veuillez préciser vos motivations",
+            "modal_with_select_reason": "Sélectionner un motif",
+            "modal_with_select_freecomment": "Saisissez un commentaire",
             "apply_default": "Appliquer ce statut aux entités sans statut"
         },
 		"e_group": {
@@ -86,6 +91,13 @@
             "r_media": "Média",
             "f_order": "Ordre",
             "f_execution": "Exécution"
+        },
+        "e_reason": {
+            "label_entity": "Motif",
+            "id_entity": "ID",
+            "f_name": "Nom",
+            "f_order": "Ordre",
+            "f_enabled": "Actif"
         },
 		"e_media": {
             "label_entity": "Média",
@@ -214,6 +226,7 @@
             "id_entity": "ID",
             "r_state": "Etat",
             "f_comment": "Commentaire",
+            "r_reason": "Motif",
             "r_modified_by": "Modifié par",
             "as_r_history_state": "Historique Etat",
             "as_r_history_e_task_s_state": "Historique Etat tâche"

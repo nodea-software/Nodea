@@ -11,6 +11,7 @@
 			"@app/public/js/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css",
 			"@app/public/AdminLTE/dist/css/adminlte.min.css",
 			"@core/public/css/nodea.css",
+			"@core/public/css/intlTelInput.css",
 			"@app/public/theme/nodea/css/style.css"
 		]
 	},
@@ -34,7 +35,8 @@
 			"@core/public/js/nodeaForms.js",
 			"@core/public/js/html_encode_decode.js",
 			"@core/public/js/nodea.js",
-			"@core/public/js/nodeaTable.js"
+			"@core/public/js/nodeaTable.js",
+			"@core/public/js/intlTelInput.js"
 		]
 	},
 	"nodea_module_js": {

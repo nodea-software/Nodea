@@ -70,6 +70,14 @@ module.exports = {
 				let relationPath = '';
 
 				const acceptedModelTracking = Object.keys(trackingConfig);
+
+				// Appel via API
+				if (!options.entitySource) {
+					options.entitySource = modelName;
+					options.upperEntity = false;
+				}
+
+				// Appel via UI
 				if(options.upperEntity && !acceptedModelTracking.includes(options.upperEntity)){
 					return;
 				}

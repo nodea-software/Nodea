@@ -25,14 +25,11 @@ $(function() {
 
         function loadTab(href) {
             var tab = $(href);
-            if (currentTab.overlay === true)
-                closeOverlay();
 
             currentTab = {
                 tab,
                 href,
-                id: tab.attr('id'),
-                overlay: false
+                id: tab.attr('id')
             };
             // Set tab hash to URL
             location.hash = currentTab.id;
@@ -93,12 +90,16 @@ $(function() {
             $.ajax({
                 url: overlayUrl,
                 success: function(overlayContent) {
-                    currentTab.overlay = true;
                     tab.find('.ajax-content').after(`<div class="ajax-overlay" style="display: none;">${overlayContent}</div>`);
                     tab.find('.ajax-content').hide()
                     tab.find(".ajax-overlay").slideDown();
                 },
                 error: function (...all) {
+                    if(all[0] && all[0].responseJSON && all[0].responseJSON.refresh){
+						return location.reload();
+					}
+
+					toastr.error(all[0].responseText);
                     console.error(all);
                 }
             });
@@ -106,7 +107,6 @@ $(function() {
 
         function closeOverlay() {
             try {
-                currentTab.overlay = false;
                 currentTab.tab.find('.ajax-overlay').slideUp().remove();
                 currentTab.tab.find('.ajax-content').slideDown();
             } catch(err) {

@@ -4,16 +4,43 @@ const bcrypt = require('bcrypt');
 const models = require('@app/models');
 // Handle writing log in file connection.log
 const { writeConnectionLog } = require('@core/helpers/connection_log');
+const dayjs = require('dayjs');
 
 // Default authentication strategy : passport.authenticate('local')
 passport.use(new LocalStrategy({
 	usernameField: 'login',
 	passwordField: 'password',
 	passReqToCallback: true // Allows us to pass back the entire request to the callback
-}, function(req, login, password, done) {
+}, async function (req, login, password, done) {
+	const STATUS_ID_DISABLED = 3;
 
-	models.E_user.findOne({
-		where: {f_login: login},
+	function accessForbidden(msg){
+		// Write in file connection.log
+		const log = `LOGIN ERROR => ${msg} [login: ${login}]`;
+		writeConnectionLog(log);
+
+		console.error(log);
+		if(!req.session.loginAttempt)
+			req.session.loginAttempt = 0;
+		req.session.loginAttempt++;
+
+		req.session.toastr = [{
+			message: "login.login_fail",
+			level: 'error'
+		}];
+
+		return done(null, false);
+	}
+
+	if (password && password.length > 120)
+		return accessForbidden('Mot de passe trop long');
+
+	// Wrong captcha
+	if (typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
+		return accessForbidden("Le captcha saisi n'est pas correct.");
+
+	const user = await models.E_user.findOne({
+		where: { f_login: login },
 		include: [{
 			model: models.E_group,
 			as: 'r_group'
@@ -21,51 +48,38 @@ passport.use(new LocalStrategy({
 			model: models.E_role,
 			as: 'r_role'
 		}]
-	}).then(function(user) {
-
-		function accessForbidden(msg){
-			// Write in file connection.log
-			const log = `LOGIN ERROR => ${msg} [login: ${login}]`;
-			writeConnectionLog(log);
-
-			console.error(log);
-			if(!req.session.loginAttempt)
-				req.session.loginAttempt = 0;
-			req.session.loginAttempt++;
-
-			req.session.toastr = [{
-				message: "login.login_fail",
-				level: 'error'
-			}];
-
-			return done(null, false);
-		}
-
-		// Wrong captcha
-		if(typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
-			return accessForbidden("Le captcha saisi n'est pas correct.");
-
-		// If the user doesn't exist
-		if (!user)
-			return accessForbidden("Nom d'utilisateur inexistant.");
-
-		// If the user has no password
-		if (user.f_password == "" || user.f_password == null)
-			return accessForbidden('Compte non activé - Mot de passe manquant');
-
-		// If the user is not enabled
-		if (user.f_enabled == 0 || user.f_enabled == null)
-			return accessForbidden('Compte non activé');
-
-		// If the user is found but the password is wrong
-		if (!bcrypt.compareSync(password, user.f_password))
-			return accessForbidden('Mauvais mot de passe.');
-
-		// Access authorized
-		delete req.session.loginAttempt;
-
-		return done(null, user);
 	});
+
+	// If the user doesn't exist
+	if (!user)
+		return accessForbidden("Nom d'utilisateur inexistant.");
+
+	// If the user status is "disabled"
+	if (user.fk_id_status_state == STATUS_ID_DISABLED)
+		return accessForbidden('Compte désactivé');
+
+	// If the user has no password
+	if (user.f_password == "" || user.f_password == null)
+		return accessForbidden('Compte non activé - Mot de passe manquant');
+
+	// If the user is not enabled
+	if (user.f_enabled == false || user.f_enabled == null)
+		return accessForbidden('Compte non activé');
+
+	// If the user is found but the password is wrong
+	if (!bcrypt.compareSync(password, user.f_password))
+		return accessForbidden('Mauvais mot de passe.');
+
+	// Access authorized
+	delete req.session.loginAttempt;
+
+	await user.update({
+		f_last_connection: dayjs()
+	}, {
+		user
+	});
+
+	return done(null, user);
 }));
 
 passport.serializeUser(function(user_id, done) {
