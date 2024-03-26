@@ -193,8 +193,8 @@ var Nodea = (enables = {}) => {
                             $("#nextHelp").show();
                         if (currentIdx > 0)
                             $("#prevHelp").show();
-                        $(".modal-title").html($(currentHelp).parents('label').text());
-                        $(".modal-body").html(content);
+                        $("#inlineHelp").find(".modal-title").html($(currentHelp).parents('label').text());
+                        $("#inlineHelp").find(".modal-body").html(content);
                         $("#inlineHelp").modal('show');
                     }
                 });
