@@ -37,7 +37,8 @@
 		"remember_me": "Se souvenir de moi",
 		"submit": "Soumettre",
 		"missing_infos": "Merci de renseigner l'ensemble des champs.",
-		"login_fail": "Le login et/ou le mot de passe n'est pas correct, merci de recommencer.",
+		"login_fail": "Connexion impossible, merci de réessayer.",
+		"update_fail": "Modification impossible, merci de réessayer.",
 		"not_enabled": "Votre compte ne semble pas être activé, merci d'effectuer le processus de première connexion.",
 		"logout_success": "Vous avez bien été déconnecté."
 	},
@@ -184,7 +185,11 @@
 			"resend_email": "Renvoyer un email de première connexion",
 			"resend_email_success": "Le mail a bien été envoyé",
 			"cannot_modify_admin": "Vous ne pouvez pas modifier le compte Administrateur de l'application.",
-			"cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application."
+			"cannot_delete_admin": "Vous ne pouvez pas supprimer le compte Administrateur de l'application.",
+			"cannot_disable_admin": "Vous ne pouvez pas désactiver le compte Administrateur de l'application.",
+			"cannot_delete_user_status": "Vous ne pouvez pas supprimer les statuts de l'utilisateur.",
+			"last_connection": "Date de dernière connexion",
+			"status": "Etat"
 		}
 	},
 	"button": {
@@ -239,6 +244,10 @@
 		"relatedtomanycheckbox_required": "Un champ nécessite d'avoir au moins une case cochée."
 	},
 	"entity": {},
+	"ref_entity": {
+		"enabled": "Actif",
+		"order": "Ordre"
+	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Des fichiers sont en cours de téléchargement, merci de bien vouloir patienter.",
@@ -328,7 +337,10 @@
 				"distribution": "Répartition"
 			}
 		},
-		"createdAt": "Date de création"
+		"createdBy": "Créé par",
+		"createdAt": "Date de création",
+		"updatedBy": "Modifié par",
+		"updatedAt": "Date de modification"
 	},
 	"error": {
 		"validation": {

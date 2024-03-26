@@ -1,8 +1,6 @@
 const fs = require("fs-extra");
 const helpers = require('../utils/helpers');
-const domHelper = require('../helpers/js_dom');
 const translateHelper = require("../utils/translate");
-const utils = require('../utils/helpers');
 const mysql = require('promise-mysql');
 const {Client} = require('pg');
 
@@ -221,6 +219,16 @@ async function initializeWorkflow(application) {
 		"through": "2_group",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
+	},
+	{
+		"target": "e_status",
+		"relation": "belongsToMany",
+		"foreignKey": "fk_id_e_group",
+		"as": "r_status",
+		"showAs": "Status",
+		"through": "5_accepted_group",
+		"otherKey": "fk_id_e_status",
+		"structureType": "hasMany"
 	}], null, '\t'), 'utf8');
 
 	// Clean useless auto_generate key in user option about role and group hasMany/BelongsTo
@@ -256,9 +264,10 @@ async function initializeWorkflow(application) {
 	fs.copySync(statusPiecesPath + '/models/e_status.js', workspacePath + '/app/models/e_status.js');
 
 	// Copy views pieces
-	const toCopyViewFolders = ['e_status', 'e_media', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_translation', 'e_action'];
-	for (const folder of toCopyViewFolders)
-		fs.copySync(statusPiecesPath + '/views/' + folder, workspacePath + '/app/views/' + folder);
+	//	const toCopyViewFolders = ['e_status', 'e_media', 'e_media_mail', 'e_media_notification', 'e_media_sms', 'e_media_task', 'e_translation', 'e_action'];
+	//	for (const folder of toCopyViewFolders)
+
+	fs.copySync(statusPiecesPath + '/views', workspacePath + '/app/views');
 
 	// Copy routes
 	fs.copySync(statusPiecesPath + '/routes/', workspacePath + '/app/routes/');
@@ -323,20 +332,6 @@ exports.initializeApplication = async(application) => {
 	// ACCESS AND SECURITY: USER / GROUP / ROLE
 	//
 	fs.copySync(piecesPath + '/administration/views/e_user/', workspacePath + '/app/views/e_user/');
-
-	// Clean user show fields and remove tab view
-	let $ = await domHelper.read(workspacePath + '/app/views/e_user/show_fields.dust');
-	$("[data-field=id], [data-field=f_password], [data-field=f_token_password_reset]").remove();
-	const homeHtml = $("#home").html();
-	$("#home").remove();
-	$("#tabs").removeClass('.nav-tabs-custom').attr('id', 'home');
-	$("#home").html(homeHtml);
-	domHelper.write(workspacePath + '/app/views/e_user/show_fields.dust', $);
-
-	// Clean user update fields
-	$ = await domHelper.read(workspacePath + '/app/views/e_user/update_fields.dust');
-	$("[data-field=id], [data-field=f_password], [data-field=f_token_password_reset], [data-field=f_enabled]").remove();
-	domHelper.write(workspacePath + '/app/views/e_user/update_fields.dust', $);
 
 	// Copy inline-help route and views
 	fs.copySync(piecesPath + '/routes/e_inline_help.js', workspacePath + '/app/routes/e_inline_help.js');

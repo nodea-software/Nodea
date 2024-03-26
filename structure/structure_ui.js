@@ -460,7 +460,7 @@ exports.createWidgetPiechart = async (data) => {
 	const $2 = await domHelper.read(global.__piecesPath + '/views/widget/' + data.widgetType + '.dust');
 
 	// Widget box title traduction
-	$2(".box-title").html(`<!--{#__ key="defaults.widgets.piechart.distribution" /}-->&nbsp;<!--{#__ key="entity.${data.entity.name}.label_entity" /}-->&nbsp;-&nbsp;<!--{#__ key="entity.${data.entity.name}.${data.field.name}" /}-->`);
+	$2(".card-title").html(`<!--{#__ key="defaults.widgets.piechart.distribution" /}-->&nbsp;<!--{#__ key="entity.${data.entity.name}.label_entity" /}-->&nbsp;-&nbsp;<!--{#__ key="entity.${data.entity.name}.${data.field.name}" /}-->`);
 
 	let widgetElemId = data.widgetType + '_' + data.entity.name + '_' + data.field.name + '_widget';
 
@@ -478,6 +478,7 @@ exports.createWidgetPiechart = async (data) => {
 	newHtml += "<div id='" + widgetElemId + "' data-entity='" + data.entity.name + "' data-field-type='" + type + "' data-field='" + data.field.name + "' data-legend='" + data.legend + "' data-widget-type='" + data.widgetType + "' class='ajax-widget col-sm-4 col-12'>\n";
 	newHtml += $2("body")[0].innerHTML + "\n";
 	newHtml += "</div>";
+	newHtml = newHtml.replace(/ENTITY_URL_NAME/g, data.entity.name.substring(2));
 	newHtml += '<!--{/entityAccess}-->';
 	$("#widgets").append(newHtml);
 	domHelper.write(layoutFile, $);

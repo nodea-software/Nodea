@@ -432,7 +432,7 @@ module.exports = {
 				if (searchField[i] == "id")
 					continue;
 				const searchProp = searchField[i].indexOf(".") != -1 ? "$" + searchField[i] + "$" : searchField[i];
-				$or.push({[searchProp]: {[models.$like]: search}});
+				$or.push({[searchProp]: {[models.$like]: search.toLowerCase()}});
 			}
 			where[models.$or] = $or;
 			return where;

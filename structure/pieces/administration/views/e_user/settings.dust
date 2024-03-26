@@ -139,24 +139,24 @@
 													<label for="old_password" class='required'>
 														{#__ key="settings.old_password"/}
 													</label>
-													<input class="form-control" placeholder='{#__ key="settings.old_password"/}' name="old_password" type="password">
+													<input id="old_password" class="form-control" placeholder='{#__ key="settings.old_password"/}' name="old_password" type="password">
 												</div>
 											</div>
 											<div class="col-12">
 												<div class="form-group">
-													<label for="f_role" class='required'>
+													<label for="new_password_1" class='required'>
 														{#__ key="settings.new_password_1"/}&nbsp;&nbsp;
 														<i class="login-help fa fa-info-circle" style="color: #1085EE;cursor: pointer;" data-title='{#__ key="login.first_connection.help.password_title"/}' data-content='{#__ key="login.first_connection.help.password_content"/}'></i>
 													</label>
-													<input class="form-control" placeholder='{#__ key="settings.new_password_1"/}' name="new_password_1" type="password">
+													<input id="new_password_1" class="form-control" placeholder='{#__ key="settings.new_password_1"/}' name="new_password_1" type="password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$">
 												</div>
 											</div>
 											<div class="col-12">
 												<div class="form-group">
-													<label for="f_group" class='required'>
+													<label for="new_password_2" class='required'>
 														{#__ key="settings.new_password_2"/}
 													</label>
-													<input class="form-control" placeholder='{#__ key="settings.new_password_2"/}' name="new_password_2" type="password">
+													<input id ="new_password_2" class="form-control" placeholder='{#__ key="settings.new_password_2"/}' name="new_password_2" type="password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$">
 												</div>
 											</div>
 										</div>
@@ -180,7 +180,7 @@
 {<custom_js}
 	<script>
 		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotMatch"/}';
-		var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*/+;-])(?=.{8,})");
+		const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
 		var globalConfEnv = '{config.env}';
 
 		$(document).ready(function() {
@@ -221,7 +221,7 @@
 				if(globalConfEnv == 'develop')
 					return true;
 
-				if (string.length < 8)
+				if (string.length < 12)
 					return false;
 
 				if (!passwordRegex.test(string))

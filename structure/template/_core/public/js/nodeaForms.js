@@ -478,6 +478,67 @@ let NodeaForms = (_ => {
 						element.css("border-color", "#d2d6de").parents('.form-group').find('span').remove();
 				}
 			},
+			phone_indic: {
+				selector: "input[type='tel_indic']",
+				initializer: (element) => {
+					const reset = () => {
+						element.removeClass("error");
+						getValidMessage(element, ".valid-msg").hide();
+						getValidMessage(element, ".error-msg").html('');
+						getValidMessage(element, ".error-msg").hide();
+					};
+
+					const getValidMessage = (context, selector) => context.parents().siblings(selector);
+
+					const frenchPrefixes = ['fr', 'pf', 'gf', 'gp', 'gy', 'mq', 're', 'bl', 'pm', 'yt', 'mf', 'wf', 'nc'];
+					const errorMap = ["Numéro invalide", "Code pays invalide", "Trop court", "Trop long", "Numéro invalide"];
+
+					/* Input type tel - Use module intl-tel-input */
+					const iti = window.intlTelInput(element[0], {
+						initialCountry: 'fr',
+						nationalMode: false,
+						autoHideDialCode: true,
+						utilsScript: '/core/js/intlTelInput-utils.js',
+						separateDialCode: true,
+						onlyCountries: element.hasClass('national') ? frenchPrefixes : []
+					});
+
+					reset();
+					$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`);
+
+					// on blur: validate
+					element.on('blur', function () {
+						$(`input[name=indicatif_${element[0].name}]`).val(`+${iti.selectedCountryData.dialCode}`);
+						reset();
+
+						if (!$(this).val().trim()) {
+							return;
+						}
+
+						if (!iti.isValidNumber()) {
+							const errorCode = iti.getValidationError() === -99 ? 0 : iti.getValidationError();
+							getValidMessage($(this), ".error-msg").html(errorMap[errorCode]);
+							getValidMessage($(this), ".error-msg").show();
+							$(this).addClass("error");
+							return;
+						}
+
+						getValidMessage($(this), ".valid-msg").show();
+					});
+
+					// on keyup / change flag: reset
+					element.on('change', reset);
+					element.on('keyup', reset);
+				},
+				validator: (element, form) => {
+					if (element.hasClass("error")) {
+						$([document.documentElement, document.body]).animate({
+							scrollTop: element.offset().top
+						}, 500);
+						return false;
+					}
+				}
+			},
 			picture: {
 				selector: 'img[data-type="picture"]',
 				initializer: (element) => {
@@ -524,7 +585,8 @@ let NodeaForms = (_ => {
 						icons: {
 							clear: 'fas fa-trash'
 						},
-						format: 'HH:mm'
+						format: 'HH:mm',
+						defaultDate: moment().format(TIMEPICKER_FORMAT)
 					});
 				}
 			},
@@ -663,12 +725,12 @@ let NodeaForms = (_ => {
 					if (element.attr('show') == 'true' && element.val() != '') {
 						var jq_element = element;
 						var id = jq_element.attr('name');
-						var img = '<br><img id="' + id + '" class="img-fluid"/>';
+						var img = '<br><img id="' + id + '-barcode" class="img-fluid"/>';
 						var barcodeType = jq_element.attr('data-custom-type');
 						if (typeof barcodeType != 'undefined') {
 							jq_element.parent().after(img);
 							try {
-								JsBarcode('#' + id, jq_element.val(), {
+								JsBarcode('#' + id + '-barcode', jq_element.val(), {
 									format: barcodeType,
 									lineColor: "#000",
 									width: 2,
@@ -891,9 +953,10 @@ let NodeaForms = (_ => {
 				initializer: (element) => {
 					const url = element.data('href');
 					const isInTab = element.parents('.ajax-content').length;
+
 					element.click(function() {
 						// No comment expected on status
-						if (element.data('comment') != true) {
+						if (element.data('comment') != true && element.data('reason') != true ) {
 							if (isInTab) {
 								// Tab status, reloadTab on success
 								return $.ajax({
@@ -904,14 +967,39 @@ let NodeaForms = (_ => {
 							return location.href = url;
 						}
 
-						// Handle status comment
+						// Handle Modal status comment or reason select
 						const statusCommentModal = $("#statusComment");
+
+						// mise à jour de l'id statut pour filtrage des motifs
+						// Split the string by '/'
+						const parts = url.split('/');
+						// Get the last part of the array
+						const stat = parts[parts.length - 1];
+						$('select[name="r_reason"]').data('statusid', parseInt(stat));
+
+						if (element.data('comment') != true){
+							// il faut cacher la zone Commentaire libre
+							$('div[name="with_freecomment"]').hide();
+						}
+
+						if (element.data('reason') != true){
+							// il faut cacher le selecteur de motif
+							$('div[name="with_select_reason"]').hide();
+						}
+						
 						const statusCommentSubmit = function(event) {
 			        		event.preventDefault();
 			        		const comment = encodeURIComponent(statusCommentModal.find('textarea[name=comment]').summernote('code'));
+							const reasonID = parseInt(statusCommentModal.find('select[name=r_reason]').val());
+							
+							var uri = "";
+							if (element.data('comment') == true)
+								uri += "&comment="+comment;
+							if (element.data('reason') == true)
+								uri += "&reasonID="+reasonID;
 			        		if (isInTab) {
 				        		$.ajax({
-				        			url: url + '?ajax=true&comment='+comment,
+				        			url: url + '?ajax=true'+uri,
 				        			success: _ => {
 				        				// Close tab
 				        				NodeaTabs.reloadTab();
@@ -923,13 +1011,14 @@ let NodeaForms = (_ => {
 				        		});
 				        	}
 				        	else
-				        		location.href = url + '?comment='+comment;
+				        		location.href = url + '?' + uri;
 
 				        	// Unbind submit handler to avoid multiple bind since modal is not removed from DOM
 				        	statusCommentModal.find('form').unbind('submit', statusCommentSubmit);
 					        return false;
 			        	}
 			        	statusCommentModal.find('form').submit(statusCommentSubmit);
+
 
 				        statusCommentModal.modal('show');
 					});

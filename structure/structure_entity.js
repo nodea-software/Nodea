@@ -217,6 +217,24 @@ exports.setupEntity = async (data) => {
 			"validate": false
 		}
 	};
+
+	if (data.options.isRefEntity) {
+		baseAttributes.enabled = {
+			"type": "BOOLEAN",
+			"nodeaType": "boolean",
+			"defaultValue": true,
+			"validate": true,
+			"allowNull": false
+		};
+		baseAttributes.order = {
+			"type": "INTEGER",
+			"nodeaType": "number",
+			"defaultValue": 0,
+			"validate": true,
+			"allowNull": true
+		};
+	}
+
 	fs.writeFileSync(workspacePath + '/app/models/attributes/' + entity_name + '.json', JSON.stringify(baseAttributes, null, '\t'));
 
 	// CREATE MODEL OPTIONS (ASSOCIATIONS) FILE
@@ -237,6 +255,8 @@ exports.setupEntity = async (data) => {
 	let routeTemplate = '';
 	if(data.options.isParamEntity) {
 		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/param_entity.js', 'utf8');
+	} else if(data.options.isRefEntity) {
+		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/ref_entity.js', 'utf8');
 	} else {
 		routeTemplate = fs.readFileSync(global.__piecesPath + '/routes/entity.js', 'utf8');
 	}
@@ -322,7 +342,8 @@ exports.setupEntity = async (data) => {
 	}
 
 	// Copy CRUD view folder and customize them according to data entity properties
-	fs.copySync(global.__piecesPath + '/views/entity', workspacePath + '/app/views/' + entity_name);
+	const templates_dir = data.options.isRefEntity ? 'ref_entity' : 'entity';
+	fs.copySync(global.__piecesPath + `/views/${templates_dir}`, workspacePath + '/app/views/' + entity_name);
 	const fileBase = workspacePath + '/app/views/' + entity_name;
 	let dustFiles = ["create", "create_fields", "show", "show_fields", "update", "update_fields", "list", "list_fields"];
 	if(data.options.isParamEntity)

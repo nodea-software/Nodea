@@ -1,13 +1,13 @@
 <div id="fields" class="row">
 	<div data-field="f_media" class="col-12">
 		<div class="form-group">
-			<label for="r_media" class="required">{#__ key="entity.e_action.r_media" /}</label>
-			<select class="ajax form-control" required="" data-statustarget="{status_target}" name="r_media" data-source="media" data-using="f_name,f_type">
-				<option value="">{#__ key="select.default" /}</option>
-				{#r_media}
-					<option value="{id}" selected="">{f_name} - </option>
-				{/r_media}
-			</select>
+			<label for="r_media" class="required">
+				{#__ key="entity.e_action.r_media" /}&nbsp;
+				{@inline_help field="r_media"}
+				<i data-entity="e_truc" data-field="r_media" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+				{/inline_help}
+			</label>
+			<select class="ajax form-control" required="" data-statustarget="{status_target}" name="r_media" data-source="media" data-using="f_name,f_type" style="width: 100%;"></select>
 		</div>
 	</div>
 	<div data-field="f_order" class="col-12">

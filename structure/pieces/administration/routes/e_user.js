@@ -12,6 +12,10 @@ const globalConfig = require('@config/global');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const USER_ID_ADMIN = 1;
+const STATUS_ID_ENABLED = 2;
+const STATUS_ID_DISABLED = 3;
+
 class E_user extends Entity {
 	constructor() {
 		const additionalRoutes = [
@@ -72,27 +76,30 @@ class E_user extends Entity {
 						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
 					else {
 						if (req.body.new_password_1 == "" && req.body.new_password_2 == "")
-							new Error("settings.error1");
-						else if (req.body.new_password_1 != req.body.new_password_2)
-							new Error("settings.error2");
-						else if (req.body.new_password_1.length < 4)
-							new Error("settings.error3");
+							throw new Error("settings.error1");
+
+						if (req.body.new_password_1 != req.body.new_password_2)
+							throw new Error("settings.error2");
+
+						if (req.body.new_password_1.length < 4)
+							throw new Error("settings.error3");
 
 						if (!await bcrypt.compare(req.body.old_password, user.f_password))
-							new Error("settings.error4");
+							throw new Error("settings.error4");
 
 						updateObject.f_password = await bcrypt.hash(req.body.new_password_1, saltRounds);
 					}
 				}
-			} catch(err) {
+			} catch (err) {
 				if(err.message.includes('settings.')) {
+					console.error(err.message);
 					req.session.toastr = [{
-						message: err.message,
+						message: "login.update_fail",
 						level: "error"
 					}];
 					return res.success(_ => res.redirect("/user/settings"));
 				}
-
+				console.error(err);
 				throw err;
 			}
 
@@ -182,7 +189,7 @@ class E_user extends Entity {
 			},
 			update_form: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
 							level: 'error'
@@ -196,7 +203,7 @@ class E_user extends Entity {
 			},
 			update: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						data.req.session.toastr = [{
 							message: 'administration.user.cannot_modify_admin',
 							level: 'error'
@@ -215,11 +222,30 @@ class E_user extends Entity {
 				// beforeRender: (data) => {},
 			},
 			set_status: {
-				// start: async (data) => {},
+				start: (data) => {
+					if(data.idEntity == USER_ID_ADMIN && data.idNewStatus == STATUS_ID_DISABLED) {
+						if(data.req.query.ajax) {
+							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_disable_admin')));
+						} else {
+							data.req.session.toastr = [{
+								message: 'administration.user.cannot_disable_admin',
+								level: 'error'
+							}];
+							data.res.success(_ => data.res.redirect(data.redirect));
+						}
+						return false;
+					}
+				},
 				// beforeRedirect: async(data) => {}
 			},
 			search: {
 				// start: async (data) => {},
+				beforeQuery: (data) => {
+					data.query.where = {
+						...data.query.where,
+						fk_id_status_state: STATUS_ID_ENABLED
+					};
+				}
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
@@ -232,16 +258,15 @@ class E_user extends Entity {
 			},
 			destroy: {
 				start: (data) => {
-					if(data.idEntity == 1) {
+					if(data.idEntity == USER_ID_ADMIN) {
 						if(data.req.query.ajax) {
 							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_admin')));
-						}
-						else {
+						} else {
 							data.req.session.toastr = [{
 								message: 'administration.user.cannot_delete_admin',
 								level: 'error'
-							}]
-							data.res.redirect('/user/list')
+							}];
+							data.res.success(_ => data.res.redirect(`/user/show?id=${data.idEntity}`));
 						}
 						return false;
 					}

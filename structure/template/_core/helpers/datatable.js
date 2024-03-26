@@ -32,17 +32,20 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 			}
 		}
 
-	// TODO: handle attributes
-	// queryObject.attributes = attributes;
-
 	// If postgres, then we have to parse all value to text, postgres cannot compare varchar with integer for example
 	if (models.sequelize.options.dialect == "postgres" && typeof queryObject.where !== "undefined")
 		for (const item in queryObject.where[searchTerm]) {
 			const currentItem = queryObject.where[searchTerm][item];
-			const attribute = Object.keys(currentItem)[0];
+			const [attribute] = Object.keys(currentItem);
+			let cast = models.sequelize.cast(models.sequelize.col(modelName + '.' + attribute), 'text');
+			// Remove modelName to avoid missing from clause entry for table error for include fields
+			if (cast.val.col.includes("$")) {
+				cast = models.sequelize.cast(models.sequelize.col(attribute), 'text');
+				cast.val.col = cast.val.col.substring(1, cast.val.col.length - 1);
+			}
 			// Don't convert boolean to text, postgres need real boolean in order to work correctly
-			if(typeof currentItem[attribute] !== 'boolean')
-				currentItem[attribute] = models.sequelize.where(models.sequelize.cast(models.sequelize.col(modelName + '.' + attribute), 'text'), currentItem[attribute])
+			if (typeof currentItem[attribute] !== 'boolean')
+				currentItem[attribute] = models.sequelize.where(cast, currentItem[attribute]);
 		}
 
 	// Build include from field array
@@ -51,8 +54,11 @@ async function getDatalistData(modelName, params, order, start, length, search, 
 	const entityName = `e_${modelName.substring(2)}`;
 	queryObject.include = model_builder.getIncludeFromFields(models, entityName, toInclude);
 
+	queryObject.distinct = true;
+
 	// Execute query with filters and get total count
 	let result;
+
 	try {
 		result = await models[modelName].findAndCountAll(queryObject);
 	} catch(err) {
@@ -179,7 +185,8 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 	if (isNotManyToManyAssociation)
 		count = await entity['count' + subentityAlias.capitalizeFirstLetter()]({
 			where: include.where,
-			include: include.include
+			include: include.include,
+			includeIgnoreAttributes: false
 		});
 
 	return {
@@ -195,6 +202,9 @@ async function getSubdatalistData(modelName, params, order, start, length, searc
 //  - speInclude - optional: ['r_inclusion.r_specific.id',] - array of field path used to build query's include
 //  - speWhere - optional: {id: 1, property: 'value'}
 module.exports = async (modelName, params, speInclude, speWhere, isSubdatalist = false) => {
+	const entityOptions = !isSubdatalist ?
+		models[modelName].getRelations() :
+		models[params.subentityModel.capitalizeFirstLetter()].getRelations();
 	const start = params.start ? parseInt(params.start) : 1;
 	const length = params.length ? parseInt(params.length) : 10;
 
@@ -217,7 +227,15 @@ module.exports = async (modelName, params, speInclude, speWhere, isSubdatalist =
 		// Add column own search
 		if (columns[i].search.value != "") {
 			const { type, value } = JSON.parse(columns[i].search.value);
-			search[searchTerm].push(model_builder.formatSearch(columns[i].data, value, type));
+			const RelatedToMultipleColumn = entityOptions.find(el => el.structureType === 'relatedToMultiple' && el.as === columns[i].data);
+
+			if (RelatedToMultipleColumn) {
+				const usingFields = RelatedToMultipleColumn.usingField.length ? RelatedToMultipleColumn.usingField : [{ value: 'id' }];
+				const multipleSearch = usingFields.map(usingField => model_builder.formatSearch(columns[i].data + "." + usingField.value, value, type));
+				search[searchTerm].push({ [models.$or]: multipleSearch });
+			} else {
+				search[searchTerm].push(model_builder.formatSearch(columns[i].data, value, type));
+			}
 		}
 		// Add column global search
 		if (isGlobalSearch)
@@ -225,9 +243,18 @@ module.exports = async (modelName, params, speInclude, speWhere, isSubdatalist =
 	}
 
 	// ORDER BY Managment
-	const stringOrder = params.columns[params.order[0].column].data;
+	let stringOrder = params.columns[params.order[0].column].data;
+	const RelatedToMultipleOrderColumn = entityOptions.find(el => el.structureType === 'relatedToMultiple' && el.as === stringOrder);
+
+	if (RelatedToMultipleOrderColumn) {
+		const usingFieldsOrder = RelatedToMultipleOrderColumn.usingField.length ? RelatedToMultipleOrderColumn.usingField : [{ value: 'id' }];
+		stringOrder += '.' + usingFieldsOrder[0].value;
+	}
+
 	// If ordering on an association field, use Sequelize.literal so it can match field path 'r_alias.f_name'
-	const order = stringOrder.indexOf('.') != -1 ? [[models.Sequelize.literal(stringOrder), params.order[0].dir]] : [[stringOrder, params.order[0].dir]];
+	const order = stringOrder.indexOf('.') != -1 ?
+		[[models.Sequelize.literal(stringOrder), params.order[0].dir]] :
+		[[stringOrder, params.order[0].dir]];
 
 	if(isSubdatalist)
 		return getSubdatalistData(modelName, params, order, start, length, search, searchTerm, toInclude);

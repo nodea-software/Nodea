@@ -36,7 +36,7 @@ module.exports = async () => {
 			f_login: 'admin',
 			f_email: 'admin@local.fr',
 			f_password: null,
-			f_enabled: 0,
+			f_enabled: false,
 			version: 0
 		}, system)
 	]);

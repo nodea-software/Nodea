@@ -1,0 +1,112 @@
+<div class="nav-tabs-custom" id="home">
+	<div id="fields" class="row">
+        <div data-field="f_state" class="col-12">
+			<div class="form-group">
+				<label for="r_state">
+					{#__ key="administration.user.status" /}&nbsp;
+					{@inline_help field="r_state"}
+					<i data-entity="e_user" data-field="r_state" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					{/inline_help}
+				</label>
+				<br>
+				<span class="badge" style="background: {r_state.f_color}; color: {r_state.f_text_color};">
+					{r_state.f_name}
+				</span>
+			</div>
+			<div class="form-group">
+				{#r_state.r_children userid=id}
+				{#checkStatusPermission status=.}
+				<a data-href="/user/set_status/{userid}/{f_field}/{id}" data-comment="{f_comment}" class="status btn btn-info" style="margin-right: 5px;">
+					{^f_button_label}
+					{f_name}
+					{:else}
+					{f_button_label}
+					{/f_button_label}
+				</a>
+				{/checkStatusPermission}
+				{/r_state.r_children}
+			</div>
+		</div>
+		<div data-field="f_login" class="col-12">
+			<div class="form-group">
+				<label for="f_login">
+					{#__ key="entity.e_user.f_login"/}
+					{@inline_help field="f_login"}
+					<i data-entity="e_user" data-field="f_login" class="inline-help fa fa-info-circle"></i>
+					{/inline_help}
+				</label>
+				<input class="form-control" placeholder='{#__ key="entity.e_user.f_login" /}' name="f_login" id="f_login" value="{f_login}" type="text" maxlength="255" readonly="">
+			</div>
+		</div>
+		<div data-field="f_email" class="col-12">
+			<div class="form-group">
+				<label for="f_email">
+					{#__ key="entity.e_user.f_email"/}
+					{@inline_help field="f_email"}
+					<i data-entity="e_user" data-field="f_email" class="inline-help fa fa-info-circle"></i>
+					{/inline_help}
+				</label>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text">
+							<i class="fas fa-envelope"></i>
+						</span>
+					</div>
+					<input class="form-control" placeholder='{#__ key="entity.e_user.f_email" /}' name="f_email" id="f_email" value="{f_email}" type="text" data-type="email" readonly="">
+				</div>
+			</div>
+		</div>
+		<div data-field="f_role" class="col-12">
+			<div class="form-group">
+				<label for="f_role">
+					{#__ key="entity.e_user.r_role" /}
+					{@inline_help field="r_role"}
+					<i data-entity="e_user" data-field="r_role" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					{/inline_help}
+				</label>
+				<select multiple="" disabled="" readonly="" class="form-control" name="r_role" data-source="role" data-using="f_label" style="width: 100%;">
+					{#r_role}
+					<option value="{f_label}" selected="">
+						{f_label}
+					</option>
+					{/r_role}
+				</select>
+			</div>
+		</div>
+		<div data-field="f_group" class="col-12">
+			<div class="form-group">
+				<label for="f_group">
+					{#__ key="entity.e_user.r_group" /}
+					{@inline_help field="r_group"}
+					<i data-entity="e_user" data-field="r_group" class="inline-help fa fa-info-circle" style="color: #1085EE"></i>
+					{/inline_help}
+				</label>
+				<select multiple="" disabled="" readonly="" class="form-control" name="r_group" data-source="group" data-using="f_label" style="width: 100%;">
+					{#r_group}
+					<option value="{f_label}" selected="">
+						{f_label}
+					</option>
+					{/r_group}
+				</select>
+			</div>
+		</div>
+		<div data-field="f_last_connection" class="col-12">
+			<div class="form-group">
+				<label for="f_last_connection">
+					{#__ key="administration.user.last_connection"/}
+					{@inline_help field="f_last_connection"}
+					<i data-entity="e_user" data-field="f_last_connection" class="inline-help fa fa-info-circle"></i>
+					{/inline_help}
+				</label>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text">
+							<i class="fa fa-calendar"></i>
+						</span>
+					</div>
+					<input class="form-control" placeholder='{#__ key="administration.user.last_connection" /}' name="f_last_connection" id="f_last_connection" value="{f_last_connection|date}" type="text" readonly="">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

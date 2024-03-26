@@ -37,7 +37,8 @@
 		"remember_me": "Remember me",
 		"submit": "Submit",
 		"missing_infos": "Please fill all the input.",
-		"login_fail": "The login and / or password is not correct, please try again.",
+		"login_fail": "Connection fail, please try again.",
+		"update_fail": "Update fail, please try again.",
 		"not_enabled": "Your account does not seem to be activated, please complete the first connection process.",
 		"logout_success": "You have been successfully logged out."
 	},
@@ -184,7 +185,11 @@
 			"resend_email": "Resend a first connection email",
 			"resend_email_success": "The email has been successfully sent.",
 			"cannot_modify_admin": "You can't modify the main admin account of the application.",
-			"cannot_delete_admin": "You can't delete the main admin account of the application."
+			"cannot_delete_admin": "You can't delete the main admin account of the application.",
+			"cannot_disable_admin": "You can't disable the main admin account of the application.",
+			"cannot_delete_user_status": "You can't delete the user's status.",
+			"last_connection": "Last connection date",
+			"status": "State"
 		}
 	},
 	"button": {
@@ -239,6 +244,10 @@
 		"relatedtomanycheckbox_required": "A field requires you to check at least one checkbox."
 	},
 	"entity": {},
+	"ref_entity": {
+		"enabled": "Enabled",
+		"order": "Order"
+	},
 	"global_component": {
 		"local_file_storage": {
 			"wait_upload": "Uploading... Please wait.",

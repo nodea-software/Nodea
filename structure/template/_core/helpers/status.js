@@ -89,9 +89,11 @@ module.exports = {
 		const historyModel = 'E_history_' + entityName.substring(2) + '_' + statusName;
 		const statusFk = "fk_id_status_" + statusName;
 		const userID = optionnals.user ? optionnals.user.id : null;
+		const reasonID = optionnals.reasonID ? parseInt(optionnals.reasonID) : null;
 		// Create history record for this status field
 		const createObject = {
 			f_comment: optionnals.comment || "",
+			fk_id_reason_reason: reasonID,
 			fk_id_user_modified_by: userID
 		};
 

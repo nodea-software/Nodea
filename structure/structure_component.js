@@ -5,6 +5,7 @@ const helpers = require("../utils/helpers");
 const fieldHelper = require("../helpers/field");
 const dust_helper = require("../helpers/dust");
 const js_writer = require("../helpers/js_writer");
+const metadata = require('../database/metadata')();
 
 async function addTab(entity, file, newLi, newTabContent) {
 	const $ = await domHelper.read(file);
@@ -379,6 +380,18 @@ exports.newStatus = async (data) => {
 	historyModel = historyModel.replace(historyRegex, "E_"+data.history_table);
 	fs.writeFileSync(appPath + '/models/e_' + data.history_table + '.js', historyModel, 'utf8');
 
+	// Change metadata name of history table
+	const metadataApp = metadata.getApplication(data.application.name);
+	for (const module of metadataApp._modules) {
+		for (const entity of module._entities) {
+			if (entity._name === 'e_' + data.history_table_db_name) {
+				entity._name = 'e_' + data.history_table;
+				entity._displayName = data.history_table;
+			}
+		}
+	}
+	metadataApp.save();
+
 	// Add virtual status field to source entity (s_statusName)
 	const attributesObj = JSON.parse(fs.readFileSync(appPath + '/models/attributes/' + source + '.json'));
 	attributesObj[data.options.value] = {
@@ -493,6 +506,7 @@ exports.newStatus = async (data) => {
 		// Rename traduction key to use history MODEL value, delete old traduction key
 		localesFR.entity['e_' + data.history_table] = localesFR.entity['e_' + data.history_table_db_name];
 		localesFR.entity['e_' + data.history_table_db_name] = undefined;
+
 		// Change entity's status tab name for FR (Historique instead of History)
 		localesFR.entity[source]['r_history_'+data.options.urlValue] = "Historique "+data.options.showValue;
 		fs.writeFileSync(appPath + '/locales/fr-FR.json', JSON.stringify(localesFR, null, '\t'), 'utf8');
@@ -522,7 +536,7 @@ exports.newStatus = async (data) => {
 	<div class="form-group">\n\
 		<!--{#' + statusAlias + '.r_children ' + source.substring(2) + 'id=id}-->\n\
 			<!--{#checkStatusPermission status=.}-->\n\
-				<a data-href="/' + source.substring(2) + '/set_status/{' + source.substring(2) + 'id}/{f_field}/{id}" data-comment="{f_comment}" class="status btn btn-info" style="margin-right: 5px;">\n\
+				<a data-href="/' + source.substring(2) + '/set_status/{' + source.substring(2) + 'id}/{f_field}/{id}" data-statusid="{id}" data-reason="{f_reason}" data-comment="{f_comment}" class="status btn btn-info" style="margin-right: 5px;">\n\
 					<!--{^f_button_label}{f_name}{:else}{f_button_label}{/f_button_label}-->\n\
 				</a>\n\
 			<!--{/checkStatusPermission}-->\n\

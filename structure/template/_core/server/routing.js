@@ -33,6 +33,7 @@ module.exports = (dust, dustFn) => (req, res, next) => {
 	res.locals.corePath = __corePath;
 	res.locals.appPath = __appPath;
 	res.locals.sizeFileLimit = appConf.dropzoneInfo.sizeFileLimit;
+	res.locals.timePickerDateFormat = appConf.timepicker.defaultDate.dateFormat;
 
 	// Helpers / Locals / Filters
 	dustFn.helpers(dust);

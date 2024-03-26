@@ -107,8 +107,13 @@ class CoreDocumentTemplate extends CoreEntity {
 			if (await this.getHook('generate', 'beforeAccessCheck', data) === false)
 				return;
 
-			if (!data.allowedAccess)
-				throw new Error("You do not have access to this file.");
+			if (!data.allowedAccess) {
+				data.req.session.toastr = [{
+					level: 'error',
+					message: 'message.document_not_allowed'
+				}];
+				return data.res.error(_ => data.res.redirect(`/${data.template.f_entity.substring(2)}/show?id=${data.idEntity}#r_document_template`));
+			}
 
 			data.filePath = this.helpers.file.fullPath(data.template.f_file);
 

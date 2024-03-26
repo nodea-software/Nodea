@@ -8,7 +8,7 @@ $(function(){
 		if(globalConfEnv == 'develop')
 			return true;
 
-		if (string.length < 8)
+		if (string.length < 12)
 			return false;
 
 		if (!passwordRegex.test(string))

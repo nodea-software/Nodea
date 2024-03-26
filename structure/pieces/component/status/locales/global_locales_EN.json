@@ -16,7 +16,7 @@
 			"choose_from_group": "Choose a group",
 			"choose_from_field": "Choose a field",
 			"choose_from_phone_field": "Choose a field with type phone",
-			"choose_from_phone_field": "Choose a field with type email",
+			"choose_from_email_field": "Choose a field with type email",
 			"choose_from_file_field": "Choose a field with type file",
 			"choose_user_target": "Choose field related to user",
 			"notification_targets": "Notification targets",
@@ -29,13 +29,31 @@
 			"r_group": "Group"
 		},
 		"e_status": {
-			"as_r_children": "Next status",
-			"apply_default": "Apply this status to entities without status",
-			"modal_title": "Comment",
-			"r_accepted_group": "Accepted group (No group means accepted for all)",
-			"f_default": "Is the default status",
-			"f_button_label": "Button label"
-		},
+            "label_entity": "Status",
+            "id_entity": "ID",
+            "f_entity": "Enity",
+            "f_field": "Field",
+            "f_name": "Status name",
+            "f_color": "Background color",
+            "f_text_color": "Font color",
+            "r_accepted_group": "Accepted groups (No group means accepted for all)",
+            "f_button_label": "Button label",
+            "f_position": "Position",
+            "f_default": "Is the default status",
+            "f_comment": "With comment",
+            "r_children": "Children status",
+            "r_translations": "Translations",
+            "r_6_history_s_state": "Status history",
+            "r_actions": "Actions",
+            "r_reasons": "Reasons",
+            "f_reason" : "With reason to select",
+            "as_r_children": "Children status",
+            "modal_title": "You are about to change state, please specify your motivations",
+            "modal_with_select_reason": "Select a reason",
+            "modal_with_select_freecomment": "Type your comment",
+            "apply_default": "Apply this status to entities without status"
+        },
+
 		"e_translation": {
 			"as_r_translations": "Traductions"
 		},

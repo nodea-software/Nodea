@@ -675,7 +675,8 @@ let NodeaTable = (function() {
             	type: $(this).data('type'),
             	element: $(this),
             	hidden: $(this).attr("data-hidden") == "true",
-            	defaultContent: " - "
+				defaultContent: " - ",
+				using: $(this).data('using') || null
             };
 
             for (const hideCol of params.hide || []) {
@@ -730,7 +731,21 @@ let NodeaTable = (function() {
 		                }
 		                // Regular value
 		                else
-		                    value = row[fieldPath];
+							value = row[fieldPath];
+
+						// Related to many value
+						if (value && typeof value === 'object') {
+							const usings = column.using.split(",");
+							const manyValue = [];
+							for (const currentValue of value) {
+								const usingArray = [];
+								for (const using of usings) {
+									usingArray.push(currentValue[using]);
+								}
+								manyValue.push(usingArray.join(' '));
+							}
+							value = manyValue.join(' - ');
+						}
 		            }
 	                if(columnDef.htmlencode === true && value && value != '' && isNaN(value))
 	                    value = HtmlEncode(value);
