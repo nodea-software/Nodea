@@ -77,10 +77,10 @@ exports.launchApplication = async (app_name, db_app, sessionID, timeout) => {
 			process_server_per_app[app_name] = process_manager.launchChildProcess(sessionID, app_name, port);
 
 		let iframe_url = global_conf.protocol + '://' + global_conf.host + ":" + port;
-		if (global_conf.env == 'studio'){
-			iframe_url = 'https://' + global_conf.sub_domain + '-' + app_name + "." + global_conf.dns;
+		if (global_conf.env == 'studio') {
+			iframe_url = 'https://' + global_conf.sub_domain + '-' + app_name.substring(2) + "." + global_conf.dns;
 			// Checking .toml file existence, creating it if necessary
-			studio_manager.createApplicationDns(app_name, db_app.id)
+			studio_manager.createApplicationDns(app_name.substring(2), db_app.id)
 		}
 
 		const initial_timestamp = new Date().getTime();

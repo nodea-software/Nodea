@@ -24,7 +24,7 @@ exports.setChildUrl = setChildUrl;
 
 exports.process_server_per_app = [];
 
-exports.launchChildProcess = function(sessionID, appName, port) {
+exports.launchChildProcess = function (sessionID, appName, port) {
 
 	setDefaultChildUrl(sessionID, appName);
 
