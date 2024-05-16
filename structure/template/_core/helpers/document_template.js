@@ -4,6 +4,8 @@ const dust = require('dustjs-linkedin');
 const puppeteer = require('puppeteer');
 const JSZip = require('jszip');
 const decompress = require('decompress');
+const Docxtemplater = require('docxtemplater');
+const expressionParser = require('docxtemplater/expressions.js');
 
 function extractFieldsWithContext(string) {
 	// eslint-disable-next-line no-control-regex
