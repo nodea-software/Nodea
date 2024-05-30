@@ -735,17 +735,19 @@ let NodeaTable = (function() {
 
 						// Related to many value
 						if (value && typeof value === 'object') {
-							const usings = column.using.split(",");
-							const manyValue = [];
-							for (const currentValue of value) {
-								const usingArray = [];
-								for (const using of usings) {
-									usingArray.push(currentValue[using]);
-								}
-								manyValue.push(usingArray.join(' '));
-							}
-							value = manyValue.join(' - ');
-						}
+                            if(column.type != 'picture') {
+                                const usings = column.using.split(",");
+                                const manyValue = [];
+                                for (const currentValue of value) {
+                                    const usingArray = [];
+                                    for (const using of usings) {
+                                        usingArray.push(currentValue[using]);
+                                    }
+                                    manyValue.push(usingArray.join(' '));
+                                }
+                                value = manyValue.join(' - ');
+                            }
+                        }
 		            }
 	                if(columnDef.htmlencode === true && value && value != '' && isNaN(value))
 	                    value = HtmlEncode(value);
