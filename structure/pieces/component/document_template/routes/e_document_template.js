@@ -115,7 +115,7 @@ class DocumentTemplate extends CoreDocumentTemplate {
 						f_entity: data.req.body.attrData.entity,
 					}
 
-					data.query.group = data.query.attributes
+					data.query.raw = false;
 
 					data.query.include = [{
 						attributes: ['id'],
@@ -124,7 +124,6 @@ class DocumentTemplate extends CoreDocumentTemplate {
 						where: {
 							id: group_ids
 						},
-						required: false
 					}, {
 						attributes: ['id'],
 						model: models.E_role,
@@ -132,7 +131,6 @@ class DocumentTemplate extends CoreDocumentTemplate {
 						where: {
 							id: role_ids
 						},
-						required: false
 					}];
 				},
 				// beforeResponse: async (data) => {}
