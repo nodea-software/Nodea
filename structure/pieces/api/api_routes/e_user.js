@@ -36,7 +36,7 @@ class ApiE_user extends ApiEntity {
 			},
 			create:{
 				beforeCreate: data => {
-					for (const field of data.createObject || {})
+					for (const field in data.createObject || {})
 						if (!publicAttributes.includes(field))
 							delete data.createObject[field];
 				},
@@ -45,7 +45,7 @@ class ApiE_user extends ApiEntity {
 			},
 			update:{
 				beforeUpdate: data => {
-					for (const field of data.updateObject || {})
+					for (const field in data.updateObject || {})
 						if (!publicAttributes.includes(field))
 							delete data.updateObject[field];
 				},
