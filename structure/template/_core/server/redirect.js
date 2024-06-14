@@ -1,3 +1,5 @@
+const language = require('@core/helpers/language');
+
 module.exports = (req, res, next) => {
 	const redirect = res.redirect;
 	res.redirect = (view, ajaxData = {}) => {
@@ -8,7 +10,7 @@ module.exports = (req, res, next) => {
 			for (let i = 0; i < req.session.toastr.length; i++) {
 				toast = req.session.toastr[i];
 				if (toast.message && toast.message == "administration.access_settings.no_access_role")
-					return res.status(403).send({refresh: true});
+					return res.status(403).send(language(req.session.lang_user).__("administration.access_settings.no_access_role"));
 			}
 			return res.status(200).send(ajaxData);
 		}
