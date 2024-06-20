@@ -15,6 +15,7 @@
 		"clean_bundle": "rm -r ./structure/template/_core/public/bundle;rm -r ./structure/template/_core/views/bundle"
 	},
 	"dependencies": {
+		"angular-expressions": "^1.2.1",
 		"@babel/runtime": "^7.12.13",
 		"ansi-to-html": "^0.7.2",
 		"apidoc": "^0.52.0",
