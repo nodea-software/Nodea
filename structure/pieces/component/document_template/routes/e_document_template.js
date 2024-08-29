@@ -107,35 +107,34 @@ class DocumentTemplate extends CoreDocumentTemplate {
 					const group_ids = data.req.user.r_group.map(x => x.id);
 					const role_ids = data.req.user.r_role.map(x => x.id);
 
-					data.query.limit = null;
 					data.query.offset = null;
+					data.query.limit = null;
 
 					data.query.where = {
-						[models.$or]: [{
-							...data.query.where,
-							f_entity: data.req.body.attrData.entity,
-							'$r_group.id$': {
-								[models.$in]: group_ids
-							}
-						}, {
-							...data.query.where,
-							f_entity: data.req.body.attrData.entity,
-							'$r_role.id$': {
-								[models.$in]: role_ids
-							}
-						}]
+						...data.query.where,
+						f_entity: data.req.body.attrData.entity,
 					}
+
+					data.query.raw = false;
 
 					data.query.include = [{
 						attributes: ['id'],
 						model: models.E_group,
-						as: 'r_group'
+						as: 'r_group',
+						where: {
+							id: group_ids
+						},
+						required: false
 					}, {
 						attributes: ['id'],
 						model: models.E_role,
-						as: 'r_role'
+						as: 'r_role',
+						where: {
+							id: role_ids
+						},
+						required: false
 					}];
-				}
+				},
 				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
