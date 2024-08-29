@@ -124,6 +124,7 @@ class DocumentTemplate extends CoreDocumentTemplate {
 						where: {
 							id: group_ids
 						},
+						required: false
 					}, {
 						attributes: ['id'],
 						model: models.E_role,
@@ -131,6 +132,7 @@ class DocumentTemplate extends CoreDocumentTemplate {
 						where: {
 							id: role_ids
 						},
+						required: false
 					}];
 				},
 				// beforeResponse: async (data) => {}
