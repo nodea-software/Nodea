@@ -3,11 +3,11 @@ const options = require('@app/models/options/e_user');
 const middlewares = require('@core/helpers/middlewares');
 const ApiEntity = require('@core/abstract_routes/api_entity');
 
-// TODO: Change publicAttributes to privateAttributes
-const publicAttributes = [];
+// Define private attributes that will not be accessed by API
+const privateAttributes = [];
 for (const attribute in attributes) {
 	if (attribute != 'f_password' && attribute != 'f_enabled' && attribute != 'f_token_password_reset')
-		publicAttributes.push(attribute);
+		privateAttributes.push(attribute);
 }
 
 class ApiE_user extends ApiEntity {
@@ -20,13 +20,13 @@ class ApiE_user extends ApiEntity {
 		return {
 			find:{
 				beforeFind: data => {
-					data.query.attributes = publicAttributes;
+					data.query.attributes = privateAttributes;
 				},
 				// afterFind: async data => {},
 			},
 			findOne:{
 				beforeFind: data => {
-					data.query.attributes = publicAttributes;
+					data.query.attributes = privateAttributes;
 				},
 				// afterFind: async data => {},
 			},
@@ -36,8 +36,8 @@ class ApiE_user extends ApiEntity {
 			},
 			create:{
 				beforeCreate: data => {
-					for (const field of data.createObject || {})
-						if (!publicAttributes.includes(field))
+					for (const field in data.createObject || {})
+						if (!privateAttributes.includes(field))
 							delete data.createObject[field];
 				},
 				// beforeAssociations: async data => {},
@@ -45,8 +45,8 @@ class ApiE_user extends ApiEntity {
 			},
 			update:{
 				beforeUpdate: data => {
-					for (const field of data.updateObject || {})
-						if (!publicAttributes.includes(field))
+					for (const field in data.updateObject || {})
+						if (!privateAttributes.includes(field))
 							delete data.updateObject[field];
 				},
 				// beforeAssociations: async data => {},
