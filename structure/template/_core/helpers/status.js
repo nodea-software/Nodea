@@ -108,6 +108,34 @@ module.exports = {
 		});
 		await models[historyModel].create(createObject, {user: optionnals.user, transaction: optionnals.transaction});
 	},
+	setStatusAndActions: async function (entityName, entityId, statusName, statusId, optionnals = {}, customValues = {}) {
+		const self = this;
+		// execute actions
+		const actions = await self.getActions(statusId);
+		await self.executeActions(`E_${entityName.substring(2)}`, entityId, actions, optionnals.transaction, customValues)
+		// set status
+		const historyModel = 'E_history_' + entityName.substring(2) + '_' + statusName;
+		const statusFk = "fk_id_status_" + statusName;
+		const userID = optionnals.user ? optionnals.user.id : null;
+		const reasonID = optionnals.reasonID ? parseInt(optionnals.reasonID) : null;
+		// Create history record for this status field
+		const createObject = {
+			f_comment: optionnals.comment || "",
+			fk_id_reason_reason: reasonID,
+			fk_id_user_modified_by: userID
+		};
+
+		createObject[statusFk] = statusId;
+		createObject["fk_id_" + entityName.substring(2) + "_history_" + statusName] = entityId;
+
+		await models[entityName.capitalizeFirstLetter()].update({
+			[statusFk]: statusId
+		}, {
+			where: {id: entityId},
+			transaction: optionnals.transaction
+		});
+		await models[historyModel].create(createObject, {user: optionnals.user, transaction: optionnals.transaction})
+	},
 	setInitialStatus: async function (entity, modelName, attributes, optionnals = {}) {
 		const self = this;
 
