@@ -1,18 +1,18 @@
-const modelBuilder = require('@core/helpers/model_builder');
-const defaultHooks = require('@core/models/hooks');
+const modelBuilder = require("@core/helpers/model_builder");
+const defaultHooks = require("@core/models/hooks");
 
 class CoreModel {
 	constructor(modelName, tableName, attributes, relations) {
 		this.modelName = modelName;
 		this.attributes = attributes;
 		this.relations = relations;
-		this.hooks = defaultHooks;
+		this.hooks = { ...defaultHooks };
 
 		this.data = {
 			tableName: tableName,
 			timestamps: true,
 			instanceMethods: {},
-			classMethods: {}
+			classMethods: {},
 		};
 	}
 
@@ -33,7 +33,6 @@ class CoreModel {
 		sequelizeModel.getAttributes = () => this.attributes;
 		sequelizeModel.getRelations = () => this.relations;
 	}
-
 }
 
 module.exports = CoreModel;
