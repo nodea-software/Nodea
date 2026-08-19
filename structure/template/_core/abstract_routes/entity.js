@@ -1432,6 +1432,7 @@ class CoreEntity extends Route {
 				await data.deleteObject.destroy({
 					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
 					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
+					user: data.req.user,
 					transaction: data.transaction,
 				});
 
