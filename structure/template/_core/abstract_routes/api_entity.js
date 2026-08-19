@@ -232,7 +232,7 @@ class ApiEntity extends ApiRoute {
 
 				if ((await this.getHook("destroy", "beforeDestroy", data)) === false) return;
 
-				await models[this.E_entity].destroy({ where: { id: data.id } }, { transaction: data.transaction });
+				await models[this.E_entity].destroy({ where: { id: data.id } }, { user: data.req.user, transaction: data.transaction });
 
 				if ((await this.getHook("destroy", "afterDestroy", data)) === false) return;
 
