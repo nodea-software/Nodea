@@ -1,11 +1,11 @@
-const Route = require('@core/abstract_routes/route');
-const enums_radios = require('@core/utils/enum_radio');
+const Route = require("@core/abstract_routes/route");
+const enums_radios = require("@core/utils/enum_radio");
 
 // Select2 pagination size
 const SELECT_PAGE_SIZE = 10;
 
 // Models
-const models = require('@app/models/');
+const models = require("@app/models/");
 
 /**
  * An object providing association function and its parameter.
@@ -37,7 +37,6 @@ const models = require('@app/models/');
  */
 
 class CoreEntity extends Route {
-
 	/**
 	 * @constructor
 	 * @param {string} e_entity - The name of the entity.
@@ -48,26 +47,25 @@ class CoreEntity extends Route {
 	 */
 	constructor(e_entity, attributes, options, helpers, additionalRoutes = []) {
 		const registeredRoutes = [
-			'list',
-			'datalist',
-			'subdatalist',
-			'show',
-			'create_form',
-			'create',
-			'update_form',
-			'update',
-			'loadtab',
-			'set_status',
-			'search',
-			'fieldset_remove',
-			'fieldset_add',
-			'destroy',
-			...additionalRoutes
+			"list",
+			"datalist",
+			"subdatalist",
+			"show",
+			"create_form",
+			"create",
+			"update_form",
+			"update",
+			"loadtab",
+			"set_status",
+			"search",
+			"fieldset_remove",
+			"fieldset_add",
+			"destroy",
+			...additionalRoutes,
 		];
 		super(registeredRoutes);
 
-		if (!e_entity)
-			throw new Error("No entity name specified");
+		if (!e_entity) throw new Error("No entity name specified");
 
 		this.entity = e_entity.substring(2);
 		this.e_entity = e_entity;
@@ -80,17 +78,14 @@ class CoreEntity extends Route {
 		this.fileFields = [];
 		for (const fieldName in this.attributes) {
 			const field = this.attributes[fieldName];
-			if (['file', 'picture'].includes(field.nodeaType))
+			if (["file", "picture"].includes(field.nodeaType))
 				this.fileFields.push({
 					name: fieldName,
-					maxCount: field.maxCount || 1
+					maxCount: field.maxCount || 1,
 				});
 		}
 
-		this.defaultMiddlewares.push(
-			helpers.middlewares.isLoggedIn,
-			helpers.middlewares.entityAccess(this.entity)
-		);
+		this.defaultMiddlewares.push(helpers.middlewares.isLoggedIn, helpers.middlewares.entityAccess(this.entity));
 	}
 
 	//
@@ -103,8 +98,8 @@ class CoreEntity extends Route {
 	 */
 	list() {
 		return {
-			method: 'get',
-			path: '/list',
+			method: "get",
+			path: "/list",
 			middlewares: this.middlewares.list,
 			func: async (data) => {
 				data.tableUrl = `/${this.entity}/datalist`;
@@ -121,8 +116,7 @@ class CoreEntity extends Route {
 				 * @param {string} data.tableUrl - Url for the ajax datalist
 				 * @param {string} data.renderFile - Dust file to render
 				 */
-				if (await this.getHook('list', 'start', data) === false)
-					return;
+				if ((await this.getHook("list", "start", data)) === false) return;
 
 				/**
 				 * Called before rendering
@@ -135,12 +129,11 @@ class CoreEntity extends Route {
 				 * @param {string} data.tableUrl - Url for the ajax datalist
 				 * @param {string} data.renderFile - Dust file to render
 				 */
-				if (await this.getHook('list', 'beforeRender', data) === false)
-					return;
+				if ((await this.getHook("list", "beforeRender", data)) === false) return;
 
-				data.res.success(_ => data.res.render(data.renderFile, data));
-			}
-		}
+				data.res.success((_) => data.res.render(data.renderFile, data));
+			},
+		};
 	}
 
 	/**
@@ -149,8 +142,8 @@ class CoreEntity extends Route {
 	 */
 	datalist() {
 		return {
-			method: 'post',
-			path: '/datalist',
+			method: "post",
+			path: "/datalist",
 			middlewares: this.middlewares.datalist,
 			func: async (data) => {
 				data.speInclude = null;
@@ -169,8 +162,7 @@ class CoreEntity extends Route {
 				 * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
 				 */
-				if (await this.getHook('datalist', 'start', data) === false)
-					return;
+				if ((await this.getHook("datalist", "start", data)) === false) return;
 
 				/**
 				 * Called before datatable query build and execution
@@ -184,8 +176,7 @@ class CoreEntity extends Route {
 				 * @param {string[]} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
 				 */
-				if (await this.getHook('datalist', 'beforeDatatableQuery', data) === false)
-					return;
+				if ((await this.getHook("datalist", "beforeDatatableQuery", data)) === false) return;
 
 				data.rawData = await this.helpers.datatable(this.E_entity, data.tableInfo, data.speInclude, data.speWhere);
 
@@ -202,10 +193,15 @@ class CoreEntity extends Route {
 				 * @param {object} data.tableInfo - Table information from client
 				 * @param {object} data.rawData - Result of the datatable query as raw data
 				 */
-				if (await this.getHook('datalist', 'afterDatatableQuery', data) === false)
-					return;
+				if ((await this.getHook("datalist", "afterDatatableQuery", data)) === false) return;
 
-				data.preparedData = await this.helpers.entity.prepareDatalistResult(this.e_entity, this.attributes, this.options, data.rawData, data.req.session.lang_user)
+				data.preparedData = await this.helpers.entity.prepareDatalistResult(
+					this.e_entity,
+					this.attributes,
+					this.options,
+					data.rawData,
+					data.req.session.lang_user
+				);
 
 				/**
 				 * Called before json response
@@ -221,12 +217,11 @@ class CoreEntity extends Route {
 				 * @param {object} data.rawData - Result of the datatable query as raw data
 				 * @param {object} data.preparedData - Post processed data of datatable query results. This is the data sent as response
 				 */
-				if (await this.getHook('datalist', 'beforeResponse', data) === false)
-					return;
+				if ((await this.getHook("datalist", "beforeResponse", data)) === false) return;
 
-				data.res.success(_ => data.res.send(data.preparedData).end());
-			}
-		}
+				data.res.success((_) => data.res.send(data.preparedData).end());
+			},
+		};
 	}
 
 	/**
@@ -235,22 +230,21 @@ class CoreEntity extends Route {
 	 */
 	subdatalist() {
 		return {
-			method: 'post',
-			path: '/subdatalist',
+			method: "post",
+			path: "/subdatalist",
 			middlewares: this.middlewares.subdatalist,
 			func: async (data) => {
 				data.speWhere = [];
 				data.speInclude = [];
 				data.tableInfo = {
 					...data.req.body,
-					...data.req.query
+					...data.req.query,
 				};
 
 				// Verify is has_many is not actually a belongsToMany tabs, if true then we need to handle pagination differently
-				if(data.tableInfo.paginate === 'true')
-					data.tableInfo.paginate = !this.options.find(x => x.as == data.tableInfo.subentityAlias).through;
-				else
-					data.tableInfo.paginate = false;
+				if (data.tableInfo.paginate === "true")
+					data.tableInfo.paginate = !this.options.find((x) => x.as == data.tableInfo.subentityAlias).through;
+				else data.tableInfo.paginate = false;
 
 				/**
 				 * Called at route start
@@ -264,8 +258,7 @@ class CoreEntity extends Route {
 				 * @param {string} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
 				 */
-				if (await this.getHook('subdatalist', 'start', data) === false)
-					return;
+				if ((await this.getHook("subdatalist", "start", data)) === false) return;
 
 				/**
 				 * Called before datatable query build and execution
@@ -279,8 +272,7 @@ class CoreEntity extends Route {
 				 * @param {string} [data.speInclude] - Specific elements to `include` to datatable's request. An array of field path compatible with `helpers.model_builder.getIncludeFromFields()` is expected
 				 * @param {object} data.tableInfo - Table information from client
 				 */
-				if (await this.getHook('subdatalist', 'beforeDatatableQuery', data) === false)
-					return;
+				if ((await this.getHook("subdatalist", "beforeDatatableQuery", data)) === false) return;
 
 				data.rawData = await this.helpers.datatable(this.E_entity, data.tableInfo, data.speInclude, data.speWhere, true);
 
@@ -297,14 +289,19 @@ class CoreEntity extends Route {
 				 * @param {object} data.tableInfo - Table information from client
 				 * @param {object} data.rawData - Result of the datatable query as raw data
 				 */
-				if (await this.getHook('subdatalist', 'afterDatatableQuery', data) === false)
-					return;
+				if ((await this.getHook("subdatalist", "afterDatatableQuery", data)) === false) return;
 
 				// eslint-disable-next-line global-require
-				const subEntityAttributes = require('@app/models/attributes/' + data.tableInfo.subentityModel.toLowerCase());
+				const subEntityAttributes = require("@app/models/attributes/" + data.tableInfo.subentityModel.toLowerCase());
 				// eslint-disable-next-line global-require
-				const subEntityRelations = require('@app/models/options/' + data.tableInfo.subentityModel.toLowerCase());
-				data.preparedData = await this.helpers.entity.prepareDatalistResult(data.tableInfo.subentityModel, subEntityAttributes, subEntityRelations, data.rawData, data.req.session.lang_user);
+				const subEntityRelations = require("@app/models/options/" + data.tableInfo.subentityModel.toLowerCase());
+				data.preparedData = await this.helpers.entity.prepareDatalistResult(
+					data.tableInfo.subentityModel,
+					subEntityAttributes,
+					subEntityRelations,
+					data.rawData,
+					data.req.session.lang_user
+				);
 
 				/**
 				 * Called before json response
@@ -320,12 +317,11 @@ class CoreEntity extends Route {
 				 * @param {object} data.rawData - Result of the datatable query as raw data
 				 * @param {object} data.preparedData - Post processed data of datatable query results. This is the data sent as response
 				 */
-				if (await this.getHook('subdatalist', 'beforeResponse', data) === false)
-					return;
+				if ((await this.getHook("subdatalist", "beforeResponse", data)) === false) return;
 
-				data.res.success(_ => data.res.send(data.preparedData).end());
-			}
-		}
+				data.res.success((_) => data.res.send(data.preparedData).end());
+			},
+		};
 	}
 
 	/**
@@ -334,16 +330,16 @@ class CoreEntity extends Route {
 	 */
 	show() {
 		return {
-			method: 'get',
-			path: '/show',
+			method: "get",
+			path: "/show",
 			middlewares: this.middlewares.show,
 			func: async (data) => {
 				data.idEntity = data.req.query.id;
 				data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
-				data.renderFile = this.e_entity + '/show';
+				data.renderFile = this.e_entity + "/show";
 				// TODO: Check if hideButton is still useful
 				/* If we arrive from an associated tab, hide the create and the list button */
-				data.hideButton = data.req.query.hideButton !== 'undefined';
+				data.hideButton = data.req.query.hideButton !== "undefined";
 
 				/**
 				 * Called at route start
@@ -358,8 +354,7 @@ class CoreEntity extends Route {
 				 * @param {number} data.idEntity - Id of entity to show
 				 * @param {boolean} data.hideButton - Wether to hide buttons or not
 				 */
-				if (await this.getHook('show', 'start', data) === false)
-					return;
+				if ((await this.getHook("show", "start", data)) === false) return;
 
 				/**
 				 * Called before querying data of entity to show
@@ -375,8 +370,7 @@ class CoreEntity extends Route {
 				 * @param {boolean} data.hideButton - Wether to hide buttons or not
 				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
-				if (await this.getHook('show', 'beforeEntityQuery', data) === false)
-					return;
+				if ((await this.getHook("show", "beforeEntityQuery", data)) === false) return;
 
 				// TODO: use data.entityData instead of data[this.e_entity] to normalize content of data object between entities
 				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
@@ -395,13 +389,14 @@ class CoreEntity extends Route {
 				 * @param {boolean} data.hideButton - Wether to hide buttons or not
 				 * @param {object} data."e_entity" - Entity row to show
 				 */
-				if (await this.getHook('show', 'afterEntityQuery', data) === false)
-					return;
+				if ((await this.getHook("show", "afterEntityQuery", data)) === false) return;
 
 				if (!data[this.e_entity])
-					return data.res.error(_ => data.res.render('common/404', {
-						message: 'Entity row not found'
-					}));
+					return data.res.error((_) =>
+						data.res.render("common/404", {
+							message: "Entity row not found",
+						})
+					);
 
 				await this.helpers.entity.getPicturesBuffers(data[this.e_entity], this.e_entity);
 				this.helpers.status.translate(data[this.e_entity], this.attributes, data.req.session.lang_user);
@@ -412,11 +407,11 @@ class CoreEntity extends Route {
 				await this.helpers.entity.getLoadOnStartData(data, this.options);
 
 				if (data.req.query.ajax) {
-					data.renderFile = this.helpers.entity.getOverlayFile(data.req.query.associationSource, data.req.query.associationAlias, 'show');
+					data.renderFile = this.helpers.entity.getOverlayFile(data.req.query.associationSource, data.req.query.associationAlias, "show");
 					data.subentity = this.entity;
 					data.e_subentity = this.e_entity;
 					data.entityData = data[this.e_entity].get({
-						plain: true
+						plain: true,
 					});
 				}
 
@@ -437,12 +432,11 @@ class CoreEntity extends Route {
 				 * @param {string} [data.subentity] - ajax request only - entity name without prefix
 				 * @param {string} [data.e_subentity] - ajax request only - entity name with prefix
 				 */
-				if (await this.getHook('show', 'beforeRender', data) === false)
-					return;
+				if ((await this.getHook("show", "beforeRender", data)) === false) return;
 
-				data.res.success(_ => data.res.render(data.renderFile, data));
-			}
-		}
+				data.res.success((_) => data.res.render(data.renderFile, data));
+			},
+		};
 	}
 
 	/**
@@ -451,11 +445,10 @@ class CoreEntity extends Route {
 	 */
 	create_form() {
 		return {
-			method: 'get',
-			path: '/create_form',
+			method: "get",
+			path: "/create_form",
 			middlewares: this.middlewares.create_form,
 			func: async (data) => {
-
 				data.enum_radio = enums_radios.translated(this.e_entity, data.req.session.lang_user, this.options);
 				data.renderFile = `${this.e_entity}/create`;
 
@@ -470,23 +463,22 @@ class CoreEntity extends Route {
 				 * @param {object} data.enum_radio - Entity enum fields translations
 				 * @param {string} data.renderFile - Dust file to render
 				 */
-				if (await this.getHook('create_form', 'start', data) === false)
-					return;
+				if ((await this.getHook("create_form", "start", data)) === false) return;
 
 				// Get association data that needed to be load directly here (to do so set loadOnStart param to true in options).
 				await this.helpers.entity.getLoadOnStartData(data, this.options);
 
-				if (typeof data.req.query.associationFlag !== 'undefined') {
+				if (typeof data.req.query.associationFlag !== "undefined") {
 					data.associationFlag = data.req.query.associationFlag;
 					data.associationSource = data.req.query.associationSource;
 					data.associationUrl = data.req.query.associationUrl;
 					data.associationForeignKey = data.req.query.associationForeignKey;
 					data.associationAlias = data.req.query.associationAlias;
 					if (data.req.query.ajax) {
-						data.renderFile = this.helpers.entity.getOverlayFile(data.associationSource, data.associationAlias, 'create_form');
+						data.renderFile = this.helpers.entity.getOverlayFile(data.associationSource, data.associationAlias, "create_form");
 						data.subentity = this.entity;
 						data.action = `/${this.entity}/create`;
-						data.method = 'post';
+						data.method = "post";
 						data.fieldsFile = `${this.e_entity}/create_fields`;
 					}
 
@@ -510,8 +502,7 @@ class CoreEntity extends Route {
 					 * @param {string} data.method=post - ajax request only - Method of create form
 					 * @param {string} data.fieldsFile=this.e_entity/create_fields - ajax request only - Fields file to insert into the form
 					 */
-					if (await this.getHook('create_form', 'ifFromAssociation', data) === false)
-						return;
+					if ((await this.getHook("create_form", "ifFromAssociation", data)) === false) return;
 				}
 
 				/**
@@ -534,12 +525,11 @@ class CoreEntity extends Route {
 				 * @param {string} data.method=post - ajax request only - Method of create form
 				 * @param {string} data.fieldsFile=this.e_entity/create_fields - ajax request only - Fields file to insert into the form
 				 */
-				if (await this.getHook('create_form', 'beforeRender', data) === false)
-					return;
+				if ((await this.getHook("create_form", "beforeRender", data)) === false) return;
 
-				data.res.success(_ => data.res.render(data.renderFile, data));
-			}
-		}
+				data.res.success((_) => data.res.render(data.renderFile, data));
+			},
+		};
 	}
 
 	/**
@@ -548,8 +538,8 @@ class CoreEntity extends Route {
 	 */
 	create() {
 		return {
-			method: 'post',
-			path: '/create',
+			method: "post",
+			path: "/create",
 			middlewares: this.middlewares.create,
 			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
@@ -563,10 +553,15 @@ class CoreEntity extends Route {
 				 * @param {object} data.res - Response - See expressjs definition
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
 				 */
-				if (await this.getHook('create', 'start', data) === false)
-					return;
+				if ((await this.getHook("create", "start", data)) === false) return;
 
-				const [createObject, createAssociations, createFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
+				const [createObject, createAssociations, createFiles] = this.helpers.model_builder.parseBody(
+					this.e_entity,
+					this.attributes,
+					this.options,
+					data.req.body,
+					data.req.files
+				);
 				data.createObject = createObject;
 				data.createAssociations = createAssociations;
 				data.files = createFiles;
@@ -583,46 +578,45 @@ class CoreEntity extends Route {
 				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 				 */
-				if (await this.getHook('create', 'beforeCreateQuery', data) === false)
-					return;
+				if ((await this.getHook("create", "beforeCreateQuery", data)) === false) return;
 
 				data.createdRow = await models[this.E_entity].create(data.createObject, {
 					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
 					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
 
-				data.redirect = '/' + this.entity + '/show?id=' + data.createdRow.id;
+				data.redirect = "/" + this.entity + "/show?id=" + data.createdRow.id;
 				data.req.session.toastr.push({
-					message: 'message.create.success',
-					level: "success"
+					message: "message.create.success",
+					level: "success",
 				});
 
 				// If created from an association, register created row on source entity
-				if (typeof data.req.query.associationFlag !== 'undefined' && data.req.query.associationFlag !== "") {
-					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
+				if (typeof data.req.query.associationFlag !== "undefined" && data.req.query.associationFlag !== "") {
+					data.redirect =
+						"/" + data.req.query.associationUrl + "/show?id=" + data.req.query.associationFlag + "#" + data.req.query.associationAlias;
 
 					const association = await models[data.req.query.associationSource.capitalizeFirstLetter()].findOne({
 						where: {
-							id: data.req.query.associationFlag
-						}
+							id: data.req.query.associationFlag,
+						},
 					});
 
-					if (!association)
-						throw new Error("Association not found.");
+					if (!association) throw new Error("Association not found.");
 
 					const modelName = data.req.query.associationAlias.capitalizeFirstLetter();
-					if (typeof association['add' + modelName] !== 'undefined') {
-						await association['add' + modelName](data.createdRow.id, {
-							transaction: data.transaction
+					if (typeof association["add" + modelName] !== "undefined") {
+						await association["add" + modelName](data.createdRow.id, {
+							transaction: data.transaction,
 						});
 					} else {
 						const obj = {};
 						obj[data.req.query.associationForeignKey] = data.createdRow.id;
 						await association.update(obj, {
 							user: data.req.user,
-							transaction: data.transaction
+							transaction: data.transaction,
 						});
 					}
 				}
@@ -631,16 +625,18 @@ class CoreEntity extends Route {
 				// These functions will be executed on route success before transaction commit
 				for (const file of data.files)
 					if (!file.func && file.buffer)
-						file.func = async file => {
-							if (file.isPicture)
-								await this.helpers.file.writePicture(file.finalPath, file.buffer);
-							else
-								await this.helpers.file.write(file.finalPath, file.buffer);
-						}
+						file.func = async (file) => {
+							if (file.isPicture) await this.helpers.file.writePicture(file.finalPath, file.buffer);
+							else await this.helpers.file.write(file.finalPath, file.buffer);
+						};
 				// Add associations
-				await Promise.all(data.createAssociations.map(asso => data.createdRow[asso.func](asso.value, {
-					transaction: data.transaction
-				})));
+				await Promise.all(
+					data.createAssociations.map((asso) =>
+						data.createdRow[asso.func](asso.value, {
+							transaction: data.transaction,
+						})
+					)
+				);
 
 				await this.helpers.address.createAddress(data.req, data.createdRow, this.options, data.transaction);
 
@@ -648,7 +644,7 @@ class CoreEntity extends Route {
 				data.setInitialStatusOptions = {
 					transaction: data.transaction,
 					user: data.req.user,
-					noActions: false
+					noActions: false,
 				};
 				/**
 				 * Called before redirection to data.redirect
@@ -663,12 +659,11 @@ class CoreEntity extends Route {
 				 * @param {CoreEntity.associationObject[]} data.createAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 				 */
-				if (await this.getHook('create', 'beforeInitalStatus', data) === false)
-					return;
-				const statusToastrs = await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, data.setInitialStatusOptions) || [];
+				if ((await this.getHook("create", "beforeInitalStatus", data)) === false) return;
+				const statusToastrs =
+					(await this.helpers.status.setInitialStatus(data.createdRow, this.E_entity, this.attributes, data.setInitialStatusOptions)) || [];
 
-				if (statusToastrs.length)
-					data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];
+				if (statusToastrs.length) data.req.session.toastr = [...data.req.session.toastr, ...statusToastrs];
 
 				/**
 				 * Called before redirection to data.redirect
@@ -684,11 +679,10 @@ class CoreEntity extends Route {
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 				 * @param {object} data.ajaxData - Ajax data to send at response
 				 */
-				if (await this.getHook('create', 'beforeRedirect', data) === false)
-					return;
+				if ((await this.getHook("create", "beforeRedirect", data)) === false) return;
 
-				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
-			}
+				data.res.success((_) => data.res.redirect(data.redirect, data.ajaxData));
+			},
 		};
 	}
 
@@ -698,8 +692,8 @@ class CoreEntity extends Route {
 	 */
 	update_form() {
 		return {
-			method: 'get',
-			path: '/update_form',
+			method: "get",
+			path: "/update_form",
 			middlewares: this.middlewares.update_form,
 			func: async (data) => {
 				data.idEntity = data.req.query.id;
@@ -719,18 +713,17 @@ class CoreEntity extends Route {
 				 * @param {string} data.renderFile - Dust file to render
 				 * @param {array} data.customInclude - includes models for optimizedFindOne query
 				 */
-				if (await this.getHook('update_form', 'start', data) === false)
-					return;
+				if ((await this.getHook("update_form", "start", data)) === false) return;
 
 				data[this.e_entity] = await this.helpers.entity.optimizedFindOne(this.E_entity, data.idEntity, this.options, data.customInclude);
 				if (!data[this.e_entity])
-					return data.res.error(_ => {
+					return data.res.error((_) => {
 						data.req.session.toastr.push({
-							level: 'error',
-							message: 'error.404.title'
+							level: "error",
+							message: "error.404.title",
 						});
-						data.res.render('common/404', {
-							message: 'Entity row not found'
+						data.res.render("common/404", {
+							message: "Entity row not found",
 						});
 					});
 
@@ -747,28 +740,26 @@ class CoreEntity extends Route {
 				 * @param {string} data.renderFile - Dust file to render
 				 * @param {object} data."e_entity" - Entity row to update
 				 */
-				if (await this.getHook('update_form', 'afterEntityQuery', data) === false)
-					return;
+				if ((await this.getHook("update_form", "afterEntityQuery", data)) === false) return;
 
-				if (typeof data.req.query.associationFlag !== 'undefined') {
+				if (typeof data.req.query.associationFlag !== "undefined") {
 					data.associationFlag = data.req.query.associationFlag;
 					data.associationSource = data.req.query.associationSource;
 					data.associationForeignKey = data.req.query.associationForeignKey;
 					data.associationAlias = data.req.query.associationAlias;
 					data.associationUrl = data.req.query.associationUrl;
 					if (data.req.query.ajax) {
-						data.renderFile = this.helpers.entity.getOverlayFile(data.associationSource, data.associationAlias, 'update_form');
-						data.tabType = 'update_form';
+						data.renderFile = this.helpers.entity.getOverlayFile(data.associationSource, data.associationAlias, "update_form");
+						data.tabType = "update_form";
 						data.subentity = this.entity;
 						data.e_subentity = this.e_entity;
 						data.action = `/${this.entity}/update`;
-						data.method = 'post';
+						data.method = "post";
 						data.entityData = data[this.e_entity].get({
-							plain: true
+							plain: true,
 						});
 					}
-					if (await this.getHook('update_form', 'ifFromAssociation', data) === false)
-						return;
+					if ((await this.getHook("update_form", "ifFromAssociation", data)) === false) return;
 				}
 
 				data[this.e_entity].dataValues.enum_radio = data.enum_radio;
@@ -794,12 +785,11 @@ class CoreEntity extends Route {
 				 * @param {string} data.renderFile - Dust file to render
 				 * @param {object} data."e_entity" - Entity row to update
 				 */
-				if (await this.getHook('update_form', 'beforeRender', data) === false)
-					return;
+				if ((await this.getHook("update_form", "beforeRender", data)) === false) return;
 
-				data.res.success(_ => data.res.render(data.renderFile, data));
-			}
-		}
+				data.res.success((_) => data.res.render(data.renderFile, data));
+			},
+		};
 	}
 
 	/**
@@ -808,8 +798,8 @@ class CoreEntity extends Route {
 	 */
 	update() {
 		return {
-			method: 'post',
-			path: '/update',
+			method: "post",
+			path: "/update",
 			middlewares: this.middlewares.update,
 			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
@@ -825,57 +815,58 @@ class CoreEntity extends Route {
 				 * @param {object} data.transaction - Database transaction. Use this transaction in your hooks. Commit and rollback are handled through res.success() / res.error()
 				 * @param {number} data.idEntity - Id of entity to update
 				 */
-				if (await this.getHook('update', 'start', data) === false)
-					return;
+				if ((await this.getHook("update", "start", data)) === false) return;
 
-				const [updateObject, updateAssociations, updateFiles] = this.helpers.model_builder.parseBody(this.e_entity, this.attributes, this.options, data.req.body, data.req.files);
+				const [updateObject, updateAssociations, updateFiles] = this.helpers.model_builder.parseBody(
+					this.e_entity,
+					this.attributes,
+					this.options,
+					data.req.body,
+					data.req.files
+				);
 				data.updateObject = updateObject;
 				data.updateAssociations = updateAssociations;
 				data.files = data.req.files = updateFiles;
 
 				data.updateRow = await models[this.E_entity].findOne({
 					where: {
-						id: data.idEntity
+						id: data.idEntity,
 					},
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
 
 				if (!data.updateRow)
-					return data.res.error(_ => data.res.render('common/404', {
-						message: 'Entity row not found'
-					}));
+					return data.res.error((_) =>
+						data.res.render("common/404", {
+							message: "Entity row not found",
+						})
+					);
 
 				for (const file of data.files || []) {
 					// Store old path of modified file before entity update
-					if (file.isModified && data.updateRow[file.attribute])
-						file.previousPath = data.updateRow[file.attribute];
-					file.func = async file => {
+					if (file.isModified && data.updateRow[file.attribute]) file.previousPath = data.updateRow[file.attribute];
+					file.func = async (file) => {
 						// New file
 						if (file.buffer) {
-							if (file.isPicture)
-								await this.helpers.file.writePicture(file.finalPath, file.buffer);
-							else
-								await this.helpers.file.write(file.finalPath, file.buffer);
+							if (file.isPicture) await this.helpers.file.writePicture(file.finalPath, file.buffer);
+							else await this.helpers.file.write(file.finalPath, file.buffer);
 						}
 						// Replaced or removed file
 						if (file.previousPath) {
 							try {
-								if (file.isPicture)
-									await this.helpers.file.removePicture(file.previousPath);
-								else
-									await this.helpers.file.remove(file.previousPath);
+								if (file.isPicture) await this.helpers.file.removePicture(file.previousPath);
+								else await this.helpers.file.remove(file.previousPath);
 							} catch (err) {
 								console.error(err);
 							}
 						}
-					}
+					};
 				}
 
 				await this.helpers.address.updateAddress(data.req, data.updateRow, this.options, data.transaction);
 
 				data.updateObject.version = data.updateRow.version;
-				if (typeof data.updateRow.version === 'undefined' || !data.updateRow.version)
-					data.updateObject.version = 0;
+				if (typeof data.updateRow.version === "undefined" || !data.updateRow.version) data.updateObject.version = 0;
 				data.updateObject.version++;
 
 				/**
@@ -890,28 +881,32 @@ class CoreEntity extends Route {
 				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 				 */
-				if (await this.getHook('update', 'beforeUpdate', data) === false)
-					return;
+				if ((await this.getHook("update", "beforeUpdate", data)) === false) return;
 
 				await data.updateRow.update(data.updateObject, {
 					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
 					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
 					user: data.req.user,
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
 
 				// Add associations
-				await Promise.all(data.updateAssociations.map(asso => data.updateRow[asso.func](asso.value, {
-					transaction: data.transaction
-				})));
+				await Promise.all(
+					data.updateAssociations.map((asso) =>
+						data.updateRow[asso.func](asso.value, {
+							transaction: data.transaction,
+						})
+					)
+				);
 
-				data.redirect = '/' + this.entity + '/show?id=' + data.idEntity;
-				if (typeof data.req.query.associationFlag !== 'undefined')
-					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
+				data.redirect = "/" + this.entity + "/show?id=" + data.idEntity;
+				if (typeof data.req.query.associationFlag !== "undefined")
+					data.redirect =
+						"/" + data.req.query.associationUrl + "/show?id=" + data.req.query.associationFlag + "#" + data.req.query.associationAlias;
 
 				data.req.session.toastr.push({
-					message: 'message.update.success',
-					level: "success"
+					message: "message.update.success",
+					level: "success",
 				});
 
 				/**
@@ -927,13 +922,12 @@ class CoreEntity extends Route {
 				 * @param {CoreEntity.associationObject[]} data.updateAssociations - Associations array
 				 * @param {CoreEntity.fileObject[]} data.files - Array of files parsed from body
 				 * @param {object} data.ajaxData - Ajax data to send at response
-				*/
-				if (await this.getHook('update', 'beforeRedirect', data) === false)
-					return;
+				 */
+				if ((await this.getHook("update", "beforeRedirect", data)) === false) return;
 
-				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
-			}
-		}
+				data.res.success((_) => data.res.redirect(data.redirect, data.ajaxData));
+			},
+		};
 	}
 
 	/**
@@ -942,8 +936,8 @@ class CoreEntity extends Route {
 	 */
 	loadtab() {
 		return {
-			method: 'get',
-			path: '/loadtab/:id/:alias',
+			method: "get",
+			path: "/loadtab/:id/:alias",
 			middlewares: this.middlewares.loadtab,
 			func: async (data) => {
 				data.alias = data.req.params.alias;
@@ -962,8 +956,7 @@ class CoreEntity extends Route {
 				 * @param {string} data.alias - Alias of relation between source entity and tab entity
 				 * @param {boolean} data.isAllowed=false - Boolean to block tab loading. Set it to true to skip default verifications
 				 */
-				if (await this.getHook('loadtab', 'start', data) === false)
-					return;
+				if ((await this.getHook("loadtab", "start", data)) === false) return;
 
 				// Find tab option
 				for (let i = 0; i < this.options.length; i++)
@@ -971,8 +964,7 @@ class CoreEntity extends Route {
 						data.option = this.options[i];
 						break;
 					}
-				if (!data.option)
-					return data.res.error(_ => data.res.status(404).end());
+				if (!data.option) return data.res.error((_) => data.res.status(404).end());
 				data.renderFile = `${__appPath}/views/${this.e_entity}/${data.option.as}/tab`;
 
 				/**
@@ -987,12 +979,11 @@ class CoreEntity extends Route {
 				 * @param {string} data.alias - Alias of relation between source entity and tab entity
 				 * @param {boolean} data.isAllowed=false - Boolean to block tab loading. Set it to true to skip default access rights verifications
 				 */
-				if (await this.getHook('loadtab', 'beforeValidityCheck', data) === false)
-					return;
+				if ((await this.getHook("loadtab", "beforeValidityCheck", data)) === false) return;
 
 				// Check access rights to subentity
 				if (!data.isAllowed && !this.helpers.access.entityAccess(data.req.user.r_group, data.option.target.substring(2)))
-					return data.res.error(_ => data.res.status(403).end());
+					return data.res.error((_) => data.res.status(403).end());
 				data.isAllowed = true;
 
 				/**
@@ -1007,18 +998,19 @@ class CoreEntity extends Route {
 				 * @param {string} data.alias - Alias of relation between source entity and tab entity
 				 * @param {boolean} data.isAllowed - Now true because we're after validity check
 				 */
-				if (await this.getHook('loadtab', 'afterValidityCheck', data) === false)
-					return;
+				if ((await this.getHook("loadtab", "afterValidityCheck", data)) === false) return;
 
-				if (typeof data.req.query.associationFlag !== 'undefined') {
+				if (typeof data.req.query.associationFlag !== "undefined") {
 					const association = {
 						associationFlag: data.req.query.associationFlag,
 						associationSource: data.req.query.associationSource,
 						associationForeignKey: data.req.query.associationForeignKey,
 						associationAlias: data.req.query.associationAlias,
-						associationUrl: data.req.query.associationUrl
-					}
-					data.associationHref = Object.entries(association).map(asso => `${asso[0]}=${asso[1]}`).join('&');
+						associationUrl: data.req.query.associationUrl,
+					};
+					data.associationHref = Object.entries(association)
+						.map((asso) => `${asso[0]}=${asso[1]}`)
+						.join("&");
 				}
 
 				data.E_entity = this.E_entity;
@@ -1042,11 +1034,9 @@ class CoreEntity extends Route {
 				 * @param {string} data.entity - Entity name
 				 * @param {object} [data.dustData] - Data provided to rendered data.renderFile. If data.dustData as no value, tab's default value will be loaded using `helpers.entity.getTabData()`. Set your data to avoid execution of default.
 				 */
-				if (await this.getHook('loadtab', 'beforeDataQuery', data) === false)
-					return;
+				if ((await this.getHook("loadtab", "beforeDataQuery", data)) === false) return;
 
-				if (!data.dustData)
-					data.dustData = await this.helpers.entity.getTabData(data);
+				if (!data.dustData) data.dustData = await this.helpers.entity.getTabData(data);
 
 				/**
 				 * Called before rendering data.renderFile
@@ -1064,12 +1054,11 @@ class CoreEntity extends Route {
 				 * @param {string} data.entity - Entity name
 				 * @param {object} [data.dustData] - Data provided to rendered data.renderFile.
 				 */
-				if (await this.getHook('loadtab', 'beforeRender', data) === false)
-					return;
+				if ((await this.getHook("loadtab", "beforeRender", data)) === false) return;
 
-				data.res.success(_ => data.res.render(data.renderFile, data.dustData));
-			}
-		}
+				data.res.success((_) => data.res.render(data.renderFile, data.dustData));
+			},
+		};
 	}
 
 	/**
@@ -1078,14 +1067,13 @@ class CoreEntity extends Route {
 	 */
 	set_status() {
 		return {
-			method: 'get',
-			path: '/set_status/:entity_id/:status/:id_new_status',
+			method: "get",
+			path: "/set_status/:entity_id/:status/:id_new_status",
 			middlewares: this.middlewares.set_status,
 			func: async (data) => {
 				data.transaction = await models.sequelize.transaction();
 				data.redirect = data.req.headers.referer;
-				if (!data.redirect || typeof data.redirect === 'undefined')
-					data.redirect = `/${this.entity}/show?id=${data.req.params.entity_id}`;
+				if (!data.redirect || typeof data.redirect === "undefined") data.redirect = `/${this.entity}/show?id=${data.req.params.entity_id}`;
 				data.idEntity = data.req.params.entity_id;
 				data.statusName = data.req.params.status.substring(2); // TODO: no need for s_ prefix from client
 				data.idNewStatus = data.req.params.id_new_status;
@@ -1105,24 +1093,23 @@ class CoreEntity extends Route {
 				 * @param {string} data.statusName - Status's name
 				 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
 				 */
-				if (await this.getHook('set_status', 'start', data) === false)
-					return;
+				if ((await this.getHook("set_status", "start", data)) === false) return;
 
 				data.entity = await models[this.E_entity].findOne({
 					where: {
-						id: data.idEntity
+						id: data.idEntity,
 					},
 					include: {
 						model: models.E_status,
-						as: 'r_' + data.statusName
-					}
+						as: "r_" + data.statusName,
+					},
 				});
 				if (!data.entity) {
 					data.req.session.toastr.push({
-						level: 'error',
-						message: 'error.404.title'
+						level: "error",
+						message: "error.404.title",
 					});
-					return data.res.error(_ => data.res.redirect(data.redirect));
+					return data.res.error((_) => data.res.redirect(data.redirect));
 				}
 
 				/**
@@ -1140,16 +1127,15 @@ class CoreEntity extends Route {
 				 * @param {boolean} data.isAllowed=false - Boolean to block status change. Set it to true to skip default verifications
 				 * @param {object} data.entity - Entity on which status is to be set, with its current status included
 				 */
-				if (await this.getHook('set_status', 'beforeAllowedCheck', data) === false)
-					return;
+				if ((await this.getHook("set_status", "beforeAllowedCheck", data)) === false) return;
 
-				const currentStatusId = data.entity['fk_id_status_' + data.statusName];
-				if (data.isAllowed === false && await this.helpers.status.isAllowed(currentStatusId, data.idNewStatus) === false) {
+				const currentStatusId = data.entity["fk_id_status_" + data.statusName];
+				if (data.isAllowed === false && (await this.helpers.status.isAllowed(currentStatusId, data.idNewStatus)) === false) {
 					data.req.session.toastr.push({
-						level: 'error',
-						message: 'component.status.error.illegal_status'
+						level: "error",
+						message: "component.status.error.illegal_status",
 					});
-					return data.res.error(_ => data.res.redirect(data.redirect));
+					return data.res.error((_) => data.res.redirect(data.redirect));
 				}
 
 				data.actions = await this.helpers.status.getActions(data.idNewStatus);
@@ -1171,8 +1157,7 @@ class CoreEntity extends Route {
 				 * @param {object} data.customValues - Add custom values to media data object that will be used in media generation
 				 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
 				 */
-				if (await this.getHook('set_status', 'beforeActionsExecution', data) === false)
-					return;
+				if ((await this.getHook("set_status", "beforeActionsExecution", data)) === false) return;
 
 				await this.helpers.status.executeActions(this.E_entity, data.idEntity, data.actions, data.transaction, data.customValues);
 
@@ -1192,14 +1177,13 @@ class CoreEntity extends Route {
 				 * @param {object} data.entity - Entity on which status is to be set, with its current status included
 				 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
 				 */
-				if (await this.getHook('set_status', 'beforeSetStatus', data) === false)
-					return;
+				if ((await this.getHook("set_status", "beforeSetStatus", data)) === false) return;
 
 				await this.helpers.status.setStatus(this.e_entity, data.idEntity, data.statusName, data.idNewStatus, {
 					user: data.req.user,
 					comment: data.req.query.comment,
 					reasonID: data.req.query.reasonID,
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
 
 				/**
@@ -1218,13 +1202,12 @@ class CoreEntity extends Route {
 				 * @param {object} data.entity - Entity on which status is to be set, with its current status included
 				 * @param {object[]} data.actions - Target status actions fetched from `helpers.status.getActions()`
 				 * @param {object} data.ajaxData - Ajax data to send at response
-				*/
-				if (await this.getHook('set_status', 'beforeRedirect', data) === false)
-					return;
+				 */
+				if ((await this.getHook("set_status", "beforeRedirect", data)) === false) return;
 
-				data.res.success(_ => data.res.redirect(data.redirect, data.ajaxData));
-			}
-		}
+				data.res.success((_) => data.res.redirect(data.redirect, data.ajaxData));
+			},
+		};
 	}
 
 	/**
@@ -1233,11 +1216,11 @@ class CoreEntity extends Route {
 	 */
 	search() {
 		return {
-			method: 'post',
-			path: '/search',
+			method: "post",
+			path: "/search",
 			middlewares: this.middlewares.search,
 			func: async (data) => {
-				data.search = '%' + (data.req.body.search || '') + '%';
+				data.search = "%" + (data.req.body.search || "") + "%";
 				data.searchField = data.req.body.searchField;
 				data.limit = SELECT_PAGE_SIZE;
 				data.offset = (data.req.body.page - 1) * data.limit;
@@ -1255,12 +1238,10 @@ class CoreEntity extends Route {
 				 * @param {number} data.limit=SELECT_PAGE_SIZE - Limit the number of results. Defaults to `SELECT_PAGE_SIZE` global
 				 * @param {number} data.offset - The offset of search results. Equals to page number * `data.limit`
 				 */
-				if (await this.getHook('search', 'start', data) === false)
-					return;
+				if ((await this.getHook("search", "start", data)) === false) return;
 
 				// ID is always needed
-				if (data.searchField.indexOf("id") == -1)
-					data.searchField.push('id');
+				if (data.searchField.indexOf("id") == -1) data.searchField.push("id");
 
 				data.query = {
 					raw: true,
@@ -1268,7 +1249,7 @@ class CoreEntity extends Route {
 					offset: data.offset,
 					limit: data.limit,
 					where: {},
-					order: []
+					order: [],
 				};
 
 				data.query.where = this.helpers.entity.search.generateWhere(data.search, data.searchField);
@@ -1283,8 +1264,7 @@ class CoreEntity extends Route {
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
 				 * @param {object} data.query - Query object that will be used in Sequelize query, customizable
 				 */
-				if (await this.getHook('search', 'beforeQuery', data) === false)
-					return;
+				if ((await this.getHook("search", "beforeQuery", data)) === false) return;
 
 				// If you need to show fields in the select that are in an other associate entity, you have to include those entity here
 				// query.include = [{model: models.E_myentity, as: "r_myentity"}]
@@ -1309,89 +1289,82 @@ class CoreEntity extends Route {
 				 * @param {number} data.offset - The offset of search results. Equals to page number * `data.limit`
 				 * @param {object} data.results - Search result sent to response
 				 */
-				if (await this.getHook('search', 'beforeResponse', data) === false)
-					return;
+				if ((await this.getHook("search", "beforeResponse", data)) === false) return;
 
-				data.res.success(_ => data.res.json(data.results));
-			}
-		}
+				data.res.success((_) => data.res.json(data.results));
+			},
+		};
 	}
 
 	fieldset_add() {
 		return {
-			method: 'post',
-			path: '/fieldset/:alias/add',
+			method: "post",
+			path: "/fieldset/:alias/add",
 			middlewares: this.middlewares.fieldset_add,
 			func: async (data) => {
 				data.alias = data.req.params.alias;
 				data.idEntity = parseInt(data.req.body.idEntity);
 
-				if (await this.getHook('fieldset_add', 'start', data) === false)
-					return;
+				if ((await this.getHook("fieldset_add", "start", data)) === false) return;
 
 				const entity = await models[this.E_entity].findOne({
 					where: {
-						id: data.idEntity
+						id: data.idEntity,
 					},
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
-				if (!entity)
-					return data.res.error(_ => data.res.status(404).end());
+				if (!entity) return data.res.error((_) => data.res.status(404).end());
 
 				let toAdd;
-				if (typeof (toAdd = data.req.body.ids) === 'undefined') {
+				if (typeof (toAdd = data.req.body.ids) === "undefined") {
 					data.req.session.toastr.push({
-						message: 'message.create.failure',
-						level: "error"
+						message: "message.create.failure",
+						level: "error",
 					});
-					return data.res.redirect('/' + this.entity + '/show?id=' + data.idEntity + "#" + data.alias);
+					return data.res.redirect("/" + this.entity + "/show?id=" + data.idEntity + "#" + data.alias);
 				}
 
-				await entity['add' + data.alias.capitalizeFirstLetter()](toAdd, {
-					transaction: data.transaction
+				await entity["add" + data.alias.capitalizeFirstLetter()](toAdd, {
+					transaction: data.transaction,
 				});
 
-				if (await this.getHook('fieldset_add', 'beforeResponse', data) === false)
-					return;
+				if ((await this.getHook("fieldset_add", "beforeResponse", data)) === false) return;
 
-				data.res.success(_ => data.res.sendStatus(200).end());
-			}
-		}
+				data.res.success((_) => data.res.sendStatus(200).end());
+			},
+		};
 	}
 
 	fieldset_remove() {
 		return {
-			method: 'post',
-			path: '/fieldset/:alias/remove',
+			method: "post",
+			path: "/fieldset/:alias/remove",
 			middlewares: this.middlewares.fieldset_remove,
 			func: async (data) => {
 				data.alias = data.req.params.alias;
 				data.idEntity = parseInt(data.req.body.idEntity);
 				data.id_to_remove = parseInt(data.req.body.idRemove);
 
-				if (await this.getHook('fieldset_remove', 'start', data) === false)
-					return;
+				if ((await this.getHook("fieldset_remove", "start", data)) === false) return;
 
 				const entity = await models[this.E_entity].findOne({
 					where: {
-						id: data.idEntity
+						id: data.idEntity,
 					},
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
-				if (!entity)
-					return data.res.error(_ => data.res.status(404).end());
+				if (!entity) return data.res.error((_) => data.res.status(404).end());
 
 				// Get all associations
-				await entity['remove' + data.alias.capitalizeFirstLetter()](data.id_to_remove, {
-					transaction: data.transaction
+				await entity["remove" + data.alias.capitalizeFirstLetter()](data.id_to_remove, {
+					transaction: data.transaction,
 				});
 
-				if (await this.getHook('fieldset_remove', 'beforeResponse', data) === false)
-					return;
+				if ((await this.getHook("fieldset_remove", "beforeResponse", data)) === false) return;
 
-				data.res.success(_ => data.res.sendStatus(200).end());
-			}
-		}
+				data.res.success((_) => data.res.sendStatus(200).end());
+			},
+		};
 	}
 
 	/**
@@ -1400,8 +1373,8 @@ class CoreEntity extends Route {
 	 */
 	destroy() {
 		return {
-			method: 'post',
-			path: '/delete',
+			method: "post",
+			path: "/delete",
 			middlewares: this.middlewares.destroy,
 			func: async (data) => {
 				data.idEntity = parseInt(data.req.body.id);
@@ -1416,8 +1389,7 @@ class CoreEntity extends Route {
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
 				 * @param {string} data.idEntity - Id of entity to delete
 				 */
-				if (await this.getHook('destroy', 'start', data) === false)
-					return;
+				if ((await this.getHook("destroy", "start", data)) === false) return;
 
 				/**
 				 * Called before fetching row to delete
@@ -1429,19 +1401,20 @@ class CoreEntity extends Route {
 				 * @param {object} [data.transaction] - Database transaction. undefined by default, provide your own when necessary
 				 * @param {string} data.idEntity - Id of entity to delete
 				 */
-				if (await this.getHook('destroy', 'beforeEntityQuery', data) === false)
-					return;
+				if ((await this.getHook("destroy", "beforeEntityQuery", data)) === false) return;
 
 				data.deleteObject = await models[this.E_entity].findOne({
 					where: {
-						id: data.idEntity
-					}
+						id: data.idEntity,
+					},
 				});
 
 				if (!data.deleteObject)
-					return data.res.error(_ => data.res.render('common/404', {
-						message: 'Entity row not found'
-					}));
+					return data.res.error((_) =>
+						data.res.render("common/404", {
+							message: "Entity row not found",
+						})
+					);
 
 				/**
 				 * Called before deleting row in database
@@ -1454,23 +1427,23 @@ class CoreEntity extends Route {
 				 * @param {string} data.idEntity - Id of entity to delete
 				 * @param {object} data.deleteObject - Instance of entity to delete
 				 */
-				if (await this.getHook('destroy', 'beforeDestroy', data) === false)
-					return;
+				if ((await this.getHook("destroy", "beforeDestroy", data)) === false) return;
 
 				await data.deleteObject.destroy({
 					entitySourceID: data.req.query && data.req.query.associationFlag ? data.req.query.associationFlag : null,
 					entitySource: data.req.query && data.req.query.associationSource ? data.req.query.associationSource : this.E_entity.toLowerCase(),
-					transaction: data.transaction
+					transaction: data.transaction,
 				});
 
 				data.req.session.toastr.push({
-					message: 'message.delete.success',
-					level: "success"
+					message: "message.delete.success",
+					level: "success",
 				});
 
-				data.redirect = '/' + this.entity + '/list';
-				if (typeof data.req.query.associationFlag !== 'undefined')
-					data.redirect = '/' + data.req.query.associationUrl + '/show?id=' + data.req.query.associationFlag + '#' + data.req.query.associationAlias;
+				data.redirect = "/" + this.entity + "/list";
+				if (typeof data.req.query.associationFlag !== "undefined")
+					data.redirect =
+						"/" + data.req.query.associationUrl + "/show?id=" + data.req.query.associationFlag + "#" + data.req.query.associationAlias;
 
 				await this.helpers.entity.removeFiles(data.deleteObject, this.attributes);
 
@@ -1486,12 +1459,11 @@ class CoreEntity extends Route {
 				 * @param {object} data.deleteObject - Instance of entity to delete
 				 * @param {string} data.redirect - Where to redirect the response
 				 */
-				if (await this.getHook('destroy', 'beforeRedirect', data) === false)
-					return;
+				if ((await this.getHook("destroy", "beforeRedirect", data)) === false) return;
 
-				data.res.success(_ => data.res.redirect(data.redirect));
-			}
-		}
+				data.res.success((_) => data.res.redirect(data.redirect));
+			},
+		};
 	}
 }
 
