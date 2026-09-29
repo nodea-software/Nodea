@@ -39,15 +39,26 @@ passport.use(new LocalStrategy({
 	if (typeof req.session.loginCaptcha !== "undefined" && req.session.loginCaptcha && req.session.loginCaptcha != req.body.captcha)
 		return accessForbidden("Le captcha saisi n'est pas correct.");
 
+	// Retrocompatibility: only load accessible groups/roles if BOTH associations exist in this app
+	const hasAccessibleAssoc =
+		!!models.E_group?.associations?.r_group_accessible &&
+		!!models.E_role?.associations?.r_role_accessible;
+
+	const groupInclude = { model: models.E_group, as: "r_group" };
+	const roleInclude = { model: models.E_role, as: "r_role" };
+
+	if (hasAccessibleAssoc) {
+		groupInclude.include = [
+			{ model: models.E_group, as: "r_group_accessible", attributes: ["id"] },
+		];
+		roleInclude.include = [
+			{ model: models.E_role, as: "r_role_accessible", attributes: ["id"] },
+		];
+	}
+
 	const user = await models.E_user.findOne({
 		where: { f_login: login },
-		include: [{
-			model: models.E_group,
-			as: 'r_group'
-		}, {
-			model: models.E_role,
-			as: 'r_role'
-		}]
+		include: [groupInclude, roleInclude],
 	});
 
 	// If the user doesn't exist

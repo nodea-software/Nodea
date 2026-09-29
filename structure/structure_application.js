@@ -208,6 +208,22 @@ async function initializeWorkflow(application) {
 		"through": "1_role",
 		"otherKey": "fk_id_e_user",
 		"structureType": "hasMany"
+	},
+	{
+		"target": "e_role",
+		"relation": "belongsToMany",
+		"foreignKey": "fk_id_e_role",
+		"as": "r_role_accessible",
+		"showAs": "Rôle accessible",
+		"through": "20_role_accessible",
+		"otherKey": "fk_id_e_role_bis",
+		"structureType": "relatedToMultiple",
+		"usingField": [
+			{
+				"value": "f_nom",
+				"type": "string"
+			}
+		]
 	}], null, '\t'), 'utf8');
 
 	fs.writeFileSync(workspacePath + '/app/models/options/e_group.json', JSON.stringify([{
@@ -229,6 +245,22 @@ async function initializeWorkflow(application) {
 		"through": "5_accepted_group",
 		"otherKey": "fk_id_e_status",
 		"structureType": "hasMany"
+	},
+	{
+		"target": "e_group",
+		"relation": "belongsToMany",
+		"foreignKey": "fk_id_e_group",
+		"as": "r_group_accessible",
+		"showAs": "Group accessible",
+		"through": "21_group_accessible",
+		"otherKey": "fk_id_e_group_bis",
+		"structureType": "relatedToMultiple",
+		"usingField": [
+			{
+				"value": "f_nom",
+				"type": "string"
+			}
+		]
 	}], null, '\t'), 'utf8');
 
 	// Clean useless auto_generate key in user option about role and group hasMany/BelongsTo
