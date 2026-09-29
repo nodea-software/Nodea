@@ -26,7 +26,6 @@
 		"cookie-parser": "^1.4.7",
 		"crypto-js": "^4.2.0",
 		"dayjs": "^1.11.2",
-		"decompress": "^4.2.1",
 		"docxtemplater": "^3.1.12",
 		"dustjs-helpers": "~1.7.4",
 		"dustjs-linkedin": "^3.0.1",

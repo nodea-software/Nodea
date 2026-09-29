@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const dust = require('dustjs-linkedin');
 const puppeteer = require('puppeteer');
 const PizZip = require('pizzip');
-const decompress = require('decompress');
 const Docxtemplater = require('docxtemplater');
 const expressionParser = require('docxtemplater/expressions.js');
 
@@ -78,10 +77,11 @@ function dustDataParser({ filePath }) {
 }
 
 async function docxDataParser({ filePath }) {
-	await decompress(filePath, 'tmp')
-	const data = fs.readFileSync(`tmp/word/document.xml`, 'utf8');
-	const fileStr = data.replace(/(<w:p )[\s\S]*?>/g, "\n<w:p").replace(/(<([^>]+)>)/ig, "");
-	fs.remove('tmp');
+	const content = fs.readFileSync(filePath, 'binary');
+	const zip = new PizZip(content);
+	const fileStr = zip.files['word/document.xml'].asText()
+		.replace(/(<w:p )[\s\S]*?>/g, "\n<w:p")
+		.replace(/(<([^>]+)>)/ig, "");
 
 	return extractFieldsWithContext(fileStr);
 }
