@@ -45,7 +45,7 @@ module.exports = (_ => {
 					return reject(err);
 
 				// Possibility to add {host} in media
-				const RESERVED_KEYS = ['transport', 'from'];
+				const RESERVED_KEYS = ['transport', 'from', 'replyTo'];
 				for (const [key, value] of Object.entries(mailConfig)) {
 					if (!RESERVED_KEYS.includes(key)) {
 						options.data[key] = value;
@@ -62,6 +62,8 @@ module.exports = (_ => {
 					if (attachments)
 						options.attachments = attachments;
 
+					options.replyTo = options.replyTo || mailConfig.replyTo;
+
 					// Send mail
 					transporter.sendMail(options, (err, info) => {
 						if (err)
@@ -74,7 +76,7 @@ module.exports = (_ => {
 		sendHtml: (html, options, attachments) => new Promise((resolve, reject) => {
 
 			// Possibility to add {host} in media
-			const RESERVED_KEYS = ['transport', 'from'];
+			const RESERVED_KEYS = ['transport', 'from', 'replyTo'];
 			for (const [key, value] of Object.entries(mailConfig)) {
 				if (!RESERVED_KEYS.includes(key)) {
 					options.data[key] = value;
@@ -87,6 +89,8 @@ module.exports = (_ => {
 
 				if (attachments)
 					options.attachments = attachments;
+
+				options.replyTo = options.replyTo || mailConfig.replyTo;
 
 				// Send mail
 				transporter.sendMail(options, (error, info) => {
