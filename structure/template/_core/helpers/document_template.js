@@ -45,8 +45,13 @@ function getValue(itemPath /*array*/, data, scope /*where value is expected*/) {
 			scope.scopePath.length &&
 			scope.scopePath.length === scope.scopePathItem.length) {
 			//Go to data scope  before search value
-			for (let j = 0; j < scope.scopePath.length; j++)
-				data = data[scope.scopePath[j]][scope.scopePathItem[j]];
+			for (let j = 0; j < scope.scopePath.length; j++) {
+				data = data[scope.scopePath[j]];
+				// Only loop scopes are arrays indexed by scopePathItem, object scopes (belongsTo sections) are not
+				if (Array.isArray(data))
+					data = data[scope.scopePathItem[j]];
+			}
+
 		}
 		do {
 			if (data != null && typeof data !== "undefined" && typeof data[key] !== 'undefined')
