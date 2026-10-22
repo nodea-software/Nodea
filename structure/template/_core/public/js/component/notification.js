@@ -27,13 +27,14 @@ function displayNotification(notification, isNew) {
 }
 
 // Receive notification from server
-socket.on('notification', displayNotification);
+if (typeof socket !== 'undefined')
+    socket.on('notification', displayNotification);
 
 $(function() {
 
     // Load new notifications on scroll
     var lastNotifReached = false;
-    $("#notification-wrapper").scroll(function() {
+    $("#notification-wrapper").on('scroll', function() {
         if (lastNotifReached)
             return;
 
@@ -56,7 +57,7 @@ $(function() {
         }
     });
 
-    $(".delete-all").click(function() {
+    $(".delete-all").on('click', function() {
         $.ajax({
             url: '/notification/delete_all',
             success:function() {

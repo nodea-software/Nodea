@@ -197,16 +197,14 @@
 				var socket = io();
 			</script>
 
-			{! Notification init !}
-			{#config.socket.notification}
-				<script src="/core/js/component/notification.js?v={config.version}-{config.build}" type="text/javascript"></script>
-			{/config.socket.notification}
-
 			{! Component chat init !}
 			{#config.socket.chat}
-				<script src="/core/js/component/chat.js?v={config.version}-{config.build}" type="text/javascript"></script>
+			<script src="/core/js/component/chat.js?v={config.version}-{config.build}" type="text/javascript"></script>
 			{/config.socket.chat}
-		{/config.socket.enabled}
+			{/config.socket.enabled}
+
+			{! Notification init !}
+			<script src="/core/js/component/notification.js?v={config.version}-{config.build}" type="text/javascript"></script>
 
 		{! Global vars !}
 		<script type="text/javascript">
