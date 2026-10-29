@@ -11,6 +11,7 @@
 	},
 	"login": {
 		"log_in": "Log in",
+		"invalid_token": "Ce lien est invalide ou a expiré. Veuillez demander un nouveau lien.",
 		"reset_password": {
 			"title": "Mot de passe oublié",
 			"success": "Votre mot de passe a bien été réinitialisé. Merci de faire de nouveau le processus de première connexion pour changer votre mot de passe.",
@@ -23,11 +24,10 @@
 			"success_login": "Mise à jour effectuée, vous êtes désormais connecté(e) !",
 			"userNotExist": "Cet utilisateur n'existe pas ou a déjà été activé.",
 			"alreadyHavePassword": "Opération impossible, cet utilisateur possède déjà un mot de passe.",
-			"passwordNotValid": "Mot de passe invalide, merci de réessayer.",
-			"help": {
-				"password_title": "Mot de passe - Première connexion",
-				"password_content": "<p>Merci de choisir votre mot de passe, il doit respecter le format suivant:<br><br>- 8 caractères minimum<br>- Au moins 1 chiffre<br>- Au moins 1 majuscule<br>- Au moins 1 caractère spécial (!@#$%^&*)<br></i><br></p>"
-			}
+			"passwordNotValid": "Mot de passe invalide, merci de réessayer."
+		},
+		"help": {
+			"password_content": "<p>Merci de choisir votre mot de passe, il doit respecter le format suivant:<br><br>- 8 caractères minimum<br>- Au moins 1 chiffre<br>- Au moins 1 majuscule<br>- Au moins 1 caractère spécial (!@#$%^&*)<br></i><br></p>"
 		},
 		"authentication": "Connexion",
 		"login": "Login",
@@ -182,6 +182,7 @@
 		},
 		"user": {
 			"send_first_connection_mail": "Souhaitez-vous envoyer un email de première connexion à l'utilisateur ?",
+			"send_email_reset_password": "Envoyer un email de changement de mot de passe",
 			"resend_email": "Renvoyer un email de première connexion",
 			"resend_email_success": "Le mail a bien été envoyé",
 			"cannot_modify_admin": "Vous ne pouvez pas modifier le compte Administrateur de l'application.",
@@ -220,6 +221,7 @@
 		"duplicate": "Dupliquer"
 	},
 	"operation": {
+		"open": "Ouvrir",
 		"show": "Afficher",
 		"update": "Modifier",
 		"create": "Créer",
@@ -324,7 +326,23 @@
 			"inline_help": "Pour avoir une carte valide, veuillez utiliser le champ ci-dessous pour saisir l'adresse"
 		}
 	},
-	"component": {},
+	"component": {
+		"ldap": {
+			"configuration": "Configuration LDAP",
+			"give_access_to_all_groups": "Autoriser tous les groupes LDAP",
+			"update_user_ldap_group_on_login": "Toujours mettre à jour les groupes utilisateurs à la connexion",
+			"ldap_group": "Groupe LDAP",
+			"access_denied": "Accès refusé, merci de vérifier vos identifiants.",
+			"authentication_failed": "Erreur d'authentification, merci de vérifier vos identifiants.",
+			"invalid_credentials": "Identifiants invalides, merci de vérifier vos identifiants.",
+			"bad_request_messsage": "Requête invalide, merci de vérifier vos identifiants.",
+			"create_user_error": "Erreur lors de la création de l'utilisateur, merci de contacter votre administrateur.",
+			"account_not_enabled": "Votre compte n'est pas activé, merci de contacter votre administrateur.",
+			"not_enabled": "La configuration LDAP n'est pas activée.",
+			"have_access": "Autorisé",
+			"success_save": "Le fichier a bien été modifié."
+		}
+	},
 	"defaults": {
 		"widgets": {
 			"lastrecords": {

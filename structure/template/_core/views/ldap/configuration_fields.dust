@@ -1,0 +1,43 @@
+<br>
+<div class="row" style="border-top: 1px solid #ccc; padding-top: 20px;">
+    <div class="col-md-4 col-xs-12">
+        <label>{#__ key="component.ldap.have_access"/}</label><br>
+        {@ifTrue key=.access}
+        <input type="checkbox" class="input" checked="" value="1" name="access"/>
+        {:else}
+        <input type="checkbox" class="input" value="0" name="access"/>
+        {/ifTrue}
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <label>{#__ key="entity.e_group.label_entity"/}</label><br>
+        {#groups}
+        <div class="group" data-group-label="{f_label}" data-group-id="{id}">
+            {@ifTrue key=.checked}
+            <input type="checkbox" class="input" checked="" value="1" name="group"/>&nbsp;&nbsp;
+            {f_label}
+            <br>
+            {:else}
+            <input type="checkbox" class="input"  value="0" name="group"/>&nbsp;&nbsp;
+            {f_label}
+            <br>
+            {/ifTrue}
+        </div>
+        {/groups}
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <label>{#__ key="entity.e_role.label_entity"/}</label><br>
+        {#roles}
+        <div class="role" data-role-label="{f_label}" data-role-id="{id}">
+            {@ifTrue key=.checked}
+            <input type="checkbox" class="input" checked="" value="1" name="role"/>&nbsp;&nbsp;
+            {f_label}
+            <br>
+            {:else}
+            <input type="checkbox" class="input"  value="0" name="role"/>&nbsp;&nbsp;
+            {f_label}
+            <br>
+            {/ifTrue}
+        </div>
+        {/roles}
+    </div>
+</div>

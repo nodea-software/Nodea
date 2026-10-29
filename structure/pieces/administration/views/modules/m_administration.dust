@@ -78,6 +78,16 @@
                         </h3>
                     </div>
                     <div class="card-body">
+                        {@eq key=config.authStrategy value="ldap"}
+                        {#actionAccess entity="access_settings_role" action="read"}
+                        {#actionAccess entity="access_settings_group" action="read"}
+                            <a href="/ldap/configuration" class="btn btn-default" style="width: 100%;">
+                                {#__ key="component.ldap.configuration" /}
+                            </a>
+                            <br><br>
+                        {/actionAccess}
+                        {/actionAccess}
+                        {/eq}
                         {#actionAccess entity="access_settings_role" action="read"}
                             <a href="/access_settings/show_role" class="btn btn-default" style="width: 100%;">
                                 {#__ key="entity.e_role.label_entity" /}

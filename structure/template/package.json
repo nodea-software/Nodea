@@ -50,6 +50,7 @@
 		"nodemailer": "^7.0.11",
 		"ovh": "^2.0.1",
 		"passport": "^0.6.0",
+		"passport-ldapauth": "^3.0.1",
 		"passport-local": "~1.0.0",
 		"pg": "^8.5.1",
 		"pizzip": "^3.2.0",

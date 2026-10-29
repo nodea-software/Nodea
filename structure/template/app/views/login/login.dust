@@ -15,23 +15,21 @@
 	<div id="error-box"></div>
 
 	<form action="/login?r={redirect}" method="post">
-		<label for="login">{#__ key="login.login"/}</label>
+		<label id="label_login" for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
+			<input aria-labelledby="label_login" type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" required>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-user"></span>
 				</div>
 			</div>
 		</div>
-		<label for="password">{#__ key="login.password"/}</label>
-		<div class="input-group mb-3">
-			<input type="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
-			<div class="input-group-append">
-				<div class="input-group-text">
-					<span class="fas fa-lock"></span>
-				</div>
-			</div>
+		<label id="label_password" for="password">{#__ key="login.password"/}</label>
+		<div class="input-icon-right mb-3">
+			<input aria-labelledby="label_password" type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
+			<button type="button" class="password-toggle">
+				<i class="fa fa-eye" aria-hidden="true"></i>
+			</button>
 		</div>
 		{?captcha}
 			<div class="input-group mb-3">
@@ -73,14 +71,17 @@
 	<hr>
 
 	<p class="mb-1">
-		<a href="/reset_password"><i class="fa fa-unlock">&nbsp;</i>{#__ key="login.reset_password.title"/}</a>
-	</p>
-	<p class="mb-1">
-		<a href="/first_connection"><i class="fa fa-sign-in-alt">&nbsp;</i>{#__ key="login.first_connection.title"/}</a>
+		{@select key=config.authStrategy}
+		{@eq value="ldap"/}
+		{@none}
+			<a href="/forgot_password"><i class="fa fa-unlock">&nbsp;</i>{#__ key="login.reset_password.title"/}</a>
+		{/none}
+		{/select}
 	</p>
 {/content}
 
 {<custom_js}
+	<script src="/core/js/login.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$(document).on("click", "#refresh-captcha-login", function(){

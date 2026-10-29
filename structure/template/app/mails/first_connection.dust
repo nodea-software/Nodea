@@ -41,12 +41,12 @@
 	</head>
 	<body>
 		<div class="main">
-			<img src="{url.host}/img/logo/logo_nodea_color.png" alt="Nodea Logo">
+			<img src="{host}/img/logo/logo_nodea_color.png" alt="Nodea Logo">
 			<hr><br>
 			Bonjour {user.f_login},
 			<br>
 			<br>
-			Vous venez d'être inscrit sur: <b>{url.host}</b>
+			Vous venez d'être inscrit sur: <b>{host}</b>
 			<br>
 			Vous devez à présent valider votre compte en procédant à la première connexion:
 			<br><br>

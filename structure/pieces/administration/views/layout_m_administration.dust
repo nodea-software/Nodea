@@ -131,6 +131,18 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
+                    {@eq key=config.authStrategy value="ldap"}
+                    {#actionAccess entity="access_settings_role" action="read"}
+                    {#actionAccess entity="access_settings_group" action="read"}
+                        <li class="nav-item">
+                            <a href="/ldap/configuration" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>{#__ key="component.ldap.configuration" /}</p>
+                            </a>
+                        </li>
+                    {/actionAccess}
+                    {/actionAccess}
+                    {/eq}
                     {#actionAccess entity="access_settings_role" action="read"}
                         <li class="nav-item">
                             <a href="/access_settings/show_role" class="nav-link">

@@ -11,6 +11,7 @@
 	},
 	"login": {
 		"log_in": "Log in",
+		"invalid_token": "This link is invalid or has expired. Please request a new link.",
 		"reset_password": {
 			"title": "Forgotten password",
 			"success": "Your password has successfully been reset. Please do the first connection process in order to set your new password.",
@@ -25,7 +26,6 @@
 			"alreadyHavePassword": "Operation is not possible, this user already has a password.",
 			"passwordNotValid": "The password is not valid, please try again.",
 			"help": {
-				"password_title": "Password - First connection",
 				"password_content": "<p>Please choose your password, it must respect the following format:<br><br> - 8 characters minimum<br> - At least 1 digit<br> - At least 1 capital letter<br> - At least 1 special character (!@#$%^&*)<br></i><br></p>"
 			}
 		},
@@ -182,6 +182,7 @@
 		},
 		"user": {
 			"send_first_connection_mail": "Would you like to send a first connection email to the user?",
+			"send_email_reset_password": "Send a password change email",
 			"resend_email": "Resend a first connection email",
 			"resend_email_success": "The email has been successfully sent.",
 			"cannot_modify_admin": "You can't modify the main admin account of the application.",
@@ -220,6 +221,7 @@
 		"duplicate": "Duplicate"
 	},
 	"operation": {
+		"open": "Open",
 		"show": "Show",
 		"update": "Modify",
 		"create": "Create",
@@ -324,7 +326,23 @@
 			"inline_help": "To have a valid map, please use the field below to enter the address"
 		}
 	},
-	"component": {},
+	"component": {
+		"ldap": {
+			"configuration": "LDAP configuration",
+			"give_access_to_all_groups": "Allow all LDAP groups",
+			"update_user_ldap_group_on_login": "Always update user groups on login",
+			"ldap_group": "LDAP group",
+			"access_denied": "Access denied; please check your credentials.",
+			"authentication_failed": "Authentication error; please check your credentials.",
+			"invalid_credentials": "Invalid credentials; please check your credentials.",
+			"bad_request_messsage": "Invalid request; please check your credentials.",
+			"create_user_error": "Error creating user; please contact your administrator.",
+			"account_not_enabled": "Your account is not enabled; please contact your administrator.",
+			"not_enabled": "LDAP configuration is not enabled.",
+			"have_access": "Authorized",
+			"success_save": "The file has been successfully modified."
+		}
+	},
 	"defaults": {
 		"widgets": {
 			"lastrecords": {

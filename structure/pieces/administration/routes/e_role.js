@@ -1,17 +1,19 @@
-const Entity = require('@core/abstract_routes/entity');
+const Entity = require("@core/abstract_routes/entity");
 
-const options = require('@app/models/options/e_role');
-const attributes = require('@app/models/attributes/e_role');
+const options = require("@app/models/options/e_role");
+const attributes = require("@app/models/attributes/e_role");
 
-const helpers = require('@core/helpers');
+const helpers = require("@core/helpers");
 const middlewares = helpers.middlewares;
 
-const fs = require('fs-extra');
+const { isAdminUser, getAccessibleRoleIds } = helpers.user;
+
+const fs = require("fs-extra");
 
 class E_role extends Entity {
 	constructor() {
 		const additionalRoutes = [];
-		super('e_role', attributes, options, helpers, additionalRoutes);
+		super("e_role", attributes, options, helpers, additionalRoutes);
 	}
 
 	get hooks() {
@@ -46,16 +48,24 @@ class E_role extends Entity {
 			create: {
 				// start: async (data) => {},
 				// beforeCreateQuery: async(data) => {},
-				// beforeRedirect: async(data) => {}
+				beforeRedirect: async (data) => {
+					// Add the created role to its own accessible roles (self-reference)
+					await data.createdRow.addR_role_accessible(data.createdRow, {
+						transaction: data.transaction,
+						user: data.req.user,
+					});
+				},
 			},
 			update_form: {
 				start: (data) => {
-					if(data.idEntity == 1) {
-						data.req.session.toastr = [{
-							message: 'administration.user.cannot_modify_admin',
-							level: 'error'
-						}]
-						data.res.success(_ => data.res.redirect('/role/list'));
+					if (data.idEntity == 1) {
+						data.req.session.toastr = [
+							{
+								message: "administration.user.cannot_modify_admin",
+								level: "error",
+							},
+						];
+						data.res.success((_) => data.res.redirect("/role/list"));
 						return false;
 					}
 				},
@@ -64,41 +74,40 @@ class E_role extends Entity {
 			},
 			update: {
 				start: (data) => {
-					if(data.idEntity == 1) {
-						data.req.session.toastr = [{
-							message: 'administration.user.cannot_modify_admin',
-							level: 'error'
-						}]
-						data.res.success(_ => data.res.redirect('/role/list'));
+					if (data.idEntity == 1) {
+						data.req.session.toastr = [
+							{
+								message: "administration.user.cannot_modify_admin",
+								level: "error",
+							},
+						];
+						data.res.success((_) => data.res.redirect("/role/list"));
 						return false;
 					}
 				},
 				beforeUpdate: (data) => {
 					data.labelChanged = false;
-					if(data.updateObject.f_label != data.updateRow.f_label)
-						data.labelChanged = data.updateRow.f_label;
+					if (data.updateObject.f_label != data.updateRow.f_label) data.labelChanged = data.updateRow.f_label;
 				},
 				beforeRedirect: (data) => {
-					if(!data.labelChanged)
-						return;
+					if (!data.labelChanged) return;
 
-					const access = JSON.parse(fs.readFileSync(global.__configPath + '/access.json'));
-					const actions = ['read', 'create', 'update', 'delete'];
+					const access = JSON.parse(fs.readFileSync(global.__configPath + "/access.json"));
+					const actions = ["read", "create", "update", "delete"];
 
-					for(const appModule in access) {
+					for (const appModule in access) {
 						for (const entity of access[appModule].entities) {
 							for (const action of actions) {
-								entity.actions[action] = entity.actions[action].map(x => {
-									if(x == data.labelChanged)
-										return data.updateRow.f_label
+								entity.actions[action] = entity.actions[action].map((x) => {
+									if (x == data.labelChanged) return data.updateRow.f_label;
 									return x;
 								});
 							}
 						}
 					}
 
-					fs.writeFileSync(global.__configPath + '/access.json', JSON.stringify(access, null, '\t'), "utf8");
-				}
+					fs.writeFileSync(global.__configPath + "/access.json", JSON.stringify(access, null, "\t"), "utf8");
+				},
 			},
 			loadtab: {
 				// start: async (data) => {},
@@ -116,10 +125,16 @@ class E_role extends Entity {
 			},
 			search: {
 				// start: async (data) => {},
-				// beforeAllowedCheck: async (data) => {},
-				// beforeActionsExecution: async (data) => {},
-				// beforeSetStatus: async (data) => {},
-				// beforeRedirect: async (data) => {}
+				beforeQuery: async (data) => {
+					const isAdmin = isAdminUser(data.req.user);
+					if (!isAdmin) {
+						const accessibleIds = await getAccessibleRoleIds(data.req.user.id);
+						if (accessibleIds.length > 0) {
+							data.query.where.id = accessibleIds;
+						}
+					}
+				},
+				// beforeResponse: async (data) => {}
 			},
 			fieldset_remove: {
 				// start: async (data) => {},
@@ -131,15 +146,19 @@ class E_role extends Entity {
 			},
 			destroy: {
 				start: (data) => {
-					if(data.idEntity == 1) {
-						if(data.req.query.ajax)
-							data.res.success(_ => data.res.status(403).send(helpers.language(data.req.session.lang_user).__('administration.user.cannot_delete_admin')));
+					if (data.idEntity == 1) {
+						if (data.req.query.ajax)
+							data.res.success((_) =>
+								data.res.status(403).send(helpers.language(data.req.session.lang_user).__("administration.user.cannot_delete_admin"))
+							);
 						else {
-							data.req.session.toastr = [{
-								message: 'administration.user.cannot_delete_admin',
-								level: 'error'
-							}]
-							data.res.redirect('/role/list')
+							data.req.session.toastr = [
+								{
+									message: "administration.user.cannot_delete_admin",
+									level: "error",
+								},
+							];
+							data.res.redirect("/role/list");
 						}
 						return false;
 					}
@@ -147,58 +166,27 @@ class E_role extends Entity {
 				// beforeEntityQuery: async(data) => {},
 				// beforeDestroy: async(data) => {},
 				// beforeRedirect: async(data) => {},
-			}
+			},
 		};
 	}
 
 	get middlewares() {
 		return {
-			list: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			datalist: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			subdatalist: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			show: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			create_form: [
-				middlewares.actionAccess(this.entity, "create")
-			],
-			create: [
-				middlewares.actionAccess(this.entity, "create"),
-				middlewares.fileInfo(this.fileFields)
-			],
-			update_form: [
-				middlewares.actionAccess(this.entity, "update")
-			],
-			update: [
-				middlewares.actionAccess(this.entity, "update"),
-				middlewares.fileInfo(this.fileFields)
-			],
-			loadtab: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			set_status: [
-				middlewares.actionAccess(this.entity, "read"),
-				middlewares.statusGroupAccess
-			],
-			search: [
-				middlewares.actionAccess(this.entity, "read")
-			],
-			fieldset_remove: [
-				middlewares.actionAccess(this.entity, "delete")
-			],
-			fieldset_add: [
-				middlewares.actionAccess(this.entity, "create")
-			],
-			destroy: [
-				middlewares.actionAccess(this.entity, "delete")
-			]
-		}
+			list: [middlewares.actionAccess(this.entity, "read")],
+			datalist: [middlewares.actionAccess(this.entity, "read")],
+			subdatalist: [middlewares.actionAccess(this.entity, "read")],
+			show: [middlewares.actionAccess(this.entity, "read")],
+			create_form: [middlewares.actionAccess(this.entity, "create")],
+			create: [middlewares.actionAccess(this.entity, "create"), middlewares.fileInfo(this.fileFields)],
+			update_form: [middlewares.actionAccess(this.entity, "update")],
+			update: [middlewares.actionAccess(this.entity, "update"), middlewares.fileInfo(this.fileFields)],
+			loadtab: [middlewares.actionAccess(this.entity, "read")],
+			set_status: [middlewares.actionAccess(this.entity, "read"), middlewares.statusGroupAccess],
+			search: [middlewares.actionAccess(this.entity, "read")],
+			fieldset_remove: [middlewares.actionAccess(this.entity, "delete")],
+			fieldset_add: [middlewares.actionAccess(this.entity, "create")],
+			destroy: [middlewares.actionAccess(this.entity, "delete")],
+		};
 	}
 }
 

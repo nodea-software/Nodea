@@ -1,0 +1,29 @@
+{
+	"id": {
+		"type": "INTEGER",
+		"autoIncrement": true,
+		"primaryKey": true
+	},
+	"hash": {
+		"type": "CHAR",
+		"allowNull": false,
+		"type_parameter": "64",
+		"validate": {
+			"notEmpty": true
+		}
+	},
+	"type": {
+		"type": "STRING",
+		"allowNull": false,
+		"type_parameter": "50",
+		"validate": {
+			"notEmpty": true
+		}
+	},
+	"expires_at": {
+		"type": "DATE",
+		"nodeaType": "datetime",
+		"validate": true,
+		"allowNull": false
+	}
+}

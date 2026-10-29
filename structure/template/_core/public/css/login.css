@@ -1,10 +1,12 @@
 /* --- Login --- */
 
-body.login-page, .register-page {
-	background: linear-gradient(90deg, rgba(0,102,255,1) 0%, rgba(0,240,255,1) 100%);
+body.login-page,
+.register-page {
+	background: linear-gradient(90deg, rgba(0, 102, 255, 1) 0%, rgba(0, 240, 255, 1) 100%);
 }
 
-body.login-page, .login-box .card-primary.card-outline {
+body.login-page,
+.login-box .card-primary.card-outline {
 	border-top: 0px;
 }
 
@@ -19,10 +21,34 @@ body.login-page .login-help:hover {
 
 body.login-page #error-box {
 	display: none;
-	color: #FFF;
+	color: #fff;
 	margin-bottom: 20px;
 	padding: 8px;
 	border-radius: 3px;
 	text-align: center;
 	font-size: 15px;
+}
+
+.input-icon-right {
+	position: relative;
+}
+.input-icon-right input {
+	padding-right: 40px;
+}
+.password-toggle {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: 40px;
+	height: 100%;
+	transform: translateY(-50%);
+	background: #e9ecef;
+	border: 1px solid #ced4da;
+	border-radius: 0 0.25rem 0.25rem 0;
+	padding: 0;
+	cursor: pointer;
+	color: #495057;
+}
+.password-toggle:hover {
+	color: #000;
 }

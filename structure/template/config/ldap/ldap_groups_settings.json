@@ -1,0 +1,22 @@
+{
+	"update_user_groups_on_login": false,
+	"give_access_to_all_groups": true,
+	"ldap_groups": [
+		{
+			"name": "admin",
+			"access": true,
+			"app_groups": [
+				{
+					"f_label": "admin",
+					"id": "1"
+				}
+			],
+			"app_roles": [
+				{
+					"f_label": "admin",
+					"id": "1"
+				}
+			]
+		}
+	]
+}

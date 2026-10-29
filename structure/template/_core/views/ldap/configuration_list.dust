@@ -1,0 +1,40 @@
+<div id="fields">
+    <label>
+        {@ifTrue key=.give_access_to_all_groups}
+        <input type="checkbox" class="input" checked="" value="1" name="give_access_to_all_groups">&nbsp;
+        {:else}
+        <input type="checkbox" class="input" value="0" name="give_access_to_all_groups">&nbsp;
+        {/ifTrue}
+        {#__ key="component.ldap.give_access_to_all_groups"/}
+    </label>&nbsp;&nbsp;
+    <br><br>
+
+    <label>
+        {@ifTrue key=.update_user_groups_on_login}
+        <input type="checkbox" class="input" checked="" value="1" name="update_user_groups_on_login">&nbsp;
+        {:else}
+        <input type="checkbox" class="input" value="0" name="update_user_groups_on_login">&nbsp;
+        {/ifTrue}
+        {#__ key="component.ldap.update_user_ldap_group_on_login"/}
+    </label>&nbsp;&nbsp;
+    <br><br>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{#__ key="component.ldap.ldap_group"/}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#ldapGroups}
+            <tr>
+                <td>
+                    <div class="pointer" role="button" data-toggle="collapse" href="#_{uuid}" aria-expanded="false" aria-controls="{uuid}" title='{#__ key="operation.open"/}'>
+                        {cn}
+                    </div>
+                    <div class="collapse" id="_{uuid}" data-ldap-group="{cn}"></div>
+                </td>
+            </tr>
+            {/ldapGroups}
+        </tbody>
+    </table>
+</div>

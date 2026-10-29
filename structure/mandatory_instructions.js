@@ -7,16 +7,17 @@ const mandatoryInstructions = [
 	"set field login unique",
 	"add field password",
 	"add field email with type email",
-	"add field token_password_reset",
 	"add field enabled with type checkbox",
 	"create entity Role",
 	"add field label",
 	"set field label required",
 	"set field label unique",
+	"add field Role accessible related to many Role using label",
 	"create entity Group",
 	"add field label",
 	"set field label required",
 	"set field label unique",
+	"add field Group accessible related to many Group using label",
 	"select entity User",
 	"add field Role related to many Role using label",
 	"add field Group related to many Group using label",
@@ -187,7 +188,7 @@ const mandatoryInstructions = [
 	"add field After with type text",
 	"add field Action with type string",
 	"add field User related to user using login",
-	"select module home"
+	"select module home",
 ];
 
 module.exports = mandatoryInstructions;

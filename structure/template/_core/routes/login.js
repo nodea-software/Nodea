@@ -3,12 +3,14 @@ const bcrypt = require("bcrypt");
 
 const globalConf = require("@config/global");
 const models = require("@app/models");
-const crypto = require("crypto");
 const mailer = require("@core/services/mailer");
 const helpers = require("@core/helpers");
 const Route = require("@core/abstract_routes/route");
 const { writeConnectionLog } = require("@core/helpers/connection_log");
 const dayjs = require("dayjs");
+const { hashToken, generateToken, setExpiresAt } = require("@core/utils/token");
+const { lang } = require("@config/application");
+const __ = helpers.language(lang).__;
 
 class CoreLogin extends Route {
 	constructor(additionalRoutes = []) {
@@ -18,9 +20,10 @@ class CoreLogin extends Route {
 			"refresh_login_captcha",
 			"first_connectionGET",
 			"first_connectionPOST",
+			"forgot_passwordGET",
+			"forgot_passwordPOST",
 			"reset_passwordGET",
 			"reset_passwordPOST",
-			"reset_password_token",
 			"logout",
 			...additionalRoutes,
 		]);
@@ -51,10 +54,8 @@ class CoreLogin extends Route {
 						level: "error",
 					});
 			}
-			const view = globalConf.authStrategy === "ldap" ? "login/login_ldap" : "login/login";
 
-			// res.render('login/login', {
-			res.render(view, {
+			res.render("login/login", {
 				captcha: captcha,
 				redirect: req.query.r ? req.query.r : null,
 			});
@@ -88,229 +89,256 @@ class CoreLogin extends Route {
 
 	first_connectionGET() {
 		this.router.get("/first_connection", ...this.middlewares.first_connectionGET, (req, res) => {
-			res.render("login/first_connection", {
-				login: req.query.login,
-			});
+			const { token, login } = req.query;
+			res.render("login/first_connection", { login, token });
 		});
 	}
-
 	first_connectionPOST() {
-		this.router.post("/first_connection", ...this.middlewares.first_connectionPOST, (req, res) => {
-			const login = req.body.login;
-			const STATUS_ID_ENABLE = 2;
-			const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
+		this.router.post(
+			"/first_connection",
+			...this.middlewares.first_connectionPOST,
+			this.asyncRoute(async (data) => {
+				data.transaction = await models.sequelize.transaction();
+				const { login, token } = data.req.body;
+				const STATUS_ID_ENABLE = 2;
+				const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
 
-			(async () => {
-				if (globalConf.env != "develop" && (req.body.password != req.body.confirm_password || !passwordRegex.test(req.body.password)))
-					throw new Error("login.first_connection.passwordNotValid");
-
-				const user = await models.E_user.findOne({
-					where: {
-						f_login: login,
-						f_enabled: {
-							[models.$or]: [null, false],
-						},
-					},
-					include: [
-						{
-							model: models.E_group,
-							as: "r_group",
-						},
-						{
-							model: models.E_role,
-							as: "r_role",
-						},
-					],
-				});
-
-				if (!user) throw new Error("login.first_connection.userNotExist");
-
-				if (user.f_password && user.f_password != "") throw new Error("login.first_connection.alreadyHavePassword");
-
-				const saltRounds = 10;
-				const hashedPassword = await bcrypt.hash(req.body.confirm_password, saltRounds);
-
-				await user.update(
-					{
-						f_password: hashedPassword,
-						f_enabled: true,
-						f_last_connection: dayjs(),
-					},
-					{
-						user,
+				try {
+					if (data.req.body.password !== data.req.body.confirm_password) {
+						throw new Error("login.first_connection.passwordNotValid");
 					}
-				);
+					if (globalConf.env !== "develop" && !passwordRegex.test(data.req.body.password)) {
+						throw new Error("login.first_connection.passwordNotValid");
+					}
+					const user = await models.E_user.findOne({
+						where: {
+							f_login: login,
+							f_enabled: {
+								[models.$or]: [null, false],
+							},
+						},
+						include: [
+							{ model: models.E_group, as: "r_group" },
+							{ model: models.E_role, as: "r_role" },
+						],
+					});
+					if (!user) throw new Error("login.first_connection.userNotExist");
 
-				await helpers.status.setStatus("e_user", user.id, "state", STATUS_ID_ENABLE, { user });
+					if (user.f_password && user.f_password != "") throw new Error("login.first_connection.alreadyHavePassword");
 
-				return user;
-			})()
-				.then((user) => {
-					req.login(user, (err) => {
-						if (err) {
-							console.error(err);
-							req.session.toastr = [
-								{
-									message: err.message,
-									level: "warn",
-								},
-							];
-							return res.redirect("/login");
+					const hash = hashToken(token);
+
+					const activationToken = await models.E_token.findOne({ where: { hash, fk_id_user: user.id } });
+					if (!activationToken || dayjs().isAfter(activationToken.expires_at)) {
+						throw new Error("login.invalid_token");
+					}
+
+					const saltRounds = 10;
+					const hashedPassword = await bcrypt.hash(data.req.body.confirm_password, saltRounds);
+
+					await user.update(
+						{
+							f_password: hashedPassword,
+							f_enabled: true,
+							f_last_connection: dayjs(),
+						},
+						{
+							transaction: data.transaction,
+							user,
 						}
-						req.session.toastr = [
+					);
+
+					await activationToken.destroy({ transaction: data.transaction, user: data.req.user });
+
+					await helpers.status.setStatus("e_user", user.id, "state", STATUS_ID_ENABLE, { user, transaction: data.transaction });
+
+					data.req.login(user, (err) => {
+						if (err) {
+							throw new Error(err.message);
+						}
+						data.req.session.toastr = [
 							{
 								message: "login.first_connection.success_login",
 								level: "success",
 							},
 						];
 						// Reset potential captcha
-						delete req.session.loginAttempt;
-						res.redirect("/module/home");
+						delete data.req.session.loginAttempt;
+						data.res.success(() => data.res.redirect("/module/home"));
 					});
-				})
-				.catch((err) => {
-					writeConnectionLog(err);
-					console.error(err.message);
-					req.session.toastr = [
+				} catch (err) {
+					writeConnectionLog(`FIRST CONNECTION ERROR => ${__(err.message)} [login: ${login}]`);
+					console.error(err);
+					data.req.session.toastr = [
 						{
 							message: err.message,
 							level: "error",
 						},
 					];
-					res.redirect("/first_connection");
-				});
+					data.res.error(() => data.res.redirect("/first_connection"));
+				}
+			})
+		);
+	}
+
+	forgot_passwordGET() {
+		this.router.get("/forgot_password", ...this.middlewares.forgot_passwordGET, (req, res) => {
+			res.render("login/forgot_password");
 		});
 	}
 
-	reset_passwordGET() {
-		// Affichage de la page reset_password
-		this.router.get("/reset_password", ...this.middlewares.reset_passwordGET, (req, res) => {
-			res.render("login/reset_password");
-		});
-	}
-
-	reset_passwordPOST() {
+	forgot_passwordPOST() {
 		// Reset password - Generate token, insert into DB, send email
-		this.router.post("/reset_password", ...this.middlewares.reset_passwordPOST, (req, res) => {
-			(async () => {
-				// Check if user with login + email exist in DB
-				const user = await models.E_user.findOne({
-					where: {
-						f_login: req.body.login.toLowerCase(),
-						f_email: req.body.email,
-					},
-				});
+		this.router.post(
+			"/forgot_password",
+			...this.middlewares.forgot_passwordPOST,
+			this.asyncRoute(async (data) => {
+				data.transaction = await models.sequelize.transaction();
+				const { login, email } = data.req.body;
+				try {
+					// Check if user with login + email exist in DB
+					const user = await models.E_user.findOne({
+						where: {
+							f_login: login,
+							f_email: email,
+						},
+					});
+					if (!user) throw new Error("login.reset_password.userNotExist");
+					if (!user.f_enabled) throw new Error("login.not_enabled");
 
-				if (!user) throw new Error("login.reset_password.userNotExist");
+					const existingToken = await models.E_token.findOne({
+						where: { type: "RESET_PASSWORD", fk_id_user: user.id },
+						attributes: ["id"],
+					});
+					if (existingToken) {
+						await existingToken.destroy({ transaction: data.transaction, user: data.req.user });
+					}
+					const resetToken = generateToken();
+					const hash = hashToken(resetToken);
 
-				if (!user.f_enabled) throw new Error("login.not_enabled");
-
-				// Create unique token and insert into user
-				const token = crypto.randomBytes(64).toString("hex");
-
-				await user.update({
-					f_token_password_reset: token,
-				});
-
-				// Send email with generated token
-				await mailer.sendTemplate("mail_reset_password", {
-					data: {
-						href: mailer.config.url.host + "/reset_password/" + token,
-						user: user,
-					},
-					from: mailer.config.from,
-					to: req.body.email,
-					subject: mailer.config.subject.mail_reset
-				});
-			})()
-				.then((_) => {
-					req.session.toastr = [
+					await models.E_token.create(
+						{
+							hash,
+							type: "RESET_PASSWORD",
+							expires_at: setExpiresAt("RESET_PASSWORD"),
+							fk_id_user: user.id,
+						},
+						{ transaction: data.transaction, user: data.req.user }
+					);
+					// Send email with generated token
+					await mailer.sendTemplate("mail_reset_password", {
+						data: {
+							href: `${mailer.config.url.host}/reset_password?login=${user.f_login}&token=${resetToken}`,
+							user,
+						},
+						from: mailer.config.from,
+						to: email,
+						subject: mailer.config.subject.mail_reset,
+					});
+					data.req.session.toastr = [
 						{
 							message: "login.reset_password.successMail",
 							level: "success",
 						},
 					];
 					// Reset potential captcha
-					delete req.session.loginAttempt;
-					res.redirect("/");
-				})
-				.catch((err) => {
-					// Remove inserted value in user to avoid zombies
-					models.E_user.update(
-						{
-							f_token_password_reset: null,
-						},
-						{
-							where: {
-								f_login: req.body.login.toLowerCase(),
-							},
-						}
-					).catch((err) => {
-						console.error(err);
-					});
-
-					writeConnectionLog(err);
+					delete data.req.session.loginAttempt;
+					data.res.success((_) => data.res.redirect("/"));
+				} catch (err) {
+					writeConnectionLog(`FORGOT PASSWORD ERROR => ${__(err.message)} [login: ${login}]`);
 					console.error(err);
-					req.session.toastr = [
+					data.req.session.toastr = [
 						{
 							message: err.message,
 							level: "error",
 						},
 					];
-					res.render("login/reset_password");
-				});
+					data.res.error(() => data.res.render("login/forgot_password"));
+				}
+			})
+		);
+	}
+
+	reset_passwordGET() {
+		this.router.get("/reset_password", ...this.middlewares.reset_passwordGET, (req, res) => {
+			const { login, token } = req.query;
+			res.render("login/reset_password", { login, token });
 		});
 	}
 
-	reset_password_token() {
+	reset_passwordPOST() {
 		// Trigger password reset
-		this.router.get("/reset_password/:token", ...this.middlewares.reset_password_token, (req, res) => {
-			models.E_user.findOne({
-				where: {
-					f_token_password_reset: req.params.token,
-				},
-			})
-				.then((user) => {
-					if (!user) {
-						req.session.toastr = [
-							{
-								message: "login.reset_password.cannotFindToken",
-								level: "error",
-							},
-						];
-						return res.redirect("/login");
+		this.router.post(
+			"/reset_password",
+			...this.middlewares.reset_passwordPOST,
+			this.asyncRoute(async (data) => {
+				data.transaction = await models.sequelize.transaction();
+				const { login, token } = data.req.body;
+				const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
+
+				try {
+					if (data.req.body.password !== data.req.body.confirm_password) {
+						throw new Error("login.first_connection.passwordNotValid");
+					}
+					if (globalConf.env !== "develop" && !passwordRegex.test(data.req.body.password)) {
+						throw new Error("login.first_connection.passwordNotValid");
 					}
 
-					user.update({
-						f_password: null,
-						f_token_password_reset: null,
-						f_enabled: false,
-					}).then((_) => {
-						req.session.toastr = [
-							{
-								message: "login.reset_password.success",
-								level: "success",
-							},
-						];
-						res.redirect("/first_connection");
+					const user = await models.E_user.findOne({
+						where: {
+							f_login: login,
+						},
 					});
-				})
-				.catch((err) => {
-					writeConnectionLog(err);
-					req.session.toastr = [
+
+					if (!user) throw new Error("login.first_connection.userNotExist");
+
+					const hash = hashToken(token);
+					const resetToken = await models.E_token.findOne({ where: { hash, fk_id_user: user.id } });
+					if (!resetToken || dayjs().isAfter(resetToken.expires_at)) {
+						throw new Error("login.invalid_token");
+					}
+
+					const saltRounds = 10;
+					const hashedPassword = await bcrypt.hash(data.req.body.confirm_password, saltRounds);
+
+					await user.update(
+						{
+							f_password: hashedPassword,
+							f_enabled: true,
+							f_last_connection: dayjs(),
+						},
+						{
+							transaction: data.transaction,
+							user,
+						}
+					);
+
+					await resetToken.destroy({ transaction: data.transaction });
+
+					data.req.session.toastr = [
+						{
+							message: "login.reset_password.success",
+							level: "success",
+						},
+					];
+					data.res.success(() => data.res.redirect("/"));
+				} catch (err) {
+					writeConnectionLog(`RESET PASSWORD ERROR => ${__(err.message)} [login: ${login}]`);
+					console.log(err);
+					data.req.session.toastr = [
 						{
 							message: err.message,
 							level: "error",
 						},
 					];
-					res.redirect("/login");
-				});
-		});
+					data.res.error((_) => data.res.redirect("/login"));
+				}
+			})
+		);
 	}
 
 	logout() {
 		this.router.get("/logout", ...this.middlewares.logout, (req, res) => {
-			req.session.autologin = false;
 			req.logout((err) => {
 				if (err) {
 					req.session.toastr = [

@@ -109,6 +109,9 @@
                                         </a>&nbsp;
                                     {/actionAccess}
                                     {#actionAccess entity="user" action="read"}
+                                        {@select key=config.authStrategy}
+                                        {@eq value="ldap"/}
+                                        {@none}
                                         {?f_email}
                                             {^f_enabled}
                                                 <button type="button" id='resend_first_connection' class="btn btn-info">
@@ -119,6 +122,8 @@
                                                 </button>&nbsp;
                                             {/f_enabled}
                                         {/f_email}
+                                        {/none}
+                                        {/select}
                                     {/actionAccess}
                                 {/ifTrue}
                             </div>

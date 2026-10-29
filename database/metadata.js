@@ -1,40 +1,46 @@
-const Application = require('./application');
+const Application = require("./application");
 
 class Metadata {
 	constructor() {
 		this._applications = [];
 	}
 
-	getApplication(name){
+	getApplication(name) {
 		// Looking for already loaded app
-		for(const app of this._applications)
-			if(app.name == name)
-				return app
+		for (const app of this._applications) if (app.name == name) return app;
 
 		// Need to load the application and push it in the loaded app
 		const loadedApp = Application.load(name);
-		if(loadedApp)
-			this._applications.push(loadedApp);
+		if (loadedApp) this._applications.push(loadedApp);
 
 		return loadedApp;
 	}
 
+	reloadApplication(name) {
+		for (let i = 0; i < this._applications.length; i++) {
+			if (this._applications[i].name === name) {
+				this._applications[i] = Application.load(name);
+				return this._applications[i];
+			}
+		}
+		return null;
+	}
+
 	deleteApplication(name) {
 		for (let i = 0; i < this._applications.length; i++)
-			if(this._applications[i].name == name) {
+			if (this._applications[i].name == name) {
 				delete this._applications[i];
 				this._applications.splice(i, 1);
 				return true;
 			}
 
-		throw new Error('database.application.notFound.withThisName');
+		throw new Error("database.application.notFound.withThisName");
 	}
 }
 
 // Singleton
 let metadata = false;
 module.exports = () => {
-	if(!metadata)
-		metadata = new Metadata();
+	if (!metadata) metadata = new Metadata();
 	return metadata;
 };

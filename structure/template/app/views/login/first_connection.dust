@@ -16,32 +16,36 @@
 
 	<form id="first_connection" action="/first_connection" method="post">
 		<input type="hidden" name="token" value="{token}">
-		<label for="login">{#__ key="login.login"/}</label>
+		<label id="label_login" for="login">{#__ key="login.login"/}</label>
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" value="{login}" required>
+			<input aria-labelledby="label_login" type="text" class="form-control" placeholder='{#__ key="login.login"/}' name="login" value="{login}" required>
 			<div class="input-group-append">
 				<div class="input-group-text">
 					<span class="fas fa-user"></span>
 				</div>
 			</div>
 		</div>
-		<label for="password">{#__ key="login.password"/}</label>
-		<div class="input-group mb-3">
-			<input type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
-			<div class="input-group-append">
-				<div class="input-group-text login-help" data-title='{#__ key="login.first_connection.help.password_title"/}' data-content='{#__ key="login.first_connection.help.password_content"/}'>
-					<span class="fas fa-lock"></span>
-				</div>
-			</div>
+		<label id="label_password" for="password">{#__ key="login.password"/} &nbsp;<i class="inline-help fa fa-info-circle login-help" data-title='{#__ key="login.password"/}' data-content='{#__ key="login.help.password_content"/}'></i></label>
+		<div class="input-icon-right mb-3">
+			{@eq key=config.env value="develop"}
+				<input aria-labelledby="label_password" type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" required>
+			{:else}
+				<input aria-labelledby="label_password" type="password" id="password" class="form-control" placeholder='{#__ key="login.password"/}' name="password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
+			{/eq}
+			<button type="button" class="password-toggle">
+				<i class="fa fa-eye" aria-hidden="true"></i>
+			</button>
 		</div>
-		<label for="confirm_password">{#__ key="login.confirm_password"/}</label>
-		<div class="input-group mb-3">
-			<input type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
-			<div class="input-group-append">
-				<div class="input-group-text">
-					<span class="fas fa-lock"></span>
-				</div>
-			</div>
+		<label id="label_confirm_password" for="confirm_password">{#__ key="login.confirm_password"/}</label>
+		<div class="input-icon-right mb-3">
+			{@eq key=config.env value="develop"}
+				<input aria-labelledby="label_confirm_password" type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" required>
+			{:else}
+				<input aria-labelledby="label_confirm_password" type="password" id="confirm_password" class="form-control" placeholder='{#__ key="login.confirm_password"/}' name="confirm_password" title="12 caractères minimum avec une majuscule, un chiffre et un caractère spécial !@#$%^&?*" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$" required>
+			{/eq}
+			<button type="button" class="password-toggle">
+				<i class="fa fa-eye" aria-hidden="true"></i>
+			</button>
 		</div>
 		<br>
 		<div class="row">
@@ -55,66 +59,9 @@
 
 {<custom_js}
 	<script type="text/javascript">
-		var notMatchPasswordText = '{#__ key="login.first_connection.passwordNotValid"/}';
-		const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*]).{12,120}$/);
-		var globalConfEnv = '{config.env}';
-
-		$(document).ready(function(){
-
-			function isValidPassword(string, confirmString) {
-
-				if (!string || string == '')
-					return false;
-
-				if(globalConfEnv == 'develop')
-					return true;
-
-				if (string.length < 12)
-					return false;
-
-				if (!passwordRegex.test(string))
-					return false;
-
-				if (confirmString != '' && confirmString != string)
-					return false;
-
-				return true;
-			}
-
-			$(document).on("keyup", "#password", function() {
-				if (isValidPassword($(this).val(), $("#confirm_password").val())) {
-					$(this).attr("style", "border: 1px solid green !important; border-color: green !important;");
-					if (isValidPassword($("#confirm_password").val(), $(this).val()))
-						$("#confirm_password").attr("style", "border: 1px solid green !important; border-color: green !important;");
-				} else {
-					$(this).attr("style", "border: 1px solid red !important; border-color: red !important;");
-				}
-			});
-
-			$(document).on("keyup", "#confirm_password", function() {
-				if (isValidPassword($(this).val(), $("#password").val())) {
-					$(this).attr("style", "border: 1px solid green !important; border-color: green !important;");
-					if (isValidPassword($("#password").val(), $(this).val()))
-						$("#password").attr("style", "border: 1px solid green !important; border-color: green !important;");
-				} else {
-					$(this).attr("style", "border: 1px solid red !important; border-color: red !important;");
-				}
-			});
-
-			$(document).on("submit", "#first_connection", function() {
-
-				if ($('input[name="email"]').val() == '' || !$('input[name="email"]').inputmask("isComplete")) {
-					$('input[name="email"]').css("border", "1px solid red");
-					return false;
-				}
-
-				if (globalConfEnv != 'develop' && !isValidPassword($("#password").val(), $("#confirm_password").val())) {
-					$('#error-box').addClass('bg-danger').html("<i class='fa fa-exclamation-circle'></i><br>" + notMatchPasswordText).show();
-					return false;
-				}
-
-				return true;
-			});
-		});
+		const env = "{config.env}";
+		const errorMessagePassword = '{#__ key="login.first_connection.passwordNotValid"/}';
 	</script>
+	<script src="/core/js/login.js" type="text/javascript"></script>
+	<script src="/core/js/first_connection.js" type="text/javascript"></script>
 {/custom_js}

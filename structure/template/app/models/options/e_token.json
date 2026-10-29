@@ -1,0 +1,13 @@
+[
+	{
+		"target": "e_user",
+		"relation": "belongsTo",
+		"foreignKey": {
+			"name": "fk_id_user",
+			"allowNull": false
+		},
+		"onDelete": "CASCADE",
+		"as": "r_user",
+		"structureType": "hasOne"
+	}
+]

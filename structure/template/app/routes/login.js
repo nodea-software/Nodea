@@ -1,6 +1,6 @@
-const CoreLogin = require('@core/routes/login.js');
-const middlewares = require('@core/helpers/middlewares');
-const auth = require('@app/services/authentication');
+const CoreLogin = require("@core/routes/login.js");
+const middlewares = require("@core/helpers/middlewares");
+const auth = require("@app/services/authentication");
 
 class Login extends CoreLogin {
 	constructor() {
@@ -9,44 +9,40 @@ class Login extends CoreLogin {
 	}
 
 	get hooks() {
-		return {}
+		return {};
 	}
 
 	get middlewares() {
 		return {
-			loginGET: [
-				middlewares.loginAccess
-			],
+			loginGET: [middlewares.loginAccess],
 			loginPOST: [
 				auth.isLoggedIn,
 				// Trace login, remove this line if you disabled traceability
-				middlewares.connectionLogMiddleware
+				middlewares.connectionLogMiddleware,
 			],
 			refresh_login_captcha: [],
-			first_connectionGET: [
-				middlewares.loginAccess
-			],
+			first_connectionGET: [middlewares.loginAccess],
 			first_connectionPOST: [
 				middlewares.loginAccess,
 				// Trace first connection, remove this line if you disabled traceability
-				middlewares.connectionLogMiddleware
+				middlewares.connectionLogMiddleware,
 			],
-			reset_passwordGET: [
-				middlewares.loginAccess
-			],
-			reset_passwordPOST: [
+			forgot_passwordGET: [middlewares.loginAccess],
+			forgot_passwordPOST: [
 				middlewares.loginAccess,
-				// Trace reset password, remove this line if you disabled traceability
-				middlewares.connectionLogMiddleware
+				// Trace first connection, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware,
 			],
-			reset_password_token: [
-				middlewares.loginAccess
+			reset_passwordGET: [],
+			reset_passwordPOST: [
+				// Trace reset password, remove this line if you disabled traceability
+				middlewares.connectionLogMiddleware,
 			],
 			logout: [
 				// Trace logout, remove this line if you disabled traceability
-				middlewares.connectionLogMiddleware
-			]
-		}
+				middlewares.connectionLogMiddleware,
+			],
+		};
 	}
 }
 
